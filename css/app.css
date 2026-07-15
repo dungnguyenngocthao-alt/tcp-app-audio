@@ -889,23 +889,12 @@ mark { background: var(--tcp-accent-subtle); color: var(--tcp-accent-hover); bor
   #screen-analysis .page-cta .btn { width: 100%; max-width: 420px; }
 
   /* Results — masonry of cards (2 columns); export + head span full width */
-  /* Results: two flex columns — col 1 = info, col 2 = talk/summary/actions/
-     transcript. Natural heights; the transcript scrolls if it gets long. */
-  #screen-results .page {
-    display: flex;
-    align-items: flex-start;
-    gap: 20px;
-    column-count: auto;
-  }
-  #screen-results .card { margin: 0; break-inside: auto; }
-  #screen-results .rcol--1,
-  #screen-results .rcol-group {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    flex: 1 1 0;
-    min-width: 0;
-  }
+  /* Results: two columns via multi-column, split forced before the actions
+     card so col 1 = outcome/keywords/sentiment/talk/summary and
+     col 2 = actions + transcript (which caps + scrolls). */
+  #screen-results .page { column-count: 2; column-gap: 20px; }
+  #screen-results .card { margin: 0 0 20px; break-inside: avoid; }
+  #screen-results .card--actions { break-before: column; }
   #screen-results .card--transcript { display: flex; flex-direction: column; }
   #screen-results .transcript-scroll { overflow-y: auto; max-height: 460px; }
 
@@ -930,18 +919,21 @@ mark { background: var(--tcp-accent-subtle); color: var(--tcp-accent-hover); bor
   /* Three across for the block-heavy screens */
   #screen-history .history-list { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 
-  /* Results: split column 2 into two real columns (three total), equal height */
-  #screen-results .page { align-items: stretch; }
-  #screen-results .rcol--1 { min-height: 0; }
-  #screen-results .rcol-group { flex-direction: row; flex: 2 1 0; }
+  /* Results: three real flex columns of equal height */
+  #screen-results .page { display: flex; align-items: stretch; gap: 20px; column-count: auto; }
+  #screen-results .card { margin: 0; break-before: auto; }
+  #screen-results .rcol--1 {
+    display: flex; flex-direction: column; gap: 20px;
+    flex: 1 1 0; min-width: 0; min-height: 0;
+  }
+  #screen-results .rcol-group {
+    display: flex; flex-direction: row; gap: 20px;
+    flex: 2 1 0; min-width: 0; min-height: 0;
+  }
   #screen-results .rcol--2,
   #screen-results .rcol--3 {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    flex: 1 1 0;
-    min-width: 0;
-    min-height: 0;
+    display: flex; flex-direction: column; gap: 20px;
+    flex: 1 1 0; min-width: 0; min-height: 0;
   }
   /* Successful-rate card fills its column so all three columns match height */
   #screen-results .rcol--1 .card:first-child {
@@ -952,5 +944,5 @@ mark { background: var(--tcp-accent-subtle); color: var(--tcp-accent-hover); bor
   }
   /* Transcript fills its column; messages scroll inside */
   #screen-results .card--transcript { flex: 1 1 auto; min-height: 0; }
-  #screen-results .transcript-scroll { flex: 1 1 auto; min-height: 0; max-height: none; }
+  #screen-results .transcript-scroll { flex: 1 1 auto; min-height: 0; max-height: none; overflow-y: auto; }
 }
