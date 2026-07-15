@@ -644,12 +644,21 @@ button { font-family: inherit; }
 .action-item__desc { font-size: 13px; line-height: 19px; color: var(--tcp-fg-secondary); }
 
 /* Transcript */
-.subtabs { display: flex; gap: var(--tcp-space-5); border-bottom: 1px solid var(--tcp-border-subtle); margin-bottom: var(--tcp-space-5); }
+.subtabs { display: flex; align-items: flex-start; gap: var(--tcp-space-5); border-bottom: 1px solid var(--tcp-border-subtle); margin-bottom: var(--tcp-space-5); }
 .subtab {
   appearance: none; background: none; border: 0; cursor: pointer;
   padding: 0 0 10px; font-size: 14px; font-weight: var(--tcp-fw-semibold);
   color: var(--tcp-fg-tertiary); position: relative;
 }
+/* Export as an icon button, right-aligned next to the tabs */
+.subtabs__export {
+  margin-left: auto;
+  margin-top: -7px;
+  width: 32px; height: 32px;
+  color: var(--tcp-fg-secondary);
+}
+.subtabs__export svg { width: 18px; height: 18px; }
+.subtabs__export:hover { color: var(--tcp-ink); }
 .subtab.is-active { color: var(--tcp-accent); }
 .subtab.is-active::after {
   content: ""; position: absolute; left: 0; right: 0; bottom: -1px;

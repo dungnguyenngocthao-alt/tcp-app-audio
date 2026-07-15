@@ -242,7 +242,15 @@
   }
 
   const exportBtn = $("#exportBtn");
-  if (exportBtn) exportBtn.addEventListener("click", () => flashExport(exportBtn, "Exported"));
+  if (exportBtn) {
+    exportBtn.addEventListener("click", () => {
+      if (exportBtn.disabled) return;
+      const original = exportBtn.innerHTML;
+      exportBtn.innerHTML = CHECK_SVG;
+      exportBtn.disabled = true;
+      setTimeout(() => { exportBtn.innerHTML = original; exportBtn.disabled = false; }, 1400);
+    });
+  }
 
   /* -------------------------------------------------------------------------
      Screen 4 · History — past uploads with re-view / export, 10 per page
