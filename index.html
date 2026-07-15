@@ -30,6 +30,9 @@
             </span>
             <span class="brand__name">SonicAI</span>
           </div>
+          <button class="burger" type="button" aria-label="Open menu" aria-haspopup="true" aria-expanded="false" data-burger>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+          </button>
         </header>
 
         <div class="page">
@@ -104,8 +107,6 @@
           <button class="btn btn--accent btn--lg btn--block" id="processBtn" type="button">Process Audio</button>
         </div>
       </div>
-
-      <nav class="tabbar" data-navfor="analysis"></nav>
     </section>
 
     <!-- ================================================================= -->
@@ -177,9 +178,15 @@
             </span>
             <span class="brand__name">SonicAI</span>
           </div>
+          <button class="burger" type="button" aria-label="Open menu" aria-haspopup="true" aria-expanded="false" data-burger>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+          </button>
         </header>
 
         <div class="results-head">
+          <button class="iconbtn" type="button" data-nav="analysis" data-reset aria-label="Quay lại — phân tích mới">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5"/><path d="m12 19-7-7 7-7"/></svg>
+          </button>
           <div>
             <h1 class="results-head__title">Kết quả phân tích</h1>
             <p class="results-head__sub">Cuộc gọi với Khách hàng A &bull; 10/26/2023, 2:30 PM</p>
@@ -355,9 +362,34 @@
           </div>
         </div>
       </div>
-
-      <nav class="tabbar" data-navfor="results"></nav>
     </section>
+
+    <!-- Slide-in navigation menu -->
+    <div class="drawer" id="menu" hidden>
+      <div class="drawer__backdrop" data-menu-close></div>
+      <aside class="drawer__panel" role="menu" aria-label="Điều hướng chính">
+        <div class="drawer__head">
+          <span class="drawer__title">Menu</span>
+          <button class="burger" type="button" aria-label="Đóng menu" data-menu-close>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6 18 18M18 6 6 18"/></svg>
+          </button>
+        </div>
+        <nav class="drawer__nav">
+          <button class="drawer__item" role="menuitem" type="button" data-nav="analysis" data-reset>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="12" width="4" height="8" rx="1"/><rect x="10" y="7" width="4" height="13" rx="1"/><rect x="17" y="3" width="4" height="17" rx="1"/></svg>
+            <span>Analysis</span>
+          </button>
+          <button class="drawer__item" role="menuitem" type="button" data-nav="history">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v5h5"/><path d="M3.05 13A9 9 0 1 0 6 5.3L3 8"/><path d="M12 7v5l4 2"/></svg>
+            <span>History</span>
+          </button>
+          <button class="drawer__item" role="menuitem" type="button" data-nav="settings">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 8 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H2a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 3.6 8a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H8a1.65 1.65 0 0 0 1-1.51V2a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V8a1.65 1.65 0 0 0 1.51 1H22a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+            <span>Settings</span>
+          </button>
+        </nav>
+      </aside>
+    </div>
 
   </div>
 

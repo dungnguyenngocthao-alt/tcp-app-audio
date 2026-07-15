@@ -24,56 +24,55 @@
     const active = screens[name];
     const scroller = $(".screen__scroll", active);
     if (scroller) scroller.scrollTop = 0;
-    syncNav(name);
+    setActiveMenu(name);
   }
 
   /* -------------------------------------------------------------------------
-     Bottom navigation (shared markup, rendered into every .tabbar)
+     Burger menu — slide-in navigation drawer
      ------------------------------------------------------------------------- */
-  const NAV_ITEMS = [
-    {
-      id: "analysis", label: "Analysis",
-      icon: '<rect x="3" y="12" width="4" height="8" rx="1"/><rect x="10" y="7" width="4" height="13" rx="1"/><rect x="17" y="3" width="4" height="17" rx="1"/>'
-    },
-    {
-      id: "history", label: "History",
-      icon: '<path d="M3 3v5h5"/><path d="M3.05 13A9 9 0 1 0 6 5.3L3 8"/><path d="M12 7v5l4 2"/>'
-    },
-    {
-      id: "settings", label: "Settings",
-      icon: '<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 8 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H2a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 3.6 8a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H8a1.65 1.65 0 0 0 1-1.51V2a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V8a1.65 1.65 0 0 0 1.51 1H22a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>'
-    },
-  ];
+  const menu = $("#menu");
 
-  function buildNav(bar) {
-    bar.innerHTML = NAV_ITEMS.map(item => `
-      <button class="tabbar__item" data-nav="${item.id}" type="button">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"
-             stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${item.icon}</svg>
-        <span>${item.label}</span>
-      </button>`).join("");
-
-    $$(".tabbar__item", bar).forEach(btn =>
-      btn.addEventListener("click", () => {
-        const target = btn.dataset.nav;
-        // Only "Analysis" maps to a built screen; others are placeholders.
-        if (target === "analysis") show("analysis");
-      })
+  function openMenu() {
+    setActiveMenu(currentScreen());
+    menu.hidden = false;
+    $$("[data-burger]").forEach(b => b.setAttribute("aria-expanded", "true"));
+  }
+  function closeMenu() {
+    menu.hidden = true;
+    $$("[data-burger]").forEach(b => b.setAttribute("aria-expanded", "false"));
+  }
+  function currentScreen() {
+    const el = document.querySelector(".screen.is-active");
+    return el ? el.dataset.screen : "analysis";
+  }
+  function setActiveMenu(screenName) {
+    // Both the Analysis and Results screens sit under the "Analysis" item.
+    const active = (screenName === "results") ? "analysis" : screenName;
+    $$(".drawer__item").forEach(item =>
+      item.classList.toggle("is-active", item.dataset.nav === active)
     );
   }
 
-  function syncNav(screenName) {
-    // Both the Analysis and Results screens live under the "Analysis" tab.
-    const activeTab = (screenName === "results" || screenName === "analysis")
-      ? "analysis" : screenName;
-    $$(".tabbar").forEach(bar =>
-      $$(".tabbar__item", bar).forEach(btn =>
-        btn.classList.toggle("is-active", btn.dataset.nav === activeTab)
-      )
-    );
-  }
+  $$("[data-burger]").forEach(b => b.addEventListener("click", openMenu));
+  $$("[data-menu-close]").forEach(b => b.addEventListener("click", closeMenu));
+  document.addEventListener("keydown", e => {
+    if (e.key === "Escape" && !menu.hidden) closeMenu();
+  });
 
-  $$(".tabbar").forEach(buildNav);
+  /* -------------------------------------------------------------------------
+     Navigation actions — burger items + the results-screen back button.
+     [data-nav]   → which screen to open ("analysis" is the only built target)
+     [data-reset] → clear the current selection and start a fresh analysis
+     ------------------------------------------------------------------------- */
+  $$("[data-nav]").forEach(el =>
+    el.addEventListener("click", () => {
+      const target = el.dataset.nav;
+      if (el.hasAttribute("data-reset")) resetAnalysis();
+      // "history" / "settings" are placeholders in this prototype
+      if (target === "analysis") show("analysis");
+      closeMenu();
+    })
+  );
 
   /* -------------------------------------------------------------------------
      Screen 1 · upload source tabs
@@ -187,6 +186,18 @@
     procFill.style.width = rounded + "%";
     procPct.textContent = rounded + "%";
     if (label) procStage.textContent = label;
+  }
+
+  /* Clear the current selection and return the upload form to its start state */
+  function resetAnalysis() {
+    cancelled = true;
+    if (timer) { clearInterval(timer); timer = null; }
+    if (fileInput) fileInput.value = "";
+    if (chosenFile) { chosenFile.hidden = true; chosenFile.textContent = ""; }
+    if (procName) procName.textContent = "Q3_Sales_Call_JohnDoe.wav";
+    const link = $("#linkInput");
+    if (link) link.value = "";
+    setProgress(0, STAGES[0].label);
   }
 
   processBtn.addEventListener("click", () => {
