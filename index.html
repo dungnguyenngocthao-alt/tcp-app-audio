@@ -176,6 +176,7 @@
         </div>
 
         <div class="page" style="padding-top:var(--tcp-space-4);">
+          <div class="rcol rcol--1">
           <!-- Outcome -->
           <div class="card">
             <div class="outcome">
@@ -239,7 +240,9 @@
               <span class="bar-row__val">2</span>
             </div>
           </div>
+          </div>
 
+          <div class="rcol rcol--2">
           <!-- Talk duration -->
           <div class="card">
             <div class="result-card__label">
@@ -293,14 +296,17 @@
               </div>
             </div>
           </div>
+          </div>
 
+          <div class="rcol rcol--3">
           <!-- Transcript -->
-          <div class="card">
+          <div class="card card--transcript">
             <div class="subtabs">
               <button class="subtab is-active" data-scripttab="full">Full Transcript</button>
               <button class="subtab" data-scripttab="highlights">Highlights</button>
             </div>
 
+            <div class="transcript-scroll">
             <div data-scriptpane="full">
               <div class="msg msg--in">
                 <span class="msg__avatar">AG</span>
@@ -334,6 +340,7 @@
                 <div class="msg__bubble">Về <mark>giá cả</mark> thì sao? Có vẻ hơi cao so với ngân sách.<span class="msg__time">01:38</span></div>
               </div>
             </div>
+            </div>
 
             <button class="btn btn--ink btn--block" id="exportBtn" type="button" style="margin-top:var(--tcp-space-5);">
               <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -341,6 +348,7 @@
               </svg>
               Export Script
             </button>
+          </div>
           </div>
         </div>
       </div>

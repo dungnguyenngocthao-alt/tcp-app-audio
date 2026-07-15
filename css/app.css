@@ -839,6 +839,12 @@ mark { background: var(--tcp-accent-subtle); color: var(--tcp-accent-hover); bor
 /* Utility */
 .mt-6 { margin-top: var(--tcp-space-6); }
 
+/* Results column wrappers: transparent on mobile/tablet (cards flow as before),
+   real flex columns on desktop. Cards carry their own bottom margin because the
+   wrappers break .card + .card adjacency. */
+.rcol { display: contents; }
+#screen-results .card { margin: 0 0 16px; }
+
 /* ===========================================================================
    RESPONSIVE — tablet (>=768) and desktop (>=1200/1440)
    The app is mobile-first inside .phone; at wider widths it becomes a fluid
@@ -898,6 +904,42 @@ mark { background: var(--tcp-accent-subtle); color: var(--tcp-accent-hover); bor
   #screen-analysis .page-cta { max-width: 860px; margin-inline: auto; width: 100%; }
 
   /* Three across for the block-heavy screens */
-  #screen-results .page { column-count: 3; }
   #screen-history .history-list { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+
+  /* Results: three real flex columns of equal height */
+  #screen-results .page {
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+    gap: 20px;
+    column-count: auto;
+  }
+  #screen-results .rcol {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    flex: 1 1 0;
+    min-width: 0;
+    min-height: 0;
+  }
+  #screen-results .card { margin: 0; break-inside: auto; }
+  /* Successful-rate card fills its column so all three columns match height */
+  #screen-results .rcol--1 .card:first-child {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  /* Transcript capped to the column height; messages scroll inside */
+  #screen-results .card--transcript {
+    flex: 1 1 auto;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+  }
+  #screen-results .transcript-scroll {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+  }
 }
