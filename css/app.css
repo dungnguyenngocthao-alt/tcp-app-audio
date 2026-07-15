@@ -871,13 +871,18 @@ mark { background: var(--tcp-accent-subtle); color: var(--tcp-accent-hover); bor
   }
   #screen-analysis .page > .page__title,
   #screen-analysis .page > .page__lead { grid-column: 1 / -1; margin-bottom: 0; }
-  #screen-analysis .card { margin-top: 0; align-self: start; }
+  #screen-analysis .card { margin-top: 0; align-self: stretch; }
   #screen-analysis .page-cta { display: flex; justify-content: center; }
   #screen-analysis .page-cta .btn { width: 100%; max-width: 420px; }
 
   /* Results — masonry of cards (2 columns); export + head span full width */
   #screen-results .page { column-count: 2; column-gap: 20px; }
-  #screen-results .page > #exportBtn { column-span: all; margin-bottom: 20px; }
+  #screen-results .page > #exportBtn {
+    column-span: all;
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+  }
   #screen-results .card { margin-top: 0; margin-bottom: 20px; break-inside: avoid; }
 
   /* History — card grid (2 columns) */
