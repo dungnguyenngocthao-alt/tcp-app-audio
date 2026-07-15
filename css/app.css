@@ -506,7 +506,7 @@ button { font-family: inherit; }
 .results-head {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: var(--tcp-space-2);
   padding: var(--tcp-space-6) var(--tcp-space-6) var(--tcp-space-2) var(--tcp-space-4);
 }
 .results-head__top { display: flex; align-items: center; gap: var(--tcp-space-2); }
@@ -519,6 +519,13 @@ button { font-family: inherit; }
   margin: 0;
 }
 .results-head__sub { font-size: 13px; color: var(--tcp-fg-secondary); margin-top: 0; padding-left: 48px; }
+/* Mobile: drop the date/time onto its own line (hide the separator) */
+.results-head__sep { display: none; }
+.results-head__date { display: block; }
+@media (min-width: 768px) {
+  .results-head__sep { display: inline; }
+  .results-head__date { display: inline; }
+}
 
 .result-card__label {
   display: flex; align-items: center; gap: var(--tcp-space-2);
@@ -842,7 +849,7 @@ mark { background: var(--tcp-accent-subtle); color: var(--tcp-accent-hover); bor
 /* Results column wrappers: transparent on mobile/tablet (cards flow as before),
    real flex columns on desktop. Cards carry their own bottom margin because the
    wrappers break .card + .card adjacency. */
-.rcol { display: contents; }
+.rcol, .rcol-group { display: contents; }
 #screen-results .card { margin: 0 0 16px; }
 
 /* ===========================================================================
@@ -882,8 +889,25 @@ mark { background: var(--tcp-accent-subtle); color: var(--tcp-accent-hover); bor
   #screen-analysis .page-cta .btn { width: 100%; max-width: 420px; }
 
   /* Results — masonry of cards (2 columns); export + head span full width */
-  #screen-results .page { column-count: 2; column-gap: 20px; }
-  #screen-results .card { margin-top: 0; margin-bottom: 20px; break-inside: avoid; }
+  /* Results: two flex columns — col 1 = info, col 2 = talk/summary/actions/
+     transcript. Natural heights; the transcript scrolls if it gets long. */
+  #screen-results .page {
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+    column-count: auto;
+  }
+  #screen-results .card { margin: 0; break-inside: auto; }
+  #screen-results .rcol--1,
+  #screen-results .rcol-group {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    flex: 1 1 0;
+    min-width: 0;
+  }
+  #screen-results .card--transcript { display: flex; flex-direction: column; }
+  #screen-results .transcript-scroll { overflow-y: auto; max-height: 460px; }
 
   /* History — card grid (2 columns) */
   #screen-history .history-list {
@@ -906,15 +930,12 @@ mark { background: var(--tcp-accent-subtle); color: var(--tcp-accent-hover); bor
   /* Three across for the block-heavy screens */
   #screen-history .history-list { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 
-  /* Results: three real flex columns of equal height */
-  #screen-results .page {
-    display: flex;
-    flex-direction: row;
-    align-items: stretch;
-    gap: 20px;
-    column-count: auto;
-  }
-  #screen-results .rcol {
+  /* Results: split column 2 into two real columns (three total), equal height */
+  #screen-results .page { align-items: stretch; }
+  #screen-results .rcol--1 { min-height: 0; }
+  #screen-results .rcol-group { flex-direction: row; flex: 2 1 0; }
+  #screen-results .rcol--2,
+  #screen-results .rcol--3 {
     display: flex;
     flex-direction: column;
     gap: 20px;
@@ -922,7 +943,6 @@ mark { background: var(--tcp-accent-subtle); color: var(--tcp-accent-hover); bor
     min-width: 0;
     min-height: 0;
   }
-  #screen-results .card { margin: 0; break-inside: auto; }
   /* Successful-rate card fills its column so all three columns match height */
   #screen-results .rcol--1 .card:first-child {
     flex: 1 1 auto;
@@ -930,16 +950,7 @@ mark { background: var(--tcp-accent-subtle); color: var(--tcp-accent-hover); bor
     flex-direction: column;
     justify-content: center;
   }
-  /* Transcript capped to the column height; messages scroll inside */
-  #screen-results .card--transcript {
-    flex: 1 1 auto;
-    min-height: 0;
-    display: flex;
-    flex-direction: column;
-  }
-  #screen-results .transcript-scroll {
-    flex: 1 1 auto;
-    min-height: 0;
-    overflow-y: auto;
-  }
+  /* Transcript fills its column; messages scroll inside */
+  #screen-results .card--transcript { flex: 1 1 auto; min-height: 0; }
+  #screen-results .transcript-scroll { flex: 1 1 auto; min-height: 0; max-height: none; }
 }

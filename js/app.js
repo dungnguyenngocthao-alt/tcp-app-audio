@@ -350,7 +350,16 @@
     const view = e.target.closest("[data-view]");
     if (view) {
       const sub = $("#screen-results .results-head__sub");
-      if (sub) sub.textContent = view.dataset.file + " • " + view.dataset.date;
+      if (sub) {
+        sub.textContent = view.dataset.file;
+        const sep = document.createElement("span");
+        sep.className = "results-head__sep";
+        sep.textContent = " • ";
+        const date = document.createElement("span");
+        date.className = "results-head__date";
+        date.textContent = view.dataset.date;
+        sub.append(sep, date);
+      }
       show("results");
       return;
     }
