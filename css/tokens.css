@@ -1,0 +1,184 @@
+/* =============================================================================
+   Talent Connect Plus — Design Foundations
+   Imported from the "Talent Connect Plus Design System" (Claude Design project).
+   Colours, typography, spacing, radii, shadows and motion tokens.
+
+   Only the raw tokens live here. Component + app styling lives in app.css.
+   ============================================================================= */
+
+@import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=JetBrains+Mono:wght@400;500&display=swap");
+
+:root {
+  /* ---------------------------------------------------------------------------
+     GLOBAL PALETTE — raw primitives
+     --------------------------------------------------------------------------- */
+
+  /* Core */
+  --tcp-white: #FFFFFF;
+  --tcp-black: #000000;
+
+  /* Neutral scale */
+  --tcp-neutral-50:  #FAFAFA;
+  --tcp-neutral-100: #F5F5F5;
+  --tcp-neutral-200: #EEEEEE;
+  --tcp-neutral-300: #E0E0E0;
+  --tcp-neutral-400: #BDBDBD;
+  --tcp-neutral-500: #9E9E9E;
+  --tcp-neutral-600: #757575;
+  --tcp-neutral-700: #616161;
+  --tcp-neutral-800: #424242;
+  --tcp-neutral-900: #212121;
+
+  /* Brand scale (Indigo) */
+  --tcp-brand-50:  #ECECFF;
+  --tcp-brand-100: #D7D7FF;
+  --tcp-brand-200: #AFAFFF;
+  --tcp-brand-300: #8585F5;
+  --tcp-brand-400: #5555C2;
+  --tcp-brand-500: #1F1F6D;
+  --tcp-brand-600: #19195A;
+  --tcp-brand-700: #131347;
+  --tcp-brand-800: #0D0D34;
+  --tcp-brand-900: #070721;
+
+  /* Feedback */
+  --tcp-success-50:  #F0FDF4;
+  --tcp-success-500: #22C55E;
+  --tcp-success-900: #14532D;
+
+  --tcp-warning-50:  #FFFBEB;
+  --tcp-warning-500: #F59E0B;
+  --tcp-warning-900: #78350F;
+
+  --tcp-error-50:  #FEF2F2;
+  --tcp-error-500: #EF4444;
+  --tcp-error-900: #7F1D1D;
+
+  /* Brand-mark colours — sampled from the official TCP logo artwork. */
+  --tcp-logo-indigo:        #212A75;  /* wordmark fill */
+  --tcp-logo-indigo-deep:   #201192;  /* gradient end-stop */
+  --tcp-logo-indigo-mid:    #4E4DC1;
+  --tcp-logo-indigo-light:  #8391F7;
+  --tcp-logo-indigo-pale:   #D1D6FC;
+  --tcp-logo-orange:        #F2552C;  /* accent dot — primary action colour */
+
+  /* ---------------------------------------------------------------------------
+     SEMANTIC TOKENS
+     --------------------------------------------------------------------------- */
+
+  /* Surfaces & foreground */
+  --tcp-bg:               var(--tcp-white);
+  --tcp-bg-subtle:        var(--tcp-neutral-50);
+  --tcp-bg-muted:         var(--tcp-neutral-100);
+  --tcp-fg:               #1F2937;
+  --tcp-fg-primary:       var(--tcp-neutral-900);
+  --tcp-fg-secondary:     var(--tcp-neutral-600);
+  --tcp-fg-tertiary:      var(--tcp-neutral-500);
+  --tcp-fg-disabled:      var(--tcp-neutral-400);
+
+  /* Brand */
+  --tcp-brand:            var(--tcp-brand-500);
+  --tcp-brand-hover:      var(--tcp-brand-600);
+  --tcp-brand-active:     var(--tcp-brand-700);
+  --tcp-brand-subtle:     var(--tcp-brand-100);
+  --tcp-brand-dark:       var(--tcp-brand-900);
+  --tcp-on-brand:         var(--tcp-white);
+
+  /* Accent (orange) — SonicAI primary call-to-action */
+  --tcp-accent:           var(--tcp-logo-orange);
+  --tcp-accent-hover:     #E0430F;
+  --tcp-accent-subtle:    #FFEDE6;
+  --tcp-on-accent:        var(--tcp-white);
+
+  /* Ink — deep navy used for headings / dark surfaces in the SonicAI UI */
+  --tcp-ink:              #0F1B2D;
+  --tcp-ink-soft:         #14233A;
+
+  /* Borders */
+  --tcp-border-subtle:    var(--tcp-neutral-200);
+  --tcp-border:           var(--tcp-neutral-300);
+  --tcp-border-strong:    var(--tcp-neutral-400);
+  --tcp-border-focus:     var(--tcp-brand-500);
+
+  /* Feedback semantic */
+  --tcp-success-bg:       var(--tcp-success-50);
+  --tcp-success-fg:       var(--tcp-success-900);
+  --tcp-success-solid:    var(--tcp-success-500);
+
+  --tcp-warning-bg:       var(--tcp-warning-50);
+  --tcp-warning-fg:       var(--tcp-warning-900);
+  --tcp-warning-solid:    var(--tcp-warning-500);
+
+  --tcp-error-bg:         var(--tcp-error-50);
+  --tcp-error-fg:         var(--tcp-error-900);
+  --tcp-error-solid:      var(--tcp-error-500);
+
+  /* ---------------------------------------------------------------------------
+     TYPE
+     --------------------------------------------------------------------------- */
+  --tcp-font-sans:  "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --tcp-font-mono:  "JetBrains Mono", Menlo, ui-monospace, Consolas, monospace;
+
+  --tcp-fw-regular: 400;
+  --tcp-fw-medium:  500;
+  --tcp-fw-semibold: 600;
+  --tcp-fw-bold:    700;
+
+  --tcp-fs-mini:    12px;
+  --tcp-fs-small:   14px;
+  --tcp-fs-regular: 16px;
+  --tcp-fs-h4:      20px;
+  --tcp-fs-h3:      24px;
+  --tcp-fs-h2:      30px;
+  --tcp-fs-h1:      48px;
+
+  --tcp-lh-mini:    16px;
+  --tcp-lh-small:   22px;
+  --tcp-lh-regular: 24px;
+  --tcp-lh-h4:      28px;
+  --tcp-lh-h3:      28px;
+  --tcp-lh-h2:      36px;
+  --tcp-lh-h1:      56px;
+
+  /* ---------------------------------------------------------------------------
+     SPACING — 4pt scale
+     --------------------------------------------------------------------------- */
+  --tcp-space-0:   0px;
+  --tcp-space-1:   4px;
+  --tcp-space-2:   8px;
+  --tcp-space-3:   12px;
+  --tcp-space-4:   16px;
+  --tcp-space-5:   20px;
+  --tcp-space-6:   24px;
+  --tcp-space-8:   32px;
+  --tcp-space-10:  40px;
+  --tcp-space-12:  48px;
+  --tcp-space-16:  64px;
+
+  /* Radii */
+  --tcp-radius-xs: 4px;
+  --tcp-radius-sm: 6px;
+  --tcp-radius-md: 8px;
+  --tcp-radius-lg: 12px;
+  --tcp-radius-xl: 16px;
+  --tcp-radius-2xl: 20px;
+  --tcp-radius-pill: 999px;
+
+  /* Shadows */
+  --tcp-shadow-2xs: 0px 1px 0px 0px rgba(55, 65, 81, 0.05);
+  --tcp-shadow-xs:  0px 1px 2px 0px rgba(55, 65, 81, 0.05);
+  --tcp-shadow-sm:  0px 1px 3px 0px rgba(55, 65, 81, 0.10), 0px 1px 2px -1px rgba(55, 65, 81, 0.10);
+  --tcp-shadow-md:  0px 4px 6px -1px rgba(0, 0, 0, 0.10), 0px 2px 4px -2px rgba(0, 0, 0, 0.10);
+  --tcp-shadow-lg:  0px 10px 15px -3px rgba(55, 65, 81, 0.10), 0px 4px 6px -2px rgba(55, 65, 81, 0.05);
+  --tcp-shadow-xl:  0px 20px 25px -5px rgba(55, 65, 81, 0.10), 0px 8px 10px -6px rgba(55, 65, 81, 0.05);
+  --tcp-shadow-2xl: 0px 25px 50px 12px rgba(55, 65, 81, 0.25);
+
+  --tcp-ring:       0 0 0 3px rgba(31, 31, 109, 0.25);
+  --tcp-ring-accent: 0 0 0 3px rgba(242, 85, 44, 0.25);
+
+  /* Motion */
+  --tcp-ease:       cubic-bezier(0.16, 1, 0.3, 1);
+  --tcp-dur-fast:   120ms;
+  --tcp-dur-base:   180ms;
+  --tcp-dur-slow:   280ms;
+}
