@@ -24,7 +24,7 @@ motion tokens drive every screen.
 | Role            | Token / value                    |
 | --------------- | -------------------------------- |
 | Brand (indigo)  | `--tcp-brand-500` `#1F1F6D`      |
-| Accent / CTA    | `--tcp-logo-orange` `#F2552C`    |
+| Accent / CTA    | `--tcp-accent` `#4F46E5`         |
 | Ink (headings)  | `--tcp-ink` `#0F1B2D`            |
 | Type — sans     | Inter                            |
 | Type — mono     | JetBrains Mono                   |

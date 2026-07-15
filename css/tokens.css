@@ -84,10 +84,10 @@
   --tcp-brand-dark:       var(--tcp-brand-900);
   --tcp-on-brand:         var(--tcp-white);
 
-  /* Accent (orange) — SonicAI primary call-to-action */
-  --tcp-accent:           var(--tcp-logo-orange);
-  --tcp-accent-hover:     #E0430F;
-  --tcp-accent-subtle:    #FFEDE6;
+  /* Accent (indigo) — primary call-to-action */
+  --tcp-accent:           #4F46E5;
+  --tcp-accent-hover:     #4338CA;
+  --tcp-accent-subtle:    #EEF2FF;
   --tcp-on-accent:        var(--tcp-white);
 
   /* Ink — deep navy used for headings / dark surfaces in the SonicAI UI */
@@ -174,7 +174,7 @@
   --tcp-shadow-2xl: 0px 25px 50px 12px rgba(55, 65, 81, 0.25);
 
   --tcp-ring:       0 0 0 3px rgba(31, 31, 109, 0.25);
-  --tcp-ring-accent: 0 0 0 3px rgba(242, 85, 44, 0.25);
+  --tcp-ring-accent: 0 0 0 3px rgba(79, 70, 229, 0.25);
 
   /* Motion */
   --tcp-ease:       cubic-bezier(0.16, 1, 0.3, 1);
