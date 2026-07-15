@@ -837,3 +837,67 @@ mark { background: var(--tcp-accent-subtle); color: var(--tcp-accent-hover); bor
 
 /* Utility */
 .mt-6 { margin-top: var(--tcp-space-6); }
+
+/* ===========================================================================
+   RESPONSIVE — tablet (>=768) and desktop (>=1200/1440)
+   The app is mobile-first inside .phone; at wider widths it becomes a fluid
+   shell and content reflows into 2–3 columns where there are many blocks.
+   =========================================================================== */
+@media (min-width: 768px) {
+  body { padding: 32px; align-items: flex-start; }
+
+  /* Shell expands; screens flow instead of absolute-stacking */
+  .phone {
+    width: 100%;
+    max-width: 760px;
+    height: auto;
+    min-height: 0;
+    max-height: none;
+    border: 1px solid var(--tcp-border-subtle);
+    border-radius: 24px;
+    box-shadow: var(--tcp-shadow-lg);
+  }
+  .screen { position: static; }
+  .screen__scroll { overflow: visible; }
+  .screen--hasnav .screen__scroll { padding-bottom: var(--tcp-space-6); }
+
+  /* New Analysis — two-column form (upload | profile), title/lead full width */
+  #screen-analysis .page {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px 24px;
+    align-content: start;
+  }
+  #screen-analysis .page > .page__title,
+  #screen-analysis .page > .page__lead { grid-column: 1 / -1; margin-bottom: 0; }
+  #screen-analysis .card { margin-top: 0; align-self: start; }
+  #screen-analysis .page-cta { display: flex; justify-content: center; }
+  #screen-analysis .page-cta .btn { width: 100%; max-width: 420px; }
+
+  /* Results — masonry of cards (2 columns); export + head span full width */
+  #screen-results .page { column-count: 2; column-gap: 20px; }
+  #screen-results .page > #exportBtn { column-span: all; margin-bottom: 20px; }
+  #screen-results .card { margin-top: 0; margin-bottom: 20px; break-inside: avoid; }
+
+  /* History — card grid (2 columns) */
+  #screen-history .history-list {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+  }
+
+  /* Analyzing — stays a single centred column */
+  #screen-processing .analyzing { max-width: 520px; margin: 0 auto; }
+}
+
+@media (min-width: 1200px) {
+  .phone { max-width: 1140px; }
+
+  /* New Analysis stays two cards but centred so they don't stretch too wide */
+  #screen-analysis .page { max-width: 860px; margin-inline: auto; }
+  #screen-analysis .page-cta { max-width: 860px; margin-inline: auto; width: 100%; }
+
+  /* Three across for the block-heavy screens */
+  #screen-results .page { column-count: 3; }
+  #screen-history .history-list { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
