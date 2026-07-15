@@ -719,6 +719,17 @@ mark { background: var(--tcp-accent-subtle); color: var(--tcp-accent-hover); bor
 .drawer__item.is-active { background: var(--tcp-accent-subtle); color: var(--tcp-accent-hover); }
 .drawer__item.is-active svg { color: var(--tcp-accent); }
 
+/* Primary drawer action — "Thêm audio mới" */
+.drawer__item--primary {
+  background: var(--tcp-accent);
+  color: var(--tcp-on-accent);
+  font-weight: var(--tcp-fw-semibold);
+  margin-bottom: var(--tcp-space-3);
+  box-shadow: var(--tcp-shadow-sm);
+}
+.drawer__item--primary svg { color: var(--tcp-on-accent); }
+.drawer__item--primary:hover { background: var(--tcp-accent-hover); }
+
 @media (prefers-reduced-motion: reduce) {
   .drawer__backdrop { animation: none; opacity: 1; }
   .drawer__panel { animation: none; transform: none; }

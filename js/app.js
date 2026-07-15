@@ -47,9 +47,14 @@
   }
   function setActiveMenu(screenName) {
     // Both the Analysis and Results screens sit under the "Analysis" item.
+    // The primary "Thêm audio mới" action is never marked active — it's a
+    // command, not a destination.
     const active = (screenName === "results") ? "analysis" : screenName;
     $$(".drawer__item").forEach(item =>
-      item.classList.toggle("is-active", item.dataset.nav === active)
+      item.classList.toggle(
+        "is-active",
+        !item.classList.contains("drawer__item--primary") && item.dataset.nav === active
+      )
     );
   }
 
