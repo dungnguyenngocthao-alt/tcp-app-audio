@@ -130,7 +130,7 @@ button { font-family: inherit; }
    --------------------------------------------------------------------------- */
 .page { padding: var(--tcp-space-6); }
 .page__title {
-  font-weight: var(--tcp-fw-bold);
+  font-weight: 600;
   font-size: 24px;
   line-height: 30px;
   letter-spacing: -0.4px;
@@ -405,7 +405,7 @@ button { font-family: inherit; }
 }
 .analyzing__title {
   font-size: 20px;
-  font-weight: var(--tcp-fw-bold);
+  font-weight: 600;
   color: var(--tcp-ink);
   margin: 0 0 var(--tcp-space-2);
 }
@@ -511,10 +511,10 @@ button { font-family: inherit; }
 }
 .results-head__top { display: flex; align-items: center; gap: var(--tcp-space-2); }
 .results-head__title {
-  font-weight: var(--tcp-fw-bold);
-  font-size: 20px;
-  line-height: 26px;
-  letter-spacing: -0.2px;
+  font-weight: 600;
+  font-size: 24px;
+  line-height: 30px;
+  letter-spacing: -0.4px;
   color: var(--tcp-ink);
   margin: 0;
 }
