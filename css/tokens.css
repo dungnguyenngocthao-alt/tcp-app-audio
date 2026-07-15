@@ -119,10 +119,11 @@
   --tcp-font-sans:  "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   --tcp-font-mono:  "JetBrains Mono", Menlo, ui-monospace, Consolas, monospace;
 
+  /* Weights capped at 500 (Medium) — no semibold/bold, keep type light */
   --tcp-fw-regular: 400;
   --tcp-fw-medium:  500;
-  --tcp-fw-semibold: 600;
-  --tcp-fw-bold:    700;
+  --tcp-fw-semibold: 500;
+  --tcp-fw-bold:    500;
 
   --tcp-fs-mini:    12px;
   --tcp-fs-small:   14px;

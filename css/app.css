@@ -504,11 +504,11 @@ button { font-family: inherit; }
    --------------------------------------------------------------------------- */
 .results-head {
   display: flex;
-  align-items: center;
-  gap: var(--tcp-space-2);
+  flex-direction: column;
+  gap: 4px;
   padding: var(--tcp-space-6) var(--tcp-space-6) var(--tcp-space-2) var(--tcp-space-4);
 }
-.results-head .iconbtn { margin-top: 2px; }
+.results-head__top { display: flex; align-items: center; gap: var(--tcp-space-2); }
 .results-head__title {
   font-weight: var(--tcp-fw-bold);
   font-size: 20px;
@@ -517,7 +517,7 @@ button { font-family: inherit; }
   color: var(--tcp-ink);
   margin: 0;
 }
-.results-head__sub { font-size: 13px; color: var(--tcp-fg-secondary); margin-top: 4px; }
+.results-head__sub { font-size: 13px; color: var(--tcp-fg-secondary); margin-top: 0; padding-left: 48px; }
 
 .result-card__label {
   display: flex; align-items: center; gap: var(--tcp-space-2);
