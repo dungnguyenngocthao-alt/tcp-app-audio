@@ -368,4 +368,50 @@
   });
 
   renderHistory();
+
+  /* -------------------------------------------------------------------------
+     Results columns — distribute the cards per breakpoint so every column is
+     an equal-height flex column. CSS handles the fill/stretch/scroll.
+       desktop (>=1200): [outcome,keywords,sentiment] [talk,summary,actions] [transcript]
+       tablet  (>=768):  [outcome,keywords,sentiment,talk,summary] [actions,transcript]
+       mobile  (<768):   single column
+     ------------------------------------------------------------------------- */
+  const resultsPage = $("#screen-results .page");
+  let resultsCards = null;
+  let lastBp = null;
+
+  function layoutResults() {
+    if (!resultsPage) return;
+    if (!resultsCards) {
+      resultsCards = Array.prototype.filter.call(
+        resultsPage.children, el => el.classList.contains("card")
+      );
+    }
+    if (resultsCards.length < 7) return;
+
+    const w = window.innerWidth;
+    const bp = w >= 1200 ? "d" : w >= 768 ? "t" : "m";
+    if (bp === lastBp && resultsPage.classList.contains("is-cols")) return;
+    lastBp = bp;
+
+    const groups = bp === "d" ? [[0, 1, 2], [3, 4, 5], [6]]
+                 : bp === "t" ? [[0, 1, 2, 3, 4], [5, 6]]
+                 : [[0, 1, 2, 3, 4, 5, 6]];
+
+    while (resultsPage.firstChild) resultsPage.removeChild(resultsPage.firstChild);
+    groups.forEach(group => {
+      const col = document.createElement("div");
+      col.className = "rcol";
+      group.forEach(i => col.appendChild(resultsCards[i]));
+      resultsPage.appendChild(col);
+    });
+    resultsPage.classList.add("is-cols");
+  }
+
+  layoutResults();
+  let resizeRaf = null;
+  window.addEventListener("resize", () => {
+    if (resizeRaf) cancelAnimationFrame(resizeRaf);
+    resizeRaf = requestAnimationFrame(layoutResults);
+  });
 })();
