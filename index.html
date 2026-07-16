@@ -369,6 +369,126 @@
       </div>
     </section>
 
+    <!-- ================================================================= -->
+    <!-- SCREEN 5 · Dashboard                                               -->
+    <!-- ================================================================= -->
+    <section class="screen screen--hasnav" id="screen-dashboard" data-screen="dashboard">
+      <div class="screen__scroll">
+        <header class="appbar">
+          <div class="brand">
+            <span class="brand__logo" role="img" aria-label="Talent Connect Plus"></span>
+            <span class="brand__name">Talent Connect +</span>
+          </div>
+          <button class="burger" type="button" aria-label="Open menu" aria-haspopup="true" aria-expanded="false" data-burger>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+          </button>
+        </header>
+
+        <div class="page dash">
+          <h1 class="page__title">Dashboard</h1>
+          <p class="page__lead">Số liệu tổng quan cho tất cả các cuộc gọi đã phân tích.</p>
+
+          <!-- Key stats -->
+          <div class="dash-stats">
+            <div class="card stat-card">
+              <div class="result-card__label">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 17l6-6 4 4 8-8"/><path d="M17 7h4v4"/></svg>
+                Success rate trung bình
+              </div>
+              <div class="stat-card__value stat-card__value--accent" id="dashAvgRate">—</div>
+              <div class="stat-card__sub" id="dashRateSub">trên tổng số cuộc gọi</div>
+            </div>
+            <div class="card stat-card">
+              <div class="result-card__label">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
+                Thời lượng tư vấn TB
+              </div>
+              <div class="stat-card__value" id="dashAvgDur">—</div>
+              <div class="stat-card__sub">phút mỗi cuộc gọi</div>
+            </div>
+            <div class="card stat-card">
+              <div class="result-card__label">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M11 12v5a1.6 1.6 0 1 1-1.4-1.6"/></svg>
+                Tổng cuộc gọi
+              </div>
+              <div class="stat-card__value" id="dashTotal">—</div>
+              <div class="stat-card__sub">đã phân tích</div>
+            </div>
+          </div>
+
+          <div class="dash-grid">
+            <!-- Sentiment overall (half pie) -->
+            <div class="card">
+              <div class="result-card__label">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 0 1 18 0"/><path d="M12 12l4-3"/></svg>
+                Sentiment tổng quan
+              </div>
+              <div class="gauge-wrap">
+                <svg class="gauge" viewBox="0 0 200 118" role="img" aria-label="Positive 62%, Neutral 26%, Negative 12%">
+                  <path class="gauge__track" d="M18 106 A82 82 0 0 1 182 106" fill="none" stroke-width="18" stroke-linecap="round"/>
+                  <path d="M18 106 A82 82 0 0 1 182 106" fill="none" stroke="#22C55E" stroke-width="18" pathLength="100" stroke-dasharray="62 100" stroke-dashoffset="0" stroke-linecap="round"/>
+                  <path d="M18 106 A82 82 0 0 1 182 106" fill="none" stroke="#BDBDBD" stroke-width="18" pathLength="100" stroke-dasharray="26 100" stroke-dashoffset="-62"/>
+                  <path d="M18 106 A82 82 0 0 1 182 106" fill="none" stroke="#EF4444" stroke-width="18" pathLength="100" stroke-dasharray="12 100" stroke-dashoffset="-88" stroke-linecap="round"/>
+                  <text x="100" y="90" text-anchor="middle" class="gauge__num">62%</text>
+                  <text x="100" y="110" text-anchor="middle" class="gauge__lbl">Tích cực</text>
+                </svg>
+              </div>
+              <div class="gauge-legend">
+                <div class="gauge-legend__item"><span class="legend-dot" style="background:#22C55E"></span>Positive<b>62%</b></div>
+                <div class="gauge-legend__item"><span class="legend-dot" style="background:#BDBDBD"></span>Neutral<b>26%</b></div>
+                <div class="gauge-legend__item"><span class="legend-dot" style="background:#EF4444"></span>Negative<b>12%</b></div>
+              </div>
+            </div>
+
+            <!-- Top 3 calls -->
+            <div class="card">
+              <div class="result-card__label">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 21h8M12 17v4M7 4h10v4a5 5 0 0 1-10 0zM7 5H4v2a3 3 0 0 0 3 3M17 5h3v2a3 3 0 0 1-3 3"/></svg>
+                Top 3 success rate cao nhất
+              </div>
+              <div class="top3" id="dashTop3"></div>
+            </div>
+
+            <!-- Word cloud -->
+            <div class="card">
+              <div class="result-card__label">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M4 12h10M4 17h7"/></svg>
+                Word cloud từ khóa
+              </div>
+              <div class="wordcloud">
+                <span style="font-size:30px;color:var(--tcp-brand)">Premium</span>
+                <span style="font-size:22px;color:var(--tcp-accent)">Real-time</span>
+                <span style="font-size:19px;color:var(--tcp-ink)">Giá cả</span>
+                <span style="font-size:16px;color:var(--tcp-brand-400)">ROI</span>
+                <span style="font-size:24px;color:var(--tcp-ink)">Bảo mật</span>
+                <span style="font-size:15px;color:var(--tcp-fg-secondary)">Latency</span>
+                <span style="font-size:20px;color:var(--tcp-brand)">Hiệu suất</span>
+                <span style="font-size:17px;color:var(--tcp-accent)">Chi phí</span>
+                <span style="font-size:14px;color:var(--tcp-fg-secondary)">Demo</span>
+                <span style="font-size:18px;color:var(--tcp-ink)">Tích hợp</span>
+                <span style="font-size:22px;color:var(--tcp-brand-400)">Hỗ trợ</span>
+                <span style="font-size:15px;color:var(--tcp-fg-secondary)">Ngân sách</span>
+                <span style="font-size:19px;color:var(--tcp-brand)">Triển khai</span>
+                <span style="font-size:16px;color:var(--tcp-ink)">Tiết kiệm</span>
+                <span style="font-size:14px;color:var(--tcp-fg-secondary)">Đối tác</span>
+              </div>
+            </div>
+
+            <!-- Recommendation -->
+            <div class="card">
+              <h2 class="section-title">Recommendation chung</h2>
+              <ul class="bullet-list">
+                <li>Nhấn mạnh <b>ROI &amp; tiết kiệm chi phí</b> sớm — đây là từ khóa xuất hiện nhiều ở các cuộc gọi thành công.</li>
+                <li>Chuẩn bị sẵn phản hồi cho thắc mắc về <b>giá cả</b>; đây là điểm phản đối phổ biến nhất.</li>
+                <li>Rút ngắn phần mở đầu để giữ thời lượng tư vấn quanh mức trung bình, tránh kéo dài.</li>
+                <li>Ưu tiên demo tính năng <b>real-time</b> cho nhóm khách quan tâm kỹ thuật.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <!-- Slide-in navigation menu -->
     <div class="drawer" id="menu" hidden>
       <div class="drawer__backdrop" data-menu-close></div>
@@ -387,6 +507,10 @@
           <button class="drawer__item" role="menuitem" type="button" data-nav="analysis">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="12" width="4" height="8" rx="1"/><rect x="10" y="7" width="4" height="13" rx="1"/><rect x="17" y="3" width="4" height="17" rx="1"/></svg>
             <span>Analysis</span>
+          </button>
+          <button class="drawer__item" role="menuitem" type="button" data-nav="dashboard">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></svg>
+            <span>Dashboard</span>
           </button>
           <button class="drawer__item" role="menuitem" type="button" data-nav="history">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v5h5"/><path d="M3.05 13A9 9 0 1 0 6 5.3L3 8"/><path d="M12 7v5l4 2"/></svg>

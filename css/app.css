@@ -832,6 +832,83 @@ mark { background: var(--tcp-accent-subtle); color: var(--tcp-accent-hover); bor
 /* Utility */
 .mt-6 { margin-top: var(--tcp-space-6); }
 
+/* ---------------------------------------------------------------------------
+   SCREEN 5 · Dashboard
+   --------------------------------------------------------------------------- */
+.dash-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--tcp-space-4);
+  margin-bottom: var(--tcp-space-5);
+}
+.stat-card { display: flex; flex-direction: column; gap: var(--tcp-space-2); }
+.stat-card__value {
+  font-size: 32px;
+  line-height: 1.1;
+  font-weight: 600;
+  letter-spacing: -0.6px;
+  color: var(--tcp-ink);
+}
+.stat-card__value--accent { color: var(--tcp-accent); }
+.stat-card__sub { font-size: 12px; color: var(--tcp-fg-tertiary); }
+
+/* Dashboard card masonry — 1 / 2 / 3 columns handled in the media queries */
+.dash-grid { column-count: 1; column-gap: 20px; }
+.dash-grid > .card { break-inside: avoid; margin-bottom: 20px; }
+
+/* Half-pie sentiment gauge */
+.gauge-wrap { display: flex; justify-content: center; padding: var(--tcp-space-2) 0; }
+.gauge { width: 100%; max-width: 260px; height: auto; }
+.gauge__track { stroke: var(--tcp-neutral-200); }
+.gauge__num { font-size: 26px; font-weight: 600; fill: var(--tcp-ink); font-family: var(--tcp-font-sans); }
+.gauge__lbl {
+  font-size: 12px; font-weight: 500; fill: var(--tcp-success-solid);
+  font-family: var(--tcp-font-sans); text-transform: uppercase; letter-spacing: 0.6px;
+}
+.gauge-legend {
+  display: flex; flex-wrap: wrap; justify-content: center;
+  gap: var(--tcp-space-2) var(--tcp-space-5);
+  margin-top: var(--tcp-space-3);
+}
+.gauge-legend__item { display: flex; align-items: center; gap: 7px; font-size: 13px; color: var(--tcp-fg-secondary); }
+.gauge-legend__item b { color: var(--tcp-ink); font-weight: 600; }
+
+/* Word cloud */
+.wordcloud {
+  display: flex; flex-wrap: wrap; align-items: center;
+  gap: 6px var(--tcp-space-3);
+  padding: var(--tcp-space-2) 0;
+  line-height: 1.15;
+}
+.wordcloud span { font-weight: 500; }
+
+/* Top 3 calls */
+.top3 { display: flex; flex-direction: column; gap: var(--tcp-space-3); }
+.top3__row {
+  display: flex; align-items: center; gap: var(--tcp-space-3);
+  padding-bottom: var(--tcp-space-3);
+  border-bottom: 1px solid var(--tcp-border-subtle);
+}
+.top3__row:last-child { padding-bottom: 0; border-bottom: 0; }
+.top3__rank {
+  width: 26px; height: 26px; flex-shrink: 0;
+  border-radius: 50%;
+  background: var(--tcp-brand-50); color: var(--tcp-brand);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 600;
+}
+.top3__info { flex: 1; min-width: 0; }
+.top3__name {
+  font-size: 14px; font-weight: 500; color: var(--tcp-ink);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.top3__meta { font-size: 12px; color: var(--tcp-fg-secondary); margin-top: 1px; }
+.top3__meta b { color: var(--tcp-accent); font-weight: 600; }
+.top3__actions { display: flex; align-items: center; gap: var(--tcp-space-2); flex-shrink: 0; }
+.top3__export { width: 34px; height: 34px; color: var(--tcp-fg-secondary); }
+.top3__export svg { width: 18px; height: 18px; }
+.top3__export:hover { color: var(--tcp-ink); }
+
 /* Results column wrappers: transparent on mobile/tablet (cards flow as before),
    real flex columns on desktop. Cards carry their own bottom margin because the
    wrappers break .card + .card adjacency. */
@@ -902,6 +979,9 @@ mark { background: var(--tcp-accent-subtle); color: var(--tcp-accent-hover); bor
 
   /* Analyzing — stays a single centred column */
   #screen-processing .analyzing { max-width: 520px; margin: 0 auto; }
+
+  /* Dashboard — two-column card masonry */
+  .dash-grid { column-count: 2; }
 }
 
 @media (min-width: 1200px) {
@@ -912,4 +992,7 @@ mark { background: var(--tcp-accent-subtle); color: var(--tcp-accent-hover); bor
   /* Three across for the block-heavy screens */
   #screen-history .history-list { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   /* Results columns (3 at this width) are assembled by JS; see base rules. */
+
+  /* Dashboard — three-column card masonry */
+  .dash-grid { column-count: 3; }
 }

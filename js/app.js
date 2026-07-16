@@ -15,6 +15,7 @@
     processing: $("#screen-processing"),
     results:    $("#screen-results"),
     history:    $("#screen-history"),
+    dashboard:  $("#screen-dashboard"),
   };
 
   function show(name) {
@@ -74,7 +75,7 @@
     el.addEventListener("click", () => {
       const target = el.dataset.nav;
       if (el.hasAttribute("data-reset")) resetAnalysis();
-      if (target === "analysis" || target === "history") show(target);
+      if (target === "analysis" || target === "history" || target === "dashboard") show(target);
       closeMenu();
     })
   );
@@ -240,17 +241,30 @@
     btn.disabled = true;
     setTimeout(() => { btn.innerHTML = original; btn.disabled = false; }, 1600);
   }
+  /* Same, but keeps an icon button icon-only (just swaps to a check) */
+  function flashCheckIcon(btn) {
+    if (btn.disabled) return;
+    const original = btn.innerHTML;
+    btn.innerHTML = CHECK_SVG;
+    btn.disabled = true;
+    setTimeout(() => { btn.innerHTML = original; btn.disabled = false; }, 1400);
+  }
+  /* Fill the results subtitle with a call's file + date */
+  function setResultsSub(file, date) {
+    const sub = $("#screen-results .results-head__sub");
+    if (!sub) return;
+    sub.textContent = file;
+    const sep = document.createElement("span");
+    sep.className = "results-head__sep";
+    sep.textContent = " • ";
+    const d = document.createElement("span");
+    d.className = "results-head__date";
+    d.textContent = date;
+    sub.append(sep, d);
+  }
 
   const exportBtn = $("#exportBtn");
-  if (exportBtn) {
-    exportBtn.addEventListener("click", () => {
-      if (exportBtn.disabled) return;
-      const original = exportBtn.innerHTML;
-      exportBtn.innerHTML = CHECK_SVG;
-      exportBtn.disabled = true;
-      setTimeout(() => { exportBtn.innerHTML = original; exportBtn.disabled = false; }, 1400);
-    });
-  }
+  if (exportBtn) exportBtn.addEventListener("click", () => flashCheckIcon(exportBtn));
 
   /* -------------------------------------------------------------------------
      Screen 4 · History — past uploads with re-view / export, 10 per page
@@ -357,17 +371,7 @@
   historyList.addEventListener("click", e => {
     const view = e.target.closest("[data-view]");
     if (view) {
-      const sub = $("#screen-results .results-head__sub");
-      if (sub) {
-        sub.textContent = view.dataset.file;
-        const sep = document.createElement("span");
-        sep.className = "results-head__sep";
-        sep.textContent = " • ";
-        const date = document.createElement("span");
-        date.className = "results-head__date";
-        date.textContent = view.dataset.date;
-        sub.append(sep, date);
-      }
+      setResultsSub(view.dataset.file, view.dataset.date);
       show("results");
       return;
     }
@@ -376,6 +380,66 @@
   });
 
   renderHistory();
+
+  /* -------------------------------------------------------------------------
+     Dashboard — aggregate metrics over all analysed calls (HISTORY)
+     ------------------------------------------------------------------------- */
+  const DL_SVG =
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" ' +
+    'stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+    '<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/><path d="M12 15V3"/></svg>';
+
+  function renderDashboard() {
+    if (!HISTORY.length) return;
+    const rates = HISTORY.map(r => r.conf);
+    const avgRate = Math.round(rates.reduce((a, b) => a + b, 0) / rates.length);
+    const secs = HISTORY.map(r => {
+      const [m, s] = r.dur.split(":").map(Number);
+      return m * 60 + s;
+    });
+    const avgSec = Math.round(secs.reduce((a, b) => a + b, 0) / secs.length);
+    const mm = Math.floor(avgSec / 60), ss = avgSec % 60;
+
+    const rateEl = $("#dashAvgRate"); if (rateEl) rateEl.textContent = avgRate + "%";
+    const durEl = $("#dashAvgDur"); if (durEl) durEl.textContent = mm + ":" + String(ss).padStart(2, "0");
+    const totEl = $("#dashTotal"); if (totEl) totEl.textContent = HISTORY.length;
+
+    const top = [...HISTORY].sort((a, b) => b.conf - a.conf).slice(0, 3);
+    const list = $("#dashTop3");
+    if (list) {
+      list.innerHTML = top.map((r, i) => `
+        <div class="top3__row">
+          <span class="top3__rank">${i + 1}</span>
+          <div class="top3__info">
+            <div class="top3__name" title="${escAttr(r.file)}">${r.file}</div>
+            <div class="top3__meta">${r.date.split(",")[0]} &bull; ${r.dur} &bull; <b>${r.conf}%</b></div>
+          </div>
+          <div class="top3__actions">
+            <button class="btn btn--outline btn--sm" type="button" data-view
+                    data-file="${escAttr(r.file)}" data-date="${escAttr(r.date)}">Xem lại</button>
+            <button class="iconbtn top3__export" type="button" data-dash-export
+                    aria-label="Export transcript" title="Export transcript">${DL_SVG}</button>
+          </div>
+        </div>`).join("");
+    }
+  }
+
+  // Re-view (evaluation) / export transcript within a Top-3 row
+  const dashTop3 = $("#dashTop3");
+  if (dashTop3) {
+    dashTop3.addEventListener("click", e => {
+      const view = e.target.closest("[data-view]");
+      if (view) {
+        setResultsSub(view.dataset.file, view.dataset.date);
+        show("results");
+        return;
+      }
+      const exp = e.target.closest("[data-dash-export]");
+      if (exp) flashCheckIcon(exp);
+    });
+  }
+
+  renderDashboard();
 
   /* -------------------------------------------------------------------------
      Results columns — distribute the cards per breakpoint so every column is
