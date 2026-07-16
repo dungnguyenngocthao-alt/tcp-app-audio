@@ -14,7 +14,6 @@
     analysis:   $("#screen-analysis"),
     processing: $("#screen-processing"),
     results:    $("#screen-results"),
-    batch:      $("#screen-batch"),
     history:    $("#screen-history"),
     dashboard:  $("#screen-dashboard"),
   };
@@ -52,7 +51,7 @@
     // Both the Analysis and Results screens sit under the "Analysis" item.
     // The primary "Thêm audio mới" action is never marked active — it's a
     // command, not a destination.
-    const active = (screenName === "results" || screenName === "batch") ? "analysis" : screenName;
+    const active = screenName === "results" ? "analysis" : screenName;
     $$(".drawer__item").forEach(item =>
       item.classList.toggle(
         "is-active",
@@ -240,8 +239,9 @@
         timer = null;
         setTimeout(() => {
           if (cancelled) return;
-          renderBatch();
-          show("batch");
+          renderFileStrip();
+          selectResultFile(0);
+          show("results");
         }, 550);
       }
     }, 220);
@@ -431,8 +431,7 @@
   historyList.addEventListener("click", e => {
     const view = e.target.closest("[data-view]");
     if (view) {
-      setResultsSub(view.dataset.file, view.dataset.date);
-      show("results");
+      showSingleResult(view.dataset.file, view.dataset.date);
       return;
     }
     const exp = e.target.closest("[data-hist-export]");
@@ -490,8 +489,7 @@
     dashTop3.addEventListener("click", e => {
       const view = e.target.closest("[data-view]");
       if (view) {
-        setResultsSub(view.dataset.file, view.dataset.date);
-        show("results");
+        showSingleResult(view.dataset.file, view.dataset.date);
         return;
       }
       const exp = e.target.closest("[data-dash-export]");
@@ -502,12 +500,17 @@
   renderDashboard();
 
   /* -------------------------------------------------------------------------
-     Batch results — when several files are uploaded, list them (like History)
-     with per-file "Xem chi tiết" (open the detailed analysis) and export.
+     File strip — when several files are analysed together, show them as a
+     horizontal, scrollable row at the top of the Results screen. Selecting a
+     chip swaps the analysis below to that file (keeping the normal layout).
      ------------------------------------------------------------------------- */
-  const batchList = $("#batchList");
-  const batchCount = $("#batchCount");
+  const fileStrip       = $("#fileStrip");
+  const fileStripScroll = $("#fileStripScroll");
+  const fileStripCount  = $("#fileStripCount");
   const OUTCOME_LABEL = { success: "Successful Sale", warning: "Follow-up", neutral: "No Sale" };
+
+  let resultFiles = [];   // names shown in the current strip
+  let resultDate  = "";
 
   function todayLabel() {
     const d = new Date();
@@ -517,7 +520,7 @@
     return `${d.getMonth() + 1}/${d.getDate()}/${d.getFullYear()}, ${h}:${String(d.getMinutes()).padStart(2, "0")} ${ap}`;
   }
 
-  // Deterministic mock metrics per file so the list looks realistic + stable
+  // Deterministic mock metrics per file so results look realistic + stable
   function mockCall(name) {
     let h = 0;
     for (let i = 0; i < name.length; i++) h = (h * 31 + name.charCodeAt(i)) >>> 0;
@@ -527,50 +530,66 @@
     return { conf, type, dur, outcome: OUTCOME_LABEL[type] };
   }
 
-  function renderBatch() {
-    if (!batchList) return;
-    const files = selectedFiles.length ? selectedFiles.slice() : [{ name: DEFAULT_PROC_NAME }];
-    if (batchCount) batchCount.textContent = files.length;
-    const date = todayLabel();
-    batchList.innerHTML = files.map(f => {
-      const m = mockCall(f.name);
+  // Build the horizontal strip from the uploaded files. Hidden for a single
+  // file — then the Results screen is just the plain analysis.
+  function renderFileStrip() {
+    resultFiles = (selectedFiles.length ? selectedFiles.map(f => f.name) : [DEFAULT_PROC_NAME]);
+    resultDate = todayLabel();
+    if (!fileStrip) return;
+
+    if (resultFiles.length <= 1) {
+      fileStrip.hidden = true;
+      fileStripScroll.innerHTML = "";
+      return;
+    }
+    fileStrip.hidden = false;
+    if (fileStripCount) fileStripCount.textContent = resultFiles.length + " tệp đã phân tích";
+    fileStripScroll.innerHTML = resultFiles.map((name, i) => {
+      const m = mockCall(name);
       return `
-        <article class="hist">
-          <div class="hist__head">
-            <span class="hist__icon">${FILE_ICON}</span>
-            <div class="hist__info">
-              <div class="hist__titlerow">
-                <div class="hist__name" title="${escAttr(f.name)}">${f.name}</div>
-                <span class="pill pill--${m.type}">${m.outcome}</span>
-              </div>
-              <div class="hist__meta">Vừa phân tích &bull; ${m.dur}</div>
-            </div>
-          </div>
-          <div class="hist__foot">
-            <span class="hist__conf">Độ tin cậy <b>${m.conf}%</b></span>
-            <div class="hist__actions">
-              <button class="btn btn--outline btn--sm" type="button" data-view
-                      data-file="${escAttr(f.name)}" data-date="${escAttr(date)}">Xem chi tiết</button>
-              <button class="iconbtn top3__export" type="button" data-dash-export
-                      aria-label="Export transcript" title="Export transcript">${DL_SVG}</button>
-            </div>
-          </div>
-        </article>`;
+        <button class="fchip" type="button" data-chip="${i}" title="${escAttr(name)}">
+          <span class="fchip__icon">${FILE_ICON}</span>
+          <span class="fchip__info">
+            <span class="fchip__name">${name}</span>
+            <span class="fchip__meta">${m.conf}% &bull; ${m.dur}</span>
+          </span>
+        </button>`;
     }).join("");
   }
 
-  // View detail / export transcript within a batch row
-  if (batchList) {
-    batchList.addEventListener("click", e => {
-      const view = e.target.closest("[data-view]");
-      if (view) {
-        setResultsSub(view.dataset.file, view.dataset.date);
-        show("results");
-        return;
-      }
-      const exp = e.target.closest("[data-dash-export]");
-      if (exp) flashCheckIcon(exp);
+  // Swap the analysis below to a given file (by index into resultFiles)
+  function selectResultFile(index) {
+    const name = resultFiles[index] || DEFAULT_PROC_NAME;
+    setResultsSub(name, resultDate || todayLabel());
+
+    const m = mockCall(name);
+    const title = $("#screen-results .outcome__title");
+    const pct   = $("#screen-results .outcome__pct");
+    if (title) title.textContent = m.outcome;
+    if (pct)   pct.textContent = m.conf + "%";
+
+    if (fileStripScroll) {
+      $$(".fchip", fileStripScroll).forEach(c =>
+        c.classList.toggle("is-active", parseInt(c.dataset.chip, 10) === index)
+      );
+      const active = fileStripScroll.querySelector(".fchip.is-active");
+      if (active) active.scrollIntoView({ block: "nearest", inline: "nearest" });
+    }
+  }
+
+  if (fileStripScroll) {
+    fileStripScroll.addEventListener("click", e => {
+      const chip = e.target.closest("[data-chip]");
+      if (chip) selectResultFile(parseInt(chip.dataset.chip, 10));
     });
+  }
+
+  // Opening a single call from History / Dashboard: no strip, just the analysis
+  function showSingleResult(file, date) {
+    if (fileStrip) { fileStrip.hidden = true; fileStripScroll.innerHTML = ""; }
+    resultFiles = [];
+    setResultsSub(file, date);
+    show("results");
   }
 
   /* -------------------------------------------------------------------------

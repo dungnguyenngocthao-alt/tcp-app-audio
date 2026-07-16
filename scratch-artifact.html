@@ -1,0 +1,2458 @@
+<title>SonicAI — Acoustic Intelligence</title>
+<style>
+/* =============================================================================
+   Talent Connect Plus — Design Foundations
+   Imported from the "Talent Connect Plus Design System" (Claude Design project).
+   Colours, typography, spacing, radii, shadows and motion tokens.
+
+   Only the raw tokens live here. Component + app styling lives in app.css.
+   ============================================================================= */
+
+:root {
+  /* ---------------------------------------------------------------------------
+     GLOBAL PALETTE — raw primitives
+     --------------------------------------------------------------------------- */
+
+  /* Core */
+  --tcp-white: #FFFFFF;
+  --tcp-black: #000000;
+
+  /* Neutral scale */
+  --tcp-neutral-50:  #FAFAFA;
+  --tcp-neutral-100: #F5F5F5;
+  --tcp-neutral-200: #EEEEEE;
+  --tcp-neutral-300: #E0E0E0;
+  --tcp-neutral-400: #BDBDBD;
+  --tcp-neutral-500: #9E9E9E;
+  --tcp-neutral-600: #757575;
+  --tcp-neutral-700: #616161;
+  --tcp-neutral-800: #424242;
+  --tcp-neutral-900: #212121;
+
+  /* Brand scale (Indigo) */
+  --tcp-brand-50:  #ECECFF;
+  --tcp-brand-100: #D7D7FF;
+  --tcp-brand-200: #AFAFFF;
+  --tcp-brand-300: #8585F5;
+  --tcp-brand-400: #5555C2;
+  --tcp-brand-500: #1F1F6D;
+  --tcp-brand-600: #19195A;
+  --tcp-brand-700: #131347;
+  --tcp-brand-800: #0D0D34;
+  --tcp-brand-900: #070721;
+
+  /* Feedback */
+  --tcp-success-50:  #F0FDF4;
+  --tcp-success-500: #22C55E;
+  --tcp-success-900: #14532D;
+
+  --tcp-warning-50:  #FFFBEB;
+  --tcp-warning-500: #F59E0B;
+  --tcp-warning-900: #78350F;
+
+  --tcp-error-50:  #FEF2F2;
+  --tcp-error-500: #EF4444;
+  --tcp-error-900: #7F1D1D;
+
+  /* Brand-mark colours — sampled from the official TCP logo artwork. */
+  --tcp-logo-indigo:        #212A75;  /* wordmark fill */
+  --tcp-logo-indigo-deep:   #201192;  /* gradient end-stop */
+  --tcp-logo-indigo-mid:    #4E4DC1;
+  --tcp-logo-indigo-light:  #8391F7;
+  --tcp-logo-indigo-pale:   #D1D6FC;
+  --tcp-logo-orange:        #F2552C;  /* accent dot — primary action colour */
+
+  /* ---------------------------------------------------------------------------
+     SEMANTIC TOKENS
+     --------------------------------------------------------------------------- */
+
+  /* Surfaces & foreground */
+  --tcp-bg:               var(--tcp-white);
+  --tcp-bg-subtle:        var(--tcp-neutral-50);
+  --tcp-bg-muted:         var(--tcp-neutral-100);
+  --tcp-fg:               #1F2937;
+  --tcp-fg-primary:       var(--tcp-neutral-900);
+  --tcp-fg-secondary:     var(--tcp-neutral-600);
+  --tcp-fg-tertiary:      var(--tcp-neutral-500);
+  --tcp-fg-disabled:      var(--tcp-neutral-400);
+
+  /* Brand */
+  --tcp-brand:            var(--tcp-brand-500);
+  --tcp-brand-hover:      var(--tcp-brand-600);
+  --tcp-brand-active:     var(--tcp-brand-700);
+  --tcp-brand-subtle:     var(--tcp-brand-100);
+  --tcp-brand-dark:       var(--tcp-brand-900);
+  --tcp-on-brand:         var(--tcp-white);
+
+  /* Accent (indigo) — primary call-to-action */
+  --tcp-accent:           #4F46E5;
+  --tcp-accent-hover:     #4338CA;
+  --tcp-accent-subtle:    #EEF2FF;
+  --tcp-on-accent:        var(--tcp-white);
+
+  /* Ink — deep navy used for headings / dark surfaces in the SonicAI UI */
+  --tcp-ink:              #0F1B2D;
+  --tcp-ink-soft:         #14233A;
+
+  /* Borders */
+  --tcp-border-subtle:    var(--tcp-neutral-200);
+  --tcp-border:           var(--tcp-neutral-300);
+  --tcp-border-strong:    var(--tcp-neutral-400);
+  --tcp-border-focus:     var(--tcp-brand-500);
+
+  /* Feedback semantic */
+  --tcp-success-bg:       var(--tcp-success-50);
+  --tcp-success-fg:       var(--tcp-success-900);
+  --tcp-success-solid:    var(--tcp-success-500);
+
+  --tcp-warning-bg:       var(--tcp-warning-50);
+  --tcp-warning-fg:       var(--tcp-warning-900);
+  --tcp-warning-solid:    var(--tcp-warning-500);
+
+  --tcp-error-bg:         var(--tcp-error-50);
+  --tcp-error-fg:         var(--tcp-error-900);
+  --tcp-error-solid:      var(--tcp-error-500);
+
+  /* ---------------------------------------------------------------------------
+     TYPE
+     --------------------------------------------------------------------------- */
+  --tcp-font-sans:  "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --tcp-font-mono:  "JetBrains Mono", Menlo, ui-monospace, Consolas, monospace;
+
+  /* Weights capped at 500 (Medium) — no semibold/bold, keep type light */
+  --tcp-fw-regular: 400;
+  --tcp-fw-medium:  500;
+  --tcp-fw-semibold: 500;
+  --tcp-fw-bold:    500;
+
+  --tcp-fs-mini:    12px;
+  --tcp-fs-small:   14px;
+  --tcp-fs-regular: 16px;
+  --tcp-fs-h4:      20px;
+  --tcp-fs-h3:      24px;
+  --tcp-fs-h2:      30px;
+  --tcp-fs-h1:      48px;
+
+  --tcp-lh-mini:    16px;
+  --tcp-lh-small:   22px;
+  --tcp-lh-regular: 24px;
+  --tcp-lh-h4:      28px;
+  --tcp-lh-h3:      28px;
+  --tcp-lh-h2:      36px;
+  --tcp-lh-h1:      56px;
+
+  /* ---------------------------------------------------------------------------
+     SPACING — 4pt scale
+     --------------------------------------------------------------------------- */
+  --tcp-space-0:   0px;
+  --tcp-space-1:   4px;
+  --tcp-space-2:   8px;
+  --tcp-space-3:   12px;
+  --tcp-space-4:   16px;
+  --tcp-space-5:   20px;
+  --tcp-space-6:   24px;
+  --tcp-space-8:   32px;
+  --tcp-space-10:  40px;
+  --tcp-space-12:  48px;
+  --tcp-space-16:  64px;
+
+  /* Radii */
+  --tcp-radius-xs: 4px;
+  --tcp-radius-sm: 6px;
+  --tcp-radius-md: 8px;
+  --tcp-radius-lg: 12px;
+  --tcp-radius-xl: 16px;
+  --tcp-radius-2xl: 20px;
+  --tcp-radius-pill: 999px;
+
+  /* Shadows */
+  --tcp-shadow-2xs: 0px 1px 0px 0px rgba(55, 65, 81, 0.05);
+  --tcp-shadow-xs:  0px 1px 2px 0px rgba(55, 65, 81, 0.05);
+  --tcp-shadow-sm:  0px 1px 3px 0px rgba(55, 65, 81, 0.10), 0px 1px 2px -1px rgba(55, 65, 81, 0.10);
+  --tcp-shadow-md:  0px 4px 6px -1px rgba(0, 0, 0, 0.10), 0px 2px 4px -2px rgba(0, 0, 0, 0.10);
+  --tcp-shadow-lg:  0px 10px 15px -3px rgba(55, 65, 81, 0.10), 0px 4px 6px -2px rgba(55, 65, 81, 0.05);
+  --tcp-shadow-xl:  0px 20px 25px -5px rgba(55, 65, 81, 0.10), 0px 8px 10px -6px rgba(55, 65, 81, 0.05);
+  --tcp-shadow-2xl: 0px 25px 50px 12px rgba(55, 65, 81, 0.25);
+
+  --tcp-ring:       0 0 0 3px rgba(31, 31, 109, 0.25);
+  --tcp-ring-accent: 0 0 0 3px rgba(79, 70, 229, 0.25);
+
+  /* Motion */
+  --tcp-ease:       cubic-bezier(0.16, 1, 0.3, 1);
+  --tcp-dur-fast:   120ms;
+  --tcp-dur-base:   180ms;
+  --tcp-dur-slow:   280ms;
+}
+
+/* =============================================================================
+   SonicAI — Acoustic Intelligence (mobile web app)
+   Built on the Talent Connect Plus design foundations (tokens.css).
+   ============================================================================= */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  font-family: var(--tcp-font-sans);
+  font-size: var(--tcp-fs-regular);
+  line-height: var(--tcp-lh-regular);
+  color: var(--tcp-fg);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  min-height: 100vh;
+  background: var(--tcp-bg-subtle);
+}
+
+button { font-family: inherit; }
+
+/* ---------------------------------------------------------------------------
+   App shell — fills the whole viewport and scales to the real screen.
+   --------------------------------------------------------------------------- */
+.phone {
+  width: 100%;
+  height: 100vh;
+  height: 100dvh;
+  background: var(--tcp-bg-subtle);
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Scrollable content area (leaves room for the fixed bottom nav) */
+.screen {
+  position: absolute;
+  inset: 0;
+  display: none;
+  flex-direction: column;
+  background: var(--tcp-bg-subtle);
+}
+.screen.is-active { display: flex; }
+
+.screen__scroll {
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.screen--hasnav .screen__scroll { padding-bottom: var(--tcp-space-8); }
+
+/* ---------------------------------------------------------------------------
+   App bar / brand header
+   --------------------------------------------------------------------------- */
+.appbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--tcp-space-2);
+  padding: 14px var(--tcp-space-5) 12px var(--tcp-space-6);
+  background: var(--tcp-bg);
+  border-bottom: 1px solid var(--tcp-border-subtle);
+}
+
+/* Icon buttons: burger (header) + back / utility icons */
+.burger, .iconbtn {
+  appearance: none;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  border-radius: var(--tcp-radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--tcp-ink);
+  transition: background var(--tcp-dur-fast) var(--tcp-ease);
+}
+.burger:hover, .iconbtn:hover { background: var(--tcp-bg-muted); }
+.burger:active, .iconbtn:active { transform: translateY(1px); }
+.burger:focus-visible, .iconbtn:focus-visible { outline: 0; box-shadow: var(--tcp-ring); }
+.burger svg, .iconbtn svg { width: 24px; height: 24px; }
+.brand { display: flex; align-items: center; gap: 9px; }
+.brand__logo {
+  width: 34px;
+  height: 30px;
+  flex-shrink: 0;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 36.0013 31.25' fill='none'%3E%3Cpath d='M36.0013 31.25H0L18.0004 0L36.0013 31.25Z' fill='url(%23g0)'/%3E%3Cpath d='M36.0013 31.2498H0L18.0004 10.4567L36.0013 31.2498Z' fill='url(%23g1)'/%3E%3Cpath d='M18.0735 21.1674C18.815 21.1674 19.4161 20.5663 19.4161 19.8249C19.4161 19.0834 18.815 18.4824 18.0735 18.4824C17.3321 18.4824 16.731 19.0834 16.731 19.8249C16.731 20.5663 17.3321 21.1674 18.0735 21.1674Z' fill='%234F46E5'/%3E%3Cpath d='M36.0013 31.25H0L18.0004 20.3305L36.0013 31.25Z' fill='url(%23g2)'/%3E%3Cdefs%3E%3ClinearGradient id='g0' x1='18' y1='31.54' x2='18' y2='0.34' gradientUnits='userSpaceOnUse'%3E%3Cstop stop-color='white'/%3E%3Cstop offset='0.17' stop-color='%23D1D6FC'/%3E%3Cstop offset='0.39' stop-color='%2399A4F8'/%3E%3Cstop offset='0.5' stop-color='%238391F7'/%3E%3Cstop offset='0.6' stop-color='%23747EE8'/%3E%3Cstop offset='0.79' stop-color='%234E4DC1'/%3E%3Cstop offset='1' stop-color='%23201192'/%3E%3C/linearGradient%3E%3ClinearGradient id='g1' x1='0' y1='31.25' x2='18' y2='10.46' gradientUnits='userSpaceOnUse'%3E%3Cstop stop-color='white'/%3E%3Cstop offset='0.17' stop-color='%23D1D6FC'/%3E%3Cstop offset='0.39' stop-color='%2399A4F8'/%3E%3Cstop offset='0.5' stop-color='%238391F7'/%3E%3Cstop offset='0.6' stop-color='%23747EE8'/%3E%3Cstop offset='0.79' stop-color='%234E4DC1'/%3E%3Cstop offset='1' stop-color='%23201192'/%3E%3C/linearGradient%3E%3ClinearGradient id='g2' x1='18' y1='31.25' x2='18' y2='20.33' gradientUnits='userSpaceOnUse'%3E%3Cstop stop-color='white'/%3E%3Cstop offset='0.27' stop-color='%23BDC4FA'/%3E%3Cstop offset='0.5' stop-color='%238391F7'/%3E%3Cstop offset='0.6' stop-color='%23747EE8'/%3E%3Cstop offset='0.79' stop-color='%234E4DC1'/%3E%3Cstop offset='1' stop-color='%23201192'/%3E%3C/linearGradient%3E%3C/defs%3E%3C/svg%3E") center / contain no-repeat;
+}
+.brand__name {
+  /* Brand wordmark keeps its original bold weight — it's a logo, not body type */
+  font-weight: 700;
+  font-size: 16px;
+  letter-spacing: -0.2px;
+  color: var(--tcp-logo-indigo);
+}
+
+/* ---------------------------------------------------------------------------
+   Generic building blocks
+   --------------------------------------------------------------------------- */
+.page { padding: var(--tcp-space-6); }
+.page__title {
+  font-weight: 600;
+  font-size: 24px;
+  line-height: 30px;
+  letter-spacing: -0.4px;
+  color: var(--tcp-ink);
+  margin: 6px 0 var(--tcp-space-3);
+}
+.page__lead {
+  font-size: 15px;
+  line-height: 22px;
+  color: var(--tcp-fg-secondary);
+  margin: 0 0 var(--tcp-space-6);
+}
+.section-title {
+  font-weight: var(--tcp-fw-semibold);
+  font-size: 18px;
+  color: var(--tcp-ink);
+  margin: 0 0 var(--tcp-space-5);
+}
+
+.card {
+  background: var(--tcp-bg);
+  border: 1px solid var(--tcp-border-subtle);
+  border-radius: var(--tcp-radius-xl);
+  padding: var(--tcp-space-6);
+  box-shadow: var(--tcp-shadow-xs);
+}
+.card + .card { margin-top: var(--tcp-space-5); }
+
+/* Buttons ------------------------------------------------------------------ */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--tcp-space-2);
+  border: 0;
+  border-radius: var(--tcp-radius-md);
+  font-weight: var(--tcp-fw-semibold);
+  font-size: 14px;
+  line-height: 20px;
+  padding: 10px 16px;
+  cursor: pointer;
+  transition: background var(--tcp-dur-fast) var(--tcp-ease),
+              transform var(--tcp-dur-fast) var(--tcp-ease),
+              box-shadow var(--tcp-dur-fast) var(--tcp-ease);
+}
+.btn:active { transform: translateY(1px); }
+.btn:focus-visible { outline: 0; box-shadow: var(--tcp-ring); }
+
+.btn--ink { background: var(--tcp-ink); color: #fff; }
+.btn--ink:hover { background: var(--tcp-ink-soft); }
+
+.btn--accent {
+  background: var(--tcp-accent);
+  color: var(--tcp-on-accent);
+  box-shadow: var(--tcp-shadow-sm);
+}
+.btn--accent:hover { background: var(--tcp-accent-hover); }
+.btn--accent:focus-visible { box-shadow: var(--tcp-ring-accent); }
+
+.btn--outline {
+  background: var(--tcp-bg);
+  border: 1px solid var(--tcp-border);
+  color: var(--tcp-fg-primary);
+}
+.btn--outline:hover { background: var(--tcp-bg-subtle); }
+
+.btn--lg { padding: 16px 24px; font-size: 17px; border-radius: var(--tcp-radius-lg); }
+.btn--sm { padding: 8px 14px; font-size: 13px; border-radius: var(--tcp-radius-sm); }
+.btn--block { display: flex; width: 100%; }
+
+/* ---------------------------------------------------------------------------
+   SCREEN 1 · New Analysis
+   --------------------------------------------------------------------------- */
+.tabs {
+  display: flex;
+  gap: var(--tcp-space-6);
+  border-bottom: 1px solid var(--tcp-border-subtle);
+  margin: 0 0 var(--tcp-space-6);
+}
+.tab {
+  appearance: none;
+  background: none;
+  border: 0;
+  padding: 0 0 12px;
+  font-size: 15px;
+  font-weight: var(--tcp-fw-semibold);
+  color: var(--tcp-fg-tertiary);
+  cursor: pointer;
+  position: relative;
+  transition: color var(--tcp-dur-fast) var(--tcp-ease);
+}
+.tab.is-active { color: var(--tcp-ink); }
+.tab.is-active::after {
+  content: "";
+  position: absolute;
+  left: 0; right: 0; bottom: -1px;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--tcp-accent);
+}
+
+/* Dropzone */
+.dropzone {
+  border: 2px dashed var(--tcp-border);
+  border-radius: var(--tcp-radius-lg);
+  padding: var(--tcp-space-8) var(--tcp-space-6);
+  text-align: center;
+  transition: border-color var(--tcp-dur-base) var(--tcp-ease),
+              background var(--tcp-dur-base) var(--tcp-ease);
+}
+.dropzone.is-drag {
+  border-color: var(--tcp-accent);
+  background: var(--tcp-accent-subtle);
+}
+.dropzone__icon {
+  width: 64px; height: 64px;
+  margin: 0 auto var(--tcp-space-5);
+  border-radius: var(--tcp-radius-lg);
+  background: var(--tcp-brand-50);
+  color: var(--tcp-brand);
+  display: flex; align-items: center; justify-content: center;
+}
+.dropzone__icon svg { width: 30px; height: 30px; }
+.dropzone__title {
+  font-size: 18px;
+  line-height: 24px;
+  font-weight: var(--tcp-fw-semibold);
+  color: var(--tcp-ink);
+  margin: 0 0 var(--tcp-space-2);
+  letter-spacing: -0.2px;
+}
+.dropzone__hint {
+  font-size: 14px;
+  line-height: 20px;
+  color: var(--tcp-fg-secondary);
+  margin: 0 0 var(--tcp-space-5);
+}
+/* Selected files list (multi-upload) */
+.filelist {
+  display: flex;
+  flex-direction: column;
+  gap: var(--tcp-space-2);
+  margin-top: var(--tcp-space-4);
+}
+.filelist__row {
+  display: flex;
+  align-items: center;
+  gap: var(--tcp-space-3);
+  padding: 10px 12px;
+  border: 1px solid var(--tcp-border-subtle);
+  border-radius: var(--tcp-radius-md);
+  background: var(--tcp-bg);
+}
+.filelist__icon {
+  width: 32px; height: 32px; flex-shrink: 0;
+  border-radius: var(--tcp-radius-sm);
+  background: var(--tcp-brand-50);
+  color: var(--tcp-brand);
+  display: flex; align-items: center; justify-content: center;
+}
+.filelist__icon svg { width: 17px; height: 17px; }
+.filelist__info { flex: 1; min-width: 0; }
+.filelist__name {
+  font-size: 13px; font-weight: var(--tcp-fw-medium); color: var(--tcp-ink);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.filelist__size { font-size: 12px; color: var(--tcp-fg-tertiary); margin-top: 1px; }
+.filelist__remove {
+  flex-shrink: 0;
+  width: 28px; height: 28px;
+  border: 0; background: none; cursor: pointer;
+  border-radius: var(--tcp-radius-sm);
+  color: var(--tcp-fg-tertiary);
+  display: flex; align-items: center; justify-content: center;
+  transition: background var(--tcp-dur-fast) var(--tcp-ease), color var(--tcp-dur-fast) var(--tcp-ease);
+}
+.filelist__remove svg { width: 16px; height: 16px; }
+.filelist__remove:hover { background: var(--tcp-error-bg); color: var(--tcp-error-solid); }
+
+/* External link input */
+.field { margin-bottom: var(--tcp-space-4); }
+.field__label {
+  display: block;
+  font-size: 13px;
+  font-weight: var(--tcp-fw-medium);
+  color: var(--tcp-fg-secondary);
+  margin-bottom: var(--tcp-space-2);
+}
+.input, .select {
+  width: 100%;
+  border: 1px solid var(--tcp-border);
+  border-radius: var(--tcp-radius-md);
+  background: var(--tcp-bg);
+  padding: 12px 14px;
+  font-size: 15px;
+  color: var(--tcp-fg-primary);
+  transition: border-color var(--tcp-dur-fast) var(--tcp-ease),
+              box-shadow var(--tcp-dur-fast) var(--tcp-ease);
+}
+.input:focus, .select:focus {
+  outline: 0;
+  border-color: var(--tcp-border-focus);
+  box-shadow: var(--tcp-ring);
+}
+.select {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%23757575' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 40px;
+  cursor: pointer;
+}
+[hidden] { display: none !important; }
+
+/* Slider */
+.slider-row {
+  display: flex;
+  align-items: center;
+  gap: var(--tcp-space-4);
+  margin-top: var(--tcp-space-2);
+}
+.slider {
+  -webkit-appearance: none;
+  appearance: none;
+  flex: 1;
+  height: 6px;
+  border-radius: var(--tcp-radius-pill);
+  background: var(--tcp-neutral-200);
+  outline: none;
+}
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px; height: 20px;
+  border-radius: 50%;
+  background: var(--tcp-ink);
+  border: 3px solid #fff;
+  box-shadow: var(--tcp-shadow-sm);
+  cursor: pointer;
+}
+.slider::-moz-range-thumb {
+  width: 16px; height: 16px;
+  border-radius: 50%;
+  background: var(--tcp-ink);
+  border: 3px solid #fff;
+  box-shadow: var(--tcp-shadow-sm);
+  cursor: pointer;
+}
+.slider-value {
+  font-weight: var(--tcp-fw-bold);
+  font-size: 14px;
+  color: var(--tcp-fg-primary);
+  min-width: 40px;
+  text-align: right;
+}
+
+.row-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.field-divider {
+  border: 0;
+  border-top: 1px solid var(--tcp-border-subtle);
+  margin: var(--tcp-space-5) 0;
+}
+.setting-label { font-size: 16px; color: var(--tcp-fg-primary); }
+
+/* Toggle */
+.toggle {
+  position: relative;
+  width: 46px; height: 26px;
+  flex-shrink: 0;
+}
+.toggle input { position: absolute; opacity: 0; width: 100%; height: 100%; margin: 0; cursor: pointer; }
+.toggle__track {
+  position: absolute; inset: 0;
+  background: var(--tcp-neutral-300);
+  border-radius: var(--tcp-radius-pill);
+  transition: background var(--tcp-dur-base) var(--tcp-ease);
+}
+.toggle__track::after {
+  content: "";
+  position: absolute;
+  top: 3px; left: 3px;
+  width: 20px; height: 20px;
+  background: #fff;
+  border-radius: 50%;
+  box-shadow: var(--tcp-shadow-sm);
+  transition: transform var(--tcp-dur-base) var(--tcp-ease);
+}
+.toggle input:checked + .toggle__track { background: var(--tcp-accent); }
+.toggle input:checked + .toggle__track::after { transform: translateX(20px); }
+
+.page-cta { padding: var(--tcp-space-4) var(--tcp-space-6) var(--tcp-space-8); }
+
+/* ---------------------------------------------------------------------------
+   SCREEN 2 · Analyzing
+   --------------------------------------------------------------------------- */
+.analyzing {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--tcp-space-10) var(--tcp-space-6) var(--tcp-space-6);
+  text-align: center;
+}
+.analyzing__title {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--tcp-ink);
+  margin: 0 0 var(--tcp-space-2);
+}
+.analyzing__sub { color: var(--tcp-fg-secondary); margin: 0 0 var(--tcp-space-10); }
+
+.pulse {
+  position: relative;
+  width: 220px; height: 220px;
+  margin: var(--tcp-space-4) auto var(--tcp-space-12);
+  display: flex; align-items: center; justify-content: center;
+}
+.pulse__ring {
+  position: absolute;
+  border: 1.5px solid var(--tcp-brand-100);
+  border-radius: 28px;
+}
+.pulse__ring--1 { inset: 0; animation: pulse 2.4s var(--tcp-ease) infinite; }
+.pulse__ring--2 { inset: 26px; animation: pulse 2.4s var(--tcp-ease) .4s infinite; }
+.pulse__core {
+  width: 120px; height: 120px;
+  background: #0B1220;
+  border-radius: 24px;
+  color: #fff;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: var(--tcp-shadow-lg);
+  z-index: 1;
+}
+.pulse__core svg { width: 52px; height: 52px; }
+.pulse__core .bar { animation: eq 1s ease-in-out infinite; transform-origin: center; }
+.pulse__core .bar:nth-child(2){ animation-delay: .15s; }
+.pulse__core .bar:nth-child(3){ animation-delay: .3s; }
+.pulse__core .bar:nth-child(4){ animation-delay: .1s; }
+@keyframes pulse {
+  0%   { opacity: .8; transform: scale(.92); }
+  70%  { opacity: 0;  transform: scale(1.08); }
+  100% { opacity: 0;  transform: scale(1.08); }
+}
+@keyframes eq {
+  0%, 100% { transform: scaleY(.5); }
+  50%      { transform: scaleY(1); }
+}
+
+.filecard {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: var(--tcp-space-3);
+  background: var(--tcp-bg);
+  border: 1px solid var(--tcp-border-subtle);
+  border-radius: var(--tcp-radius-lg);
+  padding: var(--tcp-space-4);
+  box-shadow: var(--tcp-shadow-xs);
+  text-align: left;
+  margin-bottom: var(--tcp-space-6);
+}
+.filecard__icon {
+  width: 44px; height: 44px;
+  flex-shrink: 0;
+  border-radius: var(--tcp-radius-md);
+  background: var(--tcp-brand-50);
+  color: var(--tcp-brand);
+  display: flex; align-items: center; justify-content: center;
+}
+.filecard__name { font-weight: var(--tcp-fw-semibold); color: var(--tcp-ink); font-size: 15px; }
+.filecard__meta { font-size: 13px; color: var(--tcp-fg-secondary); margin-top: 2px; }
+
+.progress { width: 100%; margin-bottom: var(--tcp-space-6); }
+.progress__head {
+  display: flex; align-items: baseline; justify-content: space-between;
+  margin-bottom: var(--tcp-space-2);
+}
+.progress__label {
+  font-size: 12px; font-weight: var(--tcp-fw-bold);
+  letter-spacing: 1px; text-transform: uppercase;
+  color: var(--tcp-fg-primary);
+}
+.progress__pct { font-weight: var(--tcp-fw-bold); color: var(--tcp-accent); font-size: 15px; }
+.progress__track {
+  height: 8px;
+  background: var(--tcp-brand-50);
+  border-radius: var(--tcp-radius-pill);
+  overflow: hidden;
+}
+.progress__fill {
+  height: 100%;
+  width: 0%;
+  background: var(--tcp-accent);
+  border-radius: var(--tcp-radius-pill);
+  transition: width var(--tcp-dur-slow) var(--tcp-ease);
+}
+.progress__stage { text-align: center; color: var(--tcp-fg-secondary); font-size: 14px; margin-top: var(--tcp-space-4); }
+
+.analyzing__spacer { flex: 1; }
+
+/* ---------------------------------------------------------------------------
+   SCREEN 3 · Results
+   --------------------------------------------------------------------------- */
+.results-head {
+  display: flex;
+  flex-direction: column;
+  gap: var(--tcp-space-2);
+  padding: var(--tcp-space-6) var(--tcp-space-6) var(--tcp-space-2) var(--tcp-space-4);
+}
+.results-head__top { display: flex; align-items: center; gap: var(--tcp-space-2); }
+.results-head__title {
+  font-weight: 600;
+  font-size: 24px;
+  line-height: 30px;
+  letter-spacing: -0.4px;
+  color: var(--tcp-ink);
+  margin: 0;
+}
+.results-head__sub { font-size: 13px; color: var(--tcp-fg-secondary); margin-top: 0; padding-left: 48px; }
+/* Mobile: drop the date/time onto its own line (hide the separator) */
+.results-head__sep { display: none; }
+.results-head__date { display: block; }
+@media (min-width: 768px) {
+  .results-head__sep { display: inline; }
+  .results-head__date { display: inline; }
+}
+
+/* Horizontal strip of analysed files at the top of the Results screen */
+.filestrip {
+  padding: var(--tcp-space-1) var(--tcp-space-4) var(--tcp-space-2);
+}
+.filestrip__head { padding: 0 0 var(--tcp-space-2); }
+.filestrip__count {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--tcp-fg-secondary);
+  letter-spacing: .1px;
+}
+.filestrip__scroll {
+  display: flex;
+  gap: var(--tcp-space-2);
+  overflow-x: auto;
+  padding-bottom: var(--tcp-space-1);
+  scrollbar-width: thin;
+  -webkit-overflow-scrolling: touch;
+}
+.filestrip__scroll::-webkit-scrollbar { height: 6px; }
+.filestrip__scroll::-webkit-scrollbar-thumb { background: var(--tcp-neutral-300); border-radius: 999px; }
+.fchip {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: var(--tcp-space-2);
+  max-width: 230px;
+  padding: var(--tcp-space-2) var(--tcp-space-3);
+  border: 1px solid var(--tcp-border-subtle);
+  border-radius: var(--tcp-radius-lg);
+  background: var(--tcp-bg);
+  cursor: pointer;
+  transition: border-color var(--tcp-dur-fast) var(--tcp-ease), background var(--tcp-dur-fast) var(--tcp-ease), box-shadow var(--tcp-dur-fast) var(--tcp-ease);
+}
+.fchip:hover { border-color: var(--tcp-border-strong); }
+.fchip.is-active {
+  border-color: var(--tcp-accent);
+  background: var(--tcp-accent-subtle);
+  box-shadow: var(--tcp-ring-accent);
+}
+.fchip__icon {
+  flex: 0 0 auto;
+  width: 30px;
+  height: 30px;
+  display: grid;
+  place-items: center;
+  border-radius: var(--tcp-radius-md);
+  background: var(--tcp-accent-subtle);
+  color: var(--tcp-accent);
+}
+.fchip.is-active .fchip__icon { background: var(--tcp-white); }
+.fchip__icon svg { width: 16px; height: 16px; }
+.fchip__info { min-width: 0; }
+.fchip__name {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--tcp-fg-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.fchip__meta { font-size: 11px; color: var(--tcp-fg-tertiary); margin-top: 1px; }
+
+.result-card__label {
+  display: flex; align-items: center; gap: var(--tcp-space-2);
+  font-size: 12px; font-weight: var(--tcp-fw-bold);
+  text-transform: uppercase; letter-spacing: .8px;
+  color: var(--tcp-fg-tertiary);
+  margin-bottom: var(--tcp-space-4);
+}
+.result-card__label svg { width: 15px; height: 15px; }
+
+/* Outcome / confidence */
+.outcome { text-align: center; padding: var(--tcp-space-2) 0; }
+.outcome__badge {
+  width: 52px; height: 52px;
+  margin: 0 auto var(--tcp-space-3);
+  border-radius: 50%;
+  background: var(--tcp-accent-subtle);
+  color: var(--tcp-accent);
+  display: flex; align-items: center; justify-content: center;
+}
+.outcome__title { font-size: 16px; font-weight: var(--tcp-fw-semibold); color: var(--tcp-ink); }
+.outcome__pct {
+  font-size: 24px; font-weight: var(--tcp-fw-bold); color: var(--tcp-accent);
+  letter-spacing: -0.4px; line-height: 28px; margin-top: var(--tcp-space-2);
+}
+.outcome__caption {
+  font-size: 12px; font-weight: var(--tcp-fw-semibold);
+  letter-spacing: 1px; text-transform: uppercase;
+  color: var(--tcp-fg-tertiary);
+}
+
+/* Keyword chips */
+.chips { display: flex; flex-wrap: wrap; gap: var(--tcp-space-2); }
+.chip {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: var(--tcp-brand-50);
+  color: var(--tcp-brand);
+  border-radius: var(--tcp-radius-pill);
+  padding: 6px 12px;
+  font-size: 13px;
+  font-weight: var(--tcp-fw-medium);
+}
+.chip b { font-weight: var(--tcp-fw-bold); opacity: .7; }
+
+/* Sentiment */
+.senti-head {
+  display: flex; align-items: center; gap: var(--tcp-space-3);
+  margin-bottom: var(--tcp-space-5);
+}
+.senti-emoji { font-size: 24px; line-height: 1; }
+.senti-verdict { font-size: 16px; font-weight: var(--tcp-fw-semibold); color: var(--tcp-success-solid); }
+.senti-verdict + span { font-size: 13px; color: var(--tcp-fg-secondary); }
+
+.bar-row {
+  display: grid;
+  grid-template-columns: 88px 1fr 28px;
+  align-items: center;
+  gap: var(--tcp-space-3);
+  margin-bottom: var(--tcp-space-3);
+}
+.bar-row__label { font-size: 14px; color: var(--tcp-fg-primary); }
+.bar-row__track { display: block; height: 8px; background: var(--tcp-neutral-100); border-radius: var(--tcp-radius-pill); overflow: hidden; }
+.bar-row__fill { display: block; height: 100%; border-radius: var(--tcp-radius-pill); }
+.bar-row__val { font-size: 13px; font-weight: var(--tcp-fw-semibold); color: var(--tcp-fg-secondary); text-align: right; }
+
+/* Talk duration */
+.talk { display: flex; align-items: center; gap: var(--tcp-space-6); }
+.donut {
+  --agent: 45;
+  width: 92px; height: 92px; flex-shrink: 0;
+  border-radius: 50%;
+  background: conic-gradient(var(--tcp-ink) 0 calc(var(--agent) * 1%), var(--tcp-accent) 0);
+  position: relative;
+}
+.donut::after {
+  content: "";
+  position: absolute; inset: 14px;
+  border-radius: 50%;
+  background: var(--tcp-bg);
+}
+.talk-legend { flex: 1; }
+.legend-row {
+  display: flex; align-items: center; gap: var(--tcp-space-2);
+  margin-bottom: var(--tcp-space-3);
+  font-size: 14px;
+}
+.legend-row:last-child { margin-bottom: 0; }
+.legend-dot { width: 11px; height: 11px; border-radius: 3px; }
+.legend-row span:last-child { margin-left: auto; font-weight: var(--tcp-fw-bold); color: var(--tcp-fg-primary); }
+
+/* Summary / actions lists */
+.bullet-list { list-style: none; margin: 0; padding: 0; }
+.bullet-list li {
+  display: flex; gap: var(--tcp-space-3);
+  font-size: 14px; line-height: 21px;
+  color: var(--tcp-fg);
+  padding: var(--tcp-space-2) 0;
+}
+.bullet-list li::before {
+  content: "▸";
+  color: var(--tcp-accent);
+  font-weight: var(--tcp-fw-bold);
+  flex-shrink: 0;
+}
+.action-item {
+  display: flex; gap: var(--tcp-space-3);
+  border: 1px solid var(--tcp-border-subtle);
+  border-radius: var(--tcp-radius-md);
+  padding: var(--tcp-space-4);
+  margin-bottom: var(--tcp-space-3);
+}
+.action-item:last-child { margin-bottom: 0; }
+.action-item__icon { color: var(--tcp-brand); flex-shrink: 0; }
+.action-item__icon svg { width: 18px; height: 18px; }
+.action-item__title { font-weight: var(--tcp-fw-semibold); font-size: 14px; color: var(--tcp-ink); margin-bottom: 3px; }
+.action-item__desc { font-size: 13px; line-height: 19px; color: var(--tcp-fg-secondary); }
+
+/* Transcript */
+.subtabs { display: flex; align-items: flex-start; gap: var(--tcp-space-5); border-bottom: 1px solid var(--tcp-border-subtle); margin-bottom: var(--tcp-space-5); }
+.subtab {
+  appearance: none; background: none; border: 0; cursor: pointer;
+  padding: 0 0 10px; font-size: 14px; font-weight: var(--tcp-fw-semibold);
+  color: var(--tcp-fg-tertiary); position: relative;
+}
+/* Export as an icon button, right-aligned next to the tabs */
+.subtabs__export {
+  margin-left: auto;
+  margin-top: -7px;
+  width: 32px; height: 32px;
+  color: var(--tcp-fg-secondary);
+}
+.subtabs__export svg { width: 18px; height: 18px; }
+.subtabs__export:hover { color: var(--tcp-ink); }
+.subtab.is-active { color: var(--tcp-accent); }
+.subtab.is-active::after {
+  content: ""; position: absolute; left: 0; right: 0; bottom: -1px;
+  height: 2px; background: var(--tcp-accent); border-radius: 2px;
+}
+
+.msg { display: flex; gap: var(--tcp-space-2); margin-bottom: var(--tcp-space-4); align-items: flex-end; }
+.msg--out { flex-direction: row-reverse; }
+.msg__avatar {
+  width: 30px; height: 30px; flex-shrink: 0;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: var(--tcp-fw-semibold);
+  color: #fff;
+}
+.msg--in  .msg__avatar { background: var(--tcp-ink); }
+.msg--out .msg__avatar { background: var(--tcp-brand-300); }
+.msg__bubble {
+  max-width: 76%;
+  padding: 10px 13px;
+  font-size: 14px; line-height: 20px;
+  border-radius: var(--tcp-radius-lg);
+}
+.msg--in  .msg__bubble { background: var(--tcp-bg); border: 1px solid var(--tcp-border-subtle); border-bottom-left-radius: 4px; color: var(--tcp-fg); }
+.msg--out .msg__bubble { background: var(--tcp-brand-50); border-bottom-right-radius: 4px; color: var(--tcp-fg); }
+.msg__time { display: block; font-size: 12px; color: var(--tcp-fg-tertiary); margin-top: 5px; }
+.msg--out .msg__time { text-align: right; }
+mark { background: var(--tcp-accent-subtle); color: var(--tcp-accent-hover); border-radius: 3px; padding: 0 3px; font-weight: var(--tcp-fw-medium); }
+
+/* ---------------------------------------------------------------------------
+   SCREEN 4 · History
+   --------------------------------------------------------------------------- */
+.history-list { display: flex; flex-direction: column; gap: var(--tcp-space-4); }
+
+.hist {
+  background: var(--tcp-bg);
+  border: 1px solid var(--tcp-border-subtle);
+  border-radius: var(--tcp-radius-lg);
+  padding: var(--tcp-space-4);
+  box-shadow: var(--tcp-shadow-xs);
+}
+.hist__head { display: flex; align-items: center; gap: var(--tcp-space-3); }
+.hist__icon {
+  width: 40px; height: 40px; flex-shrink: 0;
+  border-radius: var(--tcp-radius-md);
+  background: var(--tcp-brand-50);
+  color: var(--tcp-brand);
+  display: flex; align-items: center; justify-content: center;
+}
+.hist__icon svg { width: 20px; height: 20px; }
+.hist__info { flex: 1; min-width: 0; }
+.hist__titlerow { display: flex; align-items: center; gap: var(--tcp-space-2); }
+.hist__name {
+  flex: 1; min-width: 0;
+  font-weight: var(--tcp-fw-semibold);
+  font-size: 14px;
+  color: var(--tcp-ink);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.hist__meta {
+  font-size: 12px;
+  color: var(--tcp-fg-secondary);
+  margin-top: 2px;
+  font-variant-numeric: tabular-nums;
+}
+
+.pill {
+  flex-shrink: 0;
+  font-size: 12px;
+  font-weight: var(--tcp-fw-semibold);
+  padding: 4px 9px;
+  border-radius: var(--tcp-radius-pill);
+  white-space: nowrap;
+}
+.pill--success { background: var(--tcp-success-bg); color: var(--tcp-success-fg); }
+.pill--warning { background: var(--tcp-warning-bg); color: var(--tcp-warning-fg); }
+.pill--neutral { background: var(--tcp-bg-muted); color: var(--tcp-fg-secondary); }
+
+.hist__foot {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: var(--tcp-space-3);
+  margin-top: var(--tcp-space-4);
+  padding-top: var(--tcp-space-3);
+  border-top: 1px solid var(--tcp-border-subtle);
+}
+.hist__conf { font-size: 13px; color: var(--tcp-fg-secondary); }
+.hist__conf b { color: var(--tcp-ink); font-weight: var(--tcp-fw-bold); }
+.hist__actions { display: flex; gap: var(--tcp-space-2); }
+
+/* Pagination */
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin-top: var(--tcp-space-6);
+}
+.pagination:empty { display: none; }
+.page-btn {
+  min-width: 36px; height: 36px;
+  padding: 0 6px;
+  border: 1px solid var(--tcp-border);
+  background: var(--tcp-bg);
+  border-radius: var(--tcp-radius-sm);
+  font-size: 14px;
+  font-weight: var(--tcp-fw-medium);
+  color: var(--tcp-fg-primary);
+  cursor: pointer;
+  font-variant-numeric: tabular-nums;
+  transition: background var(--tcp-dur-fast) var(--tcp-ease),
+              border-color var(--tcp-dur-fast) var(--tcp-ease),
+              color var(--tcp-dur-fast) var(--tcp-ease);
+}
+.page-btn:hover:not(:disabled) { background: var(--tcp-bg-subtle); }
+.page-btn:focus-visible { outline: 0; box-shadow: var(--tcp-ring); }
+.page-btn:disabled { opacity: .45; cursor: not-allowed; }
+.page-btn.is-active {
+  background: var(--tcp-ink);
+  border-color: var(--tcp-ink);
+  color: #fff;
+}
+
+/* ---------------------------------------------------------------------------
+   Slide-in navigation drawer (burger menu)
+   --------------------------------------------------------------------------- */
+.drawer { position: absolute; inset: 0; z-index: 50; }
+.drawer[hidden] { display: none; }
+
+.drawer__backdrop {
+  position: absolute; inset: 0;
+  background: rgba(15, 27, 45, 0.45);
+  opacity: 0;
+  animation: drawer-fade var(--tcp-dur-base) var(--tcp-ease) forwards;
+}
+.drawer__panel {
+  position: absolute; top: 0; right: 0; bottom: 0;
+  width: 80%; max-width: 300px;
+  background: var(--tcp-bg);
+  box-shadow: var(--tcp-shadow-2xl);
+  display: flex; flex-direction: column;
+  padding: var(--tcp-space-5);
+  transform: translateX(100%);
+  animation: drawer-slide var(--tcp-dur-slow) var(--tcp-ease) forwards;
+}
+@keyframes drawer-fade  { to { opacity: 1; } }
+@keyframes drawer-slide { to { transform: translateX(0); } }
+
+.drawer__head {
+  display: flex; align-items: center; justify-content: space-between;
+  padding-bottom: var(--tcp-space-4);
+  margin-bottom: var(--tcp-space-4);
+  border-bottom: 1px solid var(--tcp-border-subtle);
+}
+.drawer__title {
+  font-size: 12px; font-weight: var(--tcp-fw-bold);
+  letter-spacing: 1.2px; text-transform: uppercase;
+  color: var(--tcp-fg-tertiary);
+}
+.drawer__nav { display: flex; flex-direction: column; gap: 4px; }
+.drawer__item {
+  appearance: none; border: 0; background: none; cursor: pointer;
+  display: flex; align-items: center; gap: var(--tcp-space-3);
+  width: 100%;
+  padding: 13px var(--tcp-space-3);
+  border-radius: var(--tcp-radius-md);
+  font-size: 16px; font-weight: var(--tcp-fw-medium);
+  color: var(--tcp-fg-primary);
+  text-align: left;
+  transition: background var(--tcp-dur-fast) var(--tcp-ease),
+              color var(--tcp-dur-fast) var(--tcp-ease);
+}
+.drawer__item svg { width: 22px; height: 22px; flex-shrink: 0; color: var(--tcp-fg-secondary); }
+.drawer__item:hover { background: var(--tcp-bg-subtle); }
+.drawer__item:focus-visible { outline: 0; box-shadow: var(--tcp-ring); }
+.drawer__item.is-active { background: var(--tcp-accent-subtle); color: var(--tcp-accent-hover); }
+.drawer__item.is-active svg { color: var(--tcp-accent); }
+
+/* Primary drawer action — "Thêm audio mới" */
+.drawer__item--primary {
+  background: var(--tcp-accent);
+  color: var(--tcp-on-accent);
+  font-weight: var(--tcp-fw-semibold);
+  margin-bottom: var(--tcp-space-3);
+  box-shadow: var(--tcp-shadow-sm);
+}
+.drawer__item--primary svg { color: var(--tcp-on-accent); }
+.drawer__item--primary:hover { background: var(--tcp-accent-hover); }
+
+@media (prefers-reduced-motion: reduce) {
+  .drawer__backdrop { animation: none; opacity: 1; }
+  .drawer__panel { animation: none; transform: none; }
+}
+
+/* Utility */
+.mt-6 { margin-top: var(--tcp-space-6); }
+
+/* ---------------------------------------------------------------------------
+   SCREEN 5 · Dashboard
+   --------------------------------------------------------------------------- */
+.dash-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--tcp-space-4);
+  margin-bottom: var(--tcp-space-5);
+}
+.stat-card { display: flex; flex-direction: column; gap: var(--tcp-space-2); }
+.stat-card__value {
+  font-size: 32px;
+  line-height: 1.1;
+  font-weight: 600;
+  letter-spacing: -0.6px;
+  color: var(--tcp-ink);
+}
+.stat-card__value--accent { color: var(--tcp-accent); }
+.stat-card__sub { font-size: 12px; color: var(--tcp-fg-tertiary); }
+
+/* Dashboard card masonry — 1 / 2 / 3 columns handled in the media queries */
+.dash-grid { column-count: 1; column-gap: 20px; }
+.dash-grid > .card { break-inside: avoid; margin-bottom: 20px; }
+
+/* Half-pie sentiment gauge */
+.gauge-wrap { display: flex; justify-content: center; padding: var(--tcp-space-2) 0; }
+.gauge { width: 100%; max-width: 260px; height: auto; }
+.gauge__track { stroke: var(--tcp-neutral-200); }
+.gauge__num { font-size: 26px; font-weight: 600; fill: var(--tcp-ink); font-family: var(--tcp-font-sans); }
+.gauge__lbl {
+  font-size: 12px; font-weight: 500; fill: var(--tcp-success-solid);
+  font-family: var(--tcp-font-sans); text-transform: uppercase; letter-spacing: 0.6px;
+}
+.gauge-legend {
+  display: flex; flex-wrap: wrap; justify-content: center;
+  gap: var(--tcp-space-2) var(--tcp-space-5);
+  margin-top: var(--tcp-space-3);
+}
+.gauge-legend__item { display: flex; align-items: center; gap: 7px; font-size: 13px; color: var(--tcp-fg-secondary); }
+.gauge-legend__item b { color: var(--tcp-ink); font-weight: 600; }
+
+/* Word cloud */
+.wordcloud {
+  display: flex; flex-wrap: wrap; align-items: center;
+  gap: 6px var(--tcp-space-3);
+  padding: var(--tcp-space-2) 0;
+  line-height: 1.15;
+}
+.wordcloud span { font-weight: 500; }
+
+/* Top 3 calls */
+.top3 { display: flex; flex-direction: column; gap: var(--tcp-space-3); }
+.top3__row {
+  display: flex; align-items: center; gap: var(--tcp-space-3);
+  padding-bottom: var(--tcp-space-3);
+  border-bottom: 1px solid var(--tcp-border-subtle);
+}
+.top3__row:last-child { padding-bottom: 0; border-bottom: 0; }
+.top3__rank {
+  width: 26px; height: 26px; flex-shrink: 0;
+  border-radius: 50%;
+  background: var(--tcp-brand-50); color: var(--tcp-brand);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 600;
+}
+.top3__info { flex: 1; min-width: 0; }
+.top3__name {
+  font-size: 14px; font-weight: 500; color: var(--tcp-ink);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.top3__meta { font-size: 12px; color: var(--tcp-fg-secondary); margin-top: 1px; }
+.top3__meta b { color: var(--tcp-accent); font-weight: 600; }
+.top3__actions { display: flex; align-items: center; gap: var(--tcp-space-2); flex-shrink: 0; }
+.top3__export { width: 34px; height: 34px; color: var(--tcp-fg-secondary); }
+.top3__export svg { width: 18px; height: 18px; }
+.top3__export:hover { color: var(--tcp-ink); }
+
+/* Results column wrappers: transparent on mobile/tablet (cards flow as before),
+   real flex columns on desktop. Cards carry their own bottom margin because the
+   wrappers break .card + .card adjacency. */
+/* Results columns are built by JS (see layoutResults). Until then — and in
+   static contexts like the tablet gallery — the cards stack in one column. */
+#screen-results .card { margin: 0 0 16px; }
+#screen-results .page.is-cols { display: flex; gap: 20px; align-items: stretch; }
+#screen-results .page.is-cols > .rcol {
+  flex: 1 1 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+#screen-results .page.is-cols > .rcol > .card { margin: 0; }
+@media (min-width: 768px) {
+  /* Successful-rate card fills column 1; transcript fills its column and
+     scrolls inside — so every column stretches to the same height. */
+  #screen-results .page.is-cols > .rcol:first-child > .card:first-child {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  #screen-results .page.is-cols .card--transcript {
+    flex: 1 1 auto;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+  }
+  #screen-results .page.is-cols .transcript-scroll {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+  }
+}
+
+/* ===========================================================================
+   RESPONSIVE — tablet (>=768) and desktop (>=1200/1440)
+   The app is mobile-first inside .phone; at wider widths it becomes a fluid
+   shell and content reflows into 2–3 columns where there are many blocks.
+   =========================================================================== */
+@media (min-width: 768px) {
+  /* App stays full-screen; only the content reflows into columns. */
+  .screen--hasnav .screen__scroll { padding-bottom: var(--tcp-space-6); }
+
+  /* New Analysis — two-column form (upload | profile), title/lead full width */
+  #screen-analysis .page {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px 24px;
+    align-content: start;
+  }
+  #screen-analysis .page > .page__title,
+  #screen-analysis .page > .page__lead { grid-column: 1 / -1; margin-bottom: 0; }
+  #screen-analysis .card { margin-top: 0; align-self: stretch; }
+  #screen-analysis .page-cta { display: flex; justify-content: center; }
+  #screen-analysis .page-cta .btn { width: 100%; max-width: 420px; }
+
+  /* Results columns (2 at this width) are assembled by JS; see base rules. */
+
+  /* History — card grid (2 columns) */
+  #screen-history .history-list {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+  }
+
+  /* Analyzing — stays a single centred column */
+  #screen-processing .analyzing { max-width: 520px; margin: 0 auto; }
+
+  /* Dashboard — two-column card masonry */
+  .dash-grid { column-count: 2; }
+}
+
+@media (min-width: 1200px) {
+  /* New Analysis stays two cards but centred so they don't stretch too wide */
+  #screen-analysis .page { max-width: 860px; margin-inline: auto; }
+  #screen-analysis .page-cta { max-width: 860px; margin-inline: auto; width: 100%; }
+
+  /* Three across for the block-heavy screens */
+  #screen-history .history-list { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  /* Results columns (3 at this width) are assembled by JS; see base rules. */
+
+  /* Dashboard — three-column card masonry */
+  .dash-grid { column-count: 3; }
+}
+
+
+/* Artifact preview: adapt the surrounding backdrop to the viewer theme.
+   The phone screen itself stays light — it's the product being previewed. */
+@media (prefers-color-scheme: dark){
+  body{ background: radial-gradient(1200px 600px at 50% -10%, #1a1f3a 0%, transparent 60%), #0c1020; }
+}
+:root[data-theme="dark"] body{ background: radial-gradient(1200px 600px at 50% -10%, #1a1f3a 0%, transparent 60%), #0c1020; }
+:root[data-theme="light"] body{ background: radial-gradient(1200px 600px at 50% -10%, #EEF0FF 0%, transparent 60%), var(--tcp-neutral-100); }
+
+</style>
+
+  <div class="phone" role="application" aria-label="SonicAI mobile app">
+
+    <!-- ================================================================= -->
+    <!-- SCREEN 1 · New Analysis                                            -->
+    <!-- ================================================================= -->
+    <section class="screen screen--hasnav is-active" id="screen-analysis" data-screen="analysis">
+      <div class="screen__scroll">
+        <header class="appbar">
+          <div class="brand">
+            <span class="brand__logo" role="img" aria-label="Talent Connect Plus"></span>
+            <span class="brand__name">Talent Connect +</span>
+          </div>
+          <button class="burger" type="button" aria-label="Open menu" aria-haspopup="true" aria-expanded="false" data-burger>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+          </button>
+        </header>
+
+        <div class="page">
+          <h1 class="page__title">New Analysis</h1>
+          <p class="page__lead">Upload an audio file or provide an external link to begin acoustic intelligence processing.</p>
+
+          <!-- Upload card -->
+          <div class="card">
+            <div class="tabs" role="tablist">
+              <button class="tab is-active" role="tab" aria-selected="true" data-uptab="file">File Upload</button>
+              <button class="tab" role="tab" aria-selected="false" data-uptab="link">External Link</button>
+            </div>
+
+            <div data-uppane="file">
+              <div class="dropzone" id="dropzone">
+              <div class="dropzone__icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M18 10a6 6 0 0 0-11.3-2A4.5 4.5 0 0 0 7 17h11a4 4 0 0 0 .9-7.9"/>
+                  <path d="M12 12v6"/><path d="m9 15 3-3 3 3"/>
+                </svg>
+              </div>
+              <h2 class="dropzone__title">Drag and drop audio files</h2>
+              <p class="dropzone__hint">Chọn hoặc kéo thả nhiều tệp · WAV, MP3, FLAC (Max 500MB)</p>
+              <button class="btn btn--ink" id="browseBtn" type="button">Browse Files</button>
+              <input type="file" id="fileInput" accept=".wav,.mp3,.flac,audio/*" multiple hidden>
+              </div>
+              <div class="filelist" id="fileList" hidden></div>
+            </div>
+
+            <div data-uppane="link" hidden>
+              <div class="field">
+                <label class="field__label" for="linkInput">Audio URL</label>
+                <input class="input" id="linkInput" type="url" placeholder="https://example.com/call-recording.wav" inputmode="url">
+              </div>
+              <p class="dropzone__hint" style="margin:0;">We'll fetch and process the audio from the link you provide.</p>
+            </div>
+          </div>
+
+          <!-- Analysis profile -->
+          <div class="card">
+            <h2 class="section-title">Analysis Profile</h2>
+
+            <div class="field">
+              <label class="field__label" for="modelSelect">Processing Model</label>
+              <select class="select" id="modelSelect">
+                <option>Acoustic Engine v4 (Balanced)</option>
+                <option>Acoustic Engine v4 (High Accuracy)</option>
+                <option>Acoustic Engine v3 (Fast)</option>
+                <option>Speaker Diarization Pro</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label class="field__label" for="sensitivity">Sensitivity</label>
+              <div class="slider-row">
+                <input class="slider" id="sensitivity" type="range" min="0" max="100" value="75" aria-label="Sensitivity">
+                <span class="slider-value" id="sensitivityValue">75%</span>
+              </div>
+            </div>
+
+            <hr class="field-divider">
+
+            <div class="row-between">
+              <span class="setting-label">Auto-detect anomalies</span>
+              <label class="toggle">
+                <input type="checkbox" id="anomalyToggle" checked>
+                <span class="toggle__track"></span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <div class="page-cta">
+          <button class="btn btn--accent btn--lg btn--block" id="processBtn" type="button">Process Audio</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================================================================= -->
+    <!-- SCREEN 2 · Analyzing                                               -->
+    <!-- ================================================================= -->
+    <section class="screen" id="screen-processing" data-screen="processing">
+      <div class="analyzing">
+        <h1 class="analyzing__title">Analyzing Audio</h1>
+        <p class="analyzing__sub">Extracting acoustic intelligence...</p>
+
+        <div class="pulse">
+          <span class="pulse__ring pulse__ring--1"></span>
+          <span class="pulse__ring pulse__ring--2"></span>
+          <span class="pulse__core">
+            <svg viewBox="0 0 28 28" fill="currentColor" aria-hidden="true">
+              <rect class="bar" x="6"  y="8"  width="2.8" height="12" rx="1.4"/>
+              <rect class="bar" x="11" y="4"  width="2.8" height="20" rx="1.4"/>
+              <rect class="bar" x="16" y="8"  width="2.8" height="12" rx="1.4"/>
+              <rect class="bar" x="21" y="10" width="2.8" height="8"  rx="1.4"/>
+            </svg>
+          </span>
+        </div>
+
+        <div class="filecard">
+          <span class="filecard__icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+              <path d="M14 2v6h6"/>
+              <path d="M11 12v5a1.6 1.6 0 1 1-1.4-1.6"/>
+            </svg>
+          </span>
+          <div>
+            <div class="filecard__name" id="procFileName">Q3_Sales_Call_JohnDoe.wav</div>
+            <div class="filecard__meta" id="procMeta">Size: 45 MB &bull; Duration: 45:12</div>
+          </div>
+        </div>
+
+        <div class="progress">
+          <div class="progress__head">
+            <span class="progress__label">Processing</span>
+            <span class="progress__pct" id="procPct">0%</span>
+          </div>
+          <div class="progress__track"><div class="progress__fill" id="procFill"></div></div>
+          <p class="progress__stage" id="procStage">Uploading audio stream...</p>
+        </div>
+
+        <div class="analyzing__spacer"></div>
+
+        <button class="btn btn--outline btn--lg btn--block" id="cancelBtn" type="button">Cancel Analysis</button>
+      </div>
+    </section>
+
+    <!-- ================================================================= -->
+    <!-- SCREEN 3 · Results                                                 -->
+    <!-- ================================================================= -->
+    <section class="screen screen--hasnav" id="screen-results" data-screen="results">
+      <div class="screen__scroll">
+        <header class="appbar">
+          <div class="brand">
+            <span class="brand__logo" role="img" aria-label="Talent Connect Plus"></span>
+            <span class="brand__name">Talent Connect +</span>
+          </div>
+          <button class="burger" type="button" aria-label="Open menu" aria-haspopup="true" aria-expanded="false" data-burger>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+          </button>
+        </header>
+
+        <div class="results-head">
+          <div class="results-head__top">
+            <button class="iconbtn" type="button" data-nav="analysis" data-reset aria-label="Quay lại — phân tích mới">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5"/><path d="m12 19-7-7 7-7"/></svg>
+            </button>
+            <h1 class="results-head__title">Result</h1>
+          </div>
+          <p class="results-head__sub">Cuộc gọi với Khách hàng A<span class="results-head__sep"> &bull; </span><span class="results-head__date">10/26/2023, 2:30 PM</span></p>
+        </div>
+
+        <div class="filestrip" id="fileStrip" hidden>
+          <div class="filestrip__head">
+            <span class="filestrip__count" id="fileStripCount">0 tệp đã phân tích</span>
+          </div>
+          <div class="filestrip__scroll" id="fileStripScroll"></div>
+        </div>
+
+        <div class="page" style="padding-top:var(--tcp-space-4);">
+          <!-- Outcome -->
+          <div class="card">
+            <div class="outcome">
+              <div class="outcome__badge">
+                <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M20 6 9 17l-5-5"/>
+                </svg>
+              </div>
+              <div class="outcome__title">Successful Sale</div>
+              <div class="outcome__pct">98%</div>
+              <div class="outcome__caption">Độ tin cậy</div>
+            </div>
+          </div>
+
+          <!-- Keywords -->
+          <div class="card">
+            <div class="result-card__label">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M4 12h10M4 17h7"/></svg>
+              Từ khóa nổi bật
+            </div>
+            <div class="chips">
+              <span class="chip">Premium <b>12</b></span>
+              <span class="chip">Giá cả <b>8</b></span>
+              <span class="chip">Real-time <b>5</b></span>
+              <span class="chip">Tiết kiệm <b>4</b></span>
+              <span class="chip">Hỗ trợ <b>3</b></span>
+            </div>
+          </div>
+
+          <!-- Sentiment -->
+          <div class="card">
+            <div class="result-card__label">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 17l6-6 4 4 8-8"/><path d="M17 7h4v4"/></svg>
+              Cảm xúc khách hàng
+            </div>
+            <div class="senti-head">
+              <span class="senti-emoji">😊</span>
+              <div>
+                <div class="senti-verdict">Tích cực</div>
+                <span>Tổng quan cuộc hội thoại</span>
+              </div>
+            </div>
+            <div class="bar-row">
+              <span class="bar-row__label">Hài lòng</span>
+              <span class="bar-row__track"><span class="bar-row__fill" style="width:80%;background:var(--tcp-accent)"></span></span>
+              <span class="bar-row__val">12</span>
+            </div>
+            <div class="bar-row">
+              <span class="bar-row__label">Thắc mắc</span>
+              <span class="bar-row__track"><span class="bar-row__fill" style="width:53%;background:var(--tcp-ink)"></span></span>
+              <span class="bar-row__val">8</span>
+            </div>
+            <div class="bar-row">
+              <span class="bar-row__label">Lo lắng</span>
+              <span class="bar-row__track"><span class="bar-row__fill" style="width:20%;background:var(--tcp-ink)"></span></span>
+              <span class="bar-row__val">3</span>
+            </div>
+            <div class="bar-row">
+              <span class="bar-row__label">Phản đối</span>
+              <span class="bar-row__track"><span class="bar-row__fill" style="width:13%;background:var(--tcp-ink)"></span></span>
+              <span class="bar-row__val">2</span>
+            </div>
+          </div>
+
+          <!-- Talk duration -->
+          <div class="card">
+            <div class="result-card__label">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
+              Thời lượng nói
+            </div>
+            <div class="talk">
+              <div class="donut" style="--agent:45"></div>
+              <div class="talk-legend">
+                <div class="legend-row">
+                  <span class="legend-dot" style="background:var(--tcp-ink)"></span>
+                  <span>Agent</span><span>45%</span>
+                </div>
+                <div class="legend-row">
+                  <span class="legend-dot" style="background:var(--tcp-accent)"></span>
+                  <span>Client</span><span>55%</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Summary -->
+          <div class="card">
+            <h2 class="section-title">Tóm tắt</h2>
+            <ul class="bullet-list">
+              <li>Khách hàng quan tâm đến tính năng Real-time analytics.</li>
+              <li>Có một số thắc mắc về giá cả gói Premium.</li>
+              <li>Sale agent xử lý phản đối tốt, nhấn mạnh vào ROI.</li>
+            </ul>
+          </div>
+
+          <!-- Suggested actions -->
+          <div class="card card--actions">
+            <h2 class="section-title">Gợi ý hành động</h2>
+            <div class="action-item">
+              <span class="action-item__icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>
+              </span>
+              <div>
+                <div class="action-item__title">Gửi email follow-up</div>
+                <div class="action-item__desc">Gửi tài liệu chi tiết về ROI của gói Premium trong vòng 24h.</div>
+              </div>
+            </div>
+            <div class="action-item">
+              <span class="action-item__icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+              </span>
+              <div>
+                <div class="action-item__title">Lên lịch họp kỹ thuật</div>
+                <div class="action-item__desc">Sắp xếp buổi demo chuyên sâu với đội ngũ kỹ thuật của khách.</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Transcript -->
+          <div class="card card--transcript">
+            <div class="subtabs">
+              <button class="subtab is-active" data-scripttab="full">Full Transcript</button>
+              <button class="subtab" data-scripttab="highlights">Highlights</button>
+              <button class="iconbtn subtabs__export" id="exportBtn" type="button" aria-label="Export Script" title="Export Script">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/><path d="M12 15V3"/></svg>
+              </button>
+            </div>
+
+            <div class="transcript-scroll">
+            <div data-scriptpane="full">
+              <div class="msg msg--in">
+                <span class="msg__avatar">AG</span>
+                <div class="msg__bubble">Chào anh Tâm, cảm ơn anh đã dành thời gian. Hôm nay em muốn giới thiệu về hệ thống SonicAI bên em.<span class="msg__time">00:15</span></div>
+              </div>
+              <div class="msg msg--out">
+                <span class="msg__avatar">KH</span>
+                <div class="msg__bubble">Chào bạn. Mình đang quan tâm đến tính năng phân tích dữ liệu <mark>real-time</mark>. Bên bạn có hỗ trợ tốt phần này không?<span class="msg__time">00:42</span></div>
+              </div>
+              <div class="msg msg--in">
+                <span class="msg__avatar">AG</span>
+                <div class="msg__bubble">Dạ hoàn toàn được ạ. Gói <mark>Premium</mark> bên em thiết kế đặc biệt cho xử lý luồng dữ liệu lớn theo thời gian thực, độ trễ chưa tới 50ms.<span class="msg__time">01:05</span></div>
+              </div>
+              <div class="msg msg--out">
+                <span class="msg__avatar">KH</span>
+                <div class="msg__bubble">Nghe có vẻ ổn. Nhưng về <mark>giá cả</mark> thì sao? Có vẻ hơi cao so với ngân sách dự kiến của bên mình.<span class="msg__time">01:38</span></div>
+              </div>
+            </div>
+
+            <div data-scriptpane="highlights" hidden>
+              <div class="msg msg--out">
+                <span class="msg__avatar">KH</span>
+                <div class="msg__bubble">Mình đang quan tâm đến tính năng phân tích dữ liệu <mark>real-time</mark>.<span class="msg__time">00:42</span></div>
+              </div>
+              <div class="msg msg--in">
+                <span class="msg__avatar">AG</span>
+                <div class="msg__bubble">Gói <mark>Premium</mark> ... độ trễ chưa tới 50ms.<span class="msg__time">01:05</span></div>
+              </div>
+              <div class="msg msg--out">
+                <span class="msg__avatar">KH</span>
+                <div class="msg__bubble">Về <mark>giá cả</mark> thì sao? Có vẻ hơi cao so với ngân sách.<span class="msg__time">01:38</span></div>
+              </div>
+            </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================================================================= -->
+    <!-- SCREEN 4 · History                                                 -->
+    <!-- ================================================================= -->
+    <section class="screen screen--hasnav" id="screen-history" data-screen="history">
+      <div class="screen__scroll">
+        <header class="appbar">
+          <div class="brand">
+            <span class="brand__logo" role="img" aria-label="Talent Connect Plus"></span>
+            <span class="brand__name">Talent Connect +</span>
+          </div>
+          <button class="burger" type="button" aria-label="Open menu" aria-haspopup="true" aria-expanded="false" data-burger>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+          </button>
+        </header>
+
+        <div class="page">
+          <h1 class="page__title">Lịch sử</h1>
+          <p class="page__lead">Xem lại các file đã tải lên và mở lại kết quả phân tích trước đây.</p>
+
+          <div class="history-list" id="historyList"></div>
+          <nav class="pagination" id="historyPager" aria-label="Phân trang lịch sử"></nav>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================================================================= -->
+    <!-- SCREEN 5 · Dashboard                                               -->
+    <!-- ================================================================= -->
+    <section class="screen screen--hasnav" id="screen-dashboard" data-screen="dashboard">
+      <div class="screen__scroll">
+        <header class="appbar">
+          <div class="brand">
+            <span class="brand__logo" role="img" aria-label="Talent Connect Plus"></span>
+            <span class="brand__name">Talent Connect +</span>
+          </div>
+          <button class="burger" type="button" aria-label="Open menu" aria-haspopup="true" aria-expanded="false" data-burger>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+          </button>
+        </header>
+
+        <div class="page dash">
+          <h1 class="page__title">Dashboard</h1>
+          <p class="page__lead">Số liệu tổng quan cho tất cả các cuộc gọi đã phân tích.</p>
+
+          <!-- Key stats -->
+          <div class="dash-stats">
+            <div class="card stat-card">
+              <div class="result-card__label">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 17l6-6 4 4 8-8"/><path d="M17 7h4v4"/></svg>
+                Success rate trung bình
+              </div>
+              <div class="stat-card__value stat-card__value--accent" id="dashAvgRate">—</div>
+              <div class="stat-card__sub" id="dashRateSub">trên tổng số cuộc gọi</div>
+            </div>
+            <div class="card stat-card">
+              <div class="result-card__label">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
+                Thời lượng tư vấn TB
+              </div>
+              <div class="stat-card__value" id="dashAvgDur">—</div>
+              <div class="stat-card__sub">phút mỗi cuộc gọi</div>
+            </div>
+            <div class="card stat-card">
+              <div class="result-card__label">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M11 12v5a1.6 1.6 0 1 1-1.4-1.6"/></svg>
+                Tổng cuộc gọi
+              </div>
+              <div class="stat-card__value" id="dashTotal">—</div>
+              <div class="stat-card__sub">đã phân tích</div>
+            </div>
+          </div>
+
+          <div class="dash-grid">
+            <!-- Sentiment overall (half pie) -->
+            <div class="card">
+              <div class="result-card__label">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 0 1 18 0"/><path d="M12 12l4-3"/></svg>
+                Sentiment tổng quan
+              </div>
+              <div class="gauge-wrap">
+                <svg class="gauge" viewBox="0 0 200 118" role="img" aria-label="Positive 62%, Neutral 26%, Negative 12%">
+                  <path class="gauge__track" d="M18 106 A82 82 0 0 1 182 106" fill="none" stroke-width="18" stroke-linecap="round"/>
+                  <path d="M18 106 A82 82 0 0 1 182 106" fill="none" stroke="#22C55E" stroke-width="18" pathLength="100" stroke-dasharray="62 100" stroke-dashoffset="0" stroke-linecap="round"/>
+                  <path d="M18 106 A82 82 0 0 1 182 106" fill="none" stroke="#BDBDBD" stroke-width="18" pathLength="100" stroke-dasharray="26 100" stroke-dashoffset="-62"/>
+                  <path d="M18 106 A82 82 0 0 1 182 106" fill="none" stroke="#EF4444" stroke-width="18" pathLength="100" stroke-dasharray="12 100" stroke-dashoffset="-88" stroke-linecap="round"/>
+                  <text x="100" y="90" text-anchor="middle" class="gauge__num">62%</text>
+                  <text x="100" y="110" text-anchor="middle" class="gauge__lbl">Tích cực</text>
+                </svg>
+              </div>
+              <div class="gauge-legend">
+                <div class="gauge-legend__item"><span class="legend-dot" style="background:#22C55E"></span>Positive<b>62%</b></div>
+                <div class="gauge-legend__item"><span class="legend-dot" style="background:#BDBDBD"></span>Neutral<b>26%</b></div>
+                <div class="gauge-legend__item"><span class="legend-dot" style="background:#EF4444"></span>Negative<b>12%</b></div>
+              </div>
+            </div>
+
+            <!-- Top 3 calls -->
+            <div class="card">
+              <div class="result-card__label">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 21h8M12 17v4M7 4h10v4a5 5 0 0 1-10 0zM7 5H4v2a3 3 0 0 0 3 3M17 5h3v2a3 3 0 0 1-3 3"/></svg>
+                Top 3 success rate cao nhất
+              </div>
+              <div class="top3" id="dashTop3"></div>
+            </div>
+
+            <!-- Word cloud -->
+            <div class="card">
+              <div class="result-card__label">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M4 12h10M4 17h7"/></svg>
+                Word cloud từ khóa
+              </div>
+              <div class="wordcloud">
+                <span style="font-size:30px;color:var(--tcp-brand)">Premium</span>
+                <span style="font-size:22px;color:var(--tcp-accent)">Real-time</span>
+                <span style="font-size:19px;color:var(--tcp-ink)">Giá cả</span>
+                <span style="font-size:16px;color:var(--tcp-brand-400)">ROI</span>
+                <span style="font-size:24px;color:var(--tcp-ink)">Bảo mật</span>
+                <span style="font-size:15px;color:var(--tcp-fg-secondary)">Latency</span>
+                <span style="font-size:20px;color:var(--tcp-brand)">Hiệu suất</span>
+                <span style="font-size:17px;color:var(--tcp-accent)">Chi phí</span>
+                <span style="font-size:14px;color:var(--tcp-fg-secondary)">Demo</span>
+                <span style="font-size:18px;color:var(--tcp-ink)">Tích hợp</span>
+                <span style="font-size:22px;color:var(--tcp-brand-400)">Hỗ trợ</span>
+                <span style="font-size:15px;color:var(--tcp-fg-secondary)">Ngân sách</span>
+                <span style="font-size:19px;color:var(--tcp-brand)">Triển khai</span>
+                <span style="font-size:16px;color:var(--tcp-ink)">Tiết kiệm</span>
+                <span style="font-size:14px;color:var(--tcp-fg-secondary)">Đối tác</span>
+              </div>
+            </div>
+
+            <!-- Recommendation -->
+            <div class="card">
+              <h2 class="section-title">Recommendation chung</h2>
+              <ul class="bullet-list">
+                <li>Nhấn mạnh <b>ROI &amp; tiết kiệm chi phí</b> sớm — đây là từ khóa xuất hiện nhiều ở các cuộc gọi thành công.</li>
+                <li>Chuẩn bị sẵn phản hồi cho thắc mắc về <b>giá cả</b>; đây là điểm phản đối phổ biến nhất.</li>
+                <li>Rút ngắn phần mở đầu để giữ thời lượng tư vấn quanh mức trung bình, tránh kéo dài.</li>
+                <li>Ưu tiên demo tính năng <b>real-time</b> cho nhóm khách quan tâm kỹ thuật.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Slide-in navigation menu -->
+    <div class="drawer" id="menu" hidden>
+      <div class="drawer__backdrop" data-menu-close></div>
+      <aside class="drawer__panel" role="menu" aria-label="Điều hướng chính">
+        <div class="drawer__head">
+          <span class="drawer__title">Menu</span>
+          <button class="burger" type="button" aria-label="Đóng menu" data-menu-close>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6 18 18M18 6 6 18"/></svg>
+          </button>
+        </div>
+        <nav class="drawer__nav">
+          <button class="drawer__item drawer__item--primary" role="menuitem" type="button" data-nav="analysis" data-reset>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg>
+            <span>Thêm audio mới</span>
+          </button>
+          <button class="drawer__item" role="menuitem" type="button" data-nav="analysis">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="12" width="4" height="8" rx="1"/><rect x="10" y="7" width="4" height="13" rx="1"/><rect x="17" y="3" width="4" height="17" rx="1"/></svg>
+            <span>Analysis</span>
+          </button>
+          <button class="drawer__item" role="menuitem" type="button" data-nav="dashboard">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></svg>
+            <span>Dashboard</span>
+          </button>
+          <button class="drawer__item" role="menuitem" type="button" data-nav="history">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v5h5"/><path d="M3.05 13A9 9 0 1 0 6 5.3L3 8"/><path d="M12 7v5l4 2"/></svg>
+            <span>History</span>
+          </button>
+        </nav>
+      </aside>
+    </div>
+
+  </div>
+<script>
+/* =============================================================================
+   SonicAI — app interactions
+   ============================================================================= */
+(function () {
+  "use strict";
+
+  const $  = (sel, root = document) => root.querySelector(sel);
+  const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
+
+  /* -------------------------------------------------------------------------
+     Screen navigation
+     ------------------------------------------------------------------------- */
+  const screens = {
+    analysis:   $("#screen-analysis"),
+    processing: $("#screen-processing"),
+    results:    $("#screen-results"),
+    history:    $("#screen-history"),
+    dashboard:  $("#screen-dashboard"),
+  };
+
+  function show(name) {
+    Object.entries(screens).forEach(([key, el]) =>
+      el.classList.toggle("is-active", key === name)
+    );
+    // reset scroll of the newly shown screen
+    const active = screens[name];
+    const scroller = $(".screen__scroll", active);
+    if (scroller) scroller.scrollTop = 0;
+    setActiveMenu(name);
+  }
+
+  /* -------------------------------------------------------------------------
+     Burger menu — slide-in navigation drawer
+     ------------------------------------------------------------------------- */
+  const menu = $("#menu");
+
+  function openMenu() {
+    setActiveMenu(currentScreen());
+    menu.hidden = false;
+    $$("[data-burger]").forEach(b => b.setAttribute("aria-expanded", "true"));
+  }
+  function closeMenu() {
+    menu.hidden = true;
+    $$("[data-burger]").forEach(b => b.setAttribute("aria-expanded", "false"));
+  }
+  function currentScreen() {
+    const el = document.querySelector(".screen.is-active");
+    return el ? el.dataset.screen : "analysis";
+  }
+  function setActiveMenu(screenName) {
+    // Both the Analysis and Results screens sit under the "Analysis" item.
+    // The primary "Thêm audio mới" action is never marked active — it's a
+    // command, not a destination.
+    const active = screenName === "results" ? "analysis" : screenName;
+    $$(".drawer__item").forEach(item =>
+      item.classList.toggle(
+        "is-active",
+        !item.classList.contains("drawer__item--primary") && item.dataset.nav === active
+      )
+    );
+  }
+
+  $$("[data-burger]").forEach(b => b.addEventListener("click", openMenu));
+  $$("[data-menu-close]").forEach(b => b.addEventListener("click", closeMenu));
+  document.addEventListener("keydown", e => {
+    if (e.key === "Escape" && !menu.hidden) closeMenu();
+  });
+
+  /* -------------------------------------------------------------------------
+     Navigation actions — burger items + the results-screen back button.
+     [data-nav]   → which screen to open ("analysis" is the only built target)
+     [data-reset] → clear the current selection and start a fresh analysis
+     ------------------------------------------------------------------------- */
+  $$("[data-nav]").forEach(el =>
+    el.addEventListener("click", () => {
+      const target = el.dataset.nav;
+      if (el.hasAttribute("data-reset")) resetAnalysis();
+      if (target === "analysis" || target === "history" || target === "dashboard") show(target);
+      closeMenu();
+    })
+  );
+
+  /* -------------------------------------------------------------------------
+     Screen 1 · upload source tabs
+     ------------------------------------------------------------------------- */
+  $$("[data-uptab]").forEach(tab =>
+    tab.addEventListener("click", () => {
+      const which = tab.dataset.uptab;
+      $$("[data-uptab]").forEach(t => {
+        const on = t === tab;
+        t.classList.toggle("is-active", on);
+        t.setAttribute("aria-selected", String(on));
+      });
+      $$("[data-uppane]").forEach(p =>
+        p.hidden = p.dataset.uppane !== which
+      );
+    })
+  );
+
+  /* File picking + drag & drop — multiple files */
+  const fileInput  = $("#fileInput");
+  const browseBtn  = $("#browseBtn");
+  const dropzone   = $("#dropzone");
+  const fileListEl = $("#fileList");
+  const procName   = $("#procFileName");
+  const procMeta   = $("#procMeta");
+  const DEFAULT_PROC_NAME = "Q3_Sales_Call_JohnDoe.wav";
+  const DEFAULT_PROC_META = "Size: 45 MB • Duration: 45:12";
+  let selectedFiles = [];
+
+  const FILE_ICON =
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" ' +
+    'stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+    '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>' +
+    '<path d="M14 2v6h6"/><path d="M11 12v5a1.6 1.6 0 1 1-1.4-1.6"/></svg>';
+  const XCLOSE_ICON =
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" ' +
+    'stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6 18 18M18 6 6 18"/></svg>';
+
+  function humanSize(bytes) {
+    if (bytes == null) return "";
+    const u = ["B", "KB", "MB", "GB"];
+    let i = 0, n = bytes;
+    while (n >= 1024 && i < u.length - 1) { n /= 1024; i++; }
+    return (i === 0 ? n : n.toFixed(1)) + " " + u[i];
+  }
+
+  function addFiles(list) {
+    for (const f of Array.from(list || [])) {
+      if (!selectedFiles.some(s => s.name === f.name && s.size === f.size)) selectedFiles.push(f);
+    }
+    renderFileList();
+  }
+
+  function renderFileList() {
+    if (!selectedFiles.length) {
+      fileListEl.hidden = true;
+      fileListEl.innerHTML = "";
+    } else {
+      fileListEl.hidden = false;
+      fileListEl.innerHTML = selectedFiles.map((f, i) => `
+        <div class="filelist__row">
+          <span class="filelist__icon">${FILE_ICON}</span>
+          <div class="filelist__info">
+            <div class="filelist__name" title="${escAttr(f.name)}">${f.name}</div>
+            ${f.size != null ? `<div class="filelist__size">${humanSize(f.size)}</div>` : ""}
+          </div>
+          <button class="filelist__remove" type="button" data-remove="${i}" aria-label="Xóa tệp">${XCLOSE_ICON}</button>
+        </div>`).join("");
+    }
+    updateProcLabel();
+  }
+
+  function updateProcLabel() {
+    const n = selectedFiles.length;
+    if (!n) {
+      procName.textContent = DEFAULT_PROC_NAME;
+      if (procMeta) procMeta.textContent = DEFAULT_PROC_META;
+      return;
+    }
+    procName.textContent = n === 1 ? selectedFiles[0].name : `${selectedFiles[0].name} +${n - 1} tệp`;
+    if (procMeta) {
+      const total = selectedFiles.reduce((a, f) => a + (f.size || 0), 0);
+      procMeta.textContent = n + " tệp âm thanh" + (total ? " • " + humanSize(total) : "");
+    }
+  }
+
+  browseBtn.addEventListener("click", () => fileInput.click());
+  fileInput.addEventListener("change", () => { addFiles(fileInput.files); fileInput.value = ""; });
+  fileListEl.addEventListener("click", e => {
+    const rm = e.target.closest("[data-remove]");
+    if (rm) { selectedFiles.splice(parseInt(rm.dataset.remove, 10), 1); renderFileList(); }
+  });
+
+  ["dragenter", "dragover"].forEach(evt =>
+    dropzone.addEventListener(evt, e => {
+      e.preventDefault();
+      dropzone.classList.add("is-drag");
+    })
+  );
+  ["dragleave", "drop"].forEach(evt =>
+    dropzone.addEventListener(evt, e => {
+      e.preventDefault();
+      dropzone.classList.remove("is-drag");
+    })
+  );
+  dropzone.addEventListener("drop", e => {
+    if (e.dataTransfer && e.dataTransfer.files) addFiles(e.dataTransfer.files);
+  });
+
+  /* Sensitivity slider */
+  const sensitivity = $("#sensitivity");
+  const sensitivityValue = $("#sensitivityValue");
+  const paintSlider = () => {
+    const v = sensitivity.value;
+    sensitivityValue.textContent = v + "%";
+    sensitivity.style.background =
+      `linear-gradient(90deg, var(--tcp-ink) 0 ${v}%, var(--tcp-neutral-200) ${v}% 100%)`;
+  };
+  sensitivity.addEventListener("input", paintSlider);
+  paintSlider();
+
+  /* -------------------------------------------------------------------------
+     Screen 2 · processing simulation
+     ------------------------------------------------------------------------- */
+  const processBtn = $("#processBtn");
+  const cancelBtn  = $("#cancelBtn");
+  const procFill   = $("#procFill");
+  const procPct    = $("#procPct");
+  const procStage  = $("#procStage");
+
+  const STAGES = [
+    { to: 18,  label: "Uploading audio stream..." },
+    { to: 40,  label: "Normalizing waveform..." },
+    { to: 71,  label: "Isolating speaker channels..." },
+    { to: 88,  label: "Detecting sentiment & keywords..." },
+    { to: 100, label: "Compiling intelligence report..." },
+  ];
+
+  let timer = null;
+  let cancelled = false;
+
+  function runProcessing() {
+    cancelled = false;
+    let pct = 0;
+    let stageIdx = 0;
+    setProgress(0, STAGES[0].label);
+
+    timer = setInterval(() => {
+      if (cancelled) return;
+      pct = Math.min(pct + Math.random() * 4 + 1.5, 100);
+
+      // advance stage label as thresholds are crossed
+      while (stageIdx < STAGES.length - 1 && pct >= STAGES[stageIdx].to) stageIdx++;
+      setProgress(pct, STAGES[stageIdx].label);
+
+      if (pct >= 100) {
+        clearInterval(timer);
+        timer = null;
+        setTimeout(() => {
+          if (cancelled) return;
+          renderFileStrip();
+          selectResultFile(0);
+          show("results");
+        }, 550);
+      }
+    }, 220);
+  }
+
+  function setProgress(pct, label) {
+    const rounded = Math.round(pct);
+    procFill.style.width = rounded + "%";
+    procPct.textContent = rounded + "%";
+    if (label) procStage.textContent = label;
+  }
+
+  /* Clear the current selection and return the upload form to its start state */
+  function resetAnalysis() {
+    cancelled = true;
+    if (timer) { clearInterval(timer); timer = null; }
+    if (fileInput) fileInput.value = "";
+    selectedFiles = [];
+    renderFileList();
+    const link = $("#linkInput");
+    if (link) link.value = "";
+    setProgress(0, STAGES[0].label);
+  }
+
+  processBtn.addEventListener("click", () => {
+    show("processing");
+    runProcessing();
+  });
+
+  cancelBtn.addEventListener("click", () => {
+    cancelled = true;
+    if (timer) { clearInterval(timer); timer = null; }
+    show("analysis");
+  });
+
+  /* -------------------------------------------------------------------------
+     Screen 3 · transcript sub-tabs + export
+     ------------------------------------------------------------------------- */
+  $$("[data-scripttab]").forEach(tab =>
+    tab.addEventListener("click", () => {
+      const which = tab.dataset.scripttab;
+      $$("[data-scripttab]").forEach(t => t.classList.toggle("is-active", t === tab));
+      $$("[data-scriptpane]").forEach(p =>
+        p.hidden = p.dataset.scriptpane !== which
+      );
+    })
+  );
+
+  /* Briefly confirm an export action on any button */
+  const CHECK_SVG =
+    '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" ' +
+    'stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>';
+  function flashExport(btn, doneLabel) {
+    if (btn.disabled) return;
+    const original = btn.innerHTML;
+    btn.innerHTML = CHECK_SVG + " " + doneLabel;
+    btn.disabled = true;
+    setTimeout(() => { btn.innerHTML = original; btn.disabled = false; }, 1600);
+  }
+  /* Same, but keeps an icon button icon-only (just swaps to a check) */
+  function flashCheckIcon(btn) {
+    if (btn.disabled) return;
+    const original = btn.innerHTML;
+    btn.innerHTML = CHECK_SVG;
+    btn.disabled = true;
+    setTimeout(() => { btn.innerHTML = original; btn.disabled = false; }, 1400);
+  }
+  /* Fill the results subtitle with a call's file + date */
+  function setResultsSub(file, date) {
+    const sub = $("#screen-results .results-head__sub");
+    if (!sub) return;
+    sub.textContent = file;
+    const sep = document.createElement("span");
+    sep.className = "results-head__sep";
+    sep.textContent = " • ";
+    const d = document.createElement("span");
+    d.className = "results-head__date";
+    d.textContent = date;
+    sub.append(sep, d);
+  }
+
+  const exportBtn = $("#exportBtn");
+  if (exportBtn) exportBtn.addEventListener("click", () => flashCheckIcon(exportBtn));
+
+  /* -------------------------------------------------------------------------
+     Screen 4 · History — past uploads with re-view / export, 10 per page
+     ------------------------------------------------------------------------- */
+  const HISTORY = [
+    { file: "Q3_Sales_Call_JohnDoe.wav",   date: "10/26/2023, 2:30 PM", dur: "45:12", outcome: "Successful Sale", type: "success", conf: 98 },
+    { file: "Demo_AcmeCorp_Round2.mp3",     date: "10/25/2023, 4:05 PM", dur: "32:48", outcome: "Follow-up",       type: "warning", conf: 74 },
+    { file: "Cold_Call_Nguyen_Minh.wav",    date: "10/25/2023, 11:20 AM", dur: "18:03", outcome: "No Sale",         type: "neutral", conf: 61 },
+    { file: "Renewal_BetaLogistics.flac",   date: "10/24/2023, 3:15 PM", dur: "27:39", outcome: "Successful Sale", type: "success", conf: 91 },
+    { file: "Discovery_TechViet.mp3",       date: "10/24/2023, 9:48 AM", dur: "41:57", outcome: "Follow-up",       type: "warning", conf: 68 },
+    { file: "Upsell_GreenFoods.wav",        date: "10/23/2023, 5:30 PM", dur: "22:14", outcome: "Successful Sale", type: "success", conf: 88 },
+    { file: "Support_Escalation_042.mp3",   date: "10/23/2023, 1:02 PM", dur: "15:26", outcome: "No Sale",         type: "neutral", conf: 55 },
+    { file: "Pitch_SaigonRetail.wav",       date: "10/22/2023, 10:11 AM", dur: "38:09", outcome: "Successful Sale", type: "success", conf: 94 },
+    { file: "Q3_Review_HaiPhong.flac",      date: "10/21/2023, 4:44 PM", dur: "29:52", outcome: "Follow-up",       type: "warning", conf: 72 },
+    { file: "Onboarding_DeltaBank.mp3",     date: "10/21/2023, 9:05 AM", dur: "34:18", outcome: "Successful Sale", type: "success", conf: 90 },
+    { file: "Cold_Call_Tran_Anh.wav",       date: "10/20/2023, 2:57 PM", dur: "12:40", outcome: "No Sale",         type: "neutral", conf: 48 },
+    { file: "Demo_OmniHealth.mp3",          date: "10/20/2023, 11:33 AM", dur: "26:05", outcome: "Follow-up",       type: "warning", conf: 66 },
+    { file: "Renewal_VietStar.wav",         date: "10/19/2023, 3:21 PM", dur: "31:47", outcome: "Successful Sale", type: "success", conf: 87 },
+    { file: "Discovery_MetroMall.flac",     date: "10/19/2023, 10:08 AM", dur: "44:29", outcome: "Follow-up",       type: "warning", conf: 70 },
+    { file: "Pitch_BlueOcean.mp3",          date: "10/18/2023, 4:12 PM", dur: "19:55", outcome: "No Sale",         type: "neutral", conf: 52 },
+    { file: "Upsell_SunMobile.wav",         date: "10/18/2023, 9:40 AM", dur: "23:33", outcome: "Successful Sale", type: "success", conf: 93 },
+    { file: "Q3_Sales_PhuMy.mp3",           date: "10/17/2023, 1:50 PM", dur: "36:41", outcome: "Follow-up",       type: "warning", conf: 69 },
+    { file: "Cold_Call_Le_Hoang.wav",       date: "10/17/2023, 10:26 AM", dur: "14:18", outcome: "No Sale",         type: "neutral", conf: 44 },
+    { file: "Demo_NextGen_ERP.flac",        date: "10/16/2023, 3:38 PM", dur: "48:52", outcome: "Successful Sale", type: "success", conf: 96 },
+    { file: "Renewal_CityLogistics.mp3",    date: "10/16/2023, 9:15 AM", dur: "28:07", outcome: "Successful Sale", type: "success", conf: 85 },
+    { file: "Pitch_FreshMart.wav",          date: "10/15/2023, 2:44 PM", dur: "21:30", outcome: "Follow-up",       type: "warning", conf: 63 },
+    { file: "Discovery_SkyTravel.mp3",      date: "10/15/2023, 11:02 AM", dur: "33:19", outcome: "No Sale",         type: "neutral", conf: 57 },
+    { file: "Upsell_PrimeBank.wav",         date: "10/14/2023, 4:50 PM", dur: "25:44", outcome: "Successful Sale", type: "success", conf: 89 },
+  ];
+
+  const PER_PAGE = 10;
+  const historyList  = $("#historyList");
+  const historyPager = $("#historyPager");
+  let historyPage = 1;
+
+  const FILE_SVG =
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" ' +
+    'stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+    '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>' +
+    '<path d="M14 2v6h6"/><path d="M11 12v5a1.6 1.6 0 1 1-1.4-1.6"/></svg>';
+
+  function escAttr(s) { return String(s).replace(/"/g, "&quot;"); }
+
+  function renderHistory() {
+    const pages = Math.max(1, Math.ceil(HISTORY.length / PER_PAGE));
+    historyPage = Math.min(Math.max(1, historyPage), pages);
+    const start = (historyPage - 1) * PER_PAGE;
+    const rows = HISTORY.slice(start, start + PER_PAGE);
+
+    historyList.innerHTML = rows.map(r => `
+      <article class="hist">
+        <div class="hist__head">
+          <span class="hist__icon">${FILE_SVG}</span>
+          <div class="hist__info">
+            <div class="hist__titlerow">
+              <div class="hist__name" title="${escAttr(r.file)}">${r.file}</div>
+              <span class="pill pill--${r.type}">${r.outcome}</span>
+            </div>
+            <div class="hist__meta">${r.date} &bull; ${r.dur}</div>
+          </div>
+        </div>
+        <div class="hist__foot">
+          <span class="hist__conf">Độ tin cậy <b>${r.conf}%</b></span>
+          <div class="hist__actions">
+            <button class="btn btn--outline btn--sm" type="button" data-view
+                    data-file="${escAttr(r.file)}" data-date="${escAttr(r.date)}">Xem lại</button>
+            <button class="btn btn--ink btn--sm" type="button" data-hist-export>Export</button>
+          </div>
+        </div>
+      </article>`).join("");
+
+    renderPager(pages);
+  }
+
+  function renderPager(pages) {
+    if (pages <= 1) { historyPager.innerHTML = ""; return; }
+    let html = `<button class="page-btn" type="button" data-page="prev"
+                  ${historyPage === 1 ? "disabled" : ""} aria-label="Trang trước">&lsaquo;</button>`;
+    for (let i = 1; i <= pages; i++) {
+      html += `<button class="page-btn ${i === historyPage ? "is-active" : ""}" type="button"
+                 data-page="${i}" aria-label="Trang ${i}"
+                 ${i === historyPage ? 'aria-current="page"' : ""}>${i}</button>`;
+    }
+    html += `<button class="page-btn" type="button" data-page="next"
+               ${historyPage === pages ? "disabled" : ""} aria-label="Trang sau">&rsaquo;</button>`;
+    historyPager.innerHTML = html;
+  }
+
+  // Pagination clicks
+  historyPager.addEventListener("click", e => {
+    const btn = e.target.closest(".page-btn");
+    if (!btn || btn.disabled) return;
+    const pages = Math.max(1, Math.ceil(HISTORY.length / PER_PAGE));
+    const p = btn.dataset.page;
+    if (p === "prev") historyPage--;
+    else if (p === "next") historyPage++;
+    else historyPage = parseInt(p, 10);
+    renderHistory();
+    const scroller = $(".screen__scroll", screens.history);
+    if (scroller) scroller.scrollTop = 0;
+  });
+
+  // Re-view / export within a history row
+  historyList.addEventListener("click", e => {
+    const view = e.target.closest("[data-view]");
+    if (view) {
+      showSingleResult(view.dataset.file, view.dataset.date);
+      return;
+    }
+    const exp = e.target.closest("[data-hist-export]");
+    if (exp) flashExport(exp, "Đã xuất");
+  });
+
+  renderHistory();
+
+  /* -------------------------------------------------------------------------
+     Dashboard — aggregate metrics over all analysed calls (HISTORY)
+     ------------------------------------------------------------------------- */
+  const DL_SVG =
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" ' +
+    'stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+    '<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/><path d="M12 15V3"/></svg>';
+
+  function renderDashboard() {
+    if (!HISTORY.length) return;
+    const rates = HISTORY.map(r => r.conf);
+    const avgRate = Math.round(rates.reduce((a, b) => a + b, 0) / rates.length);
+    const secs = HISTORY.map(r => {
+      const [m, s] = r.dur.split(":").map(Number);
+      return m * 60 + s;
+    });
+    const avgSec = Math.round(secs.reduce((a, b) => a + b, 0) / secs.length);
+    const mm = Math.floor(avgSec / 60), ss = avgSec % 60;
+
+    const rateEl = $("#dashAvgRate"); if (rateEl) rateEl.textContent = avgRate + "%";
+    const durEl = $("#dashAvgDur"); if (durEl) durEl.textContent = mm + ":" + String(ss).padStart(2, "0");
+    const totEl = $("#dashTotal"); if (totEl) totEl.textContent = HISTORY.length;
+
+    const top = [...HISTORY].sort((a, b) => b.conf - a.conf).slice(0, 3);
+    const list = $("#dashTop3");
+    if (list) {
+      list.innerHTML = top.map((r, i) => `
+        <div class="top3__row">
+          <span class="top3__rank">${i + 1}</span>
+          <div class="top3__info">
+            <div class="top3__name" title="${escAttr(r.file)}">${r.file}</div>
+            <div class="top3__meta">${r.date.split(",")[0]} &bull; ${r.dur} &bull; <b>${r.conf}%</b></div>
+          </div>
+          <div class="top3__actions">
+            <button class="btn btn--outline btn--sm" type="button" data-view
+                    data-file="${escAttr(r.file)}" data-date="${escAttr(r.date)}">Xem lại</button>
+            <button class="iconbtn top3__export" type="button" data-dash-export
+                    aria-label="Export transcript" title="Export transcript">${DL_SVG}</button>
+          </div>
+        </div>`).join("");
+    }
+  }
+
+  // Re-view (evaluation) / export transcript within a Top-3 row
+  const dashTop3 = $("#dashTop3");
+  if (dashTop3) {
+    dashTop3.addEventListener("click", e => {
+      const view = e.target.closest("[data-view]");
+      if (view) {
+        showSingleResult(view.dataset.file, view.dataset.date);
+        return;
+      }
+      const exp = e.target.closest("[data-dash-export]");
+      if (exp) flashCheckIcon(exp);
+    });
+  }
+
+  renderDashboard();
+
+  /* -------------------------------------------------------------------------
+     File strip — when several files are analysed together, show them as a
+     horizontal, scrollable row at the top of the Results screen. Selecting a
+     chip swaps the analysis below to that file (keeping the normal layout).
+     ------------------------------------------------------------------------- */
+  const fileStrip       = $("#fileStrip");
+  const fileStripScroll = $("#fileStripScroll");
+  const fileStripCount  = $("#fileStripCount");
+  const OUTCOME_LABEL = { success: "Successful Sale", warning: "Follow-up", neutral: "No Sale" };
+
+  let resultFiles = [];   // names shown in the current strip
+  let resultDate  = "";
+
+  function todayLabel() {
+    const d = new Date();
+    let h = d.getHours();
+    const ap = h >= 12 ? "PM" : "AM";
+    h = h % 12 || 12;
+    return `${d.getMonth() + 1}/${d.getDate()}/${d.getFullYear()}, ${h}:${String(d.getMinutes()).padStart(2, "0")} ${ap}`;
+  }
+
+  // Deterministic mock metrics per file so results look realistic + stable
+  function mockCall(name) {
+    let h = 0;
+    for (let i = 0; i < name.length; i++) h = (h * 31 + name.charCodeAt(i)) >>> 0;
+    const conf = 58 + (h % 41);
+    const type = conf >= 85 ? "success" : conf >= 66 ? "warning" : "neutral";
+    const dur = (16 + (h % 30)) + ":" + String((h >>> 3) % 60).padStart(2, "0");
+    return { conf, type, dur, outcome: OUTCOME_LABEL[type] };
+  }
+
+  // Build the horizontal strip from the uploaded files. Hidden for a single
+  // file — then the Results screen is just the plain analysis.
+  function renderFileStrip() {
+    resultFiles = (selectedFiles.length ? selectedFiles.map(f => f.name) : [DEFAULT_PROC_NAME]);
+    resultDate = todayLabel();
+    if (!fileStrip) return;
+
+    if (resultFiles.length <= 1) {
+      fileStrip.hidden = true;
+      fileStripScroll.innerHTML = "";
+      return;
+    }
+    fileStrip.hidden = false;
+    if (fileStripCount) fileStripCount.textContent = resultFiles.length + " tệp đã phân tích";
+    fileStripScroll.innerHTML = resultFiles.map((name, i) => {
+      const m = mockCall(name);
+      return `
+        <button class="fchip" type="button" data-chip="${i}" title="${escAttr(name)}">
+          <span class="fchip__icon">${FILE_ICON}</span>
+          <span class="fchip__info">
+            <span class="fchip__name">${name}</span>
+            <span class="fchip__meta">${m.conf}% &bull; ${m.dur}</span>
+          </span>
+        </button>`;
+    }).join("");
+  }
+
+  // Swap the analysis below to a given file (by index into resultFiles)
+  function selectResultFile(index) {
+    const name = resultFiles[index] || DEFAULT_PROC_NAME;
+    setResultsSub(name, resultDate || todayLabel());
+
+    const m = mockCall(name);
+    const title = $("#screen-results .outcome__title");
+    const pct   = $("#screen-results .outcome__pct");
+    if (title) title.textContent = m.outcome;
+    if (pct)   pct.textContent = m.conf + "%";
+
+    if (fileStripScroll) {
+      $$(".fchip", fileStripScroll).forEach(c =>
+        c.classList.toggle("is-active", parseInt(c.dataset.chip, 10) === index)
+      );
+      const active = fileStripScroll.querySelector(".fchip.is-active");
+      if (active) active.scrollIntoView({ block: "nearest", inline: "nearest" });
+    }
+  }
+
+  if (fileStripScroll) {
+    fileStripScroll.addEventListener("click", e => {
+      const chip = e.target.closest("[data-chip]");
+      if (chip) selectResultFile(parseInt(chip.dataset.chip, 10));
+    });
+  }
+
+  // Opening a single call from History / Dashboard: no strip, just the analysis
+  function showSingleResult(file, date) {
+    if (fileStrip) { fileStrip.hidden = true; fileStripScroll.innerHTML = ""; }
+    resultFiles = [];
+    setResultsSub(file, date);
+    show("results");
+  }
+
+  /* -------------------------------------------------------------------------
+     Results columns — distribute the cards per breakpoint so every column is
+     an equal-height flex column. CSS handles the fill/stretch/scroll.
+       desktop (>=1200): [outcome,keywords,sentiment] [talk,summary,actions] [transcript]
+       tablet  (>=768):  [outcome,keywords,sentiment,talk,summary] [actions,transcript]
+       mobile  (<768):   single column
+     ------------------------------------------------------------------------- */
+  const resultsPage = $("#screen-results .page");
+  let resultsCards = null;
+  let lastBp = null;
+
+  function layoutResults() {
+    if (!resultsPage) return;
+    if (!resultsCards) {
+      resultsCards = Array.prototype.filter.call(
+        resultsPage.children, el => el.classList.contains("card")
+      );
+    }
+    if (resultsCards.length < 7) return;
+
+    const w = window.innerWidth;
+    const bp = w >= 1200 ? "d" : w >= 768 ? "t" : "m";
+    if (bp === lastBp && resultsPage.classList.contains("is-cols")) return;
+    lastBp = bp;
+
+    const groups = bp === "d" ? [[0, 1, 2], [3, 4, 5], [6]]
+                 : bp === "t" ? [[0, 1, 2, 3, 4], [5, 6]]
+                 : [[0, 1, 2, 3, 4, 5, 6]];
+
+    while (resultsPage.firstChild) resultsPage.removeChild(resultsPage.firstChild);
+    groups.forEach(group => {
+      const col = document.createElement("div");
+      col.className = "rcol";
+      group.forEach(i => col.appendChild(resultsCards[i]));
+      resultsPage.appendChild(col);
+    });
+    resultsPage.classList.add("is-cols");
+  }
+
+  layoutResults();
+  let resizeRaf = null;
+  window.addEventListener("resize", () => {
+    if (resizeRaf) cancelAnimationFrame(resizeRaf);
+    resizeRaf = requestAnimationFrame(layoutResults);
+  });
+})();
+
+</script>
