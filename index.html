@@ -37,18 +37,20 @@
               <button class="tab" role="tab" aria-selected="false" data-uptab="link">External Link</button>
             </div>
 
-            <div class="dropzone" id="dropzone" data-uppane="file">
+            <div data-uppane="file">
+              <div class="dropzone" id="dropzone">
               <div class="dropzone__icon">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                   <path d="M18 10a6 6 0 0 0-11.3-2A4.5 4.5 0 0 0 7 17h11a4 4 0 0 0 .9-7.9"/>
                   <path d="M12 12v6"/><path d="m9 15 3-3 3 3"/>
                 </svg>
               </div>
-              <h2 class="dropzone__title">Drag and drop audio file</h2>
-              <p class="dropzone__hint">Supported formats: WAV, MP3, FLAC (Max 500MB)</p>
+              <h2 class="dropzone__title">Drag and drop audio files</h2>
+              <p class="dropzone__hint">Chọn hoặc kéo thả nhiều tệp · WAV, MP3, FLAC (Max 500MB)</p>
               <button class="btn btn--ink" id="browseBtn" type="button">Browse Files</button>
-              <div class="dropzone__file" id="chosenFile" hidden></div>
-              <input type="file" id="fileInput" accept=".wav,.mp3,.flac,audio/*" hidden>
+              <input type="file" id="fileInput" accept=".wav,.mp3,.flac,audio/*" multiple hidden>
+              </div>
+              <div class="filelist" id="fileList" hidden></div>
             </div>
 
             <div data-uppane="link" hidden>
@@ -131,7 +133,7 @@
           </span>
           <div>
             <div class="filecard__name" id="procFileName">Q3_Sales_Call_JohnDoe.wav</div>
-            <div class="filecard__meta">Size: 45 MB &bull; Duration: 45:12</div>
+            <div class="filecard__meta" id="procMeta">Size: 45 MB &bull; Duration: 45:12</div>
           </div>
         </div>
 

@@ -97,23 +97,79 @@
     })
   );
 
-  /* File picking + drag & drop */
+  /* File picking + drag & drop — multiple files */
   const fileInput  = $("#fileInput");
   const browseBtn  = $("#browseBtn");
   const dropzone   = $("#dropzone");
-  const chosenFile = $("#chosenFile");
+  const fileListEl = $("#fileList");
   const procName   = $("#procFileName");
+  const procMeta   = $("#procMeta");
+  const DEFAULT_PROC_NAME = "Q3_Sales_Call_JohnDoe.wav";
+  const DEFAULT_PROC_META = "Size: 45 MB • Duration: 45:12";
+  let selectedFiles = [];
 
-  function setFile(name) {
-    if (!name) return;
-    chosenFile.hidden = false;
-    chosenFile.textContent = "Selected: " + name;
-    procName.textContent = name;
+  const FILE_ICON =
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" ' +
+    'stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+    '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>' +
+    '<path d="M14 2v6h6"/><path d="M11 12v5a1.6 1.6 0 1 1-1.4-1.6"/></svg>';
+  const XCLOSE_ICON =
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" ' +
+    'stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6 18 18M18 6 6 18"/></svg>';
+
+  function humanSize(bytes) {
+    if (bytes == null) return "";
+    const u = ["B", "KB", "MB", "GB"];
+    let i = 0, n = bytes;
+    while (n >= 1024 && i < u.length - 1) { n /= 1024; i++; }
+    return (i === 0 ? n : n.toFixed(1)) + " " + u[i];
+  }
+
+  function addFiles(list) {
+    for (const f of Array.from(list || [])) {
+      if (!selectedFiles.some(s => s.name === f.name && s.size === f.size)) selectedFiles.push(f);
+    }
+    renderFileList();
+  }
+
+  function renderFileList() {
+    if (!selectedFiles.length) {
+      fileListEl.hidden = true;
+      fileListEl.innerHTML = "";
+    } else {
+      fileListEl.hidden = false;
+      fileListEl.innerHTML = selectedFiles.map((f, i) => `
+        <div class="filelist__row">
+          <span class="filelist__icon">${FILE_ICON}</span>
+          <div class="filelist__info">
+            <div class="filelist__name" title="${escAttr(f.name)}">${f.name}</div>
+            ${f.size != null ? `<div class="filelist__size">${humanSize(f.size)}</div>` : ""}
+          </div>
+          <button class="filelist__remove" type="button" data-remove="${i}" aria-label="Xóa tệp">${XCLOSE_ICON}</button>
+        </div>`).join("");
+    }
+    updateProcLabel();
+  }
+
+  function updateProcLabel() {
+    const n = selectedFiles.length;
+    if (!n) {
+      procName.textContent = DEFAULT_PROC_NAME;
+      if (procMeta) procMeta.textContent = DEFAULT_PROC_META;
+      return;
+    }
+    procName.textContent = n === 1 ? selectedFiles[0].name : `${selectedFiles[0].name} +${n - 1} tệp`;
+    if (procMeta) {
+      const total = selectedFiles.reduce((a, f) => a + (f.size || 0), 0);
+      procMeta.textContent = n + " tệp âm thanh" + (total ? " • " + humanSize(total) : "");
+    }
   }
 
   browseBtn.addEventListener("click", () => fileInput.click());
-  fileInput.addEventListener("change", () => {
-    if (fileInput.files && fileInput.files[0]) setFile(fileInput.files[0].name);
+  fileInput.addEventListener("change", () => { addFiles(fileInput.files); fileInput.value = ""; });
+  fileListEl.addEventListener("click", e => {
+    const rm = e.target.closest("[data-remove]");
+    if (rm) { selectedFiles.splice(parseInt(rm.dataset.remove, 10), 1); renderFileList(); }
   });
 
   ["dragenter", "dragover"].forEach(evt =>
@@ -129,8 +185,7 @@
     })
   );
   dropzone.addEventListener("drop", e => {
-    const f = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
-    if (f) setFile(f.name);
+    if (e.dataTransfer && e.dataTransfer.files) addFiles(e.dataTransfer.files);
   });
 
   /* Sensitivity slider */
@@ -199,8 +254,8 @@
     cancelled = true;
     if (timer) { clearInterval(timer); timer = null; }
     if (fileInput) fileInput.value = "";
-    if (chosenFile) { chosenFile.hidden = true; chosenFile.textContent = ""; }
-    if (procName) procName.textContent = "Q3_Sales_Call_JohnDoe.wav";
+    selectedFiles = [];
+    renderFileList();
     const link = $("#linkInput");
     if (link) link.value = "";
     setProgress(0, STAGES[0].label);
