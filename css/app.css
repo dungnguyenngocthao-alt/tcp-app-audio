@@ -994,13 +994,13 @@ mark { background: var(--tcp-accent-subtle); color: var(--tcp-accent-hover); bor
 .hist--select { cursor: pointer; }
 .hist.is-selected { border-color: var(--tcp-accent); box-shadow: var(--tcp-ring-accent); }
 .hist__check {
-  width: 40px; height: 40px; flex-shrink: 0;
-  border-radius: var(--tcp-radius-md);
+  width: 18px; height: 18px; flex: 0 0 auto;
+  border-radius: var(--tcp-radius-xs);
   border: 2px solid var(--tcp-border-strong);
   display: grid; place-items: center; color: transparent;
 }
 .hist__check.is-checked { background: var(--tcp-accent); border-color: var(--tcp-accent); color: #fff; }
-.hist__check svg { width: 20px; height: 20px; }
+.hist__check svg { width: 12px; height: 12px; }
 .hist__rename-btn {
   width: 34px; height: 34px; flex: 0 0 auto;
   border: 1px solid var(--tcp-border); border-radius: var(--tcp-radius-sm);

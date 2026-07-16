@@ -491,11 +491,10 @@
     return `
       <article class="hist${selectMode ? " hist--select" : ""}${checked ? " is-selected" : ""}" data-id="${r.id}">
         <div class="hist__head">
-          ${selectMode
-            ? `<span class="hist__check${checked ? " is-checked" : ""}" aria-hidden="true">${checked ? CHECK_SVG : ""}</span>`
-            : `<span class="hist__icon">${FILE_SVG}</span>`}
+          <span class="hist__icon">${FILE_SVG}</span>
           <div class="hist__info">
             <div class="hist__titlerow">
+              ${selectMode ? `<span class="hist__check${checked ? " is-checked" : ""}" aria-hidden="true">${checked ? CHECK_SVG : ""}</span>` : ""}
               ${nameCell}
               <span class="pill pill--${r.type}">${r.outcome}</span>
             </div>
