@@ -167,6 +167,16 @@
 
   browseBtn.addEventListener("click", () => fileInput.click());
   fileInput.addEventListener("change", () => { addFiles(fileInput.files); fileInput.value = ""; });
+
+  /* Demo: load a few sample files so the multi-file flow is easy to try */
+  const SAMPLE_FILES = [
+    { name: "Q3_Sales_Call_JohnDoe.wav",   size: 47185920 },
+    { name: "Demo_AcmeCorp_Round2.mp3",     size: 12582912 },
+    { name: "Cold_Call_Nguyen_Minh.wav",    size: 33554432 },
+    { name: "Renewal_BetaLogistics.flac",   size: 58720256 },
+  ];
+  const sampleBtn = $("#sampleBtn");
+  if (sampleBtn) sampleBtn.addEventListener("click", () => addFiles(SAMPLE_FILES));
   fileListEl.addEventListener("click", e => {
     const rm = e.target.closest("[data-remove]");
     if (rm) { selectedFiles.splice(parseInt(rm.dataset.remove, 10), 1); renderFileList(); }

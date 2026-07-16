@@ -245,6 +245,21 @@ button { font-family: inherit; }
   color: var(--tcp-fg-secondary);
   margin: 0 0 var(--tcp-space-5);
 }
+/* Demo affordance — populate a few sample files to try the multi-file flow */
+.dropzone__sample {
+  display: inline-block;
+  margin-top: var(--tcp-space-4);
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--tcp-accent);
+  cursor: pointer;
+}
+.dropzone__sample:hover { text-decoration: underline; }
+
 /* Selected files list (multi-upload) */
 .filelist {
   display: flex;
