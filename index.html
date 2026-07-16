@@ -189,7 +189,15 @@
           <div class="filestrip__head">
             <span class="filestrip__count" id="fileStripCount">0 tệp đã phân tích</span>
           </div>
-          <div class="filestrip__scroll" id="fileStripScroll"></div>
+          <div class="filestrip__viewport">
+            <button class="filestrip__nav" id="fileStripPrev" type="button" aria-label="Xem tệp trước" hidden>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg>
+            </button>
+            <div class="filestrip__scroll" id="fileStripScroll"></div>
+            <button class="filestrip__nav" id="fileStripNext" type="button" aria-label="Xem tệp tiếp" hidden>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+            </button>
+          </div>
         </div>
 
         <div class="page" style="padding-top:var(--tcp-space-4);">

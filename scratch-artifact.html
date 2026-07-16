@@ -773,12 +773,37 @@ button { font-family: inherit; }
   color: var(--tcp-fg-secondary);
   letter-spacing: .1px;
 }
+.filestrip__viewport {
+  display: flex;
+  align-items: center;
+  gap: var(--tcp-space-2);
+}
+.filestrip__nav {
+  flex: 0 0 auto;
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--tcp-border);
+  border-radius: var(--tcp-radius-pill);
+  background: var(--tcp-bg);
+  color: var(--tcp-fg-primary);
+  cursor: pointer;
+  box-shadow: var(--tcp-shadow-xs);
+  transition: border-color var(--tcp-dur-fast) var(--tcp-ease), background var(--tcp-dur-fast) var(--tcp-ease), opacity var(--tcp-dur-fast) var(--tcp-ease);
+}
+.filestrip__nav:hover:not(:disabled) { border-color: var(--tcp-accent); color: var(--tcp-accent); }
+.filestrip__nav:disabled { opacity: .35; cursor: default; box-shadow: none; }
+.filestrip__nav svg { width: 18px; height: 18px; }
 .filestrip__scroll {
+  flex: 1 1 auto;
+  min-width: 0;
   display: flex;
   gap: var(--tcp-space-2);
   overflow-x: auto;
   padding-bottom: var(--tcp-space-1);
   scrollbar-width: thin;
+  scroll-behavior: smooth;
   -webkit-overflow-scrolling: touch;
 }
 .filestrip__scroll::-webkit-scrollbar { height: 6px; }
@@ -1511,7 +1536,15 @@ mark { background: var(--tcp-accent-subtle); color: var(--tcp-accent-hover); bor
           <div class="filestrip__head">
             <span class="filestrip__count" id="fileStripCount">0 tệp đã phân tích</span>
           </div>
-          <div class="filestrip__scroll" id="fileStripScroll"></div>
+          <div class="filestrip__viewport">
+            <button class="filestrip__nav" id="fileStripPrev" type="button" aria-label="Xem tệp trước" hidden>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg>
+            </button>
+            <div class="filestrip__scroll" id="fileStripScroll"></div>
+            <button class="filestrip__nav" id="fileStripNext" type="button" aria-label="Xem tệp tiếp" hidden>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+            </button>
+          </div>
         </div>
 
         <div class="page" style="padding-top:var(--tcp-space-4);">
@@ -2124,6 +2157,7 @@ mark { background: var(--tcp-accent-subtle); color: var(--tcp-accent-hover); bor
           renderFileStrip();
           selectResultFile(0);
           show("results");
+          updateStripNav();   // measure now that the strip is on-screen
         }, 550);
       }
     }, 220);
@@ -2396,7 +2430,35 @@ mark { background: var(--tcp-accent-subtle); color: var(--tcp-accent-hover); bor
   const fileStrip       = $("#fileStrip");
   const fileStripScroll = $("#fileStripScroll");
   const fileStripCount  = $("#fileStripCount");
+  const fileStripPrev   = $("#fileStripPrev");
+  const fileStripNext   = $("#fileStripNext");
+  const NAV_THRESHOLD   = 10;   // show arrows once a batch exceeds this many files
   const OUTCOME_LABEL = { success: "Successful Sale", warning: "Follow-up", neutral: "No Sale" };
+
+  /* Show the scroll arrows only for large batches, and reflect scroll extents
+     by disabling the arrow that can't move any further. */
+  function updateStripNav() {
+    if (!fileStripPrev || !fileStripNext) return;
+    const many = resultFiles.length > NAV_THRESHOLD;
+    const scrollable = fileStripScroll.scrollWidth > fileStripScroll.clientWidth + 2;
+    const show = many && scrollable;
+    fileStripPrev.hidden = !show;
+    fileStripNext.hidden = !show;
+    if (!show) return;
+    const x = fileStripScroll.scrollLeft;
+    const max = fileStripScroll.scrollWidth - fileStripScroll.clientWidth;
+    fileStripPrev.disabled = x <= 1;
+    fileStripNext.disabled = x >= max - 1;
+  }
+  if (fileStripScroll) {
+    fileStripScroll.addEventListener("scroll", updateStripNav, { passive: true });
+    window.addEventListener("resize", updateStripNav);
+  }
+  function scrollStrip(dir) {
+    fileStripScroll.scrollBy({ left: dir * fileStripScroll.clientWidth * 0.8, behavior: "smooth" });
+  }
+  if (fileStripPrev) fileStripPrev.addEventListener("click", () => scrollStrip(-1));
+  if (fileStripNext) fileStripNext.addEventListener("click", () => scrollStrip(1));
 
   let resultFiles = [];   // names shown in the current strip
   let resultDate  = "";
@@ -2430,6 +2492,7 @@ mark { background: var(--tcp-accent-subtle); color: var(--tcp-accent-hover); bor
       fileStrip.hidden = true;
       fileStripScroll.innerHTML = "";
       setSubVisible(true);
+      updateStripNav();
       return;
     }
     fileStrip.hidden = false;
@@ -2446,6 +2509,8 @@ mark { background: var(--tcp-accent-subtle); color: var(--tcp-accent-hover); bor
           </span>
         </button>`;
     }).join("");
+    fileStripScroll.scrollLeft = 0;
+    updateStripNav();
   }
 
   // Swap the analysis below to a given file (by index into resultFiles)
@@ -2480,6 +2545,7 @@ mark { background: var(--tcp-accent-subtle); color: var(--tcp-accent-hover); bor
     if (fileStrip) { fileStrip.hidden = true; fileStripScroll.innerHTML = ""; }
     resultFiles = [];
     setSubVisible(true);
+    updateStripNav();
     setResultsSub(file, date);
     show("results");
   }

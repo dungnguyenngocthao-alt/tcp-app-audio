@@ -261,6 +261,7 @@
           renderFileStrip();
           selectResultFile(0);
           show("results");
+          updateStripNav();   // measure now that the strip is on-screen
         }, 550);
       }
     }, 220);
@@ -533,7 +534,35 @@
   const fileStrip       = $("#fileStrip");
   const fileStripScroll = $("#fileStripScroll");
   const fileStripCount  = $("#fileStripCount");
+  const fileStripPrev   = $("#fileStripPrev");
+  const fileStripNext   = $("#fileStripNext");
+  const NAV_THRESHOLD   = 10;   // show arrows once a batch exceeds this many files
   const OUTCOME_LABEL = { success: "Successful Sale", warning: "Follow-up", neutral: "No Sale" };
+
+  /* Show the scroll arrows only for large batches, and reflect scroll extents
+     by disabling the arrow that can't move any further. */
+  function updateStripNav() {
+    if (!fileStripPrev || !fileStripNext) return;
+    const many = resultFiles.length > NAV_THRESHOLD;
+    const scrollable = fileStripScroll.scrollWidth > fileStripScroll.clientWidth + 2;
+    const show = many && scrollable;
+    fileStripPrev.hidden = !show;
+    fileStripNext.hidden = !show;
+    if (!show) return;
+    const x = fileStripScroll.scrollLeft;
+    const max = fileStripScroll.scrollWidth - fileStripScroll.clientWidth;
+    fileStripPrev.disabled = x <= 1;
+    fileStripNext.disabled = x >= max - 1;
+  }
+  if (fileStripScroll) {
+    fileStripScroll.addEventListener("scroll", updateStripNav, { passive: true });
+    window.addEventListener("resize", updateStripNav);
+  }
+  function scrollStrip(dir) {
+    fileStripScroll.scrollBy({ left: dir * fileStripScroll.clientWidth * 0.8, behavior: "smooth" });
+  }
+  if (fileStripPrev) fileStripPrev.addEventListener("click", () => scrollStrip(-1));
+  if (fileStripNext) fileStripNext.addEventListener("click", () => scrollStrip(1));
 
   let resultFiles = [];   // names shown in the current strip
   let resultDate  = "";
@@ -567,6 +596,7 @@
       fileStrip.hidden = true;
       fileStripScroll.innerHTML = "";
       setSubVisible(true);
+      updateStripNav();
       return;
     }
     fileStrip.hidden = false;
@@ -583,6 +613,8 @@
           </span>
         </button>`;
     }).join("");
+    fileStripScroll.scrollLeft = 0;
+    updateStripNav();
   }
 
   // Swap the analysis below to a given file (by index into resultFiles)
@@ -617,6 +649,7 @@
     if (fileStrip) { fileStrip.hidden = true; fileStripScroll.innerHTML = ""; }
     resultFiles = [];
     setSubVisible(true);
+    updateStripNav();
     setResultsSub(file, date);
     show("results");
   }
