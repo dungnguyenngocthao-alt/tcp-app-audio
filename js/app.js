@@ -329,6 +329,12 @@
     btn.disabled = true;
     setTimeout(() => { btn.innerHTML = original; btn.disabled = false; }, 1400);
   }
+  /* Show/hide the results subtitle. It's redundant when the file strip is
+     visible (the chips already name the files), so hide it there. */
+  function setSubVisible(v) {
+    const sub = $("#screen-results .results-head__sub");
+    if (sub) sub.hidden = !v;
+  }
   /* Fill the results subtitle with a call's file + date */
   function setResultsSub(file, date) {
     const sub = $("#screen-results .results-head__sub");
@@ -560,9 +566,11 @@
     if (resultFiles.length <= 1) {
       fileStrip.hidden = true;
       fileStripScroll.innerHTML = "";
+      setSubVisible(true);
       return;
     }
     fileStrip.hidden = false;
+    setSubVisible(false);
     if (fileStripCount) fileStripCount.textContent = resultFiles.length + " tệp đã phân tích";
     fileStripScroll.innerHTML = resultFiles.map((name, i) => {
       const m = mockCall(name);
@@ -608,6 +616,7 @@
   function showSingleResult(file, date) {
     if (fileStrip) { fileStrip.hidden = true; fileStripScroll.innerHTML = ""; }
     resultFiles = [];
+    setSubVisible(true);
     setResultsSub(file, date);
     show("results");
   }
