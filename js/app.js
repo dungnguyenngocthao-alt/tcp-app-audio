@@ -741,11 +741,13 @@
   const fileStripCount  = $("#fileStripCount");
   const fileStripPrev   = $("#fileStripPrev");
   const fileStripNext   = $("#fileStripNext");
-  const NAV_THRESHOLD   = 10;   // show arrows once a batch exceeds this many files
+  const NAV_THRESHOLD   = 2;   // need >2 files before arrows can appear
   const OUTCOME_LABEL = { success: "Successful Sale", warning: "Follow-up", neutral: "No Sale" };
 
-  /* Show the scroll arrows only for large batches, and reflect scroll extents
-     by disabling the arrow that can't move any further. */
+  /* Show the scroll arrows whenever the strip actually overflows (and there
+     are more than 2 files) — so on a narrow phone even 3 files get arrows,
+     while a wide screen only shows them when the row truly needs scrolling.
+     Disable whichever arrow can't move any further. */
   function updateStripNav() {
     if (!fileStripPrev || !fileStripNext) return;
     const many = resultFiles.length > NAV_THRESHOLD;
