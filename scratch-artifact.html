@@ -814,8 +814,10 @@ button { font-family: inherit; }
 }
 .fchip.is-active .fchip__icon { background: var(--tcp-white); }
 .fchip__icon svg { width: 16px; height: 16px; }
-.fchip__info { min-width: 0; }
+.fchip__info { display: flex; flex-direction: column; min-width: 0; flex: 1 1 auto; }
 .fchip__name {
+  display: block;
+  max-width: 100%;
   font-size: 13px;
   font-weight: 500;
   color: var(--tcp-fg-primary);
@@ -823,7 +825,7 @@ button { font-family: inherit; }
   overflow: hidden;
   text-overflow: ellipsis;
 }
-.fchip__meta { font-size: 11px; color: var(--tcp-fg-tertiary); margin-top: 1px; }
+.fchip__meta { display: block; font-size: 11px; color: var(--tcp-fg-tertiary); margin-top: 1px; }
 
 .result-card__label {
   display: flex; align-items: center; gap: var(--tcp-space-2);
