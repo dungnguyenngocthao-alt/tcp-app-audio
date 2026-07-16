@@ -347,6 +347,37 @@
     </section>
 
     <!-- ================================================================= -->
+    <!-- SCREEN 3b · Batch results (multi-file upload)                       -->
+    <!-- ================================================================= -->
+    <section class="screen screen--hasnav" id="screen-batch" data-screen="batch">
+      <div class="screen__scroll">
+        <header class="appbar">
+          <div class="brand">
+            <span class="brand__logo" role="img" aria-label="Talent Connect Plus"></span>
+            <span class="brand__name">Talent Connect +</span>
+          </div>
+          <button class="burger" type="button" aria-label="Open menu" aria-haspopup="true" aria-expanded="false" data-burger>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+          </button>
+        </header>
+
+        <div class="results-head">
+          <div class="results-head__top">
+            <button class="iconbtn" type="button" data-nav="analysis" data-reset aria-label="Quay lại — phân tích mới">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5"/><path d="m12 19-7-7 7-7"/></svg>
+            </button>
+            <h1 class="results-head__title">Kết quả phân tích</h1>
+          </div>
+          <p class="results-head__sub"><span id="batchCount">0</span> tệp đã phân tích · chọn một tệp để xem chi tiết</p>
+        </div>
+
+        <div class="page" style="padding-top:var(--tcp-space-2);">
+          <div class="history-list" id="batchList"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================================================================= -->
     <!-- SCREEN 4 · History                                                 -->
     <!-- ================================================================= -->
     <section class="screen screen--hasnav" id="screen-history" data-screen="history">

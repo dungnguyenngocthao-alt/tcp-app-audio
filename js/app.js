@@ -14,6 +14,7 @@
     analysis:   $("#screen-analysis"),
     processing: $("#screen-processing"),
     results:    $("#screen-results"),
+    batch:      $("#screen-batch"),
     history:    $("#screen-history"),
     dashboard:  $("#screen-dashboard"),
   };
@@ -51,7 +52,7 @@
     // Both the Analysis and Results screens sit under the "Analysis" item.
     // The primary "Thêm audio mới" action is never marked active — it's a
     // command, not a destination.
-    const active = (screenName === "results") ? "analysis" : screenName;
+    const active = (screenName === "results" || screenName === "batch") ? "analysis" : screenName;
     $$(".drawer__item").forEach(item =>
       item.classList.toggle(
         "is-active",
@@ -237,7 +238,14 @@
       if (pct >= 100) {
         clearInterval(timer);
         timer = null;
-        setTimeout(() => { if (!cancelled) show("results"); }, 550);
+        setTimeout(() => {
+          if (cancelled) return;
+          if (selectedFiles.length > 1) { renderBatch(); show("batch"); }
+          else {
+            if (selectedFiles.length === 1) setResultsSub(selectedFiles[0].name, todayLabel());
+            show("results");
+          }
+        }, 550);
       }
     }, 220);
   }
@@ -495,6 +503,78 @@
   }
 
   renderDashboard();
+
+  /* -------------------------------------------------------------------------
+     Batch results — when several files are uploaded, list them (like History)
+     with per-file "Xem chi tiết" (open the detailed analysis) and export.
+     ------------------------------------------------------------------------- */
+  const batchList = $("#batchList");
+  const batchCount = $("#batchCount");
+  const OUTCOME_LABEL = { success: "Successful Sale", warning: "Follow-up", neutral: "No Sale" };
+
+  function todayLabel() {
+    const d = new Date();
+    let h = d.getHours();
+    const ap = h >= 12 ? "PM" : "AM";
+    h = h % 12 || 12;
+    return `${d.getMonth() + 1}/${d.getDate()}/${d.getFullYear()}, ${h}:${String(d.getMinutes()).padStart(2, "0")} ${ap}`;
+  }
+
+  // Deterministic mock metrics per file so the list looks realistic + stable
+  function mockCall(name) {
+    let h = 0;
+    for (let i = 0; i < name.length; i++) h = (h * 31 + name.charCodeAt(i)) >>> 0;
+    const conf = 58 + (h % 41);
+    const type = conf >= 85 ? "success" : conf >= 66 ? "warning" : "neutral";
+    const dur = (16 + (h % 30)) + ":" + String((h >>> 3) % 60).padStart(2, "0");
+    return { conf, type, dur, outcome: OUTCOME_LABEL[type] };
+  }
+
+  function renderBatch() {
+    if (!batchList) return;
+    const files = selectedFiles.slice();
+    if (batchCount) batchCount.textContent = files.length;
+    const date = todayLabel();
+    batchList.innerHTML = files.map(f => {
+      const m = mockCall(f.name);
+      return `
+        <article class="hist">
+          <div class="hist__head">
+            <span class="hist__icon">${FILE_ICON}</span>
+            <div class="hist__info">
+              <div class="hist__titlerow">
+                <div class="hist__name" title="${escAttr(f.name)}">${f.name}</div>
+                <span class="pill pill--${m.type}">${m.outcome}</span>
+              </div>
+              <div class="hist__meta">Vừa phân tích &bull; ${m.dur}</div>
+            </div>
+          </div>
+          <div class="hist__foot">
+            <span class="hist__conf">Độ tin cậy <b>${m.conf}%</b></span>
+            <div class="hist__actions">
+              <button class="btn btn--outline btn--sm" type="button" data-view
+                      data-file="${escAttr(f.name)}" data-date="${escAttr(date)}">Xem chi tiết</button>
+              <button class="iconbtn top3__export" type="button" data-dash-export
+                      aria-label="Export transcript" title="Export transcript">${DL_SVG}</button>
+            </div>
+          </div>
+        </article>`;
+    }).join("");
+  }
+
+  // View detail / export transcript within a batch row
+  if (batchList) {
+    batchList.addEventListener("click", e => {
+      const view = e.target.closest("[data-view]");
+      if (view) {
+        setResultsSub(view.dataset.file, view.dataset.date);
+        show("results");
+        return;
+      }
+      const exp = e.target.closest("[data-dash-export]");
+      if (exp) flashCheckIcon(exp);
+    });
+  }
 
   /* -------------------------------------------------------------------------
      Results columns — distribute the cards per breakpoint so every column is

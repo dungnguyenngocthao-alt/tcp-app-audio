@@ -1005,8 +1005,9 @@ mark { background: var(--tcp-accent-subtle); color: var(--tcp-accent-hover); bor
 
   /* Results columns (2 at this width) are assembled by JS; see base rules. */
 
-  /* History — card grid (2 columns) */
-  #screen-history .history-list {
+  /* History + batch results — card grid (2 columns) */
+  #screen-history .history-list,
+  #screen-batch .history-list {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 16px;
@@ -1025,7 +1026,8 @@ mark { background: var(--tcp-accent-subtle); color: var(--tcp-accent-hover); bor
   #screen-analysis .page-cta { max-width: 860px; margin-inline: auto; width: 100%; }
 
   /* Three across for the block-heavy screens */
-  #screen-history .history-list { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  #screen-history .history-list,
+  #screen-batch .history-list { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   /* Results columns (3 at this width) are assembled by JS; see base rules. */
 
   /* Dashboard — three-column card masonry */
