@@ -240,11 +240,8 @@
         timer = null;
         setTimeout(() => {
           if (cancelled) return;
-          if (selectedFiles.length > 1) { renderBatch(); show("batch"); }
-          else {
-            if (selectedFiles.length === 1) setResultsSub(selectedFiles[0].name, todayLabel());
-            show("results");
-          }
+          renderBatch();
+          show("batch");
         }, 550);
       }
     }, 220);
@@ -532,7 +529,7 @@
 
   function renderBatch() {
     if (!batchList) return;
-    const files = selectedFiles.slice();
+    const files = selectedFiles.length ? selectedFiles.slice() : [{ name: DEFAULT_PROC_NAME }];
     if (batchCount) batchCount.textContent = files.length;
     const date = todayLabel();
     batchList.innerHTML = files.map(f => {
