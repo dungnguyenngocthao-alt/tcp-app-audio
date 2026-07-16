@@ -200,6 +200,25 @@
   sensitivity.addEventListener("input", paintSlider);
   paintSlider();
 
+  /* AI analysis model — dropdown in the upload area. Selecting a model
+     updates the helper text and the badge shown on the processing screen. */
+  const aiModelSelect = $("#aiModelSelect");
+  const aiModelHint   = $("#aiModelHint");
+  const procModelName = $("#procModelName");
+  function currentModelName() {
+    if (!aiModelSelect) return "SonicAI Insight 2.0 · Balanced";
+    return aiModelSelect.options[aiModelSelect.selectedIndex].text;
+  }
+  function paintModel() {
+    if (!aiModelSelect) return;
+    const opt = aiModelSelect.options[aiModelSelect.selectedIndex];
+    if (aiModelHint && opt) aiModelHint.textContent = opt.dataset.desc || "";
+  }
+  if (aiModelSelect) {
+    aiModelSelect.addEventListener("change", paintModel);
+    paintModel();
+  }
+
   /* -------------------------------------------------------------------------
      Screen 2 · processing simulation
      ------------------------------------------------------------------------- */
@@ -267,6 +286,7 @@
   }
 
   processBtn.addEventListener("click", () => {
+    if (procModelName) procModelName.textContent = currentModelName();
     show("processing");
     runProcessing();
   });

@@ -482,6 +482,20 @@ button { font-family: inherit; }
   color: var(--tcp-fg-secondary);
   margin-bottom: var(--tcp-space-2);
 }
+.field--last { margin-bottom: 0; }
+.field__label--ai {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--tcp-accent);
+}
+.field__label--ai svg { width: 15px; height: 15px; flex: 0 0 auto; }
+.field__hint {
+  margin: var(--tcp-space-2) 0 0;
+  font-size: 12px;
+  line-height: 16px;
+  color: var(--tcp-fg-tertiary);
+}
 .input, .select {
   width: 100%;
   border: 1px solid var(--tcp-border);
@@ -607,7 +621,22 @@ button { font-family: inherit; }
   color: var(--tcp-ink);
   margin: 0 0 var(--tcp-space-2);
 }
-.analyzing__sub { color: var(--tcp-fg-secondary); margin: 0 0 var(--tcp-space-10); }
+.analyzing__sub { color: var(--tcp-fg-secondary); margin: 0 0 var(--tcp-space-4); }
+
+.model-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: var(--tcp-space-8);
+  padding: 6px 12px 6px 10px;
+  border-radius: var(--tcp-radius-pill);
+  background: var(--tcp-accent-subtle);
+  color: var(--tcp-accent);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: .1px;
+}
+.model-badge svg { width: 14px; height: 14px; flex: 0 0 auto; }
 
 .pulse {
   position: relative;
@@ -1343,6 +1372,22 @@ mark { background: var(--tcp-accent-subtle); color: var(--tcp-accent-hover); bor
               </div>
               <p class="dropzone__hint" style="margin:0;">We'll fetch and process the audio from the link you provide.</p>
             </div>
+
+            <hr class="field-divider">
+
+            <div class="field field--last">
+              <label class="field__label field__label--ai" for="aiModelSelect">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v4M12 17v4M5 12H3M21 12h-2M6.3 6.3 4.9 4.9M19.1 19.1l-1.4-1.4M6.3 17.7l-1.4 1.4M19.1 4.9l-1.4 1.4"/><circle cx="12" cy="12" r="3.2"/></svg>
+                Mô hình AI phân tích
+              </label>
+              <select class="select" id="aiModelSelect">
+                <option value="insight" data-desc="Cân bằng độ chính xác và tốc độ — phù hợp hầu hết cuộc gọi.">SonicAI Insight 2.0 · Balanced</option>
+                <option value="pro" data-desc="Phân tích chuyên sâu cảm xúc, ý định &amp; phản đối — chậm hơn.">SonicAI Insight 2.0 Pro · Deep</option>
+                <option value="flash" data-desc="Tối ưu tốc độ cho lô nhiều tệp — độ chi tiết vừa phải.">SonicAI Flash · Fast</option>
+                <option value="multi" data-desc="Nhận dạng &amp; phân tích song ngữ Tiếng Việt · English.">SonicAI Multilingual · VI · EN</option>
+              </select>
+              <p class="field__hint" id="aiModelHint">Cân bằng độ chính xác và tốc độ — phù hợp hầu hết cuộc gọi.</p>
+            </div>
           </div>
 
           <!-- Analysis profile -->
@@ -1392,6 +1437,10 @@ mark { background: var(--tcp-accent-subtle); color: var(--tcp-accent-hover); bor
       <div class="analyzing">
         <h1 class="analyzing__title">Analyzing Audio</h1>
         <p class="analyzing__sub">Extracting acoustic intelligence...</p>
+        <span class="model-badge" id="procModel">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v4M12 17v4M5 12H3M21 12h-2M6.3 6.3 4.9 4.9M19.1 19.1l-1.4-1.4M6.3 17.7l-1.4 1.4M19.1 4.9l-1.4 1.4"/><circle cx="12" cy="12" r="3.2"/></svg>
+          <span id="procModelName">SonicAI Insight 2.0 · Balanced</span>
+        </span>
 
         <div class="pulse">
           <span class="pulse__ring pulse__ring--1"></span>
@@ -2016,6 +2065,25 @@ mark { background: var(--tcp-accent-subtle); color: var(--tcp-accent-hover); bor
   sensitivity.addEventListener("input", paintSlider);
   paintSlider();
 
+  /* AI analysis model — dropdown in the upload area. Selecting a model
+     updates the helper text and the badge shown on the processing screen. */
+  const aiModelSelect = $("#aiModelSelect");
+  const aiModelHint   = $("#aiModelHint");
+  const procModelName = $("#procModelName");
+  function currentModelName() {
+    if (!aiModelSelect) return "SonicAI Insight 2.0 · Balanced";
+    return aiModelSelect.options[aiModelSelect.selectedIndex].text;
+  }
+  function paintModel() {
+    if (!aiModelSelect) return;
+    const opt = aiModelSelect.options[aiModelSelect.selectedIndex];
+    if (aiModelHint && opt) aiModelHint.textContent = opt.dataset.desc || "";
+  }
+  if (aiModelSelect) {
+    aiModelSelect.addEventListener("change", paintModel);
+    paintModel();
+  }
+
   /* -------------------------------------------------------------------------
      Screen 2 · processing simulation
      ------------------------------------------------------------------------- */
@@ -2083,6 +2151,7 @@ mark { background: var(--tcp-accent-subtle); color: var(--tcp-accent-hover); bor
   }
 
   processBtn.addEventListener("click", () => {
+    if (procModelName) procModelName.textContent = currentModelName();
     show("processing");
     runProcessing();
   });
