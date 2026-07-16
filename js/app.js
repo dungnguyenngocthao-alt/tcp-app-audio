@@ -210,23 +210,13 @@
   sensitivity.addEventListener("input", paintSlider);
   paintSlider();
 
-  /* AI analysis model — dropdown in the upload area. Selecting a model
-     updates the helper text and the badge shown on the processing screen. */
-  const aiModelSelect = $("#aiModelSelect");
-  const aiModelHint   = $("#aiModelHint");
+  /* AI model — chosen in the "AI Model Selection" card; echoed as a badge
+     on the Analyzing screen. */
+  const modelSelect   = $("#modelSelect");
   const procModelName = $("#procModelName");
   function currentModelName() {
-    if (!aiModelSelect) return "SonicAI Insight 2.0 · Balanced";
-    return aiModelSelect.options[aiModelSelect.selectedIndex].text;
-  }
-  function paintModel() {
-    if (!aiModelSelect) return;
-    const opt = aiModelSelect.options[aiModelSelect.selectedIndex];
-    if (aiModelHint && opt) aiModelHint.textContent = opt.dataset.desc || "";
-  }
-  if (aiModelSelect) {
-    aiModelSelect.addEventListener("change", paintModel);
-    paintModel();
+    if (!modelSelect) return "Acoustic Engine v4 (Balanced)";
+    return modelSelect.options[modelSelect.selectedIndex].text;
   }
 
   /* -------------------------------------------------------------------------

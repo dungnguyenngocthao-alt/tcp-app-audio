@@ -61,27 +61,11 @@
               </div>
               <p class="dropzone__hint" style="margin:0;">We'll fetch and process the audio from the link you provide.</p>
             </div>
-
-            <hr class="field-divider">
-
-            <div class="field field--last">
-              <label class="field__label field__label--ai" for="aiModelSelect">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v4M12 17v4M5 12H3M21 12h-2M6.3 6.3 4.9 4.9M19.1 19.1l-1.4-1.4M6.3 17.7l-1.4 1.4M19.1 4.9l-1.4 1.4"/><circle cx="12" cy="12" r="3.2"/></svg>
-                Mô hình AI phân tích
-              </label>
-              <select class="select" id="aiModelSelect">
-                <option value="insight" data-desc="Cân bằng độ chính xác và tốc độ — phù hợp hầu hết cuộc gọi.">SonicAI Insight 2.0 · Balanced</option>
-                <option value="pro" data-desc="Phân tích chuyên sâu cảm xúc, ý định &amp; phản đối — chậm hơn.">SonicAI Insight 2.0 Pro · Deep</option>
-                <option value="flash" data-desc="Tối ưu tốc độ cho lô nhiều tệp — độ chi tiết vừa phải.">SonicAI Flash · Fast</option>
-                <option value="multi" data-desc="Nhận dạng &amp; phân tích song ngữ Tiếng Việt · English.">SonicAI Multilingual · VI · EN</option>
-              </select>
-              <p class="field__hint" id="aiModelHint">Cân bằng độ chính xác và tốc độ — phù hợp hầu hết cuộc gọi.</p>
-            </div>
           </div>
 
           <!-- Analysis profile -->
           <div class="card">
-            <h2 class="section-title">Analysis Profile</h2>
+            <h2 class="section-title">AI Model Selection</h2>
 
             <div class="field">
               <label class="field__label" for="modelSelect">Processing Model</label>
@@ -128,7 +112,7 @@
         <p class="analyzing__sub">Extracting acoustic intelligence...</p>
         <span class="model-badge" id="procModel">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v4M12 17v4M5 12H3M21 12h-2M6.3 6.3 4.9 4.9M19.1 19.1l-1.4-1.4M6.3 17.7l-1.4 1.4M19.1 4.9l-1.4 1.4"/><circle cx="12" cy="12" r="3.2"/></svg>
-          <span id="procModelName">SonicAI Insight 2.0 · Balanced</span>
+          <span id="procModelName">Acoustic Engine v4 (Balanced)</span>
         </span>
 
         <div class="pulse">
