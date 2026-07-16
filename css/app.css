@@ -636,6 +636,9 @@ button { font-family: inherit; }
   transition: border-color var(--tcp-dur-fast) var(--tcp-ease), background var(--tcp-dur-fast) var(--tcp-ease), box-shadow var(--tcp-dur-fast) var(--tcp-ease);
 }
 .fchip:hover { border-color: var(--tcp-border-strong); }
+/* Low-confidence result (<30%) — soft yellow flag */
+.fchip--low { background: #FFF8E1; border-color: #F1DFA6; }
+.fchip--low .fchip__icon { background: #FBE9BF; color: #B7791F; }
 .fchip.is-active {
   border-color: var(--tcp-accent);
   background: var(--tcp-accent-subtle);
@@ -885,7 +888,120 @@ mark { background: var(--tcp-accent-subtle); color: var(--tcp-accent-hover); bor
 }
 .hist__conf { font-size: 13px; color: var(--tcp-fg-secondary); }
 .hist__conf b { color: var(--tcp-ink); font-weight: var(--tcp-fw-bold); }
-.hist__actions { display: flex; gap: var(--tcp-space-2); }
+.hist__actions { display: flex; align-items: center; gap: var(--tcp-space-2); }
+
+/* ---- Archive (Lưu trữ) ------------------------------------------------ */
+.arch-toolbar { display: flex; flex-wrap: wrap; gap: var(--tcp-space-2); margin-bottom: var(--tcp-space-4); }
+.arch-toolbar .btn { display: inline-flex; align-items: center; gap: 6px; }
+.arch-toolbar .btn svg { width: 16px; height: 16px; }
+#selectModeBtn.is-active { background: var(--tcp-accent); border-color: var(--tcp-accent); color: var(--tcp-on-accent); }
+
+.arch-newfolder {
+  display: flex; gap: var(--tcp-space-2); align-items: center;
+  margin-bottom: var(--tcp-space-4);
+}
+.arch-newfolder .input { flex: 1; min-width: 0; }
+.arch-newfolder .btn { flex: 0 0 auto; }
+
+.arch-crumb {
+  display: flex; align-items: center; gap: var(--tcp-space-2);
+  margin-bottom: var(--tcp-space-3);
+  font-size: 14px; color: var(--tcp-fg-secondary);
+}
+.arch-back {
+  display: inline-flex; align-items: center; gap: 5px;
+  border: 0; background: none; cursor: pointer; padding: 0;
+  font: inherit; font-weight: 500; color: var(--tcp-accent);
+}
+.arch-back svg { width: 16px; height: 16px; }
+.arch-crumb__sep { color: var(--tcp-fg-tertiary); }
+.arch-crumb__name { font-weight: 500; color: var(--tcp-fg-primary); }
+
+.arch-folders {
+  display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--tcp-space-3); margin-bottom: var(--tcp-space-5);
+}
+.folder {
+  position: relative;
+  display: flex; align-items: center; gap: var(--tcp-space-3);
+  padding: var(--tcp-space-3) var(--tcp-space-4);
+  border: 1px solid var(--tcp-border-subtle);
+  border-radius: var(--tcp-radius-lg);
+  background: var(--tcp-bg); cursor: pointer;
+  box-shadow: var(--tcp-shadow-xs);
+  transition: border-color var(--tcp-dur-fast) var(--tcp-ease), box-shadow var(--tcp-dur-fast) var(--tcp-ease);
+}
+.folder:hover { border-color: var(--tcp-accent); }
+.folder__icon {
+  flex: 0 0 auto; width: 38px; height: 38px;
+  display: grid; place-items: center;
+  border-radius: var(--tcp-radius-md);
+  background: var(--tcp-accent-subtle); color: var(--tcp-accent);
+}
+.folder__icon svg { width: 20px; height: 20px; }
+.folder__info { display: flex; flex-direction: column; min-width: 0; flex: 1 1 auto; }
+.folder__name {
+  font-size: 14px; font-weight: 500; color: var(--tcp-ink);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.folder__count { font-size: 12px; color: var(--tcp-fg-tertiary); margin-top: 1px; }
+.folder__del {
+  flex: 0 0 auto; width: 26px; height: 26px;
+  display: grid; place-items: center;
+  border: 0; border-radius: var(--tcp-radius-sm);
+  background: none; color: var(--tcp-fg-tertiary); cursor: pointer;
+}
+.folder__del svg { width: 15px; height: 15px; }
+.folder__del:hover { background: var(--tcp-error-bg); color: var(--tcp-error-solid); }
+
+.arch-selbar {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: var(--tcp-space-3); flex-wrap: wrap;
+  margin-bottom: var(--tcp-space-4);
+  padding: var(--tcp-space-3) var(--tcp-space-4);
+  border-radius: var(--tcp-radius-lg);
+  background: var(--tcp-accent-subtle);
+  border: 1px solid var(--tcp-brand-100);
+}
+.arch-selbar__count { font-size: 13px; font-weight: 500; color: var(--tcp-accent); }
+.arch-selbar__actions { display: flex; align-items: center; gap: var(--tcp-space-2); }
+.select--sm { padding: 8px 30px 8px 12px; font-size: 13px; border-radius: var(--tcp-radius-sm); background-position: right 8px center; width: auto; }
+.btn--danger { background: var(--tcp-error-solid); color: #fff; }
+.btn--danger:hover { background: var(--tcp-error-900); }
+.btn--danger:disabled { opacity: .5; cursor: default; }
+
+.arch-empty {
+  grid-column: 1 / -1;
+  margin: 0; padding: var(--tcp-space-8) var(--tcp-space-4);
+  text-align: center; color: var(--tcp-fg-tertiary); font-size: 14px;
+}
+
+/* Select mode — cards become toggles */
+.hist--select { cursor: pointer; }
+.hist.is-selected { border-color: var(--tcp-accent); box-shadow: var(--tcp-ring-accent); }
+.hist__check {
+  width: 40px; height: 40px; flex-shrink: 0;
+  border-radius: var(--tcp-radius-md);
+  border: 2px solid var(--tcp-border-strong);
+  display: grid; place-items: center; color: transparent;
+}
+.hist__check.is-checked { background: var(--tcp-accent); border-color: var(--tcp-accent); color: #fff; }
+.hist__check svg { width: 20px; height: 20px; }
+.hist__rename-btn {
+  width: 34px; height: 34px; flex: 0 0 auto;
+  border: 1px solid var(--tcp-border); border-radius: var(--tcp-radius-sm);
+  color: var(--tcp-fg-secondary);
+}
+.hist__rename-btn svg { width: 16px; height: 16px; }
+.hist__rename-btn:hover { border-color: var(--tcp-accent); color: var(--tcp-accent); }
+.hist__rename {
+  flex: 1; min-width: 0;
+  border: 1px solid var(--tcp-border-focus);
+  border-radius: var(--tcp-radius-sm);
+  padding: 6px 8px; font-size: 14px; font-family: inherit;
+  color: var(--tcp-ink); background: var(--tcp-bg);
+}
+.hist__rename:focus { outline: 0; box-shadow: var(--tcp-ring); }
 
 /* Pagination */
 .pagination {
@@ -1132,12 +1248,13 @@ mark { background: var(--tcp-accent-subtle); color: var(--tcp-accent-hover); bor
 
   /* Results columns (2 at this width) are assembled by JS; see base rules. */
 
-  /* History — card grid (2 columns) */
+  /* Archive — card grid (2 columns) */
   #screen-history .history-list {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 16px;
   }
+  #screen-history .arch-folders { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 
   /* Analyzing — stays a single centred column */
   #screen-processing .analyzing { max-width: 520px; margin: 0 auto; }
@@ -1153,6 +1270,7 @@ mark { background: var(--tcp-accent-subtle); color: var(--tcp-accent-hover); bor
 
   /* Three across for the block-heavy screens */
   #screen-history .history-list { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  #screen-history .arch-folders { grid-template-columns: repeat(4, minmax(0, 1fr)); }
   /* Results columns (3 at this width) are assembled by JS; see base rules. */
 
   /* Dashboard — three-column card masonry */

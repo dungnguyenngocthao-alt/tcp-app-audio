@@ -385,11 +385,44 @@
         </header>
 
         <div class="page">
-          <h1 class="page__title">Lịch sử</h1>
-          <p class="page__lead">Xem lại các file đã tải lên và mở lại kết quả phân tích trước đây.</p>
+          <h1 class="page__title">Lưu trữ</h1>
+          <p class="page__lead">Quản lý các tệp đã phân tích: tạo thư mục, đổi tên, gom nhóm hoặc xóa.</p>
+
+          <div class="arch-toolbar">
+            <button class="btn btn--outline btn--sm" id="newFolderBtn" type="button">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h5l2 2h7a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2z"/><path d="M12 11v6M9 14h6"/></svg>
+              Thư mục mới
+            </button>
+            <button class="btn btn--outline btn--sm" id="selectModeBtn" type="button">Chọn</button>
+          </div>
+
+          <div class="arch-newfolder" id="newFolderRow" hidden>
+            <input class="input" id="newFolderName" type="text" placeholder="Tên thư mục mới" maxlength="40" autocomplete="off">
+            <button class="btn btn--ink btn--sm" id="newFolderSave" type="button">Tạo</button>
+            <button class="btn btn--outline btn--sm" id="newFolderCancel" type="button">Hủy</button>
+          </div>
+
+          <div class="arch-crumb" id="archCrumb" hidden>
+            <button class="arch-back" id="archBack" type="button" aria-label="Về tất cả tệp">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5"/><path d="m12 19-7-7 7-7"/></svg>
+              Tất cả tệp
+            </button>
+            <span class="arch-crumb__sep">/</span>
+            <span class="arch-crumb__name" id="archCrumbName"></span>
+          </div>
+
+          <div class="arch-folders" id="archFolders"></div>
+
+          <div class="arch-selbar" id="archSelbar" hidden>
+            <span class="arch-selbar__count" id="archSelCount">0 đã chọn</span>
+            <div class="arch-selbar__actions">
+              <select class="select select--sm" id="archMoveTo" aria-label="Chuyển vào thư mục"></select>
+              <button class="btn btn--danger btn--sm" id="archDelete" type="button">Xóa</button>
+            </div>
+          </div>
 
           <div class="history-list" id="historyList"></div>
-          <nav class="pagination" id="historyPager" aria-label="Phân trang lịch sử"></nav>
+          <nav class="pagination" id="historyPager" aria-label="Phân trang lưu trữ"></nav>
         </div>
       </div>
     </section>
@@ -538,8 +571,8 @@
             <span>Dashboard</span>
           </button>
           <button class="drawer__item" role="menuitem" type="button" data-nav="history">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v5h5"/><path d="M3.05 13A9 9 0 1 0 6 5.3L3 8"/><path d="M12 7v5l4 2"/></svg>
-            <span>History</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h5l2 2h7a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2z"/></svg>
+            <span>Lưu trữ</span>
           </button>
         </nav>
       </aside>

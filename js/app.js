@@ -392,22 +392,122 @@
     'stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
     '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>' +
     '<path d="M14 2v6h6"/><path d="M11 12v5a1.6 1.6 0 1 1-1.4-1.6"/></svg>';
+  const FOLDER_SVG =
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" ' +
+    'stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+    '<path d="M4 20a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h5l2 2h7a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2z"/></svg>';
+  const PENCIL_SVG =
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" ' +
+    'stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+    '<path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>';
 
   function escAttr(s) { return String(s).replace(/"/g, "&quot;"); }
 
-  function renderHistory() {
-    const pages = Math.max(1, Math.ceil(HISTORY.length / PER_PAGE));
+  /* Mutable archive derived from HISTORY. Each file may live in a folder.
+     (Dashboard keeps using the original HISTORY snapshot for its totals.) */
+  let archSeq = 0;
+  const archive = HISTORY.map(r => ({ ...r, id: ++archSeq, folder: null }));
+  let folderSeq = 0;
+  const folders = [];               // { id, name }
+  let currentFolder = null;         // folder id, or null for the root
+  let selectMode = false;
+  const selected = new Set();       // selected file ids
+  let renamingId = null;            // file id currently being renamed
+  let pendingMoveToNew = false;     // "move into a brand-new folder" flow
+
+  const A = {
+    newFolderBtn:  $("#newFolderBtn"),
+    selectModeBtn: $("#selectModeBtn"),
+    newFolderRow:  $("#newFolderRow"),
+    newFolderName: $("#newFolderName"),
+    newFolderSave: $("#newFolderSave"),
+    newFolderCancel: $("#newFolderCancel"),
+    crumb:      $("#archCrumb"),
+    crumbName:  $("#archCrumbName"),
+    back:       $("#archBack"),
+    foldersWrap:$("#archFolders"),
+    selbar:     $("#archSelbar"),
+    selCount:   $("#archSelCount"),
+    moveTo:     $("#archMoveTo"),
+    del:        $("#archDelete"),
+  };
+
+  const folderById = id => folders.find(f => f.id === id);
+  const filesIn = folderId => archive.filter(it => it.folder === folderId);
+
+  function renderArchive() {
+    const inFolder = currentFolder !== null;
+
+    // Breadcrumb
+    A.crumb.hidden = !inFolder;
+    if (inFolder) { const f = folderById(currentFolder); A.crumbName.textContent = f ? f.name : ""; }
+
+    // Folder cards (only at the root)
+    if (!inFolder && folders.length) {
+      A.foldersWrap.hidden = false;
+      A.foldersWrap.innerHTML = folders.map(f => `
+        <div class="folder" data-folder="${f.id}" role="button" tabindex="0">
+          <span class="folder__icon">${FOLDER_SVG}</span>
+          <span class="folder__info">
+            <span class="folder__name" title="${escAttr(f.name)}">${f.name}</span>
+            <span class="folder__count">${filesIn(f.id).length} tệp</span>
+          </span>
+          <button class="folder__del" type="button" data-folder-del="${f.id}" aria-label="Xóa thư mục">${XCLOSE_ICON}</button>
+        </div>`).join("");
+    } else {
+      A.foldersWrap.hidden = true;
+      A.foldersWrap.innerHTML = "";
+    }
+
+    // Files in the current view
+    const list = filesIn(currentFolder);
+    const pages = Math.max(1, Math.ceil(list.length / PER_PAGE));
     historyPage = Math.min(Math.max(1, historyPage), pages);
     const start = (historyPage - 1) * PER_PAGE;
-    const rows = HISTORY.slice(start, start + PER_PAGE);
+    const rows = list.slice(start, start + PER_PAGE);
 
-    historyList.innerHTML = rows.map(r => `
-      <article class="hist">
+    historyList.innerHTML = rows.length
+      ? rows.map(renderCard).join("")
+      : `<p class="arch-empty">${inFolder ? "Thư mục này chưa có tệp nào." : "Chưa có tệp nào ở ngoài thư mục."}</p>`;
+    renderPager(pages);
+
+    // Selection bar
+    A.selbar.hidden = !selectMode;
+    if (selectMode) {
+      A.selCount.textContent = selected.size + " đã chọn";
+      A.del.disabled = selected.size === 0;
+      renderMoveOptions();
+    }
+    A.selectModeBtn.textContent = selectMode ? "Xong" : "Chọn";
+    A.selectModeBtn.classList.toggle("is-active", selectMode);
+  }
+
+  function renderCard(r) {
+    const checked = selected.has(r.id);
+    const renaming = renamingId === r.id;
+    const nameCell = renaming
+      ? `<input class="hist__rename" type="text" value="${escAttr(r.file)}" data-rename-input="${r.id}" maxlength="60" autocomplete="off">`
+      : `<div class="hist__name" title="${escAttr(r.file)}">${r.file}</div>`;
+    let actions;
+    if (renaming) {
+      actions = `<button class="btn btn--ink btn--sm" type="button" data-rename-save="${r.id}">Lưu</button>
+                 <button class="btn btn--outline btn--sm" type="button" data-rename-cancel>Hủy</button>`;
+    } else if (selectMode) {
+      actions = "";
+    } else {
+      actions = `<button class="iconbtn hist__rename-btn" type="button" data-rename="${r.id}" aria-label="Đổi tên" title="Đổi tên">${PENCIL_SVG}</button>
+                 <button class="btn btn--outline btn--sm" type="button" data-view data-file="${escAttr(r.file)}" data-date="${escAttr(r.date)}">Xem lại</button>
+                 <button class="btn btn--ink btn--sm" type="button" data-hist-export>Export</button>`;
+    }
+    return `
+      <article class="hist${selectMode ? " hist--select" : ""}${checked ? " is-selected" : ""}" data-id="${r.id}">
         <div class="hist__head">
-          <span class="hist__icon">${FILE_SVG}</span>
+          ${selectMode
+            ? `<span class="hist__check${checked ? " is-checked" : ""}" aria-hidden="true">${checked ? CHECK_SVG : ""}</span>`
+            : `<span class="hist__icon">${FILE_SVG}</span>`}
           <div class="hist__info">
             <div class="hist__titlerow">
-              <div class="hist__name" title="${escAttr(r.file)}">${r.file}</div>
+              ${nameCell}
               <span class="pill pill--${r.type}">${r.outcome}</span>
             </div>
             <div class="hist__meta">${r.date} &bull; ${r.dur}</div>
@@ -415,15 +515,19 @@
         </div>
         <div class="hist__foot">
           <span class="hist__conf">Độ tin cậy <b>${r.conf}%</b></span>
-          <div class="hist__actions">
-            <button class="btn btn--outline btn--sm" type="button" data-view
-                    data-file="${escAttr(r.file)}" data-date="${escAttr(r.date)}">Xem lại</button>
-            <button class="btn btn--ink btn--sm" type="button" data-hist-export>Export</button>
-          </div>
+          <div class="hist__actions">${actions}</div>
         </div>
-      </article>`).join("");
+      </article>`;
+  }
 
-    renderPager(pages);
+  function renderMoveOptions() {
+    let opts = `<option value="">Chuyển vào…</option>`;
+    if (currentFolder !== null) opts += `<option value="__root__">↑ Đưa ra ngoài</option>`;
+    opts += folders.filter(f => f.id !== currentFolder)
+      .map(f => `<option value="${f.id}">${escAttr(f.name)}</option>`).join("");
+    opts += `<option value="__new__">＋ Thư mục mới…</option>`;
+    A.moveTo.innerHTML = opts;
+    A.moveTo.value = "";
   }
 
   function renderPager(pages) {
@@ -440,32 +544,133 @@
     historyPager.innerHTML = html;
   }
 
+  /* --- Actions --------------------------------------------------------- */
+  function openNewFolder() {
+    A.newFolderRow.hidden = false;
+    A.newFolderName.value = "";
+    A.newFolderName.focus();
+  }
+  function closeNewFolder() { A.newFolderRow.hidden = true; pendingMoveToNew = false; }
+  function saveNewFolder() {
+    const name = A.newFolderName.value.trim();
+    if (!name) { A.newFolderName.focus(); return; }
+    const f = { id: ++folderSeq, name };
+    folders.push(f);
+    A.newFolderRow.hidden = true;
+    if (pendingMoveToNew && selected.size) {
+      archive.forEach(it => { if (selected.has(it.id)) it.folder = f.id; });
+      selected.clear();
+    }
+    pendingMoveToNew = false;
+    renderArchive();
+  }
+  function moveSelectedTo(folderId) {
+    archive.forEach(it => { if (selected.has(it.id)) it.folder = folderId; });
+    selected.clear();
+    renderArchive();
+  }
+  function deleteSelected() {
+    for (let i = archive.length - 1; i >= 0; i--) if (selected.has(archive[i].id)) archive.splice(i, 1);
+    selected.clear();
+    renderArchive();
+  }
+  function commitRename(id) {
+    const inp = historyList.querySelector(`[data-rename-input="${id}"]`);
+    const it = archive.find(a => a.id === id);
+    if (inp && it) { const v = inp.value.trim(); if (v) it.file = v; }
+    renamingId = null;
+    renderArchive();
+  }
+
+  A.newFolderBtn.addEventListener("click", () => { pendingMoveToNew = false; openNewFolder(); });
+  A.newFolderSave.addEventListener("click", saveNewFolder);
+  A.newFolderCancel.addEventListener("click", closeNewFolder);
+  A.newFolderName.addEventListener("keydown", e => {
+    if (e.key === "Enter") saveNewFolder();
+    else if (e.key === "Escape") closeNewFolder();
+  });
+
+  A.selectModeBtn.addEventListener("click", () => {
+    selectMode = !selectMode;
+    selected.clear();
+    renamingId = null;
+    renderArchive();
+  });
+
+  A.back.addEventListener("click", () => { currentFolder = null; historyPage = 1; renderArchive(); });
+
+  A.foldersWrap.addEventListener("click", e => {
+    const del = e.target.closest("[data-folder-del]");
+    if (del) {
+      const id = parseInt(del.dataset.folderDel, 10);
+      archive.forEach(it => { if (it.folder === id) it.folder = null; });  // spill files back to root
+      const i = folders.findIndex(f => f.id === id);
+      if (i >= 0) folders.splice(i, 1);
+      renderArchive();
+      return;
+    }
+    const fo = e.target.closest("[data-folder]");
+    if (fo) { currentFolder = parseInt(fo.dataset.folder, 10); historyPage = 1; renderArchive(); }
+  });
+
+  A.moveTo.addEventListener("change", () => {
+    const v = A.moveTo.value;
+    if (!v || !selected.size) { A.moveTo.value = ""; return; }
+    if (v === "__new__") { pendingMoveToNew = true; openNewFolder(); A.moveTo.value = ""; return; }
+    moveSelectedTo(v === "__root__" ? null : parseInt(v, 10));
+  });
+  A.del.addEventListener("click", () => { if (selected.size) deleteSelected(); });
+
   // Pagination clicks
   historyPager.addEventListener("click", e => {
     const btn = e.target.closest(".page-btn");
     if (!btn || btn.disabled) return;
-    const pages = Math.max(1, Math.ceil(HISTORY.length / PER_PAGE));
+    const pages = Math.max(1, Math.ceil(filesIn(currentFolder).length / PER_PAGE));
     const p = btn.dataset.page;
     if (p === "prev") historyPage--;
     else if (p === "next") historyPage++;
     else historyPage = parseInt(p, 10);
-    renderHistory();
+    renderArchive();
     const scroller = $(".screen__scroll", screens.history);
     if (scroller) scroller.scrollTop = 0;
   });
 
-  // Re-view / export within a history row
+  // Card interactions: select-toggle, rename, re-view, export
   historyList.addEventListener("click", e => {
-    const view = e.target.closest("[data-view]");
-    if (view) {
-      showSingleResult(view.dataset.file, view.dataset.date);
+    const rOpen = e.target.closest("[data-rename]");
+    if (rOpen) {
+      renamingId = parseInt(rOpen.dataset.rename, 10);
+      renderArchive();
+      const inp = historyList.querySelector("[data-rename-input]");
+      if (inp) { inp.focus(); inp.select(); }
       return;
     }
+    if (e.target.closest("[data-rename-save]")) { commitRename(parseInt(e.target.closest("[data-rename-save]").dataset.renameSave, 10)); return; }
+    if (e.target.closest("[data-rename-cancel]")) { renamingId = null; renderArchive(); return; }
+
+    if (selectMode) {
+      const card = e.target.closest(".hist");
+      if (card) {
+        const id = parseInt(card.dataset.id, 10);
+        if (selected.has(id)) selected.delete(id); else selected.add(id);
+        renderArchive();
+      }
+      return;
+    }
+    const view = e.target.closest("[data-view]");
+    if (view) { showSingleResult(view.dataset.file, view.dataset.date); return; }
     const exp = e.target.closest("[data-hist-export]");
     if (exp) flashExport(exp, "Đã xuất");
   });
 
-  renderHistory();
+  historyList.addEventListener("keydown", e => {
+    const inp = e.target.closest("[data-rename-input]");
+    if (!inp) return;
+    if (e.key === "Enter") commitRename(parseInt(inp.dataset.renameInput, 10));
+    else if (e.key === "Escape") { renamingId = null; renderArchive(); }
+  });
+
+  renderArchive();
 
   /* -------------------------------------------------------------------------
      Dashboard — aggregate metrics over all analysed calls (HISTORY)
@@ -579,7 +784,8 @@
   function mockCall(name) {
     let h = 0;
     for (let i = 0; i < name.length; i++) h = (h * 31 + name.charCodeAt(i)) >>> 0;
-    const conf = 58 + (h % 41);
+    // Spread wide enough that some calls land in the low-confidence (<30%) band
+    const conf = 12 + (h % 87);
     const type = conf >= 85 ? "success" : conf >= 66 ? "warning" : "neutral";
     const dur = (16 + (h % 30)) + ":" + String((h >>> 3) % 60).padStart(2, "0");
     return { conf, type, dur, outcome: OUTCOME_LABEL[type] };
@@ -605,7 +811,7 @@
     fileStripScroll.innerHTML = resultFiles.map((name, i) => {
       const m = mockCall(name);
       return `
-        <button class="fchip" type="button" data-chip="${i}" title="${escAttr(name)}">
+        <button class="fchip${m.conf < 30 ? " fchip--low" : ""}" type="button" data-chip="${i}" title="${escAttr(name)}">
           <span class="fchip__icon">${FILE_ICON}</span>
           <span class="fchip__info">
             <span class="fchip__name">${name}</span>

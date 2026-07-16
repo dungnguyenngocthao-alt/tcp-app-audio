@@ -822,6 +822,9 @@ button { font-family: inherit; }
   transition: border-color var(--tcp-dur-fast) var(--tcp-ease), background var(--tcp-dur-fast) var(--tcp-ease), box-shadow var(--tcp-dur-fast) var(--tcp-ease);
 }
 .fchip:hover { border-color: var(--tcp-border-strong); }
+/* Low-confidence result (<30%) — soft yellow flag */
+.fchip--low { background: #FFF8E1; border-color: #F1DFA6; }
+.fchip--low .fchip__icon { background: #FBE9BF; color: #B7791F; }
 .fchip.is-active {
   border-color: var(--tcp-accent);
   background: var(--tcp-accent-subtle);
@@ -1071,7 +1074,120 @@ mark { background: var(--tcp-accent-subtle); color: var(--tcp-accent-hover); bor
 }
 .hist__conf { font-size: 13px; color: var(--tcp-fg-secondary); }
 .hist__conf b { color: var(--tcp-ink); font-weight: var(--tcp-fw-bold); }
-.hist__actions { display: flex; gap: var(--tcp-space-2); }
+.hist__actions { display: flex; align-items: center; gap: var(--tcp-space-2); }
+
+/* ---- Archive (Lưu trữ) ------------------------------------------------ */
+.arch-toolbar { display: flex; flex-wrap: wrap; gap: var(--tcp-space-2); margin-bottom: var(--tcp-space-4); }
+.arch-toolbar .btn { display: inline-flex; align-items: center; gap: 6px; }
+.arch-toolbar .btn svg { width: 16px; height: 16px; }
+#selectModeBtn.is-active { background: var(--tcp-accent); border-color: var(--tcp-accent); color: var(--tcp-on-accent); }
+
+.arch-newfolder {
+  display: flex; gap: var(--tcp-space-2); align-items: center;
+  margin-bottom: var(--tcp-space-4);
+}
+.arch-newfolder .input { flex: 1; min-width: 0; }
+.arch-newfolder .btn { flex: 0 0 auto; }
+
+.arch-crumb {
+  display: flex; align-items: center; gap: var(--tcp-space-2);
+  margin-bottom: var(--tcp-space-3);
+  font-size: 14px; color: var(--tcp-fg-secondary);
+}
+.arch-back {
+  display: inline-flex; align-items: center; gap: 5px;
+  border: 0; background: none; cursor: pointer; padding: 0;
+  font: inherit; font-weight: 500; color: var(--tcp-accent);
+}
+.arch-back svg { width: 16px; height: 16px; }
+.arch-crumb__sep { color: var(--tcp-fg-tertiary); }
+.arch-crumb__name { font-weight: 500; color: var(--tcp-fg-primary); }
+
+.arch-folders {
+  display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--tcp-space-3); margin-bottom: var(--tcp-space-5);
+}
+.folder {
+  position: relative;
+  display: flex; align-items: center; gap: var(--tcp-space-3);
+  padding: var(--tcp-space-3) var(--tcp-space-4);
+  border: 1px solid var(--tcp-border-subtle);
+  border-radius: var(--tcp-radius-lg);
+  background: var(--tcp-bg); cursor: pointer;
+  box-shadow: var(--tcp-shadow-xs);
+  transition: border-color var(--tcp-dur-fast) var(--tcp-ease), box-shadow var(--tcp-dur-fast) var(--tcp-ease);
+}
+.folder:hover { border-color: var(--tcp-accent); }
+.folder__icon {
+  flex: 0 0 auto; width: 38px; height: 38px;
+  display: grid; place-items: center;
+  border-radius: var(--tcp-radius-md);
+  background: var(--tcp-accent-subtle); color: var(--tcp-accent);
+}
+.folder__icon svg { width: 20px; height: 20px; }
+.folder__info { display: flex; flex-direction: column; min-width: 0; flex: 1 1 auto; }
+.folder__name {
+  font-size: 14px; font-weight: 500; color: var(--tcp-ink);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.folder__count { font-size: 12px; color: var(--tcp-fg-tertiary); margin-top: 1px; }
+.folder__del {
+  flex: 0 0 auto; width: 26px; height: 26px;
+  display: grid; place-items: center;
+  border: 0; border-radius: var(--tcp-radius-sm);
+  background: none; color: var(--tcp-fg-tertiary); cursor: pointer;
+}
+.folder__del svg { width: 15px; height: 15px; }
+.folder__del:hover { background: var(--tcp-error-bg); color: var(--tcp-error-solid); }
+
+.arch-selbar {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: var(--tcp-space-3); flex-wrap: wrap;
+  margin-bottom: var(--tcp-space-4);
+  padding: var(--tcp-space-3) var(--tcp-space-4);
+  border-radius: var(--tcp-radius-lg);
+  background: var(--tcp-accent-subtle);
+  border: 1px solid var(--tcp-brand-100);
+}
+.arch-selbar__count { font-size: 13px; font-weight: 500; color: var(--tcp-accent); }
+.arch-selbar__actions { display: flex; align-items: center; gap: var(--tcp-space-2); }
+.select--sm { padding: 8px 30px 8px 12px; font-size: 13px; border-radius: var(--tcp-radius-sm); background-position: right 8px center; width: auto; }
+.btn--danger { background: var(--tcp-error-solid); color: #fff; }
+.btn--danger:hover { background: var(--tcp-error-900); }
+.btn--danger:disabled { opacity: .5; cursor: default; }
+
+.arch-empty {
+  grid-column: 1 / -1;
+  margin: 0; padding: var(--tcp-space-8) var(--tcp-space-4);
+  text-align: center; color: var(--tcp-fg-tertiary); font-size: 14px;
+}
+
+/* Select mode — cards become toggles */
+.hist--select { cursor: pointer; }
+.hist.is-selected { border-color: var(--tcp-accent); box-shadow: var(--tcp-ring-accent); }
+.hist__check {
+  width: 40px; height: 40px; flex-shrink: 0;
+  border-radius: var(--tcp-radius-md);
+  border: 2px solid var(--tcp-border-strong);
+  display: grid; place-items: center; color: transparent;
+}
+.hist__check.is-checked { background: var(--tcp-accent); border-color: var(--tcp-accent); color: #fff; }
+.hist__check svg { width: 20px; height: 20px; }
+.hist__rename-btn {
+  width: 34px; height: 34px; flex: 0 0 auto;
+  border: 1px solid var(--tcp-border); border-radius: var(--tcp-radius-sm);
+  color: var(--tcp-fg-secondary);
+}
+.hist__rename-btn svg { width: 16px; height: 16px; }
+.hist__rename-btn:hover { border-color: var(--tcp-accent); color: var(--tcp-accent); }
+.hist__rename {
+  flex: 1; min-width: 0;
+  border: 1px solid var(--tcp-border-focus);
+  border-radius: var(--tcp-radius-sm);
+  padding: 6px 8px; font-size: 14px; font-family: inherit;
+  color: var(--tcp-ink); background: var(--tcp-bg);
+}
+.hist__rename:focus { outline: 0; box-shadow: var(--tcp-ring); }
 
 /* Pagination */
 .pagination {
@@ -1318,12 +1434,13 @@ mark { background: var(--tcp-accent-subtle); color: var(--tcp-accent-hover); bor
 
   /* Results columns (2 at this width) are assembled by JS; see base rules. */
 
-  /* History — card grid (2 columns) */
+  /* Archive — card grid (2 columns) */
   #screen-history .history-list {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 16px;
   }
+  #screen-history .arch-folders { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 
   /* Analyzing — stays a single centred column */
   #screen-processing .analyzing { max-width: 520px; margin: 0 auto; }
@@ -1339,6 +1456,7 @@ mark { background: var(--tcp-accent-subtle); color: var(--tcp-accent-hover); bor
 
   /* Three across for the block-heavy screens */
   #screen-history .history-list { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  #screen-history .arch-folders { grid-template-columns: repeat(4, minmax(0, 1fr)); }
   /* Results columns (3 at this width) are assembled by JS; see base rules. */
 
   /* Dashboard — three-column card masonry */
@@ -1732,11 +1850,44 @@ mark { background: var(--tcp-accent-subtle); color: var(--tcp-accent-hover); bor
         </header>
 
         <div class="page">
-          <h1 class="page__title">Lịch sử</h1>
-          <p class="page__lead">Xem lại các file đã tải lên và mở lại kết quả phân tích trước đây.</p>
+          <h1 class="page__title">Lưu trữ</h1>
+          <p class="page__lead">Quản lý các tệp đã phân tích: tạo thư mục, đổi tên, gom nhóm hoặc xóa.</p>
+
+          <div class="arch-toolbar">
+            <button class="btn btn--outline btn--sm" id="newFolderBtn" type="button">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h5l2 2h7a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2z"/><path d="M12 11v6M9 14h6"/></svg>
+              Thư mục mới
+            </button>
+            <button class="btn btn--outline btn--sm" id="selectModeBtn" type="button">Chọn</button>
+          </div>
+
+          <div class="arch-newfolder" id="newFolderRow" hidden>
+            <input class="input" id="newFolderName" type="text" placeholder="Tên thư mục mới" maxlength="40" autocomplete="off">
+            <button class="btn btn--ink btn--sm" id="newFolderSave" type="button">Tạo</button>
+            <button class="btn btn--outline btn--sm" id="newFolderCancel" type="button">Hủy</button>
+          </div>
+
+          <div class="arch-crumb" id="archCrumb" hidden>
+            <button class="arch-back" id="archBack" type="button" aria-label="Về tất cả tệp">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5"/><path d="m12 19-7-7 7-7"/></svg>
+              Tất cả tệp
+            </button>
+            <span class="arch-crumb__sep">/</span>
+            <span class="arch-crumb__name" id="archCrumbName"></span>
+          </div>
+
+          <div class="arch-folders" id="archFolders"></div>
+
+          <div class="arch-selbar" id="archSelbar" hidden>
+            <span class="arch-selbar__count" id="archSelCount">0 đã chọn</span>
+            <div class="arch-selbar__actions">
+              <select class="select select--sm" id="archMoveTo" aria-label="Chuyển vào thư mục"></select>
+              <button class="btn btn--danger btn--sm" id="archDelete" type="button">Xóa</button>
+            </div>
+          </div>
 
           <div class="history-list" id="historyList"></div>
-          <nav class="pagination" id="historyPager" aria-label="Phân trang lịch sử"></nav>
+          <nav class="pagination" id="historyPager" aria-label="Phân trang lưu trữ"></nav>
         </div>
       </div>
     </section>
@@ -1885,8 +2036,8 @@ mark { background: var(--tcp-accent-subtle); color: var(--tcp-accent-hover); bor
             <span>Dashboard</span>
           </button>
           <button class="drawer__item" role="menuitem" type="button" data-nav="history">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v5h5"/><path d="M3.05 13A9 9 0 1 0 6 5.3L3 8"/><path d="M12 7v5l4 2"/></svg>
-            <span>History</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h5l2 2h7a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2z"/></svg>
+            <span>Lưu trữ</span>
           </button>
         </nav>
       </aside>
@@ -2288,22 +2439,122 @@ mark { background: var(--tcp-accent-subtle); color: var(--tcp-accent-hover); bor
     'stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
     '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>' +
     '<path d="M14 2v6h6"/><path d="M11 12v5a1.6 1.6 0 1 1-1.4-1.6"/></svg>';
+  const FOLDER_SVG =
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" ' +
+    'stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+    '<path d="M4 20a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h5l2 2h7a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2z"/></svg>';
+  const PENCIL_SVG =
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" ' +
+    'stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+    '<path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>';
 
   function escAttr(s) { return String(s).replace(/"/g, "&quot;"); }
 
-  function renderHistory() {
-    const pages = Math.max(1, Math.ceil(HISTORY.length / PER_PAGE));
+  /* Mutable archive derived from HISTORY. Each file may live in a folder.
+     (Dashboard keeps using the original HISTORY snapshot for its totals.) */
+  let archSeq = 0;
+  const archive = HISTORY.map(r => ({ ...r, id: ++archSeq, folder: null }));
+  let folderSeq = 0;
+  const folders = [];               // { id, name }
+  let currentFolder = null;         // folder id, or null for the root
+  let selectMode = false;
+  const selected = new Set();       // selected file ids
+  let renamingId = null;            // file id currently being renamed
+  let pendingMoveToNew = false;     // "move into a brand-new folder" flow
+
+  const A = {
+    newFolderBtn:  $("#newFolderBtn"),
+    selectModeBtn: $("#selectModeBtn"),
+    newFolderRow:  $("#newFolderRow"),
+    newFolderName: $("#newFolderName"),
+    newFolderSave: $("#newFolderSave"),
+    newFolderCancel: $("#newFolderCancel"),
+    crumb:      $("#archCrumb"),
+    crumbName:  $("#archCrumbName"),
+    back:       $("#archBack"),
+    foldersWrap:$("#archFolders"),
+    selbar:     $("#archSelbar"),
+    selCount:   $("#archSelCount"),
+    moveTo:     $("#archMoveTo"),
+    del:        $("#archDelete"),
+  };
+
+  const folderById = id => folders.find(f => f.id === id);
+  const filesIn = folderId => archive.filter(it => it.folder === folderId);
+
+  function renderArchive() {
+    const inFolder = currentFolder !== null;
+
+    // Breadcrumb
+    A.crumb.hidden = !inFolder;
+    if (inFolder) { const f = folderById(currentFolder); A.crumbName.textContent = f ? f.name : ""; }
+
+    // Folder cards (only at the root)
+    if (!inFolder && folders.length) {
+      A.foldersWrap.hidden = false;
+      A.foldersWrap.innerHTML = folders.map(f => `
+        <div class="folder" data-folder="${f.id}" role="button" tabindex="0">
+          <span class="folder__icon">${FOLDER_SVG}</span>
+          <span class="folder__info">
+            <span class="folder__name" title="${escAttr(f.name)}">${f.name}</span>
+            <span class="folder__count">${filesIn(f.id).length} tệp</span>
+          </span>
+          <button class="folder__del" type="button" data-folder-del="${f.id}" aria-label="Xóa thư mục">${XCLOSE_ICON}</button>
+        </div>`).join("");
+    } else {
+      A.foldersWrap.hidden = true;
+      A.foldersWrap.innerHTML = "";
+    }
+
+    // Files in the current view
+    const list = filesIn(currentFolder);
+    const pages = Math.max(1, Math.ceil(list.length / PER_PAGE));
     historyPage = Math.min(Math.max(1, historyPage), pages);
     const start = (historyPage - 1) * PER_PAGE;
-    const rows = HISTORY.slice(start, start + PER_PAGE);
+    const rows = list.slice(start, start + PER_PAGE);
 
-    historyList.innerHTML = rows.map(r => `
-      <article class="hist">
+    historyList.innerHTML = rows.length
+      ? rows.map(renderCard).join("")
+      : `<p class="arch-empty">${inFolder ? "Thư mục này chưa có tệp nào." : "Chưa có tệp nào ở ngoài thư mục."}</p>`;
+    renderPager(pages);
+
+    // Selection bar
+    A.selbar.hidden = !selectMode;
+    if (selectMode) {
+      A.selCount.textContent = selected.size + " đã chọn";
+      A.del.disabled = selected.size === 0;
+      renderMoveOptions();
+    }
+    A.selectModeBtn.textContent = selectMode ? "Xong" : "Chọn";
+    A.selectModeBtn.classList.toggle("is-active", selectMode);
+  }
+
+  function renderCard(r) {
+    const checked = selected.has(r.id);
+    const renaming = renamingId === r.id;
+    const nameCell = renaming
+      ? `<input class="hist__rename" type="text" value="${escAttr(r.file)}" data-rename-input="${r.id}" maxlength="60" autocomplete="off">`
+      : `<div class="hist__name" title="${escAttr(r.file)}">${r.file}</div>`;
+    let actions;
+    if (renaming) {
+      actions = `<button class="btn btn--ink btn--sm" type="button" data-rename-save="${r.id}">Lưu</button>
+                 <button class="btn btn--outline btn--sm" type="button" data-rename-cancel>Hủy</button>`;
+    } else if (selectMode) {
+      actions = "";
+    } else {
+      actions = `<button class="iconbtn hist__rename-btn" type="button" data-rename="${r.id}" aria-label="Đổi tên" title="Đổi tên">${PENCIL_SVG}</button>
+                 <button class="btn btn--outline btn--sm" type="button" data-view data-file="${escAttr(r.file)}" data-date="${escAttr(r.date)}">Xem lại</button>
+                 <button class="btn btn--ink btn--sm" type="button" data-hist-export>Export</button>`;
+    }
+    return `
+      <article class="hist${selectMode ? " hist--select" : ""}${checked ? " is-selected" : ""}" data-id="${r.id}">
         <div class="hist__head">
-          <span class="hist__icon">${FILE_SVG}</span>
+          ${selectMode
+            ? `<span class="hist__check${checked ? " is-checked" : ""}" aria-hidden="true">${checked ? CHECK_SVG : ""}</span>`
+            : `<span class="hist__icon">${FILE_SVG}</span>`}
           <div class="hist__info">
             <div class="hist__titlerow">
-              <div class="hist__name" title="${escAttr(r.file)}">${r.file}</div>
+              ${nameCell}
               <span class="pill pill--${r.type}">${r.outcome}</span>
             </div>
             <div class="hist__meta">${r.date} &bull; ${r.dur}</div>
@@ -2311,15 +2562,19 @@ mark { background: var(--tcp-accent-subtle); color: var(--tcp-accent-hover); bor
         </div>
         <div class="hist__foot">
           <span class="hist__conf">Độ tin cậy <b>${r.conf}%</b></span>
-          <div class="hist__actions">
-            <button class="btn btn--outline btn--sm" type="button" data-view
-                    data-file="${escAttr(r.file)}" data-date="${escAttr(r.date)}">Xem lại</button>
-            <button class="btn btn--ink btn--sm" type="button" data-hist-export>Export</button>
-          </div>
+          <div class="hist__actions">${actions}</div>
         </div>
-      </article>`).join("");
+      </article>`;
+  }
 
-    renderPager(pages);
+  function renderMoveOptions() {
+    let opts = `<option value="">Chuyển vào…</option>`;
+    if (currentFolder !== null) opts += `<option value="__root__">↑ Đưa ra ngoài</option>`;
+    opts += folders.filter(f => f.id !== currentFolder)
+      .map(f => `<option value="${f.id}">${escAttr(f.name)}</option>`).join("");
+    opts += `<option value="__new__">＋ Thư mục mới…</option>`;
+    A.moveTo.innerHTML = opts;
+    A.moveTo.value = "";
   }
 
   function renderPager(pages) {
@@ -2336,32 +2591,133 @@ mark { background: var(--tcp-accent-subtle); color: var(--tcp-accent-hover); bor
     historyPager.innerHTML = html;
   }
 
+  /* --- Actions --------------------------------------------------------- */
+  function openNewFolder() {
+    A.newFolderRow.hidden = false;
+    A.newFolderName.value = "";
+    A.newFolderName.focus();
+  }
+  function closeNewFolder() { A.newFolderRow.hidden = true; pendingMoveToNew = false; }
+  function saveNewFolder() {
+    const name = A.newFolderName.value.trim();
+    if (!name) { A.newFolderName.focus(); return; }
+    const f = { id: ++folderSeq, name };
+    folders.push(f);
+    A.newFolderRow.hidden = true;
+    if (pendingMoveToNew && selected.size) {
+      archive.forEach(it => { if (selected.has(it.id)) it.folder = f.id; });
+      selected.clear();
+    }
+    pendingMoveToNew = false;
+    renderArchive();
+  }
+  function moveSelectedTo(folderId) {
+    archive.forEach(it => { if (selected.has(it.id)) it.folder = folderId; });
+    selected.clear();
+    renderArchive();
+  }
+  function deleteSelected() {
+    for (let i = archive.length - 1; i >= 0; i--) if (selected.has(archive[i].id)) archive.splice(i, 1);
+    selected.clear();
+    renderArchive();
+  }
+  function commitRename(id) {
+    const inp = historyList.querySelector(`[data-rename-input="${id}"]`);
+    const it = archive.find(a => a.id === id);
+    if (inp && it) { const v = inp.value.trim(); if (v) it.file = v; }
+    renamingId = null;
+    renderArchive();
+  }
+
+  A.newFolderBtn.addEventListener("click", () => { pendingMoveToNew = false; openNewFolder(); });
+  A.newFolderSave.addEventListener("click", saveNewFolder);
+  A.newFolderCancel.addEventListener("click", closeNewFolder);
+  A.newFolderName.addEventListener("keydown", e => {
+    if (e.key === "Enter") saveNewFolder();
+    else if (e.key === "Escape") closeNewFolder();
+  });
+
+  A.selectModeBtn.addEventListener("click", () => {
+    selectMode = !selectMode;
+    selected.clear();
+    renamingId = null;
+    renderArchive();
+  });
+
+  A.back.addEventListener("click", () => { currentFolder = null; historyPage = 1; renderArchive(); });
+
+  A.foldersWrap.addEventListener("click", e => {
+    const del = e.target.closest("[data-folder-del]");
+    if (del) {
+      const id = parseInt(del.dataset.folderDel, 10);
+      archive.forEach(it => { if (it.folder === id) it.folder = null; });  // spill files back to root
+      const i = folders.findIndex(f => f.id === id);
+      if (i >= 0) folders.splice(i, 1);
+      renderArchive();
+      return;
+    }
+    const fo = e.target.closest("[data-folder]");
+    if (fo) { currentFolder = parseInt(fo.dataset.folder, 10); historyPage = 1; renderArchive(); }
+  });
+
+  A.moveTo.addEventListener("change", () => {
+    const v = A.moveTo.value;
+    if (!v || !selected.size) { A.moveTo.value = ""; return; }
+    if (v === "__new__") { pendingMoveToNew = true; openNewFolder(); A.moveTo.value = ""; return; }
+    moveSelectedTo(v === "__root__" ? null : parseInt(v, 10));
+  });
+  A.del.addEventListener("click", () => { if (selected.size) deleteSelected(); });
+
   // Pagination clicks
   historyPager.addEventListener("click", e => {
     const btn = e.target.closest(".page-btn");
     if (!btn || btn.disabled) return;
-    const pages = Math.max(1, Math.ceil(HISTORY.length / PER_PAGE));
+    const pages = Math.max(1, Math.ceil(filesIn(currentFolder).length / PER_PAGE));
     const p = btn.dataset.page;
     if (p === "prev") historyPage--;
     else if (p === "next") historyPage++;
     else historyPage = parseInt(p, 10);
-    renderHistory();
+    renderArchive();
     const scroller = $(".screen__scroll", screens.history);
     if (scroller) scroller.scrollTop = 0;
   });
 
-  // Re-view / export within a history row
+  // Card interactions: select-toggle, rename, re-view, export
   historyList.addEventListener("click", e => {
-    const view = e.target.closest("[data-view]");
-    if (view) {
-      showSingleResult(view.dataset.file, view.dataset.date);
+    const rOpen = e.target.closest("[data-rename]");
+    if (rOpen) {
+      renamingId = parseInt(rOpen.dataset.rename, 10);
+      renderArchive();
+      const inp = historyList.querySelector("[data-rename-input]");
+      if (inp) { inp.focus(); inp.select(); }
       return;
     }
+    if (e.target.closest("[data-rename-save]")) { commitRename(parseInt(e.target.closest("[data-rename-save]").dataset.renameSave, 10)); return; }
+    if (e.target.closest("[data-rename-cancel]")) { renamingId = null; renderArchive(); return; }
+
+    if (selectMode) {
+      const card = e.target.closest(".hist");
+      if (card) {
+        const id = parseInt(card.dataset.id, 10);
+        if (selected.has(id)) selected.delete(id); else selected.add(id);
+        renderArchive();
+      }
+      return;
+    }
+    const view = e.target.closest("[data-view]");
+    if (view) { showSingleResult(view.dataset.file, view.dataset.date); return; }
     const exp = e.target.closest("[data-hist-export]");
     if (exp) flashExport(exp, "Đã xuất");
   });
 
-  renderHistory();
+  historyList.addEventListener("keydown", e => {
+    const inp = e.target.closest("[data-rename-input]");
+    if (!inp) return;
+    if (e.key === "Enter") commitRename(parseInt(inp.dataset.renameInput, 10));
+    else if (e.key === "Escape") { renamingId = null; renderArchive(); }
+  });
+
+  renderArchive();
 
   /* -------------------------------------------------------------------------
      Dashboard — aggregate metrics over all analysed calls (HISTORY)
@@ -2475,7 +2831,8 @@ mark { background: var(--tcp-accent-subtle); color: var(--tcp-accent-hover); bor
   function mockCall(name) {
     let h = 0;
     for (let i = 0; i < name.length; i++) h = (h * 31 + name.charCodeAt(i)) >>> 0;
-    const conf = 58 + (h % 41);
+    // Spread wide enough that some calls land in the low-confidence (<30%) band
+    const conf = 12 + (h % 87);
     const type = conf >= 85 ? "success" : conf >= 66 ? "warning" : "neutral";
     const dur = (16 + (h % 30)) + ":" + String((h >>> 3) % 60).padStart(2, "0");
     return { conf, type, dur, outcome: OUTCOME_LABEL[type] };
@@ -2501,7 +2858,7 @@ mark { background: var(--tcp-accent-subtle); color: var(--tcp-accent-hover); bor
     fileStripScroll.innerHTML = resultFiles.map((name, i) => {
       const m = mockCall(name);
       return `
-        <button class="fchip" type="button" data-chip="${i}" title="${escAttr(name)}">
+        <button class="fchip${m.conf < 30 ? " fchip--low" : ""}" type="button" data-chip="${i}" title="${escAttr(name)}">
           <span class="fchip__icon">${FILE_ICON}</span>
           <span class="fchip__info">
             <span class="fchip__name">${name}</span>
