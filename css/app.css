@@ -891,10 +891,23 @@ mark { background: var(--tcp-accent-subtle); color: var(--tcp-accent-hover); bor
 .hist__actions { display: flex; align-items: center; gap: var(--tcp-space-2); }
 
 /* ---- Archive (Lưu trữ) ------------------------------------------------ */
-.arch-toolbar { display: flex; flex-wrap: wrap; gap: var(--tcp-space-2); margin-bottom: var(--tcp-space-4); }
+.arch-toolbar { display: flex; align-items: center; flex-wrap: wrap; gap: var(--tcp-space-2); margin-bottom: var(--tcp-space-4); }
 .arch-toolbar .btn { display: inline-flex; align-items: center; gap: 6px; }
 .arch-toolbar .btn svg { width: 16px; height: 16px; }
-#selectModeBtn.is-active { background: var(--tcp-accent); border-color: var(--tcp-accent); color: var(--tcp-on-accent); }
+.arch-select-btn {
+  flex: 0 0 auto;
+  width: 38px; height: 38px;
+  display: grid; place-items: center;
+  border: 1px solid var(--tcp-border);
+  border-radius: var(--tcp-radius-sm);
+  background: var(--tcp-bg);
+  color: var(--tcp-fg-secondary);
+  cursor: pointer;
+  transition: border-color var(--tcp-dur-fast) var(--tcp-ease), background var(--tcp-dur-fast) var(--tcp-ease), color var(--tcp-dur-fast) var(--tcp-ease);
+}
+.arch-select-btn svg { width: 20px; height: 20px; }
+.arch-select-btn:hover { border-color: var(--tcp-accent); color: var(--tcp-accent); }
+.arch-select-btn.is-active { background: var(--tcp-accent); border-color: var(--tcp-accent); color: var(--tcp-on-accent); }
 
 .arch-newfolder {
   display: flex; gap: var(--tcp-space-2); align-items: center;

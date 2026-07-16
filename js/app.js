@@ -478,8 +478,9 @@
       A.del.disabled = selected.size === 0;
       renderMoveOptions();
     }
-    A.selectModeBtn.textContent = selectMode ? "Xong" : "Chọn";
     A.selectModeBtn.classList.toggle("is-active", selectMode);
+    A.selectModeBtn.setAttribute("aria-pressed", selectMode ? "true" : "false");
+    A.selectModeBtn.title = selectMode ? "Xong" : "Chọn nhiều tệp";
   }
 
   function renderCard(r) {
