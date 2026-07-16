@@ -247,8 +247,9 @@ button { font-family: inherit; }
 }
 /* Demo affordance — populate a few sample files to try the multi-file flow */
 .dropzone__sample {
-  display: inline-block;
-  margin-top: var(--tcp-space-4);
+  display: block;
+  width: fit-content;
+  margin: var(--tcp-space-4) auto 0;
   padding: 0;
   border: 0;
   background: none;
