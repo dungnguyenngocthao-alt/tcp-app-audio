@@ -497,6 +497,13 @@ button { font-family: inherit; }
   color: var(--tcp-fg-secondary);
   margin-bottom: var(--tcp-space-2);
 }
+.field__label--ai {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--tcp-accent);
+}
+.field__label--ai svg { width: 15px; height: 15px; flex: 0 0 auto; }
 .input, .select {
   width: 100%;
   border: 1px solid var(--tcp-border);
@@ -1376,17 +1383,20 @@ mark { background: var(--tcp-accent-subtle); color: var(--tcp-accent-hover); bor
             </div>
           </div>
 
-          <!-- Analysis profile -->
+          <!-- Analysis profile (incl. AI model) -->
           <div class="card">
-            <h2 class="section-title">AI Model Selection</h2>
+            <h2 class="section-title">Analysis Profile</h2>
 
             <div class="field">
-              <label class="field__label" for="modelSelect">Processing Model</label>
+              <label class="field__label field__label--ai" for="modelSelect">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v4M12 17v4M5 12H3M21 12h-2M6.3 6.3 4.9 4.9M19.1 19.1l-1.4-1.4M6.3 17.7l-1.4 1.4M19.1 4.9l-1.4 1.4"/><circle cx="12" cy="12" r="3.2"/></svg>
+                Mô hình AI phân tích
+              </label>
               <select class="select" id="modelSelect">
-                <option>Acoustic Engine v4 (Balanced)</option>
-                <option>Acoustic Engine v4 (High Accuracy)</option>
-                <option>Acoustic Engine v3 (Fast)</option>
-                <option>Speaker Diarization Pro</option>
+                <option>SonicAI Insight 2.0 · Balanced</option>
+                <option>SonicAI Insight 2.0 Pro · Deep</option>
+                <option>SonicAI Flash · Fast</option>
+                <option>SonicAI Multilingual · VI · EN</option>
               </select>
             </div>
 
@@ -1425,7 +1435,7 @@ mark { background: var(--tcp-accent-subtle); color: var(--tcp-accent-hover); bor
         <p class="analyzing__sub">Extracting acoustic intelligence...</p>
         <span class="model-badge" id="procModel">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v4M12 17v4M5 12H3M21 12h-2M6.3 6.3 4.9 4.9M19.1 19.1l-1.4-1.4M6.3 17.7l-1.4 1.4M19.1 4.9l-1.4 1.4"/><circle cx="12" cy="12" r="3.2"/></svg>
-          <span id="procModelName">Acoustic Engine v4 (Balanced)</span>
+          <span id="procModelName">SonicAI Insight 2.0 · Balanced</span>
         </span>
 
         <div class="pulse">
@@ -2066,7 +2076,7 @@ mark { background: var(--tcp-accent-subtle); color: var(--tcp-accent-hover); bor
   const modelSelect   = $("#modelSelect");
   const procModelName = $("#procModelName");
   function currentModelName() {
-    if (!modelSelect) return "Acoustic Engine v4 (Balanced)";
+    if (!modelSelect) return "SonicAI Insight 2.0 · Balanced";
     return modelSelect.options[modelSelect.selectedIndex].text;
   }
 

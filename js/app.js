@@ -215,7 +215,7 @@
   const modelSelect   = $("#modelSelect");
   const procModelName = $("#procModelName");
   function currentModelName() {
-    if (!modelSelect) return "Acoustic Engine v4 (Balanced)";
+    if (!modelSelect) return "SonicAI Insight 2.0 · Balanced";
     return modelSelect.options[modelSelect.selectedIndex].text;
   }
 

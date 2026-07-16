@@ -311,6 +311,13 @@ button { font-family: inherit; }
   color: var(--tcp-fg-secondary);
   margin-bottom: var(--tcp-space-2);
 }
+.field__label--ai {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--tcp-accent);
+}
+.field__label--ai svg { width: 15px; height: 15px; flex: 0 0 auto; }
 .input, .select {
   width: 100%;
   border: 1px solid var(--tcp-border);
