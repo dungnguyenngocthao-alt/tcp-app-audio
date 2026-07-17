@@ -49,10 +49,9 @@
     return el ? el.dataset.screen : "analysis";
   }
   function setActiveMenu(screenName) {
-    // Both the Analysis and Results screens sit under the "Analysis" item.
-    // The primary "Thêm audio mới" action is never marked active — it's a
-    // command, not a destination.
-    const active = screenName === "results" ? "analysis" : screenName;
+    // Results has its own "Kết quả phân tích" menu entry; the primary
+    // "Upload file" action is never marked active — it's a command.
+    const active = screenName;
     $$(".drawer__item").forEach(item =>
       item.classList.toggle(
         "is-active",
@@ -76,7 +75,7 @@
     el.addEventListener("click", () => {
       const target = el.dataset.nav;
       if (el.hasAttribute("data-reset")) resetAnalysis();
-      if (target === "analysis" || target === "history" || target === "dashboard" || target === "settings") show(target);
+      if (target === "analysis" || target === "results" || target === "history" || target === "dashboard" || target === "settings") show(target);
       closeMenu();
     })
   );
@@ -106,7 +105,7 @@
   const procName   = $("#procFileName");
   const procMeta   = $("#procMeta");
   const DEFAULT_PROC_NAME = "Q3_Sales_Call_JohnDoe.wav";
-  const DEFAULT_PROC_META = "Size: 45 MB • Duration: 45:12";
+  const DEFAULT_PROC_META = "Size: 45 MB • Thời lượng: 45:12";
   let selectedFiles = [];
 
   const FILE_ICON =

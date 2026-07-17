@@ -426,6 +426,8 @@ button { font-family: inherit; }
 .toggle input:checked + .toggle__track::after { transform: translateX(20px); }
 
 .page-cta { padding: var(--tcp-space-4) var(--tcp-space-6) var(--tcp-space-8); }
+/* Primary CTA lives at the bottom of the profile card */
+.profile-submit { margin-top: var(--tcp-space-6); }
 
 /* ---------------------------------------------------------------------------
    SCREEN 2 · Analyzing
@@ -1328,9 +1330,9 @@ mark { background: var(--tcp-accent-subtle); color: var(--tcp-accent-hover); bor
   }
   #screen-analysis .page > .page__title,
   #screen-analysis .page > .page__lead { grid-column: 1 / -1; margin-bottom: 0; }
-  #screen-analysis .card { margin-top: 0; align-self: stretch; }
-  #screen-analysis .page-cta { display: flex; justify-content: center; }
-  #screen-analysis .page-cta .btn { width: 100%; max-width: 420px; }
+  /* Keep each card at its natural height — uploading files must not stretch
+     the profile card to match the upload column. */
+  #screen-analysis .card { margin-top: 0; align-self: start; }
 
   /* Results columns (2 at this width) are assembled by JS; see base rules. */
 
@@ -1352,7 +1354,6 @@ mark { background: var(--tcp-accent-subtle); color: var(--tcp-accent-hover); bor
 @media (min-width: 1200px) {
   /* New Analysis stays two cards but centred so they don't stretch too wide */
   #screen-analysis .page { max-width: 860px; margin-inline: auto; }
-  #screen-analysis .page-cta { max-width: 860px; margin-inline: auto; width: 100%; }
 
   /* Three across for the block-heavy screens */
   #screen-history .history-list { grid-template-columns: repeat(3, minmax(0, 1fr)); }
