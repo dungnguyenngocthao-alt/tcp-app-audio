@@ -707,8 +707,8 @@ button { font-family: inherit; }
   border-radius: var(--tcp-radius-pill);
   font-size: 13px; font-weight: 500;
 }
-.kw-chip--success { background: var(--tcp-success-bg); color: var(--tcp-success-fg); }
-.kw-chip--failure { background: var(--tcp-error-bg); color: var(--tcp-error-fg); }
+.kw-chip--pos { background: var(--tcp-success-bg); color: var(--tcp-success-fg); }
+.kw-chip--neg { background: var(--tcp-error-bg); color: var(--tcp-error-fg); }
 .kw-chip__x {
   display: grid; place-items: center;
   width: 18px; height: 18px; padding: 0;
@@ -873,6 +873,19 @@ button { font-family: inherit; }
 .msg__time { display: block; font-size: 12px; color: var(--tcp-fg-tertiary); margin-top: 5px; }
 .msg--out .msg__time { text-align: right; }
 mark { background: var(--tcp-accent-subtle); color: var(--tcp-accent-hover); border-radius: 3px; padding: 0 3px; font-weight: var(--tcp-fw-medium); }
+/* Sentiment-keyword highlights inside the transcript */
+mark.mark--pos { background: var(--tcp-success-bg); color: var(--tcp-success-900); }
+mark.mark--neg { background: var(--tcp-error-bg); color: var(--tcp-error-900); }
+
+/* Audio-quality card */
+.quality-head { display: flex; align-items: baseline; gap: var(--tcp-space-3); margin-bottom: var(--tcp-space-4); }
+.quality-score { font-size: 30px; font-weight: 600; color: var(--tcp-ink); letter-spacing: -0.5px; }
+.quality-score small { font-size: 15px; font-weight: 500; color: var(--tcp-fg-tertiary); margin-left: 2px; }
+.quality-tag {
+  font-size: 12px; font-weight: 500;
+  padding: 3px 10px; border-radius: var(--tcp-radius-pill);
+  background: var(--tcp-success-bg); color: var(--tcp-success-fg);
+}
 
 /* ---------------------------------------------------------------------------
    SCREEN 4 · History

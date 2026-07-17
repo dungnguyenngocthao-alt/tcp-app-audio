@@ -918,16 +918,19 @@
         resultsPage.children, el => el.classList.contains("card")
       );
     }
-    if (resultsCards.length < 7) return;
+    if (resultsCards.length < 8) return;
 
     const w = window.innerWidth;
     const bp = w >= 1200 ? "d" : w >= 768 ? "t" : "m";
     if (bp === lastBp && resultsPage.classList.contains("is-cols")) return;
     lastBp = bp;
 
-    const groups = bp === "d" ? [[0, 1, 2], [3, 4, 5], [6]]
-                 : bp === "t" ? [[0, 1, 2, 3, 4], [5, 6]]
-                 : [[0, 1, 2, 3, 4, 5, 6]];
+    // cards: 0 outcome, 1 audio-quality, 2 keywords, 3 sentiment,
+    //        4 talk, 5 summary, 6 actions, 7 transcript.
+    // Keep outcome (0) and audio-quality (1) on the same top row.
+    const groups = bp === "d" ? [[0, 2, 3], [1, 4, 5, 6], [7]]
+                 : bp === "t" ? [[0, 2, 3, 4], [1, 5, 6, 7]]
+                 : [[0, 1, 2, 3, 4, 5, 6, 7]];
 
     while (resultsPage.firstChild) resultsPage.removeChild(resultsPage.firstChild);
     groups.forEach(group => {
@@ -947,10 +950,12 @@
   });
 
   /* -------------------------------------------------------------------------
-     Screen 6 · Settings — keyword sets that push success / failure rate
+     Screen 6 · Settings — positive / negative sentiment keyword sets.
+     Added keywords get highlighted (green / red) wherever they appear in
+     the transcript on subsequent analyses.
      ------------------------------------------------------------------------- */
-  const successKeywords = ["ROI", "tiết kiệm", "real-time", "bảo mật", "hiệu suất"];
-  const failureKeywords = ["giá cao", "phức tạp", "chậm", "lỗi", "khó dùng"];
+  const positiveKeywords = ["cảm ơn", "real-time", "hài lòng", "hiệu quả", "tin tưởng"];
+  const negativeKeywords = ["giá cả", "đắt đỏ", "lo lắng", "phản đối", "chậm trễ"];
 
   function renderKw(listEl, arr, kind) {
     listEl.innerHTML = arr.map((w, i) => `
@@ -961,7 +966,7 @@
   function setupKwEditor(listId, inputId, addId, arr, kind) {
     const listEl = $("#" + listId), input = $("#" + inputId), addBtn = $("#" + addId);
     if (!listEl || !input || !addBtn) return;
-    const draw = () => renderKw(listEl, arr, kind);
+    const draw = () => { renderKw(listEl, arr, kind); highlightTranscript(); };
     const add = () => {
       const v = input.value.trim();
       if (!v) { input.focus(); return; }
@@ -976,8 +981,39 @@
     });
     draw();
   }
-  setupKwEditor("successKwList", "successKwInput", "successKwAdd", successKeywords, "success");
-  setupKwEditor("failureKwList", "failureKwInput", "failureKwAdd", failureKeywords, "failure");
+
+  /* Re-highlight the transcript from each bubble's plain text, wrapping any
+     positive keyword in a green mark and any negative one in a red mark. */
+  function escapeRegExp(s) { return String(s).replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); }
+  function highlightTranscript() {
+    const bubbles = $$("#screen-results .msg__bubble");
+    const pos = positiveKeywords.filter(w => w.trim());
+    const neg = negativeKeywords.filter(w => w.trim());
+    const posSet = new Set(pos.map(s => s.toLowerCase()));
+    const negSet = new Set(neg.map(s => s.toLowerCase()));
+    const all = [...pos, ...neg].sort((a, b) => b.length - a.length);
+    const re = all.length ? new RegExp("(" + all.map(escapeRegExp).join("|") + ")", "gi") : null;
+    bubbles.forEach(bub => {
+      const time = bub.querySelector(".msg__time");
+      if (!("orig" in bub.dataset)) {
+        const clone = bub.cloneNode(true);
+        const t = clone.querySelector(".msg__time"); if (t) t.remove();
+        clone.querySelectorAll("mark").forEach(m => m.replaceWith(document.createTextNode(m.textContent)));
+        bub.dataset.orig = clone.textContent;
+      }
+      let text = bub.dataset.orig;
+      let html = text.replace(/[&<>]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c]));
+      if (re) html = html.replace(re, m => {
+        const cls = posSet.has(m.toLowerCase()) ? "mark--pos" : negSet.has(m.toLowerCase()) ? "mark--neg" : "";
+        return cls ? `<mark class="${cls}">${m}</mark>` : m;
+      });
+      bub.innerHTML = html + (time ? time.outerHTML : "");
+    });
+  }
+
+  setupKwEditor("successKwList", "successKwInput", "successKwAdd", positiveKeywords, "pos");
+  setupKwEditor("failureKwList", "failureKwInput", "failureKwAdd", negativeKeywords, "neg");
+  highlightTranscript();
 
   /* -------------------------------------------------------------------------
      Dashboard export — build a real .xlsx (3 sheets), dependency-free

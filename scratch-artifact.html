@@ -893,8 +893,8 @@ button { font-family: inherit; }
   border-radius: var(--tcp-radius-pill);
   font-size: 13px; font-weight: 500;
 }
-.kw-chip--success { background: var(--tcp-success-bg); color: var(--tcp-success-fg); }
-.kw-chip--failure { background: var(--tcp-error-bg); color: var(--tcp-error-fg); }
+.kw-chip--pos { background: var(--tcp-success-bg); color: var(--tcp-success-fg); }
+.kw-chip--neg { background: var(--tcp-error-bg); color: var(--tcp-error-fg); }
 .kw-chip__x {
   display: grid; place-items: center;
   width: 18px; height: 18px; padding: 0;
@@ -1059,6 +1059,19 @@ button { font-family: inherit; }
 .msg__time { display: block; font-size: 12px; color: var(--tcp-fg-tertiary); margin-top: 5px; }
 .msg--out .msg__time { text-align: right; }
 mark { background: var(--tcp-accent-subtle); color: var(--tcp-accent-hover); border-radius: 3px; padding: 0 3px; font-weight: var(--tcp-fw-medium); }
+/* Sentiment-keyword highlights inside the transcript */
+mark.mark--pos { background: var(--tcp-success-bg); color: var(--tcp-success-900); }
+mark.mark--neg { background: var(--tcp-error-bg); color: var(--tcp-error-900); }
+
+/* Audio-quality card */
+.quality-head { display: flex; align-items: baseline; gap: var(--tcp-space-3); margin-bottom: var(--tcp-space-4); }
+.quality-score { font-size: 30px; font-weight: 600; color: var(--tcp-ink); letter-spacing: -0.5px; }
+.quality-score small { font-size: 15px; font-weight: 500; color: var(--tcp-fg-tertiary); margin-left: 2px; }
+.quality-tag {
+  font-size: 12px; font-weight: 500;
+  padding: 3px 10px; border-radius: var(--tcp-radius-pill);
+  background: var(--tcp-success-bg); color: var(--tcp-success-fg);
+}
 
 /* ---------------------------------------------------------------------------
    SCREEN 4 · History
@@ -1754,6 +1767,33 @@ mark { background: var(--tcp-accent-subtle); color: var(--tcp-accent-hover); bor
             </div>
           </div>
 
+          <!-- Audio quality -->
+          <div class="card">
+            <div class="result-card__label">
+              <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M56,96v64a8,8,0,0,1-16,0V96a8,8,0,0,1,16,0ZM88,24a8,8,0,0,0-8,8V224a8,8,0,0,0,16,0V32A8,8,0,0,0,88,24Zm40,32a8,8,0,0,0-8,8V192a8,8,0,0,0,16,0V64A8,8,0,0,0,128,56Zm40,32a8,8,0,0,0-8,8v64a8,8,0,0,0,16,0V96A8,8,0,0,0,168,88Zm40-16a8,8,0,0,0-8,8v96a8,8,0,0,0,16,0V80A8,8,0,0,0,208,72Z"/></svg>
+              Chất lượng âm thanh
+            </div>
+            <div class="quality-head">
+              <span class="quality-score">8.6<small>/10</small></span>
+              <span class="quality-tag">Tốt</span>
+            </div>
+            <div class="bar-row">
+              <span class="bar-row__label">Độ rõ giọng</span>
+              <span class="bar-row__track"><span class="bar-row__fill" style="width:92%;background:var(--tcp-success-solid)"></span></span>
+              <span class="bar-row__val">92%</span>
+            </div>
+            <div class="bar-row">
+              <span class="bar-row__label">Nhiễu nền</span>
+              <span class="bar-row__track"><span class="bar-row__fill" style="width:14%;background:var(--tcp-ink)"></span></span>
+              <span class="bar-row__val">14%</span>
+            </div>
+            <div class="bar-row">
+              <span class="bar-row__label">Cân bằng âm</span>
+              <span class="bar-row__track"><span class="bar-row__fill" style="width:88%;background:var(--tcp-ink)"></span></span>
+              <span class="bar-row__val">88%</span>
+            </div>
+          </div>
+
           <!-- Keywords -->
           <div class="card">
             <div class="result-card__label">
@@ -2118,9 +2158,9 @@ mark { background: var(--tcp-accent-subtle); color: var(--tcp-accent-hover); bor
           <div class="card">
             <div class="result-card__label result-card__label--success">
               <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M240,56v64a8,8,0,0,1-16,0V75.31l-82.34,82.35a8,8,0,0,1-11.32,0L96,123.31,29.66,189.66a8,8,0,0,1-11.32-11.32l72-72a8,8,0,0,1,11.32,0L136,140.69,212.69,64H168a8,8,0,0,1,0-16h64A8,8,0,0,1,240,56Z"/></svg>
-              Từ khóa tăng Success rate
+              Từ khóa cảm xúc tích cực
             </div>
-            <p class="kw-hint">Khi các từ khóa này xuất hiện trong cuộc gọi, tỉ lệ thành công được cộng điểm.</p>
+            <p class="kw-hint">Khi xuất hiện trong bản ghi ở những lần phân tích sau, các từ này được tô màu tích cực.</p>
             <div class="kw-list" id="successKwList"></div>
             <div class="kw-add">
               <input class="input" id="successKwInput" type="text" placeholder="Thêm từ khóa..." maxlength="30" autocomplete="off">
@@ -2134,9 +2174,9 @@ mark { background: var(--tcp-accent-subtle); color: var(--tcp-accent-hover); bor
           <div class="card">
             <div class="result-card__label result-card__label--error">
               <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M240,128v64a8,8,0,0,1-8,8H168a8,8,0,0,1,0-16h44.69L136,107.31l-34.34,34.35a8,8,0,0,1-11.32,0l-72-72A8,8,0,0,1,29.66,58.34L96,124.69l34.34-34.35a8,8,0,0,1,11.32,0L224,172.69V128a8,8,0,0,1,16,0Z"/></svg>
-              Từ khóa tăng Failure rate
+              Từ khóa cảm xúc tiêu cực
             </div>
-            <p class="kw-hint">Khi các từ khóa này xuất hiện, cuộc gọi có nguy cơ thất bại cao hơn.</p>
+            <p class="kw-hint">Khi xuất hiện trong bản ghi ở những lần phân tích sau, các từ này được tô màu tiêu cực.</p>
             <div class="kw-list" id="failureKwList"></div>
             <div class="kw-add">
               <input class="input" id="failureKwInput" type="text" placeholder="Thêm từ khóa..." maxlength="30" autocomplete="off">
@@ -3123,16 +3163,19 @@ mark { background: var(--tcp-accent-subtle); color: var(--tcp-accent-hover); bor
         resultsPage.children, el => el.classList.contains("card")
       );
     }
-    if (resultsCards.length < 7) return;
+    if (resultsCards.length < 8) return;
 
     const w = window.innerWidth;
     const bp = w >= 1200 ? "d" : w >= 768 ? "t" : "m";
     if (bp === lastBp && resultsPage.classList.contains("is-cols")) return;
     lastBp = bp;
 
-    const groups = bp === "d" ? [[0, 1, 2], [3, 4, 5], [6]]
-                 : bp === "t" ? [[0, 1, 2, 3, 4], [5, 6]]
-                 : [[0, 1, 2, 3, 4, 5, 6]];
+    // cards: 0 outcome, 1 audio-quality, 2 keywords, 3 sentiment,
+    //        4 talk, 5 summary, 6 actions, 7 transcript.
+    // Keep outcome (0) and audio-quality (1) on the same top row.
+    const groups = bp === "d" ? [[0, 2, 3], [1, 4, 5, 6], [7]]
+                 : bp === "t" ? [[0, 2, 3, 4], [1, 5, 6, 7]]
+                 : [[0, 1, 2, 3, 4, 5, 6, 7]];
 
     while (resultsPage.firstChild) resultsPage.removeChild(resultsPage.firstChild);
     groups.forEach(group => {
@@ -3152,10 +3195,12 @@ mark { background: var(--tcp-accent-subtle); color: var(--tcp-accent-hover); bor
   });
 
   /* -------------------------------------------------------------------------
-     Screen 6 · Settings — keyword sets that push success / failure rate
+     Screen 6 · Settings — positive / negative sentiment keyword sets.
+     Added keywords get highlighted (green / red) wherever they appear in
+     the transcript on subsequent analyses.
      ------------------------------------------------------------------------- */
-  const successKeywords = ["ROI", "tiết kiệm", "real-time", "bảo mật", "hiệu suất"];
-  const failureKeywords = ["giá cao", "phức tạp", "chậm", "lỗi", "khó dùng"];
+  const positiveKeywords = ["cảm ơn", "real-time", "hài lòng", "hiệu quả", "tin tưởng"];
+  const negativeKeywords = ["giá cả", "đắt đỏ", "lo lắng", "phản đối", "chậm trễ"];
 
   function renderKw(listEl, arr, kind) {
     listEl.innerHTML = arr.map((w, i) => `
@@ -3166,7 +3211,7 @@ mark { background: var(--tcp-accent-subtle); color: var(--tcp-accent-hover); bor
   function setupKwEditor(listId, inputId, addId, arr, kind) {
     const listEl = $("#" + listId), input = $("#" + inputId), addBtn = $("#" + addId);
     if (!listEl || !input || !addBtn) return;
-    const draw = () => renderKw(listEl, arr, kind);
+    const draw = () => { renderKw(listEl, arr, kind); highlightTranscript(); };
     const add = () => {
       const v = input.value.trim();
       if (!v) { input.focus(); return; }
@@ -3181,8 +3226,39 @@ mark { background: var(--tcp-accent-subtle); color: var(--tcp-accent-hover); bor
     });
     draw();
   }
-  setupKwEditor("successKwList", "successKwInput", "successKwAdd", successKeywords, "success");
-  setupKwEditor("failureKwList", "failureKwInput", "failureKwAdd", failureKeywords, "failure");
+
+  /* Re-highlight the transcript from each bubble's plain text, wrapping any
+     positive keyword in a green mark and any negative one in a red mark. */
+  function escapeRegExp(s) { return String(s).replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); }
+  function highlightTranscript() {
+    const bubbles = $$("#screen-results .msg__bubble");
+    const pos = positiveKeywords.filter(w => w.trim());
+    const neg = negativeKeywords.filter(w => w.trim());
+    const posSet = new Set(pos.map(s => s.toLowerCase()));
+    const negSet = new Set(neg.map(s => s.toLowerCase()));
+    const all = [...pos, ...neg].sort((a, b) => b.length - a.length);
+    const re = all.length ? new RegExp("(" + all.map(escapeRegExp).join("|") + ")", "gi") : null;
+    bubbles.forEach(bub => {
+      const time = bub.querySelector(".msg__time");
+      if (!("orig" in bub.dataset)) {
+        const clone = bub.cloneNode(true);
+        const t = clone.querySelector(".msg__time"); if (t) t.remove();
+        clone.querySelectorAll("mark").forEach(m => m.replaceWith(document.createTextNode(m.textContent)));
+        bub.dataset.orig = clone.textContent;
+      }
+      let text = bub.dataset.orig;
+      let html = text.replace(/[&<>]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c]));
+      if (re) html = html.replace(re, m => {
+        const cls = posSet.has(m.toLowerCase()) ? "mark--pos" : negSet.has(m.toLowerCase()) ? "mark--neg" : "";
+        return cls ? `<mark class="${cls}">${m}</mark>` : m;
+      });
+      bub.innerHTML = html + (time ? time.outerHTML : "");
+    });
+  }
+
+  setupKwEditor("successKwList", "successKwInput", "successKwAdd", positiveKeywords, "pos");
+  setupKwEditor("failureKwList", "failureKwInput", "failureKwAdd", negativeKeywords, "neg");
+  highlightTranscript();
 
   /* -------------------------------------------------------------------------
      Dashboard export — build a real .xlsx (3 sheets), dependency-free
