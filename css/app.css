@@ -742,10 +742,16 @@ button { font-family: inherit; }
   letter-spacing: 1px; text-transform: uppercase;
   color: var(--tcp-fg-tertiary);
 }
-/* Consultation-rate tint on the outcome card */
+/* Consultation-rate tint on the outcome card — inner elements follow the tint */
 .card.outcome-card--good { background: #E9F9EF; border-color: #C7EFD6; }
+.card.outcome-card--good .outcome__badge { background: #CFF0DC; color: #16A34A; }
+.card.outcome-card--good .outcome__pct { color: #16A34A; }
 .card.outcome-card--mid  { background: #FFF7E0; border-color: #F2E2AF; }
+.card.outcome-card--mid .outcome__badge { background: #FBEBBE; color: #B45309; }
+.card.outcome-card--mid .outcome__pct { color: #B45309; }
 .card.outcome-card--low  { background: #FDEBF0; border-color: #F6CEDB; }
+.card.outcome-card--low .outcome__badge { background: #FBD3DF; color: #BE123C; }
+.card.outcome-card--low .outcome__pct { color: #BE123C; }
 
 /* Keyword chips */
 .chips { display: flex; flex-wrap: wrap; gap: var(--tcp-space-2); }
@@ -1372,7 +1378,14 @@ mark.mark--neg { background: var(--tcp-error-bg); color: var(--tcp-error-900); }
   /* Three across for the block-heavy screens */
   #screen-history .history-list { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   #screen-history .arch-folders { grid-template-columns: repeat(4, minmax(0, 1fr)); }
-  /* Results columns (3 at this width) are assembled by JS; see base rules. */
+  /* Results columns (3 at this width) are assembled by JS; see base rules.
+     The outcome card fills column 1 so all three columns are equal height. */
+  #screen-results .page.is-cols > .rcol:first-child > .card:first-child {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
 
   /* Dashboard — three-column card masonry */
   .dash-grid { column-count: 3; }
