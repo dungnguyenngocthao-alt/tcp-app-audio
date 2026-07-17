@@ -1578,14 +1578,13 @@ mark { background: var(--tcp-accent-subtle); color: var(--tcp-accent-hover); bor
         </header>
 
         <div class="page">
-          <h1 class="page__title">New Analysis</h1>
-          <p class="page__lead">Upload an audio file or provide an external link to begin acoustic intelligence processing.</p>
+          <h1 class="page__title">Upload file</h1>
 
           <!-- Upload card -->
           <div class="card">
             <div class="tabs" role="tablist">
-              <button class="tab is-active" role="tab" aria-selected="true" data-uptab="file">File Upload</button>
-              <button class="tab" role="tab" aria-selected="false" data-uptab="link">External Link</button>
+              <button class="tab is-active" role="tab" aria-selected="true" data-uptab="file">Chọn file</button>
+              <button class="tab" role="tab" aria-selected="false" data-uptab="link">Chèn link</button>
             </div>
 
             <div data-uppane="file">
@@ -1593,9 +1592,9 @@ mark { background: var(--tcp-accent-subtle); color: var(--tcp-accent-hover); bor
               <div class="dropzone__icon">
                 <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M178.34,165.66,160,147.31V208a8,8,0,0,1-16,0V147.31l-18.34,18.35a8,8,0,0,1-11.32-11.32l32-32a8,8,0,0,1,11.32,0l32,32a8,8,0,0,1-11.32,11.32ZM160,40A88.08,88.08,0,0,0,81.29,88.68,64,64,0,1,0,72,216h40a8,8,0,0,0,0-16H72a48,48,0,0,1,0-96c1.1,0,2.2,0,3.29.12A88,88,0,0,0,72,128a8,8,0,0,0,16,0,72,72,0,1,1,100.8,66,8,8,0,0,0,3.2,15.34,7.9,7.9,0,0,0,3.2-.68A88,88,0,0,0,160,40Z"/></svg>
               </div>
-              <h2 class="dropzone__title">Drag and drop audio files</h2>
+              <h2 class="dropzone__title">Kéo và thả tệp</h2>
               <p class="dropzone__hint">Chọn hoặc kéo thả nhiều tệp · WAV, MP3, FLAC (Max 500MB)</p>
-              <button class="btn btn--ink" id="browseBtn" type="button">Browse Files</button>
+              <button class="btn btn--ink" id="browseBtn" type="button">Chọn file</button>
               <input type="file" id="fileInput" accept=".wav,.mp3,.flac,audio/*" multiple hidden>
               <button class="dropzone__sample" id="sampleBtn" type="button">Chưa có tệp? Nạp 4 tệp mẫu để xem thử &rarr;</button>
               </div>
@@ -1613,7 +1612,7 @@ mark { background: var(--tcp-accent-subtle); color: var(--tcp-accent-hover); bor
 
           <!-- Analysis profile (incl. AI model) -->
           <div class="card">
-            <h2 class="section-title">Analysis Profile</h2>
+            <h2 class="section-title">Điều chỉnh cấu hình</h2>
 
             <div class="field">
               <label class="field__label field__label--ai" for="modelSelect">
@@ -1629,7 +1628,7 @@ mark { background: var(--tcp-accent-subtle); color: var(--tcp-accent-hover); bor
             </div>
 
             <div class="field">
-              <label class="field__label" for="sensitivity">Sensitivity</label>
+              <label class="field__label" for="sensitivity">Độ nhạy</label>
               <div class="slider-row">
                 <input class="slider" id="sensitivity" type="range" min="0" max="100" value="75" aria-label="Sensitivity">
                 <span class="slider-value" id="sensitivityValue">75%</span>
@@ -1639,7 +1638,7 @@ mark { background: var(--tcp-accent-subtle); color: var(--tcp-accent-hover); bor
             <hr class="field-divider">
 
             <div class="row-between">
-              <span class="setting-label">Auto-detect anomalies</span>
+              <span class="setting-label">Tự động phát hiện bất thường</span>
               <label class="toggle">
                 <input type="checkbox" id="anomalyToggle" checked>
                 <span class="toggle__track"></span>
@@ -1649,7 +1648,7 @@ mark { background: var(--tcp-accent-subtle); color: var(--tcp-accent-hover); bor
         </div>
 
         <div class="page-cta">
-          <button class="btn btn--accent btn--lg btn--block" id="processBtn" type="button">Process Audio</button>
+          <button class="btn btn--accent btn--lg btn--block" id="processBtn" type="button">Bắt đầu phân tích</button>
         </div>
       </div>
     </section>
