@@ -929,8 +929,9 @@
     // cards: 0 outcome, 1 audio-quality, 2 keywords, 3 sentiment,
     //        4 talk, 5 summary, 6 actions, 7 transcript.
     // Audio-quality (1) sits directly under the outcome (0) card.
-    // Desktop: sentiment (3) moves to column 2; the outcome card stretches.
-    const groups = bp === "d" ? [[0, 1, 2], [3, 4, 5, 6], [7]]
+    // Desktop: outcome fills col 1, actions (Gợi ý) fills col 2, transcript
+    // absorbs/scrolls in col 3 — so all three columns are equal height.
+    const groups = bp === "d" ? [[0, 1, 2, 3], [4, 5, 6], [7]]
                  : bp === "t" ? [[0, 1, 2, 3, 4], [5, 6, 7]]
                  : [[0, 1, 2, 3, 4, 5, 6, 7]];
 
