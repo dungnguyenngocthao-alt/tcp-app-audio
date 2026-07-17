@@ -742,6 +742,10 @@ button { font-family: inherit; }
   letter-spacing: 1px; text-transform: uppercase;
   color: var(--tcp-fg-tertiary);
 }
+/* Consultation-rate tint on the outcome card */
+.card.outcome-card--good { background: #E9F9EF; border-color: #C7EFD6; }
+.card.outcome-card--mid  { background: #FFF7E0; border-color: #F2E2AF; }
+.card.outcome-card--low  { background: #FDEBF0; border-color: #F6CEDB; }
 
 /* Keyword chips */
 .chips { display: flex; flex-wrap: wrap; gap: var(--tcp-space-2); }
@@ -755,6 +759,9 @@ button { font-family: inherit; }
   font-weight: var(--tcp-fw-medium);
 }
 .chip b { font-weight: var(--tcp-fw-bold); opacity: .7; }
+/* Keyword chips coloured by the sentiment keyword sets in Settings */
+.chip--pos { background: var(--tcp-success-bg); color: var(--tcp-success-fg); }
+.chip--neg { background: var(--tcp-error-bg); color: var(--tcp-error-fg); }
 
 /* Sentiment */
 .senti-head {

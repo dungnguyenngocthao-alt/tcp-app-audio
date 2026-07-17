@@ -254,6 +254,7 @@
         timer = null;
         setTimeout(() => {
           if (cancelled) return;
+          resultsBackTarget = "analysis";
           renderFileStrip();
           selectResultFile(0);
           show("results");
@@ -403,7 +404,15 @@
   let archSeq = 0;
   const archive = HISTORY.map(r => ({ ...r, id: ++archSeq, folder: null }));
   let folderSeq = 0;
-  const folders = [];               // { id, name }
+  // Pre-seeded sample folders, one per sales rep, with a few calls filed away.
+  const folders = [               // { id, name }
+    { id: ++folderSeq, name: "Nguyễn Văn An" },
+    { id: ++folderSeq, name: "Trần Thị Bình" },
+    { id: ++folderSeq, name: "Lê Hoàng Cường" },
+  ];
+  [[0, 3, 7], [1, 4, 9], [2, 5]].forEach((idxs, fi) =>
+    idxs.forEach(i => { if (archive[i]) archive[i].folder = folders[fi].id; })
+  );
   let currentFolder = null;         // folder id, or null for the root
   let selectMode = false;
   const selected = new Set();       // selected file ids
@@ -671,13 +680,13 @@
       return;
     }
     const view = e.target.closest("[data-view]");
-    if (view) { showSingleResult(view.dataset.file, view.dataset.date); return; }
+    if (view) { showSingleResult(view.dataset.file, view.dataset.date, "history"); return; }
     const exp = e.target.closest("[data-hist-export]");
     if (exp) {
       const card = exp.closest(".hist");
       const it = card && archive.find(a => a.id === parseInt(card.dataset.id, 10));
       exportTranscript(it ? it.file : "");
-      flashExport(exp, "Đã xuất");
+      flashCheckIcon(exp);
     }
   });
 
@@ -737,7 +746,7 @@
     dashTop3.addEventListener("click", e => {
       const view = e.target.closest("[data-view]");
       if (view) {
-        showSingleResult(view.dataset.file, view.dataset.date);
+        showSingleResult(view.dataset.file, view.dataset.date, "dashboard");
         return;
       }
       const exp = e.target.closest("[data-dash-export]");
@@ -763,7 +772,7 @@
   const fileStripPrev   = $("#fileStripPrev");
   const fileStripNext   = $("#fileStripNext");
   const NAV_THRESHOLD   = 2;   // need >2 files before arrows can appear
-  const OUTCOME_LABEL = { success: "Successful Sale", warning: "Follow-up", neutral: "No Sale" };
+  const OUTCOME_LABEL = { success: "Tư vấn xuất sắc", warning: "Tư vấn hiệu quả", neutral: "Cần cải thiện" };
 
   /* Show the scroll arrows whenever the strip actually overflows (and there
      are more than 2 files) — so on a narrow phone even 3 files get arrows,
@@ -794,6 +803,13 @@
 
   let resultFiles = [];   // names shown in the current strip
   let resultDate  = "";
+  let resultsBackTarget = "analysis";   // where the results back-button returns to
+
+  const resultsBackBtn = $("[data-results-back]");
+  if (resultsBackBtn) resultsBackBtn.addEventListener("click", () => {
+    if (resultsBackTarget === "analysis") { resetAnalysis(); show("analysis"); }
+    else show(resultsBackTarget);
+  });
 
   function todayLabel() {
     const d = new Date();
@@ -808,7 +824,7 @@
     let h = 0;
     for (let i = 0; i < name.length; i++) h = (h * 31 + name.charCodeAt(i)) >>> 0;
     // Spread wide enough that some calls land in the low-confidence (<30%) band
-    const conf = 12 + (h % 87);
+    const conf = name === DEFAULT_PROC_NAME ? 78 : 12 + (h % 87);
     const type = conf >= 85 ? "success" : conf >= 66 ? "warning" : "neutral";
     const dur = (16 + (h % 30)) + ":" + String((h >>> 3) % 60).padStart(2, "0");
     return { conf, type, dur, outcome: OUTCOME_LABEL[type] };
@@ -846,6 +862,14 @@
     if (title) title.textContent = m.outcome;
     if (pct)   pct.textContent = m.conf + "%";
 
+    // Tint the outcome card by consultation rate: >60 green, 40–60 amber, <40 pink
+    const outcome = $("#screen-results .outcome");
+    const card = outcome && outcome.closest(".card");
+    if (card) {
+      card.classList.remove("outcome-card--good", "outcome-card--mid", "outcome-card--low");
+      card.classList.add(m.conf > 60 ? "outcome-card--good" : m.conf >= 40 ? "outcome-card--mid" : "outcome-card--low");
+    }
+
     if (fileStripScroll) {
       $$(".fchip", fileStripScroll).forEach(c =>
         c.classList.toggle("is-active", parseInt(c.dataset.chip, 10) === index)
@@ -868,7 +892,8 @@
   selectResultFile(0);
 
   // Opening a single call from History / Dashboard: show it as one chip
-  function showSingleResult(file, date) {
+  function showSingleResult(file, date, from) {
+    resultsBackTarget = from || "history";
     resultDate = date || todayLabel();
     renderFileStrip([file]);
     selectResultFile(0);
@@ -942,7 +967,7 @@
   function setupKwEditor(listId, inputId, addId, arr, kind) {
     const listEl = $("#" + listId), input = $("#" + inputId), addBtn = $("#" + addId);
     if (!listEl || !input || !addBtn) return;
-    const draw = () => { renderKw(listEl, arr, kind); highlightTranscript(); };
+    const draw = () => { renderKw(listEl, arr, kind); highlightTranscript(); colorKeywordChips(); };
     const add = () => {
       const v = input.value.trim();
       if (!v) { input.focus(); return; }
@@ -987,9 +1012,21 @@
     });
   }
 
+  /* Colour the "Từ khóa nổi bật" chips by the sentiment keyword sets */
+  function colorKeywordChips() {
+    const posSet = new Set(positiveKeywords.map(s => s.toLowerCase()));
+    const negSet = new Set(negativeKeywords.map(s => s.toLowerCase()));
+    $$("#screen-results .chips .chip").forEach(chip => {
+      const word = ((chip.childNodes[0] && chip.childNodes[0].textContent) || "").trim().toLowerCase();
+      chip.classList.toggle("chip--pos", posSet.has(word));
+      chip.classList.toggle("chip--neg", negSet.has(word));
+    });
+  }
+
   setupKwEditor("successKwList", "successKwInput", "successKwAdd", positiveKeywords, "pos");
   setupKwEditor("failureKwList", "failureKwInput", "failureKwAdd", negativeKeywords, "neg");
   highlightTranscript();
+  colorKeywordChips();
 
   /* -------------------------------------------------------------------------
      Dashboard export — build a real .xlsx (3 sheets), dependency-free

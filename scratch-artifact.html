@@ -928,6 +928,10 @@ button { font-family: inherit; }
   letter-spacing: 1px; text-transform: uppercase;
   color: var(--tcp-fg-tertiary);
 }
+/* Consultation-rate tint on the outcome card */
+.card.outcome-card--good { background: #E9F9EF; border-color: #C7EFD6; }
+.card.outcome-card--mid  { background: #FFF7E0; border-color: #F2E2AF; }
+.card.outcome-card--low  { background: #FDEBF0; border-color: #F6CEDB; }
 
 /* Keyword chips */
 .chips { display: flex; flex-wrap: wrap; gap: var(--tcp-space-2); }
@@ -941,6 +945,9 @@ button { font-family: inherit; }
   font-weight: var(--tcp-fw-medium);
 }
 .chip b { font-weight: var(--tcp-fw-bold); opacity: .7; }
+/* Keyword chips coloured by the sentiment keyword sets in Settings */
+.chip--pos { background: var(--tcp-success-bg); color: var(--tcp-success-fg); }
+.chip--neg { background: var(--tcp-error-bg); color: var(--tcp-error-fg); }
 
 /* Sentiment */
 .senti-head {
@@ -1725,7 +1732,7 @@ mark.mark--neg { background: var(--tcp-error-bg); color: var(--tcp-error-900); }
 
         <div class="results-head">
           <div class="results-head__top">
-            <button class="iconbtn" type="button" data-nav="analysis" data-reset aria-label="Quay lại — phân tích mới">
+            <button class="iconbtn" type="button" data-results-back aria-label="Quay lại">
               <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M224,128a8,8,0,0,1-8,8H59.31l58.35,58.34a8,8,0,0,1-11.32,11.32l-72-72a8,8,0,0,1,0-11.32l72-72a8,8,0,0,1,11.32,11.32L59.31,120H216A8,8,0,0,1,224,128Z"/></svg>
             </button>
             <h1 class="results-head__title">Kết quả phân tích</h1>
@@ -1754,8 +1761,8 @@ mark.mark--neg { background: var(--tcp-error-bg); color: var(--tcp-error-900); }
               <div class="outcome__badge">
                 <svg viewBox="0 0 256 256" fill="currentColor" width="26" height="26" aria-hidden="true"><path d="M229.66,77.66l-128,128a8,8,0,0,1-11.32,0l-56-56a8,8,0,0,1,11.32-11.32L96,188.69,218.34,66.34a8,8,0,0,1,11.32,11.32Z"/></svg>
               </div>
-              <div class="outcome__title">Successful Sale</div>
-              <div class="outcome__pct">98%</div>
+              <div class="outcome__title">Tư vấn hiệu quả</div>
+              <div class="outcome__pct">78%</div>
               <div class="outcome__caption">Tỷ lệ tư vấn</div>
             </div>
           </div>
@@ -1860,7 +1867,10 @@ mark.mark--neg { background: var(--tcp-error-bg); color: var(--tcp-error-900); }
 
           <!-- Summary -->
           <div class="card">
-            <h2 class="section-title">Tóm tắt</h2>
+            <div class="result-card__label">
+              <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M216,40H40A16,16,0,0,0,24,56V200a16,16,0,0,0,16,16H216a16,16,0,0,0,16-16V56A16,16,0,0,0,216,40Zm0,160H40V56H216V200ZM184,96a8,8,0,0,1-8,8H80a8,8,0,0,1,0-16h96A8,8,0,0,1,184,96Zm0,32a8,8,0,0,1-8,8H80a8,8,0,0,1,0-16h96A8,8,0,0,1,184,128Zm0,32a8,8,0,0,1-8,8H80a8,8,0,0,1,0-16h96A8,8,0,0,1,184,160Z"/></svg>
+              Tóm tắt
+            </div>
             <ul class="bullet-list">
               <li>Khách hàng quan tâm đến tính năng Real-time analytics.</li>
               <li>Có một số thắc mắc về giá cả gói Premium.</li>
@@ -1870,7 +1880,10 @@ mark.mark--neg { background: var(--tcp-error-bg); color: var(--tcp-error-900); }
 
           <!-- Suggested actions -->
           <div class="card card--actions">
-            <h2 class="section-title">Gợi ý</h2>
+            <div class="result-card__label">
+              <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M176,232a8,8,0,0,1-8,8H88a8,8,0,0,1,0-16h80A8,8,0,0,1,176,232Zm40-128a87.55,87.55,0,0,1-33.64,69.21A16.24,16.24,0,0,0,176,186v6a16,16,0,0,1-16,16H96a16,16,0,0,1-16-16v-6a16,16,0,0,0-6.23-12.66A87.59,87.59,0,0,1,40,104.49C39.74,56.83,78.26,17.14,125.88,16A88,88,0,0,1,216,104Zm-16,0a72,72,0,0,0-73.74-72c-39,.92-70.47,33.39-70.26,72.39a71.65,71.65,0,0,0,27.64,56.3A32,32,0,0,1,96,186v6h64v-6a32.15,32.15,0,0,1,12.47-25.35A71.65,71.65,0,0,0,200,104Zm-16.11-9.34a57.6,57.6,0,0,0-46.56-46.55,8,8,0,0,0-2.66,15.78c16.57,2.79,30.63,16.85,33.44,33.45A8,8,0,0,0,176,104a9,9,0,0,0,1.35-.11A8,8,0,0,0,183.89,94.66Z"/></svg>
+              Gợi ý
+            </div>
             <div class="action-item">
               <span class="action-item__icon">
                 <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M224,48H32a8,8,0,0,0-8,8V192a16,16,0,0,0,16,16H216a16,16,0,0,0,16-16V56A8,8,0,0,0,224,48Zm-96,85.15L52.57,64H203.43ZM98.71,128,40,181.81V74.19Zm11.84,10.85,12,11.05a8,8,0,0,0,10.82,0l12-11.05,58,53.15H52.57ZM157.29,128,216,74.18V181.82Z"/></svg>
@@ -2218,10 +2231,6 @@ mark.mark--neg { background: var(--tcp-error-bg); color: var(--tcp-error-900); }
             <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M104,40H56A16,16,0,0,0,40,56v48a16,16,0,0,0,16,16h48a16,16,0,0,0,16-16V56A16,16,0,0,0,104,40Zm0,64H56V56h48v48Zm96-64H152a16,16,0,0,0-16,16v48a16,16,0,0,0,16,16h48a16,16,0,0,0,16-16V56A16,16,0,0,0,200,40Zm0,64H152V56h48v48Zm-96,32H56a16,16,0,0,0-16,16v48a16,16,0,0,0,16,16h48a16,16,0,0,0,16-16V152A16,16,0,0,0,104,136Zm0,64H56V152h48v48Zm96-64H152a16,16,0,0,0-16,16v48a16,16,0,0,0,16,16h48a16,16,0,0,0,16-16V152A16,16,0,0,0,200,136Zm0,64H152V152h48v48Z"/></svg>
             <span>Dashboard</span>
           </button>
-          <button class="drawer__item" role="menuitem" type="button" data-nav="results">
-            <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M224,200h-8V40a8,8,0,0,0-8-8H152a8,8,0,0,0-8,8V80H96a8,8,0,0,0-8,8v40H48a8,8,0,0,0-8,8v64H32a8,8,0,0,0,0,16H224a8,8,0,0,0,0-16ZM160,48h40V200H160ZM104,96h40V200H104ZM56,144H88v56H56Z"/></svg>
-            <span>Kết quả phân tích</span>
-          </button>
           <button class="drawer__item" role="menuitem" type="button" data-nav="history">
             <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M216,72H131.31L104,44.69A15.86,15.86,0,0,0,92.69,40H40A16,16,0,0,0,24,56V200.62A15.4,15.4,0,0,0,39.38,216H216.89A15.13,15.13,0,0,0,232,200.89V88A16,16,0,0,0,216,72ZM40,56H92.69l16,16H40ZM216,200H40V88H216Z"/></svg>
             <span>Lưu trữ</span>
@@ -2492,6 +2501,7 @@ mark.mark--neg { background: var(--tcp-error-bg); color: var(--tcp-error-900); }
         timer = null;
         setTimeout(() => {
           if (cancelled) return;
+          resultsBackTarget = "analysis";
           renderFileStrip();
           selectResultFile(0);
           show("results");
@@ -2641,7 +2651,15 @@ mark.mark--neg { background: var(--tcp-error-bg); color: var(--tcp-error-900); }
   let archSeq = 0;
   const archive = HISTORY.map(r => ({ ...r, id: ++archSeq, folder: null }));
   let folderSeq = 0;
-  const folders = [];               // { id, name }
+  // Pre-seeded sample folders, one per sales rep, with a few calls filed away.
+  const folders = [               // { id, name }
+    { id: ++folderSeq, name: "Nguyễn Văn An" },
+    { id: ++folderSeq, name: "Trần Thị Bình" },
+    { id: ++folderSeq, name: "Lê Hoàng Cường" },
+  ];
+  [[0, 3, 7], [1, 4, 9], [2, 5]].forEach((idxs, fi) =>
+    idxs.forEach(i => { if (archive[i]) archive[i].folder = folders[fi].id; })
+  );
   let currentFolder = null;         // folder id, or null for the root
   let selectMode = false;
   const selected = new Set();       // selected file ids
@@ -2909,13 +2927,13 @@ mark.mark--neg { background: var(--tcp-error-bg); color: var(--tcp-error-900); }
       return;
     }
     const view = e.target.closest("[data-view]");
-    if (view) { showSingleResult(view.dataset.file, view.dataset.date); return; }
+    if (view) { showSingleResult(view.dataset.file, view.dataset.date, "history"); return; }
     const exp = e.target.closest("[data-hist-export]");
     if (exp) {
       const card = exp.closest(".hist");
       const it = card && archive.find(a => a.id === parseInt(card.dataset.id, 10));
       exportTranscript(it ? it.file : "");
-      flashExport(exp, "Đã xuất");
+      flashCheckIcon(exp);
     }
   });
 
@@ -2975,7 +2993,7 @@ mark.mark--neg { background: var(--tcp-error-bg); color: var(--tcp-error-900); }
     dashTop3.addEventListener("click", e => {
       const view = e.target.closest("[data-view]");
       if (view) {
-        showSingleResult(view.dataset.file, view.dataset.date);
+        showSingleResult(view.dataset.file, view.dataset.date, "dashboard");
         return;
       }
       const exp = e.target.closest("[data-dash-export]");
@@ -3001,7 +3019,7 @@ mark.mark--neg { background: var(--tcp-error-bg); color: var(--tcp-error-900); }
   const fileStripPrev   = $("#fileStripPrev");
   const fileStripNext   = $("#fileStripNext");
   const NAV_THRESHOLD   = 2;   // need >2 files before arrows can appear
-  const OUTCOME_LABEL = { success: "Successful Sale", warning: "Follow-up", neutral: "No Sale" };
+  const OUTCOME_LABEL = { success: "Tư vấn xuất sắc", warning: "Tư vấn hiệu quả", neutral: "Cần cải thiện" };
 
   /* Show the scroll arrows whenever the strip actually overflows (and there
      are more than 2 files) — so on a narrow phone even 3 files get arrows,
@@ -3032,6 +3050,13 @@ mark.mark--neg { background: var(--tcp-error-bg); color: var(--tcp-error-900); }
 
   let resultFiles = [];   // names shown in the current strip
   let resultDate  = "";
+  let resultsBackTarget = "analysis";   // where the results back-button returns to
+
+  const resultsBackBtn = $("[data-results-back]");
+  if (resultsBackBtn) resultsBackBtn.addEventListener("click", () => {
+    if (resultsBackTarget === "analysis") { resetAnalysis(); show("analysis"); }
+    else show(resultsBackTarget);
+  });
 
   function todayLabel() {
     const d = new Date();
@@ -3046,7 +3071,7 @@ mark.mark--neg { background: var(--tcp-error-bg); color: var(--tcp-error-900); }
     let h = 0;
     for (let i = 0; i < name.length; i++) h = (h * 31 + name.charCodeAt(i)) >>> 0;
     // Spread wide enough that some calls land in the low-confidence (<30%) band
-    const conf = 12 + (h % 87);
+    const conf = name === DEFAULT_PROC_NAME ? 78 : 12 + (h % 87);
     const type = conf >= 85 ? "success" : conf >= 66 ? "warning" : "neutral";
     const dur = (16 + (h % 30)) + ":" + String((h >>> 3) % 60).padStart(2, "0");
     return { conf, type, dur, outcome: OUTCOME_LABEL[type] };
@@ -3084,6 +3109,14 @@ mark.mark--neg { background: var(--tcp-error-bg); color: var(--tcp-error-900); }
     if (title) title.textContent = m.outcome;
     if (pct)   pct.textContent = m.conf + "%";
 
+    // Tint the outcome card by consultation rate: >60 green, 40–60 amber, <40 pink
+    const outcome = $("#screen-results .outcome");
+    const card = outcome && outcome.closest(".card");
+    if (card) {
+      card.classList.remove("outcome-card--good", "outcome-card--mid", "outcome-card--low");
+      card.classList.add(m.conf > 60 ? "outcome-card--good" : m.conf >= 40 ? "outcome-card--mid" : "outcome-card--low");
+    }
+
     if (fileStripScroll) {
       $$(".fchip", fileStripScroll).forEach(c =>
         c.classList.toggle("is-active", parseInt(c.dataset.chip, 10) === index)
@@ -3106,7 +3139,8 @@ mark.mark--neg { background: var(--tcp-error-bg); color: var(--tcp-error-900); }
   selectResultFile(0);
 
   // Opening a single call from History / Dashboard: show it as one chip
-  function showSingleResult(file, date) {
+  function showSingleResult(file, date, from) {
+    resultsBackTarget = from || "history";
     resultDate = date || todayLabel();
     renderFileStrip([file]);
     selectResultFile(0);
@@ -3180,7 +3214,7 @@ mark.mark--neg { background: var(--tcp-error-bg); color: var(--tcp-error-900); }
   function setupKwEditor(listId, inputId, addId, arr, kind) {
     const listEl = $("#" + listId), input = $("#" + inputId), addBtn = $("#" + addId);
     if (!listEl || !input || !addBtn) return;
-    const draw = () => { renderKw(listEl, arr, kind); highlightTranscript(); };
+    const draw = () => { renderKw(listEl, arr, kind); highlightTranscript(); colorKeywordChips(); };
     const add = () => {
       const v = input.value.trim();
       if (!v) { input.focus(); return; }
@@ -3225,9 +3259,21 @@ mark.mark--neg { background: var(--tcp-error-bg); color: var(--tcp-error-900); }
     });
   }
 
+  /* Colour the "Từ khóa nổi bật" chips by the sentiment keyword sets */
+  function colorKeywordChips() {
+    const posSet = new Set(positiveKeywords.map(s => s.toLowerCase()));
+    const negSet = new Set(negativeKeywords.map(s => s.toLowerCase()));
+    $$("#screen-results .chips .chip").forEach(chip => {
+      const word = ((chip.childNodes[0] && chip.childNodes[0].textContent) || "").trim().toLowerCase();
+      chip.classList.toggle("chip--pos", posSet.has(word));
+      chip.classList.toggle("chip--neg", negSet.has(word));
+    });
+  }
+
   setupKwEditor("successKwList", "successKwInput", "successKwAdd", positiveKeywords, "pos");
   setupKwEditor("failureKwList", "failureKwInput", "failureKwAdd", negativeKeywords, "neg");
   highlightTranscript();
+  colorKeywordChips();
 
   /* -------------------------------------------------------------------------
      Dashboard export — build a real .xlsx (3 sheets), dependency-free
