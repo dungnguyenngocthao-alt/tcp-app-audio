@@ -326,24 +326,7 @@
     setTimeout(() => { btn.innerHTML = original; btn.disabled = false; }, 1400);
   }
   /* Show/hide the results subtitle. It's redundant when the file strip is
-     visible (the chips already name the files), so hide it there. */
-  function setSubVisible(v) {
-    const sub = $("#screen-results .results-head__sub");
-    if (sub) sub.hidden = !v;
-  }
-  /* Fill the results subtitle with a call's file + date */
-  function setResultsSub(file, date) {
-    const sub = $("#screen-results .results-head__sub");
-    if (!sub) return;
-    sub.textContent = file;
-    const sep = document.createElement("span");
-    sep.className = "results-head__sep";
-    sep.textContent = " • ";
-    const d = document.createElement("span");
-    d.className = "results-head__date";
-    d.textContent = date;
-    sub.append(sep, d);
-  }
+     visible — the file name lives on the chip, so there's no subtitle. */
 
   /* Reusable confirm dialog */
   const confirmModal = $("#confirmModal");
@@ -831,22 +814,13 @@
     return { conf, type, dur, outcome: OUTCOME_LABEL[type] };
   }
 
-  // Build the horizontal strip from the uploaded files. Hidden for a single
-  // file — then the Results screen is just the plain analysis.
-  function renderFileStrip() {
-    resultFiles = (selectedFiles.length ? selectedFiles.map(f => f.name) : [DEFAULT_PROC_NAME]);
-    resultDate = todayLabel();
+  // Build the horizontal strip of analysed files. Always shown — a single
+  // result renders one chip (no subtitle).
+  function renderFileStrip(names) {
+    resultFiles = names || (selectedFiles.length ? selectedFiles.map(f => f.name) : [DEFAULT_PROC_NAME]);
     if (!fileStrip) return;
 
-    if (resultFiles.length <= 1) {
-      fileStrip.hidden = true;
-      fileStripScroll.innerHTML = "";
-      setSubVisible(true);
-      updateStripNav();
-      return;
-    }
     fileStrip.hidden = false;
-    setSubVisible(false);
     if (fileStripCount) fileStripCount.textContent = resultFiles.length + " tệp đã phân tích";
     fileStripScroll.innerHTML = resultFiles.map((name, i) => {
       const m = mockCall(name);
@@ -866,8 +840,6 @@
   // Swap the analysis below to a given file (by index into resultFiles)
   function selectResultFile(index) {
     const name = resultFiles[index] || DEFAULT_PROC_NAME;
-    setResultsSub(name, resultDate || todayLabel());
-
     const m = mockCall(name);
     const title = $("#screen-results .outcome__title");
     const pct   = $("#screen-results .outcome__pct");
@@ -890,14 +862,18 @@
     });
   }
 
-  // Opening a single call from History / Dashboard: no strip, just the analysis
+  // Seed the strip with a single default chip so the Results screen always
+  // shows at least one file (e.g. when opened straight from the menu).
+  renderFileStrip([DEFAULT_PROC_NAME]);
+  selectResultFile(0);
+
+  // Opening a single call from History / Dashboard: show it as one chip
   function showSingleResult(file, date) {
-    if (fileStrip) { fileStrip.hidden = true; fileStripScroll.innerHTML = ""; }
-    resultFiles = [];
-    setSubVisible(true);
-    updateStripNav();
-    setResultsSub(file, date);
+    resultDate = date || todayLabel();
+    renderFileStrip([file]);
+    selectResultFile(0);
     show("results");
+    updateStripNav();
   }
 
   /* -------------------------------------------------------------------------
@@ -927,9 +903,9 @@
 
     // cards: 0 outcome, 1 audio-quality, 2 keywords, 3 sentiment,
     //        4 talk, 5 summary, 6 actions, 7 transcript.
-    // Keep outcome (0) and audio-quality (1) on the same top row.
-    const groups = bp === "d" ? [[0, 2, 3], [1, 4, 5, 6], [7]]
-                 : bp === "t" ? [[0, 2, 3, 4], [1, 5, 6, 7]]
+    // Audio-quality (1) sits directly under the outcome (0) card.
+    const groups = bp === "d" ? [[0, 1, 2, 3], [4, 5, 6], [7]]
+                 : bp === "t" ? [[0, 1, 2, 3, 4], [5, 6, 7]]
                  : [[0, 1, 2, 3, 4, 5, 6, 7]];
 
     while (resultsPage.firstChild) resultsPage.removeChild(resultsPage.firstChild);
@@ -1117,17 +1093,15 @@
 
   /* Transcript export — download the conversation as a .txt file */
   const TRANSCRIPT = [
-    { who: "Agent",       time: "00:15", text: "Chào anh Tâm, cảm ơn anh đã dành thời gian. Hôm nay em muốn giới thiệu về hệ thống SonicAI bên em." },
+    { who: "Tư vấn viên", time: "00:15", text: "Chào anh Tâm, cảm ơn anh đã dành thời gian. Hôm nay em muốn giới thiệu về hệ thống SonicAI bên em." },
     { who: "Khách hàng",  time: "00:42", text: "Chào bạn. Mình đang quan tâm đến tính năng phân tích dữ liệu real-time. Bên bạn có hỗ trợ tốt phần này không?" },
-    { who: "Agent",       time: "01:05", text: "Dạ hoàn toàn được ạ. Gói Premium bên em thiết kế đặc biệt cho xử lý luồng dữ liệu lớn theo thời gian thực, độ trễ chưa tới 50ms." },
+    { who: "Tư vấn viên", time: "01:05", text: "Dạ hoàn toàn được ạ. Gói Premium bên em thiết kế đặc biệt cho xử lý luồng dữ liệu lớn theo thời gian thực, độ trễ chưa tới 50ms." },
     { who: "Khách hàng",  time: "01:38", text: "Nghe có vẻ ổn. Nhưng về giá cả thì sao? Có vẻ hơi cao so với ngân sách dự kiến của bên mình." },
   ];
   function currentResultName() {
     const active = fileStripScroll && fileStripScroll.querySelector(".fchip.is-active .fchip__name");
     if (active) return active.textContent.trim();
-    const sub = $("#screen-results .results-head__sub");
-    if (sub && sub.childNodes[0]) return (sub.childNodes[0].textContent || "").trim();
-    return DEFAULT_PROC_NAME;
+    return resultFiles[0] || DEFAULT_PROC_NAME;
   }
   function buildTranscriptText(fileName) {
     const lines = ["SonicAI — Bản ghi cuộc hội thoại", ""];

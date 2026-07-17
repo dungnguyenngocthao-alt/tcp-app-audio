@@ -794,13 +794,13 @@ button { font-family: inherit; }
 }
 .talk-legend { flex: 1; }
 .legend-row {
-  display: flex; align-items: center; gap: var(--tcp-space-2);
+  display: flex; align-items: center;
   margin-bottom: var(--tcp-space-3);
   font-size: 14px;
 }
 .legend-row:last-child { margin-bottom: 0; }
-.legend-dot { width: 11px; height: 11px; border-radius: 3px; }
-.legend-row span:last-child { margin-left: auto; font-weight: var(--tcp-fw-bold); color: var(--tcp-fg-primary); }
+.legend-dot { width: 11px; height: 11px; border-radius: 3px; margin-right: var(--tcp-space-2); }
+.legend-row span:last-child { margin-left: var(--tcp-space-3); font-weight: var(--tcp-fw-bold); color: var(--tcp-fg-primary); }
 
 /* Summary / actions lists */
 .bullet-list { list-style: none; margin: 0; padding: 0; }
@@ -1304,14 +1304,8 @@ mark.mark--neg { background: var(--tcp-error-bg); color: var(--tcp-error-900); }
 }
 #screen-results .page.is-cols > .rcol > .card { margin: 0; }
 @media (min-width: 768px) {
-  /* Successful-rate card fills column 1; transcript fills its column and
-     scrolls inside — so every column stretches to the same height. */
-  #screen-results .page.is-cols > .rcol:first-child > .card:first-child {
-    flex: 1 1 auto;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-  }
+  /* The transcript is the flexible card — it grows to fill its column and
+     scrolls inside, so every column stretches to the same height. */
   #screen-results .page.is-cols .card--transcript {
     flex: 1 1 auto;
     min-height: 0;
