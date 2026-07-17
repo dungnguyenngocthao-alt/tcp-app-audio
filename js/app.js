@@ -840,7 +840,7 @@
     if (!pie) return;
     const inCount = 152, outCount = 94, total = inCount + outCount;
     const inPct = Math.round(inCount / total * 100);
-    pie.style.background = `conic-gradient(#EF4444 0 ${inPct}%, #22C55E ${inPct}% 100%)`;
+    pie.style.background = `conic-gradient(#F97316 0 ${inPct}%, var(--tcp-accent) ${inPct}% 100%)`;
     const set = (id, v) => { const el = $("#" + id); if (el) el.textContent = v; };
     set("pieInPct", inPct + "%");
     set("pieIn", inCount);
