@@ -670,7 +670,14 @@ button { font-family: inherit; }
   overflow: hidden;
   text-overflow: ellipsis;
 }
-.fchip__meta { display: block; font-size: 11px; color: var(--tcp-fg-tertiary); margin-top: 1px; }
+.fchip__meta { display: block; font-size: 11px; color: var(--tcp-fg-tertiary); margin-top: 2px; }
+.fchip__dir {
+  display: inline-block; vertical-align: middle;
+  font-size: 10px; font-weight: 500; line-height: 1.4;
+  padding: 0 6px; margin-right: 6px; border-radius: var(--tcp-radius-pill);
+}
+.fchip__dir--in { background: var(--tcp-success-bg); color: var(--tcp-success-900); }
+.fchip__dir--out { background: var(--tcp-accent-subtle); color: var(--tcp-accent-hover); }
 
 .result-card__label {
   display: flex; align-items: center; gap: var(--tcp-space-2);
@@ -1227,14 +1234,68 @@ mark.mark--neg { background: var(--tcp-error-bg); color: var(--tcp-error-900); }
 /* ---------------------------------------------------------------------------
    SCREEN 5 · Dashboard
    --------------------------------------------------------------------------- */
+/* Top row: uploads bar chart + call-direction pie */
+.dash-toprow { display: grid; grid-template-columns: 1fr; gap: 20px; margin-bottom: var(--tcp-space-5); align-items: stretch; }
+.dash-toprow > .card { margin-top: 0; }
+
+/* Uploads bar chart */
+.dash-chart__head {
+  display: flex; align-items: flex-start; justify-content: space-between;
+  gap: var(--tcp-space-4); flex-wrap: wrap; margin-bottom: var(--tcp-space-3);
+}
+.dash-chart__legend { display: flex; gap: var(--tcp-space-4); margin-bottom: var(--tcp-space-4); }
+.cl-item { display: inline-flex; align-items: center; font-size: 12px; color: var(--tcp-fg-secondary); }
+.cl-dot { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 7px; vertical-align: middle; }
+.cl-dot--in { background: #22C55E; }
+.cl-dot--out { background: var(--tcp-accent); }
+.dash-chart__total { font-size: 32px; font-weight: 600; color: var(--tcp-ink); letter-spacing: -0.6px; line-height: 1.1; }
+.dash-chart__cap { font-size: 12px; color: var(--tcp-fg-tertiary); text-transform: uppercase; letter-spacing: .8px; margin-top: 3px; }
+.seg { display: inline-flex; background: var(--tcp-bg-muted); border-radius: var(--tcp-radius-pill); padding: 3px; gap: 2px; }
+.seg__btn {
+  border: 0; background: none; padding: 6px 14px;
+  border-radius: var(--tcp-radius-pill); font: inherit; font-size: 13px; font-weight: 500;
+  color: var(--tcp-fg-secondary); cursor: pointer;
+  transition: background var(--tcp-dur-fast) var(--tcp-ease), color var(--tcp-dur-fast) var(--tcp-ease);
+}
+.seg__btn.is-active { background: var(--tcp-bg); color: var(--tcp-accent); box-shadow: var(--tcp-shadow-xs); }
+.dash-chart__plot { display: flex; align-items: stretch; gap: 6px; height: 180px; }
+.chart-col { flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; }
+.chart-col__track { flex: 1; display: flex; align-items: flex-end; justify-content: center; gap: 2px; min-height: 0; }
+.chart-col__bar {
+  flex: 1 1 0; max-width: 13px;
+  border-radius: 4px 4px 0 0;
+  transition: height var(--tcp-dur-slow) var(--tcp-ease);
+}
+.chart-col__bar--in  { background: linear-gradient(180deg, #34D47A 0%, #16A34A 100%); }
+.chart-col__bar--out { background: linear-gradient(180deg, #7C74EE 0%, var(--tcp-accent) 100%); }
+.chart-col__x { height: 18px; margin-top: 6px; text-align: center; font-size: 11px; color: var(--tcp-fg-tertiary); white-space: nowrap; overflow: hidden; }
+
+/* Call-direction donut */
+.dash-pie { display: flex; flex-direction: column; }
+.pie-wrap { position: relative; display: grid; place-items: center; flex: 1; padding: var(--tcp-space-3) 0; }
+.pie {
+  width: 150px; height: 150px; border-radius: 50%;
+  -webkit-mask: radial-gradient(circle, transparent 53%, #000 54%);
+  mask: radial-gradient(circle, transparent 53%, #000 54%);
+}
+.pie__center { position: absolute; text-align: center; }
+.pie__center b { display: block; font-size: 24px; font-weight: 600; color: var(--tcp-ink); line-height: 1.1; }
+.pie__center span { font-size: 11px; color: var(--tcp-fg-tertiary); }
+.pie-legend { display: flex; justify-content: center; gap: var(--tcp-space-6); margin-top: var(--tcp-space-3); }
+.pie-legend__item { display: inline-flex; align-items: center; font-size: 13px; color: var(--tcp-fg-secondary); }
+.pie-legend__item b { color: var(--tcp-ink); font-weight: 600; margin-left: 6px; }
+
 .dash-stats {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
   gap: var(--tcp-space-4);
   margin-bottom: var(--tcp-space-5);
-  align-items: stretch;
 }
-.stat-card { display: flex; flex-direction: column; gap: var(--tcp-space-2); height: 100%; align-self: stretch; }
+.stat-card { flex: 1 1 200px; display: flex; flex-direction: column; gap: var(--tcp-space-2); }
+/* Row-based dashboard layouts manage spacing via gap — cancel the
+   stacked-card top margin so cards in a row stay level. */
+.dash-stats .card, .dash-grid > .card { margin-top: 0; }
 .stat-card__value {
   font-size: 32px;
   line-height: 1.1;
@@ -1247,7 +1308,7 @@ mark.mark--neg { background: var(--tcp-error-bg); color: var(--tcp-error-900); }
 
 /* Dashboard card grid — 1 / 2 / 3 columns handled in the media queries.
    The recommendation card spans every column. */
-.dash-grid { display: grid; grid-template-columns: 1fr; gap: 20px; align-items: start; }
+.dash-grid { display: grid; grid-template-columns: 1fr; gap: 20px; align-items: stretch; }
 .dash-rec { grid-column: 1 / -1; }
 /* Recommendation bullets: one full-width row each, no line wrapping */
 .bullet-list--cols { overflow-x: auto; }
@@ -1396,4 +1457,6 @@ mark.mark--neg { background: var(--tcp-error-bg); color: var(--tcp-error-900); }
 
   /* Dashboard — three-column card grid (sentiment · top 3 · word cloud) */
   .dash-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  /* Top row: bar chart (wide) + direction pie (narrow) */
+  .dash-toprow { grid-template-columns: 2fr 1fr; }
 }

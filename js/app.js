@@ -760,6 +760,67 @@
 
   renderDashboard();
 
+  /* Uploads-over-time bar chart (incoming + outgoing) with a range toggle.
+     Each period shows two adjacent bars: [label, incoming, outgoing]. */
+  const UPLOADS = {
+    week: {
+      total: 128,
+      bars: [["T2", 9, 5], ["T3", 14, 8], ["T4", 11, 7], ["T5", 16, 10], ["T6", 19, 12], ["T7", 7, 4], ["CN", 4, 3]],
+    },
+    month: {
+      total: 512,
+      bars: Array.from({ length: 30 }, (_, i) => [String(i + 1), 4 + ((i * 5 + 2) % 15), 2 + ((i * 3 + 1) % 9)]),
+    },
+    year: {
+      total: 4870,
+      bars: [["T1", 200, 120], ["T2", 180, 110], ["T3", 220, 140], ["T4", 250, 160], ["T5", 230, 150],
+             ["T6", 190, 110], ["T7", 210, 130], ["T8", 270, 180], ["T9", 290, 180], ["T10", 320, 200],
+             ["T11", 340, 220], ["T12", 290, 180]],
+    },
+  };
+  const chartTotal = $("#chartTotal");
+  const chartPlot  = $("#chartPlot");
+  const chartRange = $("#chartRange");
+  function renderChart(range) {
+    const d = UPLOADS[range];
+    if (!d || !chartPlot) return;
+    if (chartTotal) chartTotal.textContent = d.total.toLocaleString("vi-VN");
+    const max = Math.max(...d.bars.map(b => Math.max(b[1], b[2])));
+    const many = d.bars.length > 12;
+    chartPlot.innerHTML = d.bars.map(([x, inc, out], i) => {
+      const showX = !many || i % 5 === 0;
+      return `<div class="chart-col" title="${x} — Gọi đến: ${inc}, Gọi đi: ${out}">
+        <div class="chart-col__track">
+          <div class="chart-col__bar chart-col__bar--in" style="height:${Math.max(3, Math.round(inc / max * 100))}%"></div>
+          <div class="chart-col__bar chart-col__bar--out" style="height:${Math.max(3, Math.round(out / max * 100))}%"></div>
+        </div>
+        <div class="chart-col__x">${showX ? x : ""}</div>
+      </div>`;
+    }).join("");
+  }
+  if (chartRange) {
+    chartRange.addEventListener("click", e => {
+      const btn = e.target.closest(".seg__btn");
+      if (!btn) return;
+      $$(".seg__btn", chartRange).forEach(b => b.classList.toggle("is-active", b === btn));
+      renderChart(btn.dataset.range);
+    });
+  }
+  renderChart("week");
+
+  /* Call-direction donut — total incoming vs outgoing */
+  (function renderCallPie() {
+    const pie = $("#callPie");
+    if (!pie) return;
+    const inCount = 152, outCount = 94, total = inCount + outCount;
+    const inPct = Math.round(inCount / total * 100);
+    pie.style.background = `conic-gradient(#22C55E 0 ${inPct}%, var(--tcp-accent) ${inPct}% 100%)`;
+    const set = (id, v) => { const el = $("#" + id); if (el) el.textContent = v; };
+    set("pieInPct", inPct + "%");
+    set("pieIn", inCount);
+    set("pieOut", outCount);
+  })();
+
   /* -------------------------------------------------------------------------
      File strip — when several files are analysed together, show them as a
      horizontal, scrollable row at the top of the Results screen. Selecting a
@@ -772,6 +833,8 @@
   const fileStripNext   = $("#fileStripNext");
   const NAV_THRESHOLD   = 2;   // need >2 files before arrows can appear
   const OUTCOME_LABEL = { success: "Tư vấn xuất sắc", warning: "Tư vấn hiệu quả", neutral: "Cần cải thiện" };
+  // AI infers call direction from the agent's opening lines
+  const DIRECTION_LABEL = { in: "Gọi đến", out: "Gọi đi" };
 
   /* Show the scroll arrows whenever the strip actually overflows (and there
      are more than 2 files) — so on a narrow phone even 3 files get arrows,
@@ -826,7 +889,8 @@
     const conf = name === DEFAULT_PROC_NAME ? 78 : 12 + (h % 87);
     const type = conf >= 85 ? "success" : conf >= 66 ? "warning" : "neutral";
     const dur = (16 + (h % 30)) + ":" + String((h >>> 3) % 60).padStart(2, "0");
-    return { conf, type, dur, outcome: OUTCOME_LABEL[type] };
+    const direction = (h % 5) < 3 ? "in" : "out";
+    return { conf, type, dur, outcome: OUTCOME_LABEL[type], direction };
   }
 
   // Build the horizontal strip of analysed files. Always shown — a single
@@ -844,7 +908,7 @@
           <span class="fchip__icon">${FILE_ICON}</span>
           <span class="fchip__info">
             <span class="fchip__name">${name}</span>
-            <span class="fchip__meta">${m.conf}% &bull; ${m.dur}</span>
+            <span class="fchip__meta"><span class="fchip__dir fchip__dir--${m.direction}">${DIRECTION_LABEL[m.direction]}</span>${m.conf}% &bull; ${m.dur}</span>
           </span>
         </button>`;
     }).join("");

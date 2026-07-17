@@ -856,7 +856,14 @@ button { font-family: inherit; }
   overflow: hidden;
   text-overflow: ellipsis;
 }
-.fchip__meta { display: block; font-size: 11px; color: var(--tcp-fg-tertiary); margin-top: 1px; }
+.fchip__meta { display: block; font-size: 11px; color: var(--tcp-fg-tertiary); margin-top: 2px; }
+.fchip__dir {
+  display: inline-block; vertical-align: middle;
+  font-size: 10px; font-weight: 500; line-height: 1.4;
+  padding: 0 6px; margin-right: 6px; border-radius: var(--tcp-radius-pill);
+}
+.fchip__dir--in { background: var(--tcp-success-bg); color: var(--tcp-success-900); }
+.fchip__dir--out { background: var(--tcp-accent-subtle); color: var(--tcp-accent-hover); }
 
 .result-card__label {
   display: flex; align-items: center; gap: var(--tcp-space-2);
@@ -1413,14 +1420,68 @@ mark.mark--neg { background: var(--tcp-error-bg); color: var(--tcp-error-900); }
 /* ---------------------------------------------------------------------------
    SCREEN 5 · Dashboard
    --------------------------------------------------------------------------- */
+/* Top row: uploads bar chart + call-direction pie */
+.dash-toprow { display: grid; grid-template-columns: 1fr; gap: 20px; margin-bottom: var(--tcp-space-5); align-items: stretch; }
+.dash-toprow > .card { margin-top: 0; }
+
+/* Uploads bar chart */
+.dash-chart__head {
+  display: flex; align-items: flex-start; justify-content: space-between;
+  gap: var(--tcp-space-4); flex-wrap: wrap; margin-bottom: var(--tcp-space-3);
+}
+.dash-chart__legend { display: flex; gap: var(--tcp-space-4); margin-bottom: var(--tcp-space-4); }
+.cl-item { display: inline-flex; align-items: center; font-size: 12px; color: var(--tcp-fg-secondary); }
+.cl-dot { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 7px; vertical-align: middle; }
+.cl-dot--in { background: #22C55E; }
+.cl-dot--out { background: var(--tcp-accent); }
+.dash-chart__total { font-size: 32px; font-weight: 600; color: var(--tcp-ink); letter-spacing: -0.6px; line-height: 1.1; }
+.dash-chart__cap { font-size: 12px; color: var(--tcp-fg-tertiary); text-transform: uppercase; letter-spacing: .8px; margin-top: 3px; }
+.seg { display: inline-flex; background: var(--tcp-bg-muted); border-radius: var(--tcp-radius-pill); padding: 3px; gap: 2px; }
+.seg__btn {
+  border: 0; background: none; padding: 6px 14px;
+  border-radius: var(--tcp-radius-pill); font: inherit; font-size: 13px; font-weight: 500;
+  color: var(--tcp-fg-secondary); cursor: pointer;
+  transition: background var(--tcp-dur-fast) var(--tcp-ease), color var(--tcp-dur-fast) var(--tcp-ease);
+}
+.seg__btn.is-active { background: var(--tcp-bg); color: var(--tcp-accent); box-shadow: var(--tcp-shadow-xs); }
+.dash-chart__plot { display: flex; align-items: stretch; gap: 6px; height: 180px; }
+.chart-col { flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; }
+.chart-col__track { flex: 1; display: flex; align-items: flex-end; justify-content: center; gap: 2px; min-height: 0; }
+.chart-col__bar {
+  flex: 1 1 0; max-width: 13px;
+  border-radius: 4px 4px 0 0;
+  transition: height var(--tcp-dur-slow) var(--tcp-ease);
+}
+.chart-col__bar--in  { background: linear-gradient(180deg, #34D47A 0%, #16A34A 100%); }
+.chart-col__bar--out { background: linear-gradient(180deg, #7C74EE 0%, var(--tcp-accent) 100%); }
+.chart-col__x { height: 18px; margin-top: 6px; text-align: center; font-size: 11px; color: var(--tcp-fg-tertiary); white-space: nowrap; overflow: hidden; }
+
+/* Call-direction donut */
+.dash-pie { display: flex; flex-direction: column; }
+.pie-wrap { position: relative; display: grid; place-items: center; flex: 1; padding: var(--tcp-space-3) 0; }
+.pie {
+  width: 150px; height: 150px; border-radius: 50%;
+  -webkit-mask: radial-gradient(circle, transparent 53%, #000 54%);
+  mask: radial-gradient(circle, transparent 53%, #000 54%);
+}
+.pie__center { position: absolute; text-align: center; }
+.pie__center b { display: block; font-size: 24px; font-weight: 600; color: var(--tcp-ink); line-height: 1.1; }
+.pie__center span { font-size: 11px; color: var(--tcp-fg-tertiary); }
+.pie-legend { display: flex; justify-content: center; gap: var(--tcp-space-6); margin-top: var(--tcp-space-3); }
+.pie-legend__item { display: inline-flex; align-items: center; font-size: 13px; color: var(--tcp-fg-secondary); }
+.pie-legend__item b { color: var(--tcp-ink); font-weight: 600; margin-left: 6px; }
+
 .dash-stats {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
   gap: var(--tcp-space-4);
   margin-bottom: var(--tcp-space-5);
-  align-items: stretch;
 }
-.stat-card { display: flex; flex-direction: column; gap: var(--tcp-space-2); height: 100%; align-self: stretch; }
+.stat-card { flex: 1 1 200px; display: flex; flex-direction: column; gap: var(--tcp-space-2); }
+/* Row-based dashboard layouts manage spacing via gap — cancel the
+   stacked-card top margin so cards in a row stay level. */
+.dash-stats .card, .dash-grid > .card { margin-top: 0; }
 .stat-card__value {
   font-size: 32px;
   line-height: 1.1;
@@ -1433,7 +1494,7 @@ mark.mark--neg { background: var(--tcp-error-bg); color: var(--tcp-error-900); }
 
 /* Dashboard card grid — 1 / 2 / 3 columns handled in the media queries.
    The recommendation card spans every column. */
-.dash-grid { display: grid; grid-template-columns: 1fr; gap: 20px; align-items: start; }
+.dash-grid { display: grid; grid-template-columns: 1fr; gap: 20px; align-items: stretch; }
 .dash-rec { grid-column: 1 / -1; }
 /* Recommendation bullets: one full-width row each, no line wrapping */
 .bullet-list--cols { overflow-x: auto; }
@@ -1582,6 +1643,8 @@ mark.mark--neg { background: var(--tcp-error-bg); color: var(--tcp-error-900); }
 
   /* Dashboard — three-column card grid (sentiment · top 3 · word cloud) */
   .dash-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  /* Top row: bar chart (wide) + direction pie (narrow) */
+  .dash-toprow { grid-template-columns: 2fr 1fr; }
 }
 
 
@@ -2079,6 +2142,43 @@ mark.mark--neg { background: var(--tcp-error-bg); color: var(--tcp-error-900); }
             </button>
           </div>
 
+          <!-- Uploads over time + call direction -->
+          <div class="dash-toprow">
+            <div class="card dash-chart">
+              <div class="dash-chart__head">
+                <div>
+                  <div class="dash-chart__total" id="chartTotal">—</div>
+                  <div class="dash-chart__cap">Tổng tệp đã tải lên</div>
+                </div>
+                <div class="seg" id="chartRange" role="tablist" aria-label="Khoảng thời gian">
+                  <button class="seg__btn is-active" type="button" data-range="week">Tuần</button>
+                  <button class="seg__btn" type="button" data-range="month">Tháng</button>
+                  <button class="seg__btn" type="button" data-range="year">Năm</button>
+                </div>
+              </div>
+              <div class="dash-chart__legend">
+                <span class="cl-item"><span class="cl-dot cl-dot--in"></span>Gọi đến</span>
+                <span class="cl-item"><span class="cl-dot cl-dot--out"></span>Gọi đi</span>
+              </div>
+              <div class="dash-chart__plot" id="chartPlot"></div>
+            </div>
+
+            <div class="card dash-pie">
+              <div class="result-card__label">
+                <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M213.66,181.66l-32,32a8,8,0,0,1-11.32-11.32L188.69,184H48a8,8,0,0,1,0-16H188.69l-18.35-18.34a8,8,0,0,1,11.32-11.32l32,32A8,8,0,0,1,213.66,181.66Zm-139.32-64a8,8,0,0,0,11.32-11.32L67.31,88H208a8,8,0,0,0,0-16H67.31L85.66,53.66A8,8,0,0,0,74.34,42.34l-32,32a8,8,0,0,0,0,11.32Z"/></svg>
+                Gọi đến / Gọi đi
+              </div>
+              <div class="pie-wrap">
+                <div class="pie" id="callPie"></div>
+                <div class="pie__center"><b id="pieInPct">—</b><span>Gọi đến</span></div>
+              </div>
+              <div class="pie-legend">
+                <div class="pie-legend__item"><span class="cl-dot cl-dot--in"></span>Gọi đến<b id="pieIn">—</b></div>
+                <div class="pie-legend__item"><span class="cl-dot cl-dot--out"></span>Gọi đi<b id="pieOut">—</b></div>
+              </div>
+            </div>
+          </div>
+
           <!-- Key stats -->
           <div class="dash-stats">
             <div class="card stat-card">
@@ -2162,6 +2262,16 @@ mark.mark--neg { background: var(--tcp-error-bg); color: var(--tcp-error-900); }
                 <span style="font-size:19px;color:var(--tcp-brand)">Triển khai</span>
                 <span style="font-size:16px;color:var(--tcp-ink)">Tiết kiệm</span>
                 <span style="font-size:14px;color:var(--tcp-fg-secondary)">Đối tác</span>
+                <span style="font-size:21px;color:var(--tcp-brand)">Cảm ơn</span>
+                <span style="font-size:15px;color:var(--tcp-accent)">Ưu đãi</span>
+                <span style="font-size:18px;color:var(--tcp-ink)">Chất lượng</span>
+                <span style="font-size:14px;color:var(--tcp-fg-secondary)">Cam kết</span>
+                <span style="font-size:23px;color:var(--tcp-brand-400)">Tin cậy</span>
+                <span style="font-size:16px;color:var(--tcp-accent)">Bảo hành</span>
+                <span style="font-size:19px;color:var(--tcp-ink)">Đào tạo</span>
+                <span style="font-size:15px;color:var(--tcp-fg-secondary)">Vận hành</span>
+                <span style="font-size:17px;color:var(--tcp-brand)">Nâng cấp</span>
+                <span style="font-size:14px;color:var(--tcp-fg-secondary)">Bảo trì</span>
               </div>
             </div>
 
@@ -3048,6 +3158,67 @@ mark.mark--neg { background: var(--tcp-error-bg); color: var(--tcp-error-900); }
 
   renderDashboard();
 
+  /* Uploads-over-time bar chart (incoming + outgoing) with a range toggle.
+     Each period shows two adjacent bars: [label, incoming, outgoing]. */
+  const UPLOADS = {
+    week: {
+      total: 128,
+      bars: [["T2", 9, 5], ["T3", 14, 8], ["T4", 11, 7], ["T5", 16, 10], ["T6", 19, 12], ["T7", 7, 4], ["CN", 4, 3]],
+    },
+    month: {
+      total: 512,
+      bars: Array.from({ length: 30 }, (_, i) => [String(i + 1), 4 + ((i * 5 + 2) % 15), 2 + ((i * 3 + 1) % 9)]),
+    },
+    year: {
+      total: 4870,
+      bars: [["T1", 200, 120], ["T2", 180, 110], ["T3", 220, 140], ["T4", 250, 160], ["T5", 230, 150],
+             ["T6", 190, 110], ["T7", 210, 130], ["T8", 270, 180], ["T9", 290, 180], ["T10", 320, 200],
+             ["T11", 340, 220], ["T12", 290, 180]],
+    },
+  };
+  const chartTotal = $("#chartTotal");
+  const chartPlot  = $("#chartPlot");
+  const chartRange = $("#chartRange");
+  function renderChart(range) {
+    const d = UPLOADS[range];
+    if (!d || !chartPlot) return;
+    if (chartTotal) chartTotal.textContent = d.total.toLocaleString("vi-VN");
+    const max = Math.max(...d.bars.map(b => Math.max(b[1], b[2])));
+    const many = d.bars.length > 12;
+    chartPlot.innerHTML = d.bars.map(([x, inc, out], i) => {
+      const showX = !many || i % 5 === 0;
+      return `<div class="chart-col" title="${x} — Gọi đến: ${inc}, Gọi đi: ${out}">
+        <div class="chart-col__track">
+          <div class="chart-col__bar chart-col__bar--in" style="height:${Math.max(3, Math.round(inc / max * 100))}%"></div>
+          <div class="chart-col__bar chart-col__bar--out" style="height:${Math.max(3, Math.round(out / max * 100))}%"></div>
+        </div>
+        <div class="chart-col__x">${showX ? x : ""}</div>
+      </div>`;
+    }).join("");
+  }
+  if (chartRange) {
+    chartRange.addEventListener("click", e => {
+      const btn = e.target.closest(".seg__btn");
+      if (!btn) return;
+      $$(".seg__btn", chartRange).forEach(b => b.classList.toggle("is-active", b === btn));
+      renderChart(btn.dataset.range);
+    });
+  }
+  renderChart("week");
+
+  /* Call-direction donut — total incoming vs outgoing */
+  (function renderCallPie() {
+    const pie = $("#callPie");
+    if (!pie) return;
+    const inCount = 152, outCount = 94, total = inCount + outCount;
+    const inPct = Math.round(inCount / total * 100);
+    pie.style.background = `conic-gradient(#22C55E 0 ${inPct}%, var(--tcp-accent) ${inPct}% 100%)`;
+    const set = (id, v) => { const el = $("#" + id); if (el) el.textContent = v; };
+    set("pieInPct", inPct + "%");
+    set("pieIn", inCount);
+    set("pieOut", outCount);
+  })();
+
   /* -------------------------------------------------------------------------
      File strip — when several files are analysed together, show them as a
      horizontal, scrollable row at the top of the Results screen. Selecting a
@@ -3060,6 +3231,8 @@ mark.mark--neg { background: var(--tcp-error-bg); color: var(--tcp-error-900); }
   const fileStripNext   = $("#fileStripNext");
   const NAV_THRESHOLD   = 2;   // need >2 files before arrows can appear
   const OUTCOME_LABEL = { success: "Tư vấn xuất sắc", warning: "Tư vấn hiệu quả", neutral: "Cần cải thiện" };
+  // AI infers call direction from the agent's opening lines
+  const DIRECTION_LABEL = { in: "Gọi đến", out: "Gọi đi" };
 
   /* Show the scroll arrows whenever the strip actually overflows (and there
      are more than 2 files) — so on a narrow phone even 3 files get arrows,
@@ -3114,7 +3287,8 @@ mark.mark--neg { background: var(--tcp-error-bg); color: var(--tcp-error-900); }
     const conf = name === DEFAULT_PROC_NAME ? 78 : 12 + (h % 87);
     const type = conf >= 85 ? "success" : conf >= 66 ? "warning" : "neutral";
     const dur = (16 + (h % 30)) + ":" + String((h >>> 3) % 60).padStart(2, "0");
-    return { conf, type, dur, outcome: OUTCOME_LABEL[type] };
+    const direction = (h % 5) < 3 ? "in" : "out";
+    return { conf, type, dur, outcome: OUTCOME_LABEL[type], direction };
   }
 
   // Build the horizontal strip of analysed files. Always shown — a single
@@ -3132,7 +3306,7 @@ mark.mark--neg { background: var(--tcp-error-bg); color: var(--tcp-error-900); }
           <span class="fchip__icon">${FILE_ICON}</span>
           <span class="fchip__info">
             <span class="fchip__name">${name}</span>
-            <span class="fchip__meta">${m.conf}% &bull; ${m.dur}</span>
+            <span class="fchip__meta"><span class="fchip__dir fchip__dir--${m.direction}">${DIRECTION_LABEL[m.direction]}</span>${m.conf}% &bull; ${m.dur}</span>
           </span>
         </button>`;
     }).join("");

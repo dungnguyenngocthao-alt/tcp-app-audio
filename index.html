@@ -493,6 +493,43 @@
             </button>
           </div>
 
+          <!-- Uploads over time + call direction -->
+          <div class="dash-toprow">
+            <div class="card dash-chart">
+              <div class="dash-chart__head">
+                <div>
+                  <div class="dash-chart__total" id="chartTotal">—</div>
+                  <div class="dash-chart__cap">Tổng tệp đã tải lên</div>
+                </div>
+                <div class="seg" id="chartRange" role="tablist" aria-label="Khoảng thời gian">
+                  <button class="seg__btn is-active" type="button" data-range="week">Tuần</button>
+                  <button class="seg__btn" type="button" data-range="month">Tháng</button>
+                  <button class="seg__btn" type="button" data-range="year">Năm</button>
+                </div>
+              </div>
+              <div class="dash-chart__legend">
+                <span class="cl-item"><span class="cl-dot cl-dot--in"></span>Gọi đến</span>
+                <span class="cl-item"><span class="cl-dot cl-dot--out"></span>Gọi đi</span>
+              </div>
+              <div class="dash-chart__plot" id="chartPlot"></div>
+            </div>
+
+            <div class="card dash-pie">
+              <div class="result-card__label">
+                <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M213.66,181.66l-32,32a8,8,0,0,1-11.32-11.32L188.69,184H48a8,8,0,0,1,0-16H188.69l-18.35-18.34a8,8,0,0,1,11.32-11.32l32,32A8,8,0,0,1,213.66,181.66Zm-139.32-64a8,8,0,0,0,11.32-11.32L67.31,88H208a8,8,0,0,0,0-16H67.31L85.66,53.66A8,8,0,0,0,74.34,42.34l-32,32a8,8,0,0,0,0,11.32Z"/></svg>
+                Gọi đến / Gọi đi
+              </div>
+              <div class="pie-wrap">
+                <div class="pie" id="callPie"></div>
+                <div class="pie__center"><b id="pieInPct">—</b><span>Gọi đến</span></div>
+              </div>
+              <div class="pie-legend">
+                <div class="pie-legend__item"><span class="cl-dot cl-dot--in"></span>Gọi đến<b id="pieIn">—</b></div>
+                <div class="pie-legend__item"><span class="cl-dot cl-dot--out"></span>Gọi đi<b id="pieOut">—</b></div>
+              </div>
+            </div>
+          </div>
+
           <!-- Key stats -->
           <div class="dash-stats">
             <div class="card stat-card">
@@ -576,6 +613,16 @@
                 <span style="font-size:19px;color:var(--tcp-brand)">Triển khai</span>
                 <span style="font-size:16px;color:var(--tcp-ink)">Tiết kiệm</span>
                 <span style="font-size:14px;color:var(--tcp-fg-secondary)">Đối tác</span>
+                <span style="font-size:21px;color:var(--tcp-brand)">Cảm ơn</span>
+                <span style="font-size:15px;color:var(--tcp-accent)">Ưu đãi</span>
+                <span style="font-size:18px;color:var(--tcp-ink)">Chất lượng</span>
+                <span style="font-size:14px;color:var(--tcp-fg-secondary)">Cam kết</span>
+                <span style="font-size:23px;color:var(--tcp-brand-400)">Tin cậy</span>
+                <span style="font-size:16px;color:var(--tcp-accent)">Bảo hành</span>
+                <span style="font-size:19px;color:var(--tcp-ink)">Đào tạo</span>
+                <span style="font-size:15px;color:var(--tcp-fg-secondary)">Vận hành</span>
+                <span style="font-size:17px;color:var(--tcp-brand)">Nâng cấp</span>
+                <span style="font-size:14px;color:var(--tcp-fg-secondary)">Bảo trì</span>
               </div>
             </div>
 
