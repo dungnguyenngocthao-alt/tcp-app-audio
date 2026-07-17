@@ -661,8 +661,8 @@ button { font-family: inherit; }
 .fchip__icon svg { width: 16px; height: 16px; }
 .fchip__info { display: flex; flex-direction: column; min-width: 0; flex: 1 1 auto; }
 .fchip__name {
-  flex: 1 1 auto;
-  min-width: 0;
+  display: block;
+  max-width: 100%;
   font-size: 13px;
   font-weight: 500;
   color: var(--tcp-fg-primary);
@@ -670,8 +670,8 @@ button { font-family: inherit; }
   overflow: hidden;
   text-overflow: ellipsis;
 }
-.fchip__top { display: flex; align-items: center; gap: 6px; min-width: 0; }
-.fchip__meta { display: block; font-size: 11px; color: var(--tcp-fg-tertiary); margin-top: 2px; }
+.fchip__meta { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--tcp-fg-tertiary); margin-top: 3px; }
+.fchip__stats { white-space: nowrap; }
 .fchip__dir {
   flex: 0 0 auto;
   font-size: 10px; font-weight: 500; line-height: 1.5;
@@ -1324,9 +1324,6 @@ mark.mark--neg { background: var(--tcp-error-bg); color: var(--tcp-error-900); }
    The recommendation card spans every column. */
 .dash-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 20px; align-items: stretch; }
 .dash-rec { grid-column: 1 / -1; }
-/* Recommendation bullets: one full-width row each, no line wrapping */
-.bullet-list--cols { overflow-x: auto; }
-.bullet-list--cols li { white-space: nowrap; }
 
 /* Half-pie sentiment gauge */
 .gauge-wrap { display: flex; justify-content: center; padding: var(--tcp-space-2) 0; }
@@ -1447,8 +1444,9 @@ mark.mark--neg { background: var(--tcp-error-bg); color: var(--tcp-error-900); }
   /* Analyzing — stays a single centred column */
   #screen-processing .analyzing { max-width: 520px; margin: 0 auto; }
 
-  /* Dashboard — two-column card grid */
+  /* Dashboard — two-column card grid; word cloud spans both columns */
   .dash-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .dash-wordcloud { grid-column: 1 / -1; }
 }
 
 @media (min-width: 1200px) {
@@ -1471,6 +1469,7 @@ mark.mark--neg { background: var(--tcp-error-bg); color: var(--tcp-error-900); }
 
   /* Dashboard — three-column card grid (sentiment · top 3 · word cloud) */
   .dash-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .dash-wordcloud { grid-column: auto; }
   /* Top row: bar chart (wide) + direction pie (narrow) */
   .dash-toprow { grid-template-columns: 2fr 1fr; }
 }
