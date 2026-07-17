@@ -661,8 +661,8 @@ button { font-family: inherit; }
 .fchip__icon svg { width: 16px; height: 16px; }
 .fchip__info { display: flex; flex-direction: column; min-width: 0; flex: 1 1 auto; }
 .fchip__name {
-  display: block;
-  max-width: 100%;
+  flex: 1 1 auto;
+  min-width: 0;
   font-size: 13px;
   font-weight: 500;
   color: var(--tcp-fg-primary);
@@ -670,11 +670,12 @@ button { font-family: inherit; }
   overflow: hidden;
   text-overflow: ellipsis;
 }
+.fchip__top { display: flex; align-items: center; gap: 6px; min-width: 0; }
 .fchip__meta { display: block; font-size: 11px; color: var(--tcp-fg-tertiary); margin-top: 2px; }
 .fchip__dir {
-  display: inline-block; vertical-align: middle;
-  font-size: 10px; font-weight: 500; line-height: 1.4;
-  padding: 0 6px; margin-right: 6px; border-radius: var(--tcp-radius-pill);
+  flex: 0 0 auto;
+  font-size: 10px; font-weight: 500; line-height: 1.5;
+  padding: 0 7px; border-radius: var(--tcp-radius-pill);
 }
 .fchip__dir--in { background: #FDECDF; color: #C2410C; }
 .fchip__dir--out { background: var(--tcp-accent-subtle); color: var(--tcp-accent-hover); }
@@ -1235,7 +1236,7 @@ mark.mark--neg { background: var(--tcp-error-bg); color: var(--tcp-error-900); }
    SCREEN 5 · Dashboard
    --------------------------------------------------------------------------- */
 /* Top row: uploads bar chart + call-direction pie */
-.dash-toprow { display: grid; grid-template-columns: 1fr; gap: 20px; margin-bottom: var(--tcp-space-5); align-items: stretch; }
+.dash-toprow { display: grid; grid-template-columns: minmax(0, 1fr); gap: 20px; margin-bottom: var(--tcp-space-5); align-items: stretch; }
 .dash-toprow > .card { margin-top: 0; }
 
 /* Uploads bar chart */
@@ -1321,7 +1322,7 @@ mark.mark--neg { background: var(--tcp-error-bg); color: var(--tcp-error-900); }
 
 /* Dashboard card grid — 1 / 2 / 3 columns handled in the media queries.
    The recommendation card spans every column. */
-.dash-grid { display: grid; grid-template-columns: 1fr; gap: 20px; align-items: stretch; }
+.dash-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 20px; align-items: stretch; }
 .dash-rec { grid-column: 1 / -1; }
 /* Recommendation bullets: one full-width row each, no line wrapping */
 .bullet-list--cols { overflow-x: auto; }

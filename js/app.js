@@ -933,8 +933,11 @@
         <button class="fchip${m.conf < 30 ? " fchip--low" : ""}" type="button" data-chip="${i}" title="${escAttr(name)}">
           <span class="fchip__icon">${FILE_ICON}</span>
           <span class="fchip__info">
-            <span class="fchip__name">${name}</span>
-            <span class="fchip__meta"><span class="fchip__dir fchip__dir--${m.direction}">${DIRECTION_LABEL[m.direction]}</span>${m.conf}% &bull; ${m.dur}</span>
+            <span class="fchip__top">
+              <span class="fchip__name">${name}</span>
+              <span class="fchip__dir fchip__dir--${m.direction}">${DIRECTION_LABEL[m.direction]}</span>
+            </span>
+            <span class="fchip__meta">${m.conf}% &bull; ${m.dur}</span>
           </span>
         </button>`;
     }).join("");
