@@ -16,6 +16,7 @@
     results:    $("#screen-results"),
     history:    $("#screen-history"),
     dashboard:  $("#screen-dashboard"),
+    settings:   $("#screen-settings"),
   };
 
   function show(name) {
@@ -75,7 +76,7 @@
     el.addEventListener("click", () => {
       const target = el.dataset.nav;
       if (el.hasAttribute("data-reset")) resetAnalysis();
-      if (target === "analysis" || target === "history" || target === "dashboard") show(target);
+      if (target === "analysis" || target === "history" || target === "dashboard" || target === "settings") show(target);
       closeMenu();
     })
   );
@@ -892,5 +893,154 @@
   window.addEventListener("resize", () => {
     if (resizeRaf) cancelAnimationFrame(resizeRaf);
     resizeRaf = requestAnimationFrame(layoutResults);
+  });
+
+  /* -------------------------------------------------------------------------
+     Screen 6 · Settings — keyword sets that push success / failure rate
+     ------------------------------------------------------------------------- */
+  const successKeywords = ["ROI", "tiết kiệm", "real-time", "bảo mật", "hiệu suất"];
+  const failureKeywords = ["giá cao", "phức tạp", "chậm", "lỗi", "khó dùng"];
+
+  function renderKw(listEl, arr, kind) {
+    listEl.innerHTML = arr.map((w, i) => `
+      <span class="kw-chip kw-chip--${kind}">${w}
+        <button class="kw-chip__x" type="button" data-kw-remove="${i}" aria-label="Xóa ${escAttr(w)}">${XCLOSE_ICON}</button>
+      </span>`).join("");
+  }
+  function setupKwEditor(listId, inputId, addId, arr, kind) {
+    const listEl = $("#" + listId), input = $("#" + inputId), addBtn = $("#" + addId);
+    if (!listEl || !input || !addBtn) return;
+    const draw = () => renderKw(listEl, arr, kind);
+    const add = () => {
+      const v = input.value.trim();
+      if (!v) { input.focus(); return; }
+      if (!arr.some(k => k.toLowerCase() === v.toLowerCase())) arr.push(v);
+      input.value = ""; input.focus(); draw();
+    };
+    addBtn.addEventListener("click", add);
+    input.addEventListener("keydown", e => { if (e.key === "Enter") { e.preventDefault(); add(); } });
+    listEl.addEventListener("click", e => {
+      const rm = e.target.closest("[data-kw-remove]");
+      if (rm) { arr.splice(parseInt(rm.dataset.kwRemove, 10), 1); draw(); }
+    });
+    draw();
+  }
+  setupKwEditor("successKwList", "successKwInput", "successKwAdd", successKeywords, "success");
+  setupKwEditor("failureKwList", "failureKwInput", "failureKwAdd", failureKeywords, "failure");
+
+  /* -------------------------------------------------------------------------
+     Dashboard export — build a real .xlsx (3 sheets), dependency-free
+     ------------------------------------------------------------------------- */
+  const KEYWORD_FREQ = [
+    ["Premium", 42], ["Real-time", 38], ["Giá cả", 34], ["Bảo mật", 29],
+    ["ROI", 26], ["Hiệu suất", 22], ["Tích hợp", 19], ["Chi phí", 17],
+    ["Hỗ trợ", 15], ["Triển khai", 13], ["Latency", 11], ["Demo", 9],
+  ];
+  const SENTIMENT_TOTALS = [
+    ["Positive", 142, "62%"], ["Neutral", 60, "26%"], ["Negative", 27, "12%"],
+  ];
+
+  const enc = new TextEncoder();
+  const CRC_TABLE = (() => {
+    const t = new Uint32Array(256);
+    for (let n = 0; n < 256; n++) {
+      let c = n;
+      for (let k = 0; k < 8; k++) c = (c & 1) ? (0xEDB88320 ^ (c >>> 1)) : (c >>> 1);
+      t[n] = c >>> 0;
+    }
+    return t;
+  })();
+  function crc32(bytes) {
+    let c = 0xFFFFFFFF;
+    for (let i = 0; i < bytes.length; i++) c = CRC_TABLE[(c ^ bytes[i]) & 0xFF] ^ (c >>> 8);
+    return (c ^ 0xFFFFFFFF) >>> 0;
+  }
+  function zipStore(files) {
+    const u16 = n => [n & 255, (n >>> 8) & 255];
+    const u32 = n => [n & 255, (n >>> 8) & 255, (n >>> 16) & 255, (n >>> 24) & 255];
+    const parts = [], central = [];
+    let offset = 0;
+    files.forEach(f => {
+      const nameB = enc.encode(f.name), crc = crc32(f.data), size = f.data.length;
+      const local = [].concat(u32(0x04034b50), u16(20), u16(0), u16(0), u16(0), u16(0),
+        u32(crc), u32(size), u32(size), u16(nameB.length), u16(0));
+      parts.push(new Uint8Array(local), nameB, f.data);
+      central.push({ nameB, crc, size, offset });
+      offset += local.length + nameB.length + size;
+    });
+    const cdStart = offset;
+    central.forEach(c => {
+      const h = [].concat(u32(0x02014b50), u16(20), u16(20), u16(0), u16(0), u16(0), u16(0),
+        u32(c.crc), u32(c.size), u32(c.size), u16(c.nameB.length), u16(0), u16(0), u16(0), u16(0),
+        u32(0), u32(c.offset));
+      parts.push(new Uint8Array(h), c.nameB);
+      offset += h.length + c.nameB.length;
+    });
+    const end = new Uint8Array([].concat(u32(0x06054b50), u16(0), u16(0),
+      u16(central.length), u16(central.length), u32(offset - cdStart), u32(cdStart), u16(0)));
+    parts.push(end);
+    const total = parts.reduce((a, b) => a + b.length, 0);
+    const out = new Uint8Array(total);
+    let p = 0;
+    parts.forEach(a => { out.set(a, p); p += a.length; });
+    return out;
+  }
+  function xmlEsc(s) {
+    return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+  }
+  function colLetter(n) {
+    let s = ""; n++;
+    while (n > 0) { s = String.fromCharCode(65 + (n - 1) % 26) + s; n = Math.floor((n - 1) / 26); }
+    return s;
+  }
+  function sheetXml(rows) {
+    const body = rows.map((row, r) => {
+      const cells = row.map((val, c) => {
+        const ref = colLetter(c) + (r + 1);
+        if (typeof val === "number" && isFinite(val)) return `<c r="${ref}"><v>${val}</v></c>`;
+        return `<c r="${ref}" t="inlineStr"><is><t xml:space="preserve">${xmlEsc(val == null ? "" : val)}</t></is></c>`;
+      }).join("");
+      return `<row r="${r + 1}">${cells}</row>`;
+    }).join("");
+    return `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><sheetData>${body}</sheetData></worksheet>`;
+  }
+  function buildXlsx(sheets) {
+    const R = "http://schemas.openxmlformats.org";
+    const contentTypes = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n<Types xmlns="${R}/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/>${sheets.map((s, i) => `<Override PartName="/xl/worksheets/sheet${i + 1}.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>`).join("")}</Types>`;
+    const rels = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n<Relationships xmlns="${R}/package/2006/relationships"><Relationship Id="rId1" Type="${R}/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/></Relationships>`;
+    const workbook = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n<workbook xmlns="${R}/spreadsheetml/2006/main" xmlns:r="${R}/officeDocument/2006/relationships"><sheets>${sheets.map((s, i) => `<sheet name="${xmlEsc(s.name)}" sheetId="${i + 1}" r:id="rId${i + 1}"/>`).join("")}</sheets></workbook>`;
+    const wbRels = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n<Relationships xmlns="${R}/package/2006/relationships">${sheets.map((s, i) => `<Relationship Id="rId${i + 1}" Type="${R}/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet${i + 1}.xml"/>`).join("")}</Relationships>`;
+    const files = [
+      { name: "[Content_Types].xml", data: enc.encode(contentTypes) },
+      { name: "_rels/.rels", data: enc.encode(rels) },
+      { name: "xl/workbook.xml", data: enc.encode(workbook) },
+      { name: "xl/_rels/workbook.xml.rels", data: enc.encode(wbRels) },
+    ];
+    sheets.forEach((s, i) => files.push({ name: `xl/worksheets/sheet${i + 1}.xml`, data: enc.encode(sheetXml(s.rows)) }));
+    return zipStore(files);
+  }
+  function downloadBlob(bytes, filename, mime) {
+    const blob = new Blob([bytes], { type: mime });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url; a.download = filename;
+    document.body.appendChild(a); a.click();
+    setTimeout(() => { document.body.removeChild(a); URL.revokeObjectURL(url); }, 0);
+  }
+
+  const dashExportBtn = $("#dashExportBtn");
+  if (dashExportBtn) dashExportBtn.addEventListener("click", () => {
+    const src = archive.length ? archive : HISTORY;
+    const callRows = [["Tên cuộc gọi", "Success rate (%)"]].concat(src.map(r => [r.file, r.conf]));
+    const kwRows = [["Từ khóa", "Số lần lặp lại"]].concat(KEYWORD_FREQ.map(k => [k[0], k[1]]));
+    const sentiRows = [["Sentiment", "Tổng số", "Tỉ lệ"]].concat(SENTIMENT_TOTALS.map(s => [s[0], s[1], s[2]]));
+    const bytes = buildXlsx([
+      { name: "Success rate", rows: callRows },
+      { name: "Từ khóa lặp lại", rows: kwRows },
+      { name: "Sentiment", rows: sentiRows },
+    ]);
+    downloadBlob(bytes, "SonicAI-Dashboard-Report.xlsx",
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+    flashExport(dashExportBtn, "Đã xuất");
   });
 })();
