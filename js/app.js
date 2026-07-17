@@ -718,7 +718,6 @@
 
     const rateEl = $("#dashAvgRate"); if (rateEl) rateEl.textContent = avgRate + "%";
     const durEl = $("#dashAvgDur"); if (durEl) durEl.textContent = mm + ":" + String(ss).padStart(2, "0");
-    const totEl = $("#dashTotal"); if (totEl) totEl.textContent = HISTORY.length;
 
     const top = [...HISTORY].sort((a, b) => b.conf - a.conf).slice(0, 3);
     const list = $("#dashTop3");
