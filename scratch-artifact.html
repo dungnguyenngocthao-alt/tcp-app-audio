@@ -1283,6 +1283,37 @@ mark { background: var(--tcp-accent-subtle); color: var(--tcp-accent-hover); bor
 .drawer { position: absolute; inset: 0; z-index: 50; }
 .drawer[hidden] { display: none; }
 
+/* Confirm modal */
+.modal { position: absolute; inset: 0; z-index: 60; display: grid; place-items: center; padding: var(--tcp-space-6); }
+.modal[hidden] { display: none; }
+.modal__backdrop {
+  position: absolute; inset: 0;
+  background: rgba(15, 27, 45, 0.45);
+  opacity: 0; animation: drawer-fade var(--tcp-dur-base) var(--tcp-ease) forwards;
+}
+.modal__box {
+  position: relative;
+  width: 100%; max-width: 340px;
+  background: var(--tcp-bg);
+  border-radius: var(--tcp-radius-xl);
+  box-shadow: var(--tcp-shadow-2xl);
+  padding: var(--tcp-space-6);
+  text-align: center;
+  animation: modal-pop var(--tcp-dur-base) var(--tcp-ease);
+}
+@keyframes modal-pop { from { transform: scale(.94); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+.modal__icon {
+  width: 52px; height: 52px; margin: 0 auto var(--tcp-space-3);
+  display: grid; place-items: center;
+  border-radius: 50%;
+  background: var(--tcp-error-bg); color: var(--tcp-error-solid);
+}
+.modal__icon svg { width: 26px; height: 26px; }
+.modal__title { font-size: 18px; font-weight: 600; color: var(--tcp-ink); margin: 0 0 var(--tcp-space-2); }
+.modal__msg { font-size: 14px; line-height: 20px; color: var(--tcp-fg-secondary); margin: 0 0 var(--tcp-space-5); }
+.modal__actions { display: flex; gap: var(--tcp-space-3); }
+.modal__actions .btn { flex: 1; }
+
 .drawer__backdrop {
   position: absolute; inset: 0;
   background: rgba(15, 27, 45, 0.45);
@@ -2122,6 +2153,22 @@ mark { background: var(--tcp-accent-subtle); color: var(--tcp-accent-hover); bor
       </div>
     </section>
 
+    <!-- Confirm dialog -->
+    <div class="modal" id="confirmModal" hidden>
+      <div class="modal__backdrop" data-confirm-cancel></div>
+      <div class="modal__box" role="dialog" aria-modal="true" aria-labelledby="confirmTitle">
+        <div class="modal__icon">
+          <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M216,48H176V40a24,24,0,0,0-24-24H104A24,24,0,0,0,80,40v8H40a8,8,0,0,0,0,16h8V208a16,16,0,0,0,16,16H192a16,16,0,0,0,16-16V64h8a8,8,0,0,0,0-16ZM96,40a8,8,0,0,1,8-8h48a8,8,0,0,1,8,8v8H96Zm96,168H64V64H192ZM112,104v64a8,8,0,0,1-16,0V104a8,8,0,0,1,16,0Zm48,0v64a8,8,0,0,1-16,0V104a8,8,0,0,1,16,0Z"/></svg>
+        </div>
+        <h2 class="modal__title" id="confirmTitle">Xóa?</h2>
+        <p class="modal__msg" id="confirmMsg"></p>
+        <div class="modal__actions">
+          <button class="btn btn--outline" type="button" data-confirm-cancel>Hủy</button>
+          <button class="btn btn--danger" type="button" id="confirmOk">Xóa</button>
+        </div>
+      </div>
+    </div>
+
     <!-- Slide-in navigation menu -->
     <div class="drawer" id="menu" hidden>
       <div class="drawer__backdrop" data-menu-close></div>
@@ -2507,8 +2554,32 @@ mark { background: var(--tcp-accent-subtle); color: var(--tcp-accent-hover); bor
     sub.append(sep, d);
   }
 
+  /* Reusable confirm dialog */
+  const confirmModal = $("#confirmModal");
+  const confirmTitle = $("#confirmTitle");
+  const confirmMsg   = $("#confirmMsg");
+  const confirmOk    = $("#confirmOk");
+  let confirmAction  = null;
+  function showConfirm(opts) {
+    if (!confirmModal) { if (opts.onConfirm) opts.onConfirm(); return; }
+    confirmTitle.textContent = opts.title || "Xác nhận";
+    confirmMsg.textContent = opts.message || "";
+    confirmOk.textContent = opts.confirmLabel || "Xóa";
+    confirmAction = opts.onConfirm || null;
+    confirmModal.hidden = false;
+  }
+  function hideConfirm() { if (confirmModal) confirmModal.hidden = true; confirmAction = null; }
+  if (confirmOk) confirmOk.addEventListener("click", () => { const a = confirmAction; hideConfirm(); if (a) a(); });
+  $$("[data-confirm-cancel]").forEach(el => el.addEventListener("click", hideConfirm));
+  document.addEventListener("keydown", e => {
+    if (e.key === "Escape" && confirmModal && !confirmModal.hidden) hideConfirm();
+  });
+
   const exportBtn = $("#exportBtn");
-  if (exportBtn) exportBtn.addEventListener("click", () => flashCheckIcon(exportBtn));
+  if (exportBtn) exportBtn.addEventListener("click", () => {
+    exportTranscript(currentResultName());
+    flashCheckIcon(exportBtn);
+  });
 
   /* -------------------------------------------------------------------------
      Screen 4 · History — past uploads with re-view / export, 10 per page
@@ -2753,10 +2824,19 @@ mark { background: var(--tcp-accent-subtle); color: var(--tcp-accent-hover); bor
     const del = e.target.closest("[data-folder-del]");
     if (del) {
       const id = parseInt(del.dataset.folderDel, 10);
-      archive.forEach(it => { if (it.folder === id) it.folder = null; });  // spill files back to root
-      const i = folders.findIndex(f => f.id === id);
-      if (i >= 0) folders.splice(i, 1);
-      renderArchive();
+      const f = folderById(id);
+      const n = filesIn(id).length;
+      showConfirm({
+        title: "Xóa thư mục?",
+        message: `Thư mục "${f ? f.name : ""}" sẽ bị xóa.` + (n ? ` ${n} tệp bên trong sẽ được đưa ra ngoài.` : ""),
+        confirmLabel: "Xóa thư mục",
+        onConfirm: () => {
+          archive.forEach(it => { if (it.folder === id) it.folder = null; });  // spill files back to root
+          const i = folders.findIndex(fo => fo.id === id);
+          if (i >= 0) folders.splice(i, 1);
+          renderArchive();
+        },
+      });
       return;
     }
     const fo = e.target.closest("[data-folder]");
@@ -2769,7 +2849,16 @@ mark { background: var(--tcp-accent-subtle); color: var(--tcp-accent-hover); bor
     if (v === "__new__") { pendingMoveToNew = true; openNewFolder(); A.moveTo.value = ""; return; }
     moveSelectedTo(v === "__root__" ? null : parseInt(v, 10));
   });
-  A.del.addEventListener("click", () => { if (selected.size) deleteSelected(); });
+  A.del.addEventListener("click", () => {
+    if (!selected.size) return;
+    const n = selected.size;
+    showConfirm({
+      title: "Xóa tệp?",
+      message: `${n} tệp đã chọn sẽ bị xóa vĩnh viễn.`,
+      confirmLabel: "Xóa",
+      onConfirm: deleteSelected,
+    });
+  });
 
   // Pagination clicks
   historyPager.addEventListener("click", e => {
@@ -2810,7 +2899,12 @@ mark { background: var(--tcp-accent-subtle); color: var(--tcp-accent-hover); bor
     const view = e.target.closest("[data-view]");
     if (view) { showSingleResult(view.dataset.file, view.dataset.date); return; }
     const exp = e.target.closest("[data-hist-export]");
-    if (exp) flashExport(exp, "Đã xuất");
+    if (exp) {
+      const card = exp.closest(".hist");
+      const it = card && archive.find(a => a.id === parseInt(card.dataset.id, 10));
+      exportTranscript(it ? it.file : "");
+      flashExport(exp, "Đã xuất");
+    }
   });
 
   historyList.addEventListener("keydown", e => {
@@ -2873,7 +2967,12 @@ mark { background: var(--tcp-accent-subtle); color: var(--tcp-accent-hover); bor
         return;
       }
       const exp = e.target.closest("[data-dash-export]");
-      if (exp) flashCheckIcon(exp);
+      if (exp) {
+        const row = exp.closest(".top3__row");
+        const v = row && row.querySelector("[data-view]");
+        exportTranscript(v ? v.dataset.file : "");
+        flashCheckIcon(exp);
+      }
     });
   }
 
@@ -3187,6 +3286,34 @@ mark { background: var(--tcp-accent-subtle); color: var(--tcp-accent-hover); bor
     a.href = url; a.download = filename;
     document.body.appendChild(a); a.click();
     setTimeout(() => { document.body.removeChild(a); URL.revokeObjectURL(url); }, 0);
+  }
+
+  /* Transcript export — download the conversation as a .txt file */
+  const TRANSCRIPT = [
+    { who: "Agent",       time: "00:15", text: "Chào anh Tâm, cảm ơn anh đã dành thời gian. Hôm nay em muốn giới thiệu về hệ thống SonicAI bên em." },
+    { who: "Khách hàng",  time: "00:42", text: "Chào bạn. Mình đang quan tâm đến tính năng phân tích dữ liệu real-time. Bên bạn có hỗ trợ tốt phần này không?" },
+    { who: "Agent",       time: "01:05", text: "Dạ hoàn toàn được ạ. Gói Premium bên em thiết kế đặc biệt cho xử lý luồng dữ liệu lớn theo thời gian thực, độ trễ chưa tới 50ms." },
+    { who: "Khách hàng",  time: "01:38", text: "Nghe có vẻ ổn. Nhưng về giá cả thì sao? Có vẻ hơi cao so với ngân sách dự kiến của bên mình." },
+  ];
+  function currentResultName() {
+    const active = fileStripScroll && fileStripScroll.querySelector(".fchip.is-active .fchip__name");
+    if (active) return active.textContent.trim();
+    const sub = $("#screen-results .results-head__sub");
+    if (sub && sub.childNodes[0]) return (sub.childNodes[0].textContent || "").trim();
+    return DEFAULT_PROC_NAME;
+  }
+  function buildTranscriptText(fileName) {
+    const lines = ["SonicAI — Bản ghi cuộc hội thoại", ""];
+    if (fileName) lines.push("Tệp: " + fileName);
+    lines.push("Ngày xuất: " + todayLabel(), "");
+    lines.push("========================================", "");
+    TRANSCRIPT.forEach(m => lines.push(`[${m.time}] ${m.who}: ${m.text}`));
+    lines.push("", "======== Hết bản ghi ========");
+    return lines.join("\r\n");
+  }
+  function exportTranscript(fileName) {
+    const base = (fileName ? fileName.replace(/\.[^.]+$/, "") : "SonicAI") || "SonicAI";
+    downloadBlob(enc.encode(buildTranscriptText(fileName)), base + "-transcript.txt", "text/plain;charset=utf-8");
   }
 
   const dashExportBtn = $("#dashExportBtn");

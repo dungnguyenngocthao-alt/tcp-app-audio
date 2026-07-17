@@ -346,8 +346,32 @@
     sub.append(sep, d);
   }
 
+  /* Reusable confirm dialog */
+  const confirmModal = $("#confirmModal");
+  const confirmTitle = $("#confirmTitle");
+  const confirmMsg   = $("#confirmMsg");
+  const confirmOk    = $("#confirmOk");
+  let confirmAction  = null;
+  function showConfirm(opts) {
+    if (!confirmModal) { if (opts.onConfirm) opts.onConfirm(); return; }
+    confirmTitle.textContent = opts.title || "Xác nhận";
+    confirmMsg.textContent = opts.message || "";
+    confirmOk.textContent = opts.confirmLabel || "Xóa";
+    confirmAction = opts.onConfirm || null;
+    confirmModal.hidden = false;
+  }
+  function hideConfirm() { if (confirmModal) confirmModal.hidden = true; confirmAction = null; }
+  if (confirmOk) confirmOk.addEventListener("click", () => { const a = confirmAction; hideConfirm(); if (a) a(); });
+  $$("[data-confirm-cancel]").forEach(el => el.addEventListener("click", hideConfirm));
+  document.addEventListener("keydown", e => {
+    if (e.key === "Escape" && confirmModal && !confirmModal.hidden) hideConfirm();
+  });
+
   const exportBtn = $("#exportBtn");
-  if (exportBtn) exportBtn.addEventListener("click", () => flashCheckIcon(exportBtn));
+  if (exportBtn) exportBtn.addEventListener("click", () => {
+    exportTranscript(currentResultName());
+    flashCheckIcon(exportBtn);
+  });
 
   /* -------------------------------------------------------------------------
      Screen 4 · History — past uploads with re-view / export, 10 per page
@@ -592,10 +616,19 @@
     const del = e.target.closest("[data-folder-del]");
     if (del) {
       const id = parseInt(del.dataset.folderDel, 10);
-      archive.forEach(it => { if (it.folder === id) it.folder = null; });  // spill files back to root
-      const i = folders.findIndex(f => f.id === id);
-      if (i >= 0) folders.splice(i, 1);
-      renderArchive();
+      const f = folderById(id);
+      const n = filesIn(id).length;
+      showConfirm({
+        title: "Xóa thư mục?",
+        message: `Thư mục "${f ? f.name : ""}" sẽ bị xóa.` + (n ? ` ${n} tệp bên trong sẽ được đưa ra ngoài.` : ""),
+        confirmLabel: "Xóa thư mục",
+        onConfirm: () => {
+          archive.forEach(it => { if (it.folder === id) it.folder = null; });  // spill files back to root
+          const i = folders.findIndex(fo => fo.id === id);
+          if (i >= 0) folders.splice(i, 1);
+          renderArchive();
+        },
+      });
       return;
     }
     const fo = e.target.closest("[data-folder]");
@@ -608,7 +641,16 @@
     if (v === "__new__") { pendingMoveToNew = true; openNewFolder(); A.moveTo.value = ""; return; }
     moveSelectedTo(v === "__root__" ? null : parseInt(v, 10));
   });
-  A.del.addEventListener("click", () => { if (selected.size) deleteSelected(); });
+  A.del.addEventListener("click", () => {
+    if (!selected.size) return;
+    const n = selected.size;
+    showConfirm({
+      title: "Xóa tệp?",
+      message: `${n} tệp đã chọn sẽ bị xóa vĩnh viễn.`,
+      confirmLabel: "Xóa",
+      onConfirm: deleteSelected,
+    });
+  });
 
   // Pagination clicks
   historyPager.addEventListener("click", e => {
@@ -649,7 +691,12 @@
     const view = e.target.closest("[data-view]");
     if (view) { showSingleResult(view.dataset.file, view.dataset.date); return; }
     const exp = e.target.closest("[data-hist-export]");
-    if (exp) flashExport(exp, "Đã xuất");
+    if (exp) {
+      const card = exp.closest(".hist");
+      const it = card && archive.find(a => a.id === parseInt(card.dataset.id, 10));
+      exportTranscript(it ? it.file : "");
+      flashExport(exp, "Đã xuất");
+    }
   });
 
   historyList.addEventListener("keydown", e => {
@@ -712,7 +759,12 @@
         return;
       }
       const exp = e.target.closest("[data-dash-export]");
-      if (exp) flashCheckIcon(exp);
+      if (exp) {
+        const row = exp.closest(".top3__row");
+        const v = row && row.querySelector("[data-view]");
+        exportTranscript(v ? v.dataset.file : "");
+        flashCheckIcon(exp);
+      }
     });
   }
 
@@ -1026,6 +1078,34 @@
     a.href = url; a.download = filename;
     document.body.appendChild(a); a.click();
     setTimeout(() => { document.body.removeChild(a); URL.revokeObjectURL(url); }, 0);
+  }
+
+  /* Transcript export — download the conversation as a .txt file */
+  const TRANSCRIPT = [
+    { who: "Agent",       time: "00:15", text: "Chào anh Tâm, cảm ơn anh đã dành thời gian. Hôm nay em muốn giới thiệu về hệ thống SonicAI bên em." },
+    { who: "Khách hàng",  time: "00:42", text: "Chào bạn. Mình đang quan tâm đến tính năng phân tích dữ liệu real-time. Bên bạn có hỗ trợ tốt phần này không?" },
+    { who: "Agent",       time: "01:05", text: "Dạ hoàn toàn được ạ. Gói Premium bên em thiết kế đặc biệt cho xử lý luồng dữ liệu lớn theo thời gian thực, độ trễ chưa tới 50ms." },
+    { who: "Khách hàng",  time: "01:38", text: "Nghe có vẻ ổn. Nhưng về giá cả thì sao? Có vẻ hơi cao so với ngân sách dự kiến của bên mình." },
+  ];
+  function currentResultName() {
+    const active = fileStripScroll && fileStripScroll.querySelector(".fchip.is-active .fchip__name");
+    if (active) return active.textContent.trim();
+    const sub = $("#screen-results .results-head__sub");
+    if (sub && sub.childNodes[0]) return (sub.childNodes[0].textContent || "").trim();
+    return DEFAULT_PROC_NAME;
+  }
+  function buildTranscriptText(fileName) {
+    const lines = ["SonicAI — Bản ghi cuộc hội thoại", ""];
+    if (fileName) lines.push("Tệp: " + fileName);
+    lines.push("Ngày xuất: " + todayLabel(), "");
+    lines.push("========================================", "");
+    TRANSCRIPT.forEach(m => lines.push(`[${m.time}] ${m.who}: ${m.text}`));
+    lines.push("", "======== Hết bản ghi ========");
+    return lines.join("\r\n");
+  }
+  function exportTranscript(fileName) {
+    const base = (fileName ? fileName.replace(/\.[^.]+$/, "") : "SonicAI") || "SonicAI";
+    downloadBlob(enc.encode(buildTranscriptText(fileName)), base + "-transcript.txt", "text/plain;charset=utf-8");
   }
 
   const dashExportBtn = $("#dashExportBtn");
