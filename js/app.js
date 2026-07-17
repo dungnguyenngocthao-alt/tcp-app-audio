@@ -789,7 +789,7 @@
     const many = d.bars.length > 12;
     chartPlot.innerHTML = d.bars.map(([x, inc, out], i) => {
       const showX = !many || i % 5 === 0;
-      return `<div class="chart-col" title="${x} — Gọi đến: ${inc}, Gọi đi: ${out}">
+      return `<div class="chart-col" data-x="${x}" data-in="${inc}" data-out="${out}">
         <div class="chart-col__track">
           <div class="chart-col__bar chart-col__bar--in" style="height:${Math.max(3, Math.round(inc / max * 100))}%"></div>
           <div class="chart-col__bar chart-col__bar--out" style="height:${Math.max(3, Math.round(out / max * 100))}%"></div>
@@ -807,6 +807,32 @@
     });
   }
   renderChart("week");
+
+  /* Hover tooltip showing the incoming / outgoing counts for a period */
+  const chartTip = $("#chartTip");
+  function positionTip(col) {
+    if (!chartTip) return;
+    chartTip.innerHTML =
+      `<div class="chart-tip__x">${col.dataset.x}</div>` +
+      `<div class="chart-tip__row"><span class="cl-dot cl-dot--in"></span>Gọi đến: ${col.dataset.in}</div>` +
+      `<div class="chart-tip__row"><span class="cl-dot cl-dot--out"></span>Gọi đi: ${col.dataset.out}</div>`;
+    chartTip.hidden = false;
+    const p = chartTip.parentElement.getBoundingClientRect();
+    const c = col.getBoundingClientRect();
+    chartTip.style.left = (c.left - p.left + c.width / 2) + "px";
+    chartTip.style.top = (c.top - p.top - 8) + "px";
+  }
+  if (chartPlot && chartTip) {
+    chartPlot.addEventListener("mouseover", e => {
+      const col = e.target.closest(".chart-col");
+      if (col) positionTip(col);
+    });
+    chartPlot.addEventListener("mousemove", e => {
+      const col = e.target.closest(".chart-col");
+      if (col) positionTip(col);
+    });
+    chartPlot.addEventListener("mouseleave", () => { chartTip.hidden = true; });
+  }
 
   /* Call-direction donut — total incoming vs outgoing */
   (function renderCallPie() {

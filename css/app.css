@@ -1239,6 +1239,19 @@ mark.mark--neg { background: var(--tcp-error-bg); color: var(--tcp-error-900); }
 .dash-toprow > .card { margin-top: 0; }
 
 /* Uploads bar chart */
+.dash-chart { position: relative; }
+.chart-tip {
+  position: absolute; z-index: 6; pointer-events: none;
+  transform: translate(-50%, -100%);
+  background: var(--tcp-ink); color: #fff;
+  font-size: 12px; line-height: 1.5; white-space: nowrap;
+  padding: 7px 11px; border-radius: var(--tcp-radius-md);
+  box-shadow: var(--tcp-shadow-lg);
+}
+.chart-tip[hidden] { display: none; }
+.chart-tip__x { font-weight: 600; margin-bottom: 2px; }
+.chart-tip__row { display: flex; align-items: center; gap: 6px; }
+.chart-tip__row .cl-dot { width: 8px; height: 8px; margin-right: 0; }
 .dash-chart__head {
   display: flex; align-items: flex-start; justify-content: space-between;
   gap: var(--tcp-space-4); flex-wrap: wrap; margin-bottom: var(--tcp-space-3);
