@@ -863,7 +863,7 @@ button { font-family: inherit; }
   padding: 0 6px; margin-right: 6px; border-radius: var(--tcp-radius-pill);
 }
 .fchip__dir--in { background: var(--tcp-error-bg); color: var(--tcp-error-900); }
-.fchip__dir--out { background: var(--tcp-accent-subtle); color: var(--tcp-accent-hover); }
+.fchip__dir--out { background: var(--tcp-success-bg); color: var(--tcp-success-900); }
 
 .result-card__label {
   display: flex; align-items: center; gap: var(--tcp-space-2);
@@ -1446,7 +1446,7 @@ mark.mark--neg { background: var(--tcp-error-bg); color: var(--tcp-error-900); }
 .cl-item { display: inline-flex; align-items: center; font-size: 12px; color: var(--tcp-fg-secondary); }
 .cl-dot { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 7px; vertical-align: middle; }
 .cl-dot--in { background: #EF4444; }
-.cl-dot--out { background: var(--tcp-accent); }
+.cl-dot--out { background: #22C55E; }
 .dash-chart__total { font-size: 32px; font-weight: 600; color: var(--tcp-ink); letter-spacing: -0.6px; line-height: 1.1; }
 .dash-chart__cap { font-size: 12px; color: var(--tcp-fg-tertiary); text-transform: uppercase; letter-spacing: .8px; margin-top: 3px; }
 .seg { display: inline-flex; background: var(--tcp-bg-muted); border-radius: var(--tcp-radius-pill); padding: 3px; gap: 2px; }
@@ -1466,7 +1466,7 @@ mark.mark--neg { background: var(--tcp-error-bg); color: var(--tcp-error-900); }
   transition: height var(--tcp-dur-slow) var(--tcp-ease);
 }
 .chart-col__bar--in  { background: linear-gradient(180deg, #F87171 0%, #EF4444 100%); }
-.chart-col__bar--out { background: linear-gradient(180deg, #7C74EE 0%, var(--tcp-accent) 100%); }
+.chart-col__bar--out { background: linear-gradient(180deg, #34D47A 0%, #16A34A 100%); }
 .chart-col__x { height: 18px; margin-top: 6px; text-align: center; font-size: 11px; color: var(--tcp-fg-tertiary); white-space: nowrap; overflow: hidden; }
 
 /* Call-direction donut */
@@ -3252,7 +3252,7 @@ mark.mark--neg { background: var(--tcp-error-bg); color: var(--tcp-error-900); }
     if (!pie) return;
     const inCount = 152, outCount = 94, total = inCount + outCount;
     const inPct = Math.round(inCount / total * 100);
-    pie.style.background = `conic-gradient(#EF4444 0 ${inPct}%, var(--tcp-accent) ${inPct}% 100%)`;
+    pie.style.background = `conic-gradient(#EF4444 0 ${inPct}%, #22C55E ${inPct}% 100%)`;
     const set = (id, v) => { const el = $("#" + id); if (el) el.textContent = v; };
     set("pieInPct", inPct + "%");
     set("pieIn", inCount);
