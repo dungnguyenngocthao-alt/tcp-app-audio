@@ -1,5 +1,5 @@
 /* =============================================================================
-   SonicAI — Acoustic Intelligence (mobile web app)
+   TCPVoiceAI — Acoustic Intelligence (mobile web app)
    Built on the Talent Connect Plus design foundations (tokens.css).
    ============================================================================= */
 
@@ -698,6 +698,41 @@ button { font-family: inherit; }
 }
 .dash-export { display: inline-flex; align-items: center; gap: 6px; flex: 0 0 auto; }
 .dash-export svg { width: 16px; height: 16px; }
+
+/* Dashboard date-range filter */
+.dash-filter {
+  display: flex; align-items: center; flex-wrap: wrap;
+  gap: 10px; margin: var(--tcp-space-4) 0 var(--tcp-space-5);
+  padding: 10px 14px;
+  background: var(--tcp-bg);
+  border: 1px solid var(--tcp-border-subtle);
+  border-radius: var(--tcp-radius-md);
+  box-shadow: var(--tcp-shadow-xs);
+}
+.dash-filter__label {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 13px; font-weight: 500; color: var(--tcp-fg-secondary);
+  margin-right: 2px;
+}
+.dash-filter__label svg { width: 16px; height: 16px; }
+.dash-filter__field { display: inline-flex; align-items: center; gap: 6px; }
+.dash-filter__field label { font-size: 13px; color: var(--tcp-fg-secondary); }
+.dash-filter__input {
+  font: inherit; font-size: 13px; color: var(--tcp-fg);
+  padding: 6px 8px;
+  background: var(--tcp-white);
+  border: 1px solid var(--tcp-border);
+  border-radius: var(--tcp-radius-sm);
+}
+.dash-filter__input:focus-visible {
+  outline: none; border-color: var(--tcp-accent);
+  box-shadow: 0 0 0 3px var(--tcp-accent-subtle);
+}
+.dash-filter__sep { color: var(--tcp-fg-tertiary); }
+.dash-filter #dateReset { margin-left: auto; flex: 0 0 auto; }
+.top3__empty {
+  padding: 12px 4px; font-size: 14px; color: var(--tcp-fg-secondary);
+}
 
 /* Settings — keyword editor */
 .kw-hint {

@@ -1,5 +1,5 @@
 /* =============================================================================
-   SonicAI — app interactions
+   TCPVoiceAI — app interactions
    ============================================================================= */
 (function () {
   "use strict";
@@ -211,7 +211,7 @@
   const modelSelect   = $("#modelSelect");
   const procModelName = $("#procModelName");
   function currentModelName() {
-    if (!modelSelect) return "SonicAI Insight 2.0 · Balanced";
+    if (!modelSelect) return "TCPVoiceAI Insight 2.0 · Balanced";
     return modelSelect.options[modelSelect.selectedIndex].text;
   }
 
@@ -705,22 +705,61 @@
   const DL_SVG =
     '<svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M224,144v64a8,8,0,0,1-8,8H40a8,8,0,0,1-8-8V144a8,8,0,0,1,16,0v56H208V144a8,8,0,0,1,16,0Zm-101.66,5.66a8,8,0,0,0,11.32,0l40-40a8,8,0,0,0-11.32-11.32L136,124.69V32a8,8,0,0,0-16,0v92.69L93.66,98.34a8,8,0,0,0-11.32,11.32Z"/></svg>';
 
-  function renderDashboard() {
-    if (!HISTORY.length) return;
-    const rates = HISTORY.map(r => r.conf);
+  // Parse a HISTORY "MM/DD/YYYY, h:mm AP" string into a local Date (day precision).
+  function parseHistDate(s) {
+    const [m, d, y] = s.split(",")[0].trim().split("/").map(Number);
+    return new Date(y, m - 1, d);
+  }
+  // ISO yyyy-mm-dd (for <input type="date"> value/min/max)
+  function isoDate(dt) {
+    return dt.getFullYear() + "-" +
+      String(dt.getMonth() + 1).padStart(2, "0") + "-" +
+      String(dt.getDate()).padStart(2, "0");
+  }
+  const HIST_DATES = HISTORY.map(r => parseHistDate(r.date).getTime());
+  const HIST_MIN = new Date(Math.min(...HIST_DATES));
+  const HIST_MAX = new Date(Math.max(...HIST_DATES));
+  // Volume shown in the call-direction donut for the full range (mock total).
+  const PIE_TOTAL_FULL = 128, PIE_IN_RATIO = 79 / 128;
+
+  function renderDashboard(subset) {
+    const rows = subset || HISTORY;
+    const fraction = HISTORY.length ? rows.length / HISTORY.length : 0;
+
+    const rateEl = $("#dashAvgRate"), durEl = $("#dashAvgDur"),
+          qualEl = $("#dashAvgQuality"), subEl = $("#dashRateSub"),
+          list = $("#dashTop3");
+
+    if (!rows.length) {
+      if (rateEl) rateEl.textContent = "—";
+      if (durEl) durEl.textContent = "—";
+      if (qualEl) qualEl.textContent = "—";
+      if (subEl) subEl.textContent = "Không có cuộc gọi trong khoảng này";
+      if (list) list.innerHTML = '<div class="top3__empty">Không có dữ liệu.</div>';
+      renderCallPie(0);
+      return;
+    }
+
+    const rates = rows.map(r => r.conf);
     const avgRate = Math.round(rates.reduce((a, b) => a + b, 0) / rates.length);
-    const secs = HISTORY.map(r => {
+    const secs = rows.map(r => {
       const [m, s] = r.dur.split(":").map(Number);
       return m * 60 + s;
     });
     const avgSec = Math.round(secs.reduce((a, b) => a + b, 0) / secs.length);
     const mm = Math.floor(avgSec / 60), ss = avgSec % 60;
+    // Audio quality tracks avg confidence, deterministic + clamped to a sane band.
+    const quality = Math.min(9.6, Math.max(7.2, 7.4 + (avgRate - 60) / 100 * 3));
 
-    const rateEl = $("#dashAvgRate"); if (rateEl) rateEl.textContent = avgRate + "%";
-    const durEl = $("#dashAvgDur"); if (durEl) durEl.textContent = mm + ":" + String(ss).padStart(2, "0");
+    if (rateEl) rateEl.textContent = avgRate + "%";
+    if (durEl) durEl.textContent = mm + ":" + String(ss).padStart(2, "0");
+    if (qualEl) qualEl.textContent = quality.toFixed(1);
+    if (subEl) subEl.textContent = "trên " + rows.length + " cuộc gọi";
 
-    const top = [...HISTORY].sort((a, b) => b.conf - a.conf).slice(0, 3);
-    const list = $("#dashTop3");
+    // Volume counts scale with how much of the full range is selected.
+    renderCallPie(fraction);
+
+    const top = [...rows].sort((a, b) => b.conf - a.conf).slice(0, 3);
     if (list) {
       list.innerHTML = top.map((r, i) => `
         <div class="top3__row">
@@ -759,6 +798,36 @@
   }
 
   renderDashboard();
+
+  /* Date-range filter — recompute the dashboard analysis over calls whose date
+     falls within [from, to]. Inputs are bounded to the available data span. */
+  (function initDateFilter() {
+    const from = $("#dateFrom"), to = $("#dateTo"), reset = $("#dateReset");
+    if (!from || !to) return;
+    const minISO = isoDate(HIST_MIN), maxISO = isoDate(HIST_MAX);
+    [from, to].forEach(el => { el.min = minISO; el.max = maxISO; });
+    from.value = minISO;
+    to.value = maxISO;
+
+    function apply() {
+      // Guard against an inverted range by swapping ends.
+      let a = from.value || minISO, b = to.value || maxISO;
+      if (a > b) { const t = a; a = b; b = t; }
+      const lo = new Date(a).getTime(), hi = new Date(b).getTime();
+      const subset = HISTORY.filter(r => {
+        const t = parseHistDate(r.date).getTime();
+        return t >= lo && t <= hi;
+      });
+      renderDashboard(subset);
+    }
+    from.addEventListener("change", apply);
+    to.addEventListener("change", apply);
+    if (reset) reset.addEventListener("click", () => {
+      from.value = minISO;
+      to.value = maxISO;
+      renderDashboard();
+    });
+  })();
 
   /* Uploads-over-time bar chart (incoming + outgoing) with a range toggle.
      Each period shows two adjacent bars: [label, incoming, outgoing]. */
@@ -834,18 +903,21 @@
     chartPlot.addEventListener("mouseleave", () => { chartTip.hidden = true; });
   }
 
-  /* Call-direction donut — total incoming vs outgoing */
-  (function renderCallPie() {
+  /* Call-direction donut — total incoming vs outgoing. `fraction` (0–1) scales
+     the volume to the selected date range; the in/out split stays constant. */
+  function renderCallPie(fraction) {
     const pie = $("#callPie");
     if (!pie) return;
-    const inCount = 152, outCount = 94, total = inCount + outCount;
-    const inPct = Math.round(inCount / total * 100);
+    const f = fraction == null ? 1 : fraction;
+    const total = Math.round(PIE_TOTAL_FULL * f);
+    const inCount = Math.round(total * PIE_IN_RATIO);
+    const inPct = total ? Math.round(inCount / total * 100) : 0;
     pie.style.background = `conic-gradient(#F97316 0 ${inPct}%, var(--tcp-accent) ${inPct}% 100%)`;
     const set = (id, v) => { const el = $("#" + id); if (el) el.textContent = v; };
-    set("pieInPct", inPct + "%");
-    set("pieIn", inCount);
-    set("pieOut", outCount);
-  })();
+    set("pieTotal", total.toLocaleString("vi-VN"));
+    set("pieIn", inPct + "%");
+    set("pieOut", (total ? 100 - inPct : 0) + "%");
+  }
 
   /* -------------------------------------------------------------------------
      File strip — when several files are analysed together, show them as a
@@ -1224,7 +1296,7 @@
 
   /* Transcript export — download the conversation as a .txt file */
   const TRANSCRIPT = [
-    { who: "Tư vấn viên", time: "00:15", text: "Chào anh Tâm, cảm ơn anh đã dành thời gian. Hôm nay em muốn giới thiệu về hệ thống SonicAI bên em." },
+    { who: "Tư vấn viên", time: "00:15", text: "Chào anh Tâm, cảm ơn anh đã dành thời gian. Hôm nay em muốn giới thiệu về hệ thống TCPVoiceAI bên em." },
     { who: "Khách hàng",  time: "00:42", text: "Chào bạn. Mình đang quan tâm đến tính năng phân tích dữ liệu real-time. Bên bạn có hỗ trợ tốt phần này không?" },
     { who: "Tư vấn viên", time: "01:05", text: "Dạ hoàn toàn được ạ. Gói Premium bên em thiết kế đặc biệt cho xử lý luồng dữ liệu lớn theo thời gian thực, độ trễ chưa tới 50ms." },
     { who: "Khách hàng",  time: "01:38", text: "Nghe có vẻ ổn. Nhưng về giá cả thì sao? Có vẻ hơi cao so với ngân sách dự kiến của bên mình." },
@@ -1235,7 +1307,7 @@
     return resultFiles[0] || DEFAULT_PROC_NAME;
   }
   function buildTranscriptText(fileName) {
-    const lines = ["SonicAI — Bản ghi cuộc hội thoại", ""];
+    const lines = ["TCPVoiceAI — Bản ghi cuộc hội thoại", ""];
     if (fileName) lines.push("Tệp: " + fileName);
     lines.push("Ngày xuất: " + todayLabel(), "");
     lines.push("========================================", "");
@@ -1244,7 +1316,7 @@
     return lines.join("\r\n");
   }
   function exportTranscript(fileName) {
-    const base = (fileName ? fileName.replace(/\.[^.]+$/, "") : "SonicAI") || "SonicAI";
+    const base = (fileName ? fileName.replace(/\.[^.]+$/, "") : "TCPVoiceAI") || "TCPVoiceAI";
     downloadBlob(enc.encode(buildTranscriptText(fileName)), base + "-transcript.txt", "text/plain;charset=utf-8");
   }
 
@@ -1259,7 +1331,7 @@
       { name: "Từ khóa lặp lại", rows: kwRows },
       { name: "Sentiment", rows: sentiRows },
     ]);
-    downloadBlob(bytes, "SonicAI-Dashboard-Report.xlsx",
+    downloadBlob(bytes, "TCPVoiceAI-Dashboard-Report.xlsx",
       "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
     flashExport(dashExportBtn, "Đã xuất");
   });
