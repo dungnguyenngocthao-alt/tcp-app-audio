@@ -804,8 +804,8 @@
   (function initDateFilter() {
     const from = $("#dateFrom"), to = $("#dateTo"), reset = $("#dateReset");
     if (!from || !to) return;
+    // Any date can be picked freely — no min/max bounds. Default spans the data.
     const minISO = isoDate(HIST_MIN), maxISO = isoDate(HIST_MAX);
-    [from, to].forEach(el => { el.min = minISO; el.max = maxISO; });
     from.value = minISO;
     to.value = maxISO;
 
