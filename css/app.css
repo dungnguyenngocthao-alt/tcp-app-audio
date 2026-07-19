@@ -176,7 +176,14 @@ button { font-family: inherit; }
 
 .btn--lg { padding: 16px 24px; font-size: 17px; border-radius: var(--tcp-radius-lg); }
 .btn--sm { padding: 8px 14px; font-size: 13px; border-radius: var(--tcp-radius-sm); }
-.btn--block { display: flex; width: 100%; }
+.btn--block { display: flex; width: 100%; justify-content: center; align-items: center; gap: 8px; }
+.btn--block svg { width: 18px; height: 18px; }
+
+/* Results screen — "go to dashboard" footer action */
+.results-foot {
+  padding: var(--tcp-space-4) var(--tcp-space-5) var(--tcp-space-8);
+  max-width: 460px; margin: 0 auto; width: 100%;
+}
 
 /* ---------------------------------------------------------------------------
    SCREEN 1 · New Analysis
