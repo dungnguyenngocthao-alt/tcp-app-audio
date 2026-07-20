@@ -503,6 +503,8 @@
     A.selectModeBtn.classList.toggle("is-active", selectMode);
     A.selectModeBtn.setAttribute("aria-pressed", selectMode ? "true" : "false");
     A.selectModeBtn.title = selectMode ? "Xong" : "Chọn nhiều tệp";
+    const selLabel = A.selectModeBtn.querySelector(".arch-select-btn__label");
+    if (selLabel) selLabel.textContent = selectMode ? "Xong" : "Chọn nhiều";
   }
 
   function renderCard(r) {
