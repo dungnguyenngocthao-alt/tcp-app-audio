@@ -1054,16 +1054,16 @@ button { font-family: inherit; }
 /* Summary / actions lists */
 .bullet-list { list-style: none; margin: 0; padding: 0; }
 .bullet-list li {
-  display: flex; gap: var(--tcp-space-3);
+  position: relative;
+  padding: var(--tcp-space-2) 0 var(--tcp-space-2) var(--tcp-space-5);
   font-size: 14px; line-height: 21px;
   color: var(--tcp-fg);
-  padding: var(--tcp-space-2) 0;
 }
 .bullet-list li::before {
   content: "▸";
+  position: absolute; left: 0; top: var(--tcp-space-2);
   color: var(--tcp-accent);
   font-weight: var(--tcp-fw-bold);
-  flex-shrink: 0;
 }
 .action-item {
   display: flex; gap: var(--tcp-space-3);
@@ -1637,6 +1637,21 @@ mark.mark--neg { background: var(--tcp-error-bg); color: var(--tcp-error-900); }
   }
 }
 
+/* Tablet only (2 columns): the talk-duration card is last in column 1, so let
+   it stretch to fill the leftover space — both columns end at the same height
+   (the transcript already grows in column 2). At >=1200 the layout is 3 cols
+   and this card moves to column 2, where different rules apply. */
+@media (min-width: 768px) and (max-width: 1199px) {
+  #screen-results .page.is-cols .card--talk {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+  }
+  #screen-results .page.is-cols .card--talk .talk {
+    flex: 1 1 auto;
+  }
+}
+
 /* ===========================================================================
    RESPONSIVE — tablet (>=768) and desktop (>=1200/1440)
    The app is mobile-first inside .phone; at wider widths it becomes a fluid
@@ -1983,7 +1998,7 @@ mark.mark--neg { background: var(--tcp-error-bg); color: var(--tcp-error-900); }
           </div>
 
           <!-- Talk duration -->
-          <div class="card">
+          <div class="card card--talk">
             <div class="result-card__label">
               <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm0,192a88,88,0,1,1,88-88A88.1,88.1,0,0,1,128,216Zm64-88a8,8,0,0,1-8,8H128a8,8,0,0,1-8-8V72a8,8,0,0,1,16,0v48h48A8,8,0,0,1,192,128Z"/></svg>
               Thời lượng đàm thoại
@@ -3282,14 +3297,15 @@ mark.mark--neg { background: var(--tcp-error-bg); color: var(--tcp-error-900); }
   (function initDateFilter() {
     const from = $("#dateFrom"), to = $("#dateTo"), reset = $("#dateReset");
     if (!from || !to) return;
-    // Any date can be picked freely — no min/max bounds. Default spans the data.
-    const minISO = isoDate(HIST_MIN), maxISO = isoDate(HIST_MAX);
-    from.value = minISO;
-    to.value = maxISO;
+    // Any date can be picked freely — no min/max bounds.
+    // Default: "Từ" empty (open start), "Đến" = today.
+    const todayISO = isoDate(new Date());
+    const setDefaults = () => { from.value = ""; to.value = todayISO; };
+    setDefaults();
 
     function apply() {
-      // Guard against an inverted range by swapping ends.
-      let a = from.value || minISO, b = to.value || maxISO;
+      // Empty "Từ" = open start; empty "Đến" = today. Swap if inverted.
+      let a = from.value || "1970-01-01", b = to.value || todayISO;
       if (a > b) { const t = a; a = b; b = t; }
       const lo = new Date(a).getTime(), hi = new Date(b).getTime();
       const subset = HISTORY.filter(r => {
@@ -3300,11 +3316,7 @@ mark.mark--neg { background: var(--tcp-error-bg); color: var(--tcp-error-900); }
     }
     from.addEventListener("change", apply);
     to.addEventListener("change", apply);
-    if (reset) reset.addEventListener("click", () => {
-      from.value = minISO;
-      to.value = maxISO;
-      renderDashboard();
-    });
+    if (reset) reset.addEventListener("click", () => { setDefaults(); apply(); });
   })();
 
   /* Uploads-over-time bar chart (incoming + outgoing) with a range toggle.

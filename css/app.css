@@ -868,16 +868,16 @@ button { font-family: inherit; }
 /* Summary / actions lists */
 .bullet-list { list-style: none; margin: 0; padding: 0; }
 .bullet-list li {
-  display: flex; gap: var(--tcp-space-3);
+  position: relative;
+  padding: var(--tcp-space-2) 0 var(--tcp-space-2) var(--tcp-space-5);
   font-size: 14px; line-height: 21px;
   color: var(--tcp-fg);
-  padding: var(--tcp-space-2) 0;
 }
 .bullet-list li::before {
   content: "▸";
+  position: absolute; left: 0; top: var(--tcp-space-2);
   color: var(--tcp-accent);
   font-weight: var(--tcp-fw-bold);
-  flex-shrink: 0;
 }
 .action-item {
   display: flex; gap: var(--tcp-space-3);
@@ -1448,6 +1448,21 @@ mark.mark--neg { background: var(--tcp-error-bg); color: var(--tcp-error-900); }
     flex: 1 1 auto;
     min-height: 0;
     overflow-y: auto;
+  }
+}
+
+/* Tablet only (2 columns): the talk-duration card is last in column 1, so let
+   it stretch to fill the leftover space — both columns end at the same height
+   (the transcript already grows in column 2). At >=1200 the layout is 3 cols
+   and this card moves to column 2, where different rules apply. */
+@media (min-width: 768px) and (max-width: 1199px) {
+  #screen-results .page.is-cols .card--talk {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+  }
+  #screen-results .page.is-cols .card--talk .talk {
+    flex: 1 1 auto;
   }
 }
 

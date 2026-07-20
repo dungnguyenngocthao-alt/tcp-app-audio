@@ -804,14 +804,15 @@
   (function initDateFilter() {
     const from = $("#dateFrom"), to = $("#dateTo"), reset = $("#dateReset");
     if (!from || !to) return;
-    // Any date can be picked freely — no min/max bounds. Default spans the data.
-    const minISO = isoDate(HIST_MIN), maxISO = isoDate(HIST_MAX);
-    from.value = minISO;
-    to.value = maxISO;
+    // Any date can be picked freely — no min/max bounds.
+    // Default: "Từ" empty (open start), "Đến" = today.
+    const todayISO = isoDate(new Date());
+    const setDefaults = () => { from.value = ""; to.value = todayISO; };
+    setDefaults();
 
     function apply() {
-      // Guard against an inverted range by swapping ends.
-      let a = from.value || minISO, b = to.value || maxISO;
+      // Empty "Từ" = open start; empty "Đến" = today. Swap if inverted.
+      let a = from.value || "1970-01-01", b = to.value || todayISO;
       if (a > b) { const t = a; a = b; b = t; }
       const lo = new Date(a).getTime(), hi = new Date(b).getTime();
       const subset = HISTORY.filter(r => {
@@ -822,11 +823,7 @@
     }
     from.addEventListener("change", apply);
     to.addEventListener("change", apply);
-    if (reset) reset.addEventListener("click", () => {
-      from.value = minISO;
-      to.value = maxISO;
-      renderDashboard();
-    });
+    if (reset) reset.addEventListener("click", () => { setDefaults(); apply(); });
   })();
 
   /* Uploads-over-time bar chart (incoming + outgoing) with a range toggle.
