@@ -520,7 +520,7 @@
     } else {
       actions = `<button class="iconbtn hist__rename-btn" type="button" data-rename="${r.id}" aria-label="Đổi tên" title="Đổi tên">${PENCIL_SVG}</button>
                  <button class="btn btn--outline btn--sm" type="button" data-view data-file="${escAttr(r.file)}" data-date="${escAttr(r.date)}">Xem lại</button>
-                 <button class="btn btn--ink btn--sm" type="button" data-hist-export>Export</button>`;
+                 <button class="btn btn--accent btn--sm" type="button" data-hist-export>Export</button>`;
     }
     return `
       <article class="hist${selectMode ? " hist--select" : ""}${checked ? " is-selected" : ""}" data-id="${r.id}">

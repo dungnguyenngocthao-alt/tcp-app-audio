@@ -285,7 +285,12 @@ button { font-family: inherit; }
 .burger:active, .iconbtn:active { transform: translateY(1px); }
 .burger:focus-visible, .iconbtn:focus-visible { outline: 0; box-shadow: var(--tcp-ring); }
 .burger svg, .iconbtn svg { width: 24px; height: 24px; }
-.brand { display: flex; align-items: center; gap: 9px; }
+.brand {
+  display: flex; align-items: center; gap: 9px;
+  appearance: none; border: 0; background: none; padding: 0; margin: 0;
+  font: inherit; cursor: pointer; border-radius: var(--tcp-radius-md);
+}
+.appbar .brand:focus-visible { outline: 0; box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.4); }
 .brand__logo {
   width: 34px;
   height: 30px;
@@ -1762,10 +1767,10 @@ mark.mark--neg { background: var(--tcp-error-bg); color: var(--tcp-error-900); }
     <section class="screen screen--hasnav is-active" id="screen-analysis" data-screen="analysis">
       <div class="screen__scroll">
         <header class="appbar">
-          <div class="brand">
-            <span class="brand__logo" role="img" aria-label="Talent Connect Plus"></span>
+          <button class="brand" type="button" data-nav="analysis" aria-label="Về trang tải lên">
+            <span class="brand__logo" aria-hidden="true"></span>
             <span class="brand__name">Talent Connect +</span>
-          </div>
+          </button>
           <button class="burger" type="button" aria-label="Open menu" aria-haspopup="true" aria-expanded="false" data-burger>
             <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M224,128a8,8,0,0,1-8,8H40a8,8,0,0,1,0-16H216A8,8,0,0,1,224,128ZM40,72H216a8,8,0,0,0,0-16H40a8,8,0,0,0,0,16ZM216,184H40a8,8,0,0,0,0,16H216a8,8,0,0,0,0-16Z"/></svg>
           </button>
@@ -1900,10 +1905,10 @@ mark.mark--neg { background: var(--tcp-error-bg); color: var(--tcp-error-900); }
     <section class="screen screen--hasnav" id="screen-results" data-screen="results">
       <div class="screen__scroll">
         <header class="appbar">
-          <div class="brand">
-            <span class="brand__logo" role="img" aria-label="Talent Connect Plus"></span>
+          <button class="brand" type="button" data-nav="analysis" aria-label="Về trang tải lên">
+            <span class="brand__logo" aria-hidden="true"></span>
             <span class="brand__name">Talent Connect +</span>
-          </div>
+          </button>
           <button class="burger" type="button" aria-label="Open menu" aria-haspopup="true" aria-expanded="false" data-burger>
             <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M224,128a8,8,0,0,1-8,8H40a8,8,0,0,1,0-16H216A8,8,0,0,1,224,128ZM40,72H216a8,8,0,0,0,0-16H40a8,8,0,0,0,0,16ZM216,184H40a8,8,0,0,0,0,16H216a8,8,0,0,0,0-16Z"/></svg>
           </button>
@@ -2164,10 +2169,10 @@ mark.mark--neg { background: var(--tcp-error-bg); color: var(--tcp-error-900); }
     <section class="screen screen--hasnav" id="screen-history" data-screen="history">
       <div class="screen__scroll">
         <header class="appbar">
-          <div class="brand">
-            <span class="brand__logo" role="img" aria-label="Talent Connect Plus"></span>
+          <button class="brand" type="button" data-nav="analysis" aria-label="Về trang tải lên">
+            <span class="brand__logo" aria-hidden="true"></span>
             <span class="brand__name">Talent Connect +</span>
-          </div>
+          </button>
           <button class="burger" type="button" aria-label="Open menu" aria-haspopup="true" aria-expanded="false" data-burger>
             <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M224,128a8,8,0,0,1-8,8H40a8,8,0,0,1,0-16H216A8,8,0,0,1,224,128ZM40,72H216a8,8,0,0,0,0-16H40a8,8,0,0,0,0,16ZM216,184H40a8,8,0,0,0,0,16H216a8,8,0,0,0,0-16Z"/></svg>
           </button>
@@ -2224,10 +2229,10 @@ mark.mark--neg { background: var(--tcp-error-bg); color: var(--tcp-error-900); }
     <section class="screen screen--hasnav" id="screen-dashboard" data-screen="dashboard">
       <div class="screen__scroll">
         <header class="appbar">
-          <div class="brand">
-            <span class="brand__logo" role="img" aria-label="Talent Connect Plus"></span>
+          <button class="brand" type="button" data-nav="analysis" aria-label="Về trang tải lên">
+            <span class="brand__logo" aria-hidden="true"></span>
             <span class="brand__name">Talent Connect +</span>
-          </div>
+          </button>
           <button class="burger" type="button" aria-label="Open menu" aria-haspopup="true" aria-expanded="false" data-burger>
             <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M224,128a8,8,0,0,1-8,8H40a8,8,0,0,1,0-16H216A8,8,0,0,1,224,128ZM40,72H216a8,8,0,0,0,0-16H40a8,8,0,0,0,0,16ZM216,184H40a8,8,0,0,0,0,16H216a8,8,0,0,0,0-16Z"/></svg>
           </button>
@@ -2420,10 +2425,10 @@ mark.mark--neg { background: var(--tcp-error-bg); color: var(--tcp-error-900); }
     <section class="screen screen--hasnav" id="screen-settings" data-screen="settings">
       <div class="screen__scroll">
         <header class="appbar">
-          <div class="brand">
-            <span class="brand__logo" role="img" aria-label="Talent Connect Plus"></span>
+          <button class="brand" type="button" data-nav="analysis" aria-label="Về trang tải lên">
+            <span class="brand__logo" aria-hidden="true"></span>
             <span class="brand__name">Talent Connect +</span>
-          </div>
+          </button>
           <button class="burger" type="button" aria-label="Open menu" aria-haspopup="true" aria-expanded="false" data-burger>
             <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M224,128a8,8,0,0,1-8,8H40a8,8,0,0,1,0-16H216A8,8,0,0,1,224,128ZM40,72H216a8,8,0,0,0,0-16H40a8,8,0,0,0,0,16ZM216,184H40a8,8,0,0,0,0,16H216a8,8,0,0,0,0-16Z"/></svg>
           </button>
@@ -3039,7 +3044,7 @@ mark.mark--neg { background: var(--tcp-error-bg); color: var(--tcp-error-900); }
     } else {
       actions = `<button class="iconbtn hist__rename-btn" type="button" data-rename="${r.id}" aria-label="Đổi tên" title="Đổi tên">${PENCIL_SVG}</button>
                  <button class="btn btn--outline btn--sm" type="button" data-view data-file="${escAttr(r.file)}" data-date="${escAttr(r.date)}">Xem lại</button>
-                 <button class="btn btn--ink btn--sm" type="button" data-hist-export>Export</button>`;
+                 <button class="btn btn--accent btn--sm" type="button" data-hist-export>Export</button>`;
     }
     return `
       <article class="hist${selectMode ? " hist--select" : ""}${checked ? " is-selected" : ""}" data-id="${r.id}">
