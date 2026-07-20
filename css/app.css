@@ -63,23 +63,16 @@ button { font-family: inherit; }
   justify-content: space-between;
   gap: var(--tcp-space-2);
   padding: 14px var(--tcp-space-5) 12px var(--tcp-space-6);
-  /* Talent Connect Plus indigo nav bar */
-  background: var(--tcp-brand);
-  border-bottom: 1px solid var(--tcp-brand-700);
+  /* Accent nav bar */
+  background: var(--tcp-accent);
+  border-bottom: 1px solid var(--tcp-accent-hover);
 }
-/* On the indigo bar the wordmark, burger and logo switch to a light treatment
+/* On the accent bar the wordmark and burger switch to a light treatment
    so they keep clear contrast. */
 .appbar .brand__name { color: var(--tcp-white); }
 .appbar .burger { color: var(--tcp-white); }
 .appbar .burger:hover { background: rgba(255, 255, 255, 0.14); }
 .appbar .burger:focus-visible { box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.4); }
-/* Keep the gradient triangle legible by seating it on a white tile. */
-.appbar .brand__logo {
-  box-sizing: border-box;
-  padding: 3px 5px;
-  background-color: var(--tcp-white);
-  border-radius: 8px;
-}
 
 /* Icon buttons: burger (header) + back / utility icons */
 .burger, .iconbtn {
