@@ -145,6 +145,7 @@
         </div>`).join("");
     }
     updateProcLabel();
+    syncProfileHeight();
   }
 
   function updateProcLabel() {
@@ -159,6 +160,23 @@
       const total = selectedFiles.reduce((a, f) => a + (f.size || 0), 0);
       procMeta.textContent = n + " tệp âm thanh" + (total ? " • " + humanSize(total) : "");
     }
+  }
+
+  /* In the 2-column layout (>=768) lock the config card to the *empty* upload
+     card's height so the two line up before any file is added — and stay put
+     when the upload card grows with the file list. We measure the upload card
+     with its file list momentarily hidden, so the locked height is the same
+     regardless of how many files are selected. */
+  const uploadCard  = $("#screen-analysis .card--upload");
+  const profileCard = $("#screen-analysis .card--profile");
+  function syncProfileHeight() {
+    if (!uploadCard || !profileCard) return;
+    if (window.innerWidth < 768) { profileCard.style.height = ""; return; }
+    const wasHidden = fileListEl.hidden;
+    fileListEl.hidden = true;                 // measure the empty-state height
+    const h = uploadCard.getBoundingClientRect().height;
+    fileListEl.hidden = wasHidden;            // restore (synchronous — no flash)
+    profileCard.style.height = Math.round(h) + "px";
   }
 
   browseBtn.addEventListener("click", () => fileInput.click());
@@ -1110,8 +1128,10 @@
   let resizeRaf = null;
   window.addEventListener("resize", () => {
     if (resizeRaf) cancelAnimationFrame(resizeRaf);
-    resizeRaf = requestAnimationFrame(layoutResults);
+    resizeRaf = requestAnimationFrame(() => { layoutResults(); syncProfileHeight(); });
   });
+  syncProfileHeight();
+  window.addEventListener("load", syncProfileHeight);
 
   /* -------------------------------------------------------------------------
      Screen 6 · Settings — positive / negative sentiment keyword sets.

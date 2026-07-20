@@ -63,8 +63,22 @@ button { font-family: inherit; }
   justify-content: space-between;
   gap: var(--tcp-space-2);
   padding: 14px var(--tcp-space-5) 12px var(--tcp-space-6);
-  background: var(--tcp-bg);
-  border-bottom: 1px solid var(--tcp-border-subtle);
+  /* Talent Connect Plus indigo nav bar */
+  background: var(--tcp-brand);
+  border-bottom: 1px solid var(--tcp-brand-700);
+}
+/* On the indigo bar the wordmark, burger and logo switch to a light treatment
+   so they keep clear contrast. */
+.appbar .brand__name { color: var(--tcp-white); }
+.appbar .burger { color: var(--tcp-white); }
+.appbar .burger:hover { background: rgba(255, 255, 255, 0.14); }
+.appbar .burger:focus-visible { box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.4); }
+/* Keep the gradient triangle legible by seating it on a white tile. */
+.appbar .brand__logo {
+  box-sizing: border-box;
+  padding: 3px 5px;
+  background-color: var(--tcp-white);
+  border-radius: 8px;
 }
 
 /* Icon buttons: burger (header) + back / utility icons */
@@ -649,11 +663,13 @@ button { font-family: inherit; }
 /* Low-confidence result (<30%) — soft yellow flag */
 .fchip--low { background: #FFF8E1; border-color: #F1DFA6; }
 .fchip--low .fchip__icon { background: #FBE9BF; color: #B7791F; }
+/* Selected chip — keep its own surface (so the direction badge stays legible),
+   mark it with an accent border + soft ring and a filled accent icon. */
 .fchip.is-active {
   border-color: var(--tcp-accent);
-  background: var(--tcp-accent-subtle);
-  box-shadow: var(--tcp-ring-accent);
+  box-shadow: 0 0 0 3px var(--tcp-accent-subtle);
 }
+.fchip.is-active .fchip__name { color: var(--tcp-accent-hover); }
 .fchip__icon {
   flex: 0 0 auto;
   width: 30px;
@@ -664,7 +680,7 @@ button { font-family: inherit; }
   background: var(--tcp-accent-subtle);
   color: var(--tcp-accent);
 }
-.fchip.is-active .fchip__icon { background: var(--tcp-white); }
+.fchip.is-active .fchip__icon { background: var(--tcp-accent); color: var(--tcp-white); }
 .fchip__icon svg { width: 16px; height: 16px; }
 .fchip__info { display: flex; flex-direction: column; min-width: 0; flex: 1 1 auto; }
 .fchip__name {
@@ -1451,19 +1467,27 @@ mark.mark--neg { background: var(--tcp-error-bg); color: var(--tcp-error-900); }
   }
 }
 
-/* Tablet only (2 columns): the talk-duration card is last in column 1, so let
-   it stretch to fill the leftover space — both columns end at the same height
+/* Tablet only (2 columns): column 1 holds the audio-quality, sentiment and
+   talk-duration cards. Let all three share the leftover space so no single
+   card ends up with a large gap, and both columns finish at equal height
    (the transcript already grows in column 2). At >=1200 the layout is 3 cols
-   and this card moves to column 2, where different rules apply. */
+   and these cards regroup, where different rules apply. */
 @media (min-width: 768px) and (max-width: 1199px) {
+  #screen-results .page.is-cols .card--audio,
+  #screen-results .page.is-cols .card--sentiment,
   #screen-results .page.is-cols .card--talk {
     flex: 1 1 auto;
     display: flex;
     flex-direction: column;
   }
-  #screen-results .page.is-cols .card--talk .talk {
-    flex: 1 1 auto;
-  }
+  /* Center each card's body (everything after the section label) within the
+     extra height it receives, so the slack is shared, not dumped on one card. */
+  #screen-results .page.is-cols .card--audio .quality-head,
+  #screen-results .page.is-cols .card--sentiment .senti-head,
+  #screen-results .page.is-cols .card--talk .talk { margin-top: auto; }
+  #screen-results .page.is-cols .card--audio .bar-row:last-child,
+  #screen-results .page.is-cols .card--sentiment .bar-row:last-child,
+  #screen-results .page.is-cols .card--talk .talk { margin-bottom: auto; }
 }
 
 /* ===========================================================================
@@ -1485,8 +1509,12 @@ mark.mark--neg { background: var(--tcp-error-bg); color: var(--tcp-error-900); }
   #screen-analysis .page > .page__title,
   #screen-analysis .page > .page__lead { grid-column: 1 / -1; margin-bottom: 0; }
   /* Keep each card at its natural height — uploading files must not stretch
-     the profile card to match the upload column. */
+     the profile card to match the upload column. The profile card is locked
+     (via JS) to the empty upload card's height so the two line up before any
+     file is added; make it a flex column so its CTA settles at the bottom. */
   #screen-analysis .card { margin-top: 0; align-self: start; }
+  #screen-analysis .card--profile { display: flex; flex-direction: column; }
+  #screen-analysis .card--profile .profile-submit { margin-top: auto; }
 
   /* Results columns (2 at this width) are assembled by JS; see base rules. */
 
