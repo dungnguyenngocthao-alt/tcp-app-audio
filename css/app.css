@@ -893,6 +893,39 @@ button { font-family: inherit; }
   color: var(--tcp-accent);
   font-weight: var(--tcp-fw-bold);
 }
+/* Customer info extracted by sales, noted inside the summary card */
+.cust-info {
+  margin-top: var(--tcp-space-4);
+  padding-top: var(--tcp-space-4);
+  border-top: 1px dashed var(--tcp-border);
+}
+.cust-info__title {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 12px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase;
+  color: var(--tcp-fg-secondary);
+  margin-bottom: var(--tcp-space-3);
+}
+.cust-info__title svg { width: 15px; height: 15px; color: var(--tcp-accent); }
+.cust-info__src {
+  margin-left: auto;
+  font-size: 10px; font-weight: 500; letter-spacing: 0; text-transform: none;
+  padding: 1px 8px; border-radius: var(--tcp-radius-pill);
+  background: var(--tcp-accent-subtle); color: var(--tcp-accent-hover);
+}
+.cust-info__list { margin: 0; }
+.cust-info__row {
+  display: flex; align-items: baseline; gap: var(--tcp-space-3);
+  padding: 5px 0;
+  border-bottom: 1px solid var(--tcp-border-subtle);
+}
+.cust-info__row:last-child { border-bottom: 0; }
+.cust-info__row dt {
+  flex: 0 0 34%; font-size: 13px; color: var(--tcp-fg-tertiary);
+}
+.cust-info__row dd {
+  margin: 0; flex: 1 1 auto; min-width: 0;
+  font-size: 13px; font-weight: 500; color: var(--tcp-fg);
+}
 .action-item {
   display: flex; gap: var(--tcp-space-3);
   border: 1px solid var(--tcp-border-subtle);
