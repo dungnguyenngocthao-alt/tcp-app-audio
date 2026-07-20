@@ -90,6 +90,11 @@
   --tcp-accent-subtle:    #EEF2FF;
   --tcp-on-accent:        var(--tcp-white);
 
+  /* External palette bridge — blue → violet used for the nav-bar gradient.
+     Swap these two hex values for the exact palette colors if needed. */
+  --color-blue-7:         #2F6BF6;
+  --color-violet-26:      #6D34E4;
+
   /* Ink — deep navy used for headings / dark surfaces in the TCPVoiceAI UI */
   --tcp-ink:              #0F1B2D;
   --tcp-ink-soft:         #14233A;

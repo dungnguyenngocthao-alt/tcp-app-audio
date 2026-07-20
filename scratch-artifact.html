@@ -90,6 +90,11 @@
   --tcp-accent-subtle:    #EEF2FF;
   --tcp-on-accent:        var(--tcp-white);
 
+  /* External palette bridge — blue → violet used for the nav-bar gradient.
+     Swap these two hex values for the exact palette colors if needed. */
+  --color-blue-7:         #2F6BF6;
+  --color-violet-26:      #6D34E4;
+
   /* Ink — deep navy used for headings / dark surfaces in the TCPVoiceAI UI */
   --tcp-ink:              #0F1B2D;
   --tcp-ink-soft:         #14233A;
@@ -249,9 +254,9 @@ button { font-family: inherit; }
   justify-content: space-between;
   gap: var(--tcp-space-2);
   padding: 14px var(--tcp-space-5) 12px var(--tcp-space-6);
-  /* Accent nav bar */
-  background: var(--tcp-accent);
-  border-bottom: 1px solid var(--tcp-accent-hover);
+  /* Blue → violet gradient nav bar */
+  background: linear-gradient(60deg, var(--color-blue-7) 0%, var(--color-violet-26) 75%);
+  border-bottom: 0;
 }
 /* On the accent bar the wordmark and burger switch to a light treatment
    so they keep clear contrast. */
