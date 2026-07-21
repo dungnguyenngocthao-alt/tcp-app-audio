@@ -246,6 +246,15 @@ button { font-family: inherit; }
 }
 .btn--outline:hover { background: var(--tcp-bg-subtle); }
 
+/* Inverse of the accent button — light surface, accent text + border */
+.btn--inverse {
+  background: var(--tcp-white);
+  color: var(--tcp-accent);
+  border: 1px solid var(--tcp-accent);
+}
+.btn--inverse:hover { background: var(--tcp-accent-subtle); }
+.btn--inverse:focus-visible { box-shadow: var(--tcp-ring-accent); }
+
 .btn--lg { padding: 16px 24px; font-size: 17px; border-radius: var(--tcp-radius-lg); }
 .btn--sm { padding: 8px 14px; font-size: 13px; border-radius: var(--tcp-radius-sm); }
 .btn--block { display: flex; width: 100%; justify-content: center; align-items: center; gap: 8px; }
@@ -777,8 +786,9 @@ button { font-family: inherit; }
   display: flex; align-items: flex-start; justify-content: space-between;
   gap: var(--tcp-space-4); flex-wrap: wrap;
 }
-.dash-export { display: inline-flex; align-items: center; gap: 6px; flex: 0 0 auto; }
-.dash-export svg { width: 16px; height: 16px; }
+.dash-actions { display: flex; align-items: center; gap: var(--tcp-space-2); flex: 0 0 auto; flex-wrap: wrap; }
+.dash-actions .btn { display: inline-flex; align-items: center; gap: 6px; }
+.dash-actions .btn svg { width: 16px; height: 16px; }
 
 /* Dashboard date-range filter */
 .dash-filter {
