@@ -1046,6 +1046,8 @@
      Screen 5b · Employees — per-agent calling performance, with add support
      ------------------------------------------------------------------------- */
   const AVATAR_COLORS = ["#6366F1", "#F97316", "#0EA5E9", "#10B981", "#E11D48", "#8B5CF6", "#F59E0B", "#14B8A6"];
+  const TRASH_SVG =
+    '<svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M216,48H176V40a24,24,0,0,0-24-24H104A24,24,0,0,0,80,40v8H40a8,8,0,0,0,0,16h8V208a16,16,0,0,0,16,16H192a16,16,0,0,0,16-16V64h8a8,8,0,0,0,0-16ZM96,40a8,8,0,0,1,8-8h48a8,8,0,0,1,8,8v8H96Zm96,168H64V64H192ZM112,104v64a8,8,0,0,1-16,0V104a8,8,0,0,1,16,0Zm48,0v64a8,8,0,0,1-16,0V104a8,8,0,0,1,16,0Z"/></svg>';
   function initials(name) {
     const parts = name.trim().split(/\s+/);
     const a = parts[0] ? parts[0][0] : "";
@@ -1150,11 +1152,32 @@
             </div>
           </td>
           <td class="emp-last">${e.last}</td>
+          <td class="tbl-act">
+            <button class="tbl-del emp-del" type="button" data-id="${e.id}" aria-label="Xóa nhân viên" title="Xóa nhân viên">${TRASH_SVG}</button>
+          </td>
         </tr>`;
     }).join("");
     populateUploadEmp();
     if (typeof renderDashTop3 === "function") renderDashTop3();
   }
+  // Delete an employee (with confirm).
+  if (empTbody) empTbody.addEventListener("click", e => {
+    const del = e.target.closest(".emp-del");
+    if (!del) return;
+    const id = parseInt(del.dataset.id, 10);
+    const emp = employees.find(x => x.id === id);
+    showConfirm({
+      title: "Xóa nhân viên?",
+      message: `Nhân viên "${emp ? emp.name : ""}" sẽ bị xóa khỏi danh sách.`,
+      confirmLabel: "Xóa",
+      onConfirm: () => {
+        const i = employees.findIndex(x => x.id === id);
+        if (i >= 0) employees.splice(i, 1);
+        renderEmployees();
+        updateSortIndicators();
+      },
+    });
+  });
   function updateSortIndicators() {
     // Sortable headers show a neutral ⇅ by default (so they read as sortable),
     // and the active one shows the current direction.
@@ -1385,6 +1408,7 @@
               <button class="btn btn--outline btn--sm up-review" type="button" data-id="${escAttr(u.id)}" ${u.reviewed ? "disabled" : ""}>Đánh giá lại</button>
               <button class="btn btn--outline btn--sm up-detail" type="button"
                       data-file="${escAttr(u.file)}" data-date="${escAttr(u.date)}">Xem chi tiết</button>
+              <button class="tbl-del up-del" type="button" data-id="${escAttr(u.id)}" aria-label="Xóa cuộc gọi" title="Xóa cuộc gọi">${TRASH_SVG}</button>
             </div>
           </td>
         </tr>`;
@@ -1394,6 +1418,22 @@
   renderUploads();
   if (upTbody) {
     upTbody.addEventListener("click", e => {
+      const del = e.target.closest(".up-del");
+      if (del) {
+        const id = del.dataset.id;
+        const u = UPLOAD_LOG.find(x => x.id === id);
+        showConfirm({
+          title: "Xóa cuộc gọi?",
+          message: `Cuộc gọi ${id}${u ? ` (${u.agent})` : ""} sẽ bị xóa khỏi Lịch sử upload.`,
+          confirmLabel: "Xóa",
+          onConfirm: () => {
+            const i = UPLOAD_LOG.findIndex(x => x.id === id);
+            if (i >= 0) UPLOAD_LOG.splice(i, 1);
+            renderUploads();
+          },
+        });
+        return;
+      }
       const rev = e.target.closest(".up-review");
       if (rev) { openReview(rev.dataset.id); return; }
       const btn = e.target.closest(".up-detail");

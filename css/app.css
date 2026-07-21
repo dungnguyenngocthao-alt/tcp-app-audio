@@ -209,6 +209,19 @@ button { font-family: inherit; }
 .up-badge--neutral { background: var(--tcp-neutral-100); color: var(--tcp-fg-secondary); }
 .up-detail { flex: 0 0 auto; white-space: nowrap; }
 .up-actions { display: flex; align-items: center; gap: 8px; }
+/* Row delete button (Employees + Upload history) */
+.tbl-act { text-align: right; white-space: nowrap; }
+.tbl-act-col { width: 44px; }
+.tbl-del {
+  appearance: none; border: 0; background: none; cursor: pointer;
+  width: 30px; height: 30px; border-radius: var(--tcp-radius-sm);
+  display: inline-grid; place-items: center; flex: 0 0 auto;
+  color: var(--tcp-fg-tertiary);
+  transition: background var(--tcp-dur-fast) var(--tcp-ease), color var(--tcp-dur-fast) var(--tcp-ease);
+}
+.tbl-del svg { width: 17px; height: 17px; }
+.tbl-del:hover { background: var(--tcp-error-bg); color: var(--tcp-error-fg); }
+.tbl-del:focus-visible { outline: 0; box-shadow: 0 0 0 3px var(--tcp-error-bg); }
 .up-src {
   display: inline-block; margin-left: 8px; vertical-align: middle;
   font-size: 10px; font-weight: 600; padding: 1px 7px; border-radius: var(--tcp-radius-pill);
