@@ -384,7 +384,7 @@ button { font-family: inherit; }
 .emp-last { color: var(--tcp-fg-secondary); font-size: 13px; }
 
 /* Upload history table (7 columns) */
-.up-table { min-width: 860px; }
+.up-table { min-width: 1000px; }
 .up-id { font-family: var(--tcp-font-mono); font-size: 13px; color: var(--tcp-fg-secondary); }
 .up-to { font-variant-numeric: tabular-nums; }
 .up-dur { font-variant-numeric: tabular-nums; color: var(--tcp-fg-secondary); }
@@ -399,6 +399,22 @@ button { font-family: inherit; }
 .up-badge--warning { background: var(--tcp-warning-bg); color: var(--tcp-warning-fg); }
 .up-badge--neutral { background: var(--tcp-neutral-100); color: var(--tcp-fg-secondary); }
 .up-detail { flex: 0 0 auto; white-space: nowrap; }
+.up-actions { display: flex; align-items: center; gap: 8px; }
+.up-src {
+  display: inline-block; margin-left: 8px; vertical-align: middle;
+  font-size: 10px; font-weight: 600; padding: 1px 7px; border-radius: var(--tcp-radius-pill);
+}
+.up-src--ai { background: var(--tcp-neutral-100); color: var(--tcp-fg-secondary); }
+.up-src--user { background: var(--tcp-accent-subtle); color: var(--tcp-accent-hover); }
+.review-info {
+  font-size: 13px; color: var(--tcp-fg-primary);
+  background: var(--tcp-bg-subtle); border: 1px solid var(--tcp-border-subtle);
+  border-radius: var(--tcp-radius-sm); padding: 8px 12px; margin-bottom: var(--tcp-space-3);
+}
+.review-ai { font-size: 13px; color: var(--tcp-fg-secondary); margin-bottom: var(--tcp-space-4); }
+.review-ai b { color: var(--tcp-fg-primary); }
+#reviewRateVal { color: var(--tcp-accent); font-weight: 600; }
+.review-note { resize: vertical; min-height: 42px; font-family: inherit; line-height: 1.4; }
 .up-stats { margin-bottom: var(--tcp-space-5); }
 .up-filter { margin-bottom: var(--tcp-space-4); }
 
@@ -3030,6 +3046,29 @@ mark.mark--neg { background: var(--tcp-error-bg); color: var(--tcp-error-900); }
       </form>
     </div>
 
+    <!-- Re-evaluate (manual review) dialog -->
+    <div class="modal" id="reviewModal" hidden>
+      <div class="modal__backdrop" data-review-cancel></div>
+      <form class="modal__box modal__box--form" id="reviewForm" role="dialog" aria-modal="true" aria-labelledby="reviewTitle" novalidate>
+        <h2 class="modal__title" id="reviewTitle">Đánh giá lại cuộc gọi</h2>
+        <p class="modal__msg">Xác nhận hoặc điều chỉnh tỷ lệ thành công. Kết quả bạn chốt sẽ thay cho đánh giá của AI.</p>
+        <div class="review-info" id="reviewInfo"></div>
+        <div class="review-ai">Đánh giá của AI: <b id="reviewAiRate">—</b></div>
+        <div class="field">
+          <label class="field__label" for="reviewRate">Tỷ lệ thành công bạn chốt · <span id="reviewRateVal">—</span></label>
+          <input class="slider review-slider" id="reviewRate" type="range" min="0" max="100" value="0">
+        </div>
+        <div class="field">
+          <label class="field__label" for="reviewNote">Ghi chú (tuỳ chọn)</label>
+          <textarea class="input review-note" id="reviewNote" rows="2" placeholder="Lý do điều chỉnh…"></textarea>
+        </div>
+        <div class="modal__actions">
+          <button class="btn btn--outline" type="button" data-review-cancel>Hủy</button>
+          <button class="btn btn--accent" type="submit">Chốt kết quả</button>
+        </div>
+      </form>
+    </div>
+
     <!-- Slide-in navigation menu -->
     <div class="drawer" id="menu" hidden>
       <div class="drawer__backdrop" data-menu-close></div>
@@ -4397,6 +4436,8 @@ mark.mark--neg { background: var(--tcp-error-bg); color: var(--tcp-error-900); }
     return m ? new Date(+m[3], +m[2] - 1, +m[1]).getTime() : 0;
   }
   function durToSec(d) { const [m, s] = String(d).split(":").map(Number); return (m || 0) * 60 + (s || 0); }
+  // The confirmed rate: a manual re-evaluation overrides the AI's.
+  function effRate(u) { return u.reviewed ? u.userRate : u.rate; }
 
   function populateUpAgent() {
     if (!upAgent) return;
@@ -4421,7 +4462,7 @@ mark.mark--neg { background: var(--tcp-error-bg); color: var(--tcp-error-900); }
     if (!list.length) { set("upStatDur", "—"); set("upStatRate", "—"); return; }
     const avgSec = Math.round(list.reduce((a, u) => a + durToSec(u.dur), 0) / list.length);
     set("upStatDur", Math.floor(avgSec / 60) + ":" + String(avgSec % 60).padStart(2, "0"));
-    set("upStatRate", Math.round(list.reduce((a, u) => a + u.rate, 0) / list.length) + "%");
+    set("upStatRate", Math.round(list.reduce((a, u) => a + effRate(u), 0) / list.length) + "%");
   }
   function renderUpPager(pages) {
     if (!upPager) return;
@@ -4447,7 +4488,11 @@ mark.mark--neg { background: var(--tcp-error-bg); color: var(--tcp-error-900); }
     }
     upTbody.innerHTML = slice.map(u => {
       const color = AVATAR_COLORS[nameHash(u.agent) % AVATAR_COLORS.length];
-      const rateClass = u.rate >= 70 ? "emp-rate--good" : u.rate >= 55 ? "emp-rate--mid" : "emp-rate--low";
+      const eff = effRate(u);
+      const rateClass = eff >= 70 ? "emp-rate--good" : eff >= 55 ? "emp-rate--mid" : "emp-rate--low";
+      const srcTag = u.reviewed
+        ? '<span class="up-src up-src--user" title="Kết quả do người dùng chốt">Đã chốt</span>'
+        : '<span class="up-src up-src--ai" title="Kết quả do AI đánh giá">AI</span>';
       return `
         <tr>
           <td class="up-id">${u.id}</td>
@@ -4463,10 +4508,13 @@ mark.mark--neg { background: var(--tcp-error-bg); color: var(--tcp-error-900); }
           </td>
           <td class="up-to">${u.to}</td>
           <td class="up-dur">${u.dur}</td>
-          <td><span class="emp-rate ${rateClass}">${u.rate}%</span></td>
+          <td><span class="emp-rate ${rateClass}">${eff}%</span>${srcTag}</td>
           <td>
-            <button class="btn btn--outline btn--sm up-detail" type="button"
-                    data-file="${escAttr(u.file)}" data-date="${escAttr(u.date)}">Xem chi tiết</button>
+            <div class="up-actions">
+              <button class="btn btn--outline btn--sm up-review" type="button" data-id="${escAttr(u.id)}">Đánh giá lại</button>
+              <button class="btn btn--outline btn--sm up-detail" type="button"
+                      data-file="${escAttr(u.file)}" data-date="${escAttr(u.date)}">Xem chi tiết</button>
+            </div>
           </td>
         </tr>`;
     }).join("");
@@ -4475,6 +4523,8 @@ mark.mark--neg { background: var(--tcp-error-bg); color: var(--tcp-error-900); }
   renderUploads();
   if (upTbody) {
     upTbody.addEventListener("click", e => {
+      const rev = e.target.closest(".up-review");
+      if (rev) { openReview(rev.dataset.id); return; }
       const btn = e.target.closest(".up-detail");
       if (btn) showSingleResult(btn.dataset.file, btn.dataset.date, "uploads");
     });
@@ -4494,6 +4544,47 @@ mark.mark--neg { background: var(--tcp-error-bg); color: var(--tcp-error-900); }
     else if (v === "next") upPage = Math.min(pages, upPage + 1);
     else upPage = parseInt(v, 10);
     renderUploads();
+  });
+
+  /* Manual re-evaluation — the user confirms/overrides the AI result. */
+  const reviewModal   = $("#reviewModal");
+  const reviewForm    = $("#reviewForm");
+  const reviewRate    = $("#reviewRate");
+  const reviewRateVal = $("#reviewRateVal");
+  const reviewNote    = $("#reviewNote");
+  const reviewInfo    = $("#reviewInfo");
+  const reviewAiRate  = $("#reviewAiRate");
+  let reviewId = null;
+  function openReview(id) {
+    const u = UPLOAD_LOG.find(x => x.id === id);
+    if (!u || !reviewModal) return;
+    reviewId = id;
+    if (reviewInfo) reviewInfo.textContent = `${u.id} · ${u.agent} (${u.caller}) → ${u.to}`;
+    if (reviewAiRate) reviewAiRate.textContent = u.rate + "%";
+    const eff = effRate(u);
+    if (reviewRate) reviewRate.value = eff;
+    if (reviewRateVal) reviewRateVal.textContent = eff + "%";
+    if (reviewNote) reviewNote.value = u.note || "";
+    reviewModal.hidden = false;
+  }
+  function closeReview() { if (reviewModal) reviewModal.hidden = true; reviewId = null; }
+  if (reviewRate) reviewRate.addEventListener("input", () => {
+    if (reviewRateVal) reviewRateVal.textContent = reviewRate.value + "%";
+  });
+  $$("[data-review-cancel]").forEach(el => el.addEventListener("click", closeReview));
+  document.addEventListener("keydown", e => {
+    if (e.key === "Escape" && reviewModal && !reviewModal.hidden) closeReview();
+  });
+  if (reviewForm) reviewForm.addEventListener("submit", e => {
+    e.preventDefault();
+    const u = UPLOAD_LOG.find(x => x.id === reviewId);
+    if (u) {
+      u.userRate = parseInt(reviewRate.value, 10);
+      u.reviewed = true;
+      u.note = (reviewNote.value || "").trim();
+    }
+    renderUploads();
+    closeReview();
   });
 
   /* -------------------------------------------------------------------------

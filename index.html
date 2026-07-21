@@ -1005,6 +1005,29 @@
       </form>
     </div>
 
+    <!-- Re-evaluate (manual review) dialog -->
+    <div class="modal" id="reviewModal" hidden>
+      <div class="modal__backdrop" data-review-cancel></div>
+      <form class="modal__box modal__box--form" id="reviewForm" role="dialog" aria-modal="true" aria-labelledby="reviewTitle" novalidate>
+        <h2 class="modal__title" id="reviewTitle">Đánh giá lại cuộc gọi</h2>
+        <p class="modal__msg">Xác nhận hoặc điều chỉnh tỷ lệ thành công. Kết quả bạn chốt sẽ thay cho đánh giá của AI.</p>
+        <div class="review-info" id="reviewInfo"></div>
+        <div class="review-ai">Đánh giá của AI: <b id="reviewAiRate">—</b></div>
+        <div class="field">
+          <label class="field__label" for="reviewRate">Tỷ lệ thành công bạn chốt · <span id="reviewRateVal">—</span></label>
+          <input class="slider review-slider" id="reviewRate" type="range" min="0" max="100" value="0">
+        </div>
+        <div class="field">
+          <label class="field__label" for="reviewNote">Ghi chú (tuỳ chọn)</label>
+          <textarea class="input review-note" id="reviewNote" rows="2" placeholder="Lý do điều chỉnh…"></textarea>
+        </div>
+        <div class="modal__actions">
+          <button class="btn btn--outline" type="button" data-review-cancel>Hủy</button>
+          <button class="btn btn--accent" type="submit">Chốt kết quả</button>
+        </div>
+      </form>
+    </div>
+
     <!-- Slide-in navigation menu -->
     <div class="drawer" id="menu" hidden>
       <div class="drawer__backdrop" data-menu-close></div>

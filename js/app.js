@@ -1324,6 +1324,8 @@
     return m ? new Date(+m[3], +m[2] - 1, +m[1]).getTime() : 0;
   }
   function durToSec(d) { const [m, s] = String(d).split(":").map(Number); return (m || 0) * 60 + (s || 0); }
+  // The confirmed rate: a manual re-evaluation overrides the AI's.
+  function effRate(u) { return u.reviewed ? u.userRate : u.rate; }
 
   function populateUpAgent() {
     if (!upAgent) return;
@@ -1348,7 +1350,7 @@
     if (!list.length) { set("upStatDur", "—"); set("upStatRate", "—"); return; }
     const avgSec = Math.round(list.reduce((a, u) => a + durToSec(u.dur), 0) / list.length);
     set("upStatDur", Math.floor(avgSec / 60) + ":" + String(avgSec % 60).padStart(2, "0"));
-    set("upStatRate", Math.round(list.reduce((a, u) => a + u.rate, 0) / list.length) + "%");
+    set("upStatRate", Math.round(list.reduce((a, u) => a + effRate(u), 0) / list.length) + "%");
   }
   function renderUpPager(pages) {
     if (!upPager) return;
@@ -1374,7 +1376,11 @@
     }
     upTbody.innerHTML = slice.map(u => {
       const color = AVATAR_COLORS[nameHash(u.agent) % AVATAR_COLORS.length];
-      const rateClass = u.rate >= 70 ? "emp-rate--good" : u.rate >= 55 ? "emp-rate--mid" : "emp-rate--low";
+      const eff = effRate(u);
+      const rateClass = eff >= 70 ? "emp-rate--good" : eff >= 55 ? "emp-rate--mid" : "emp-rate--low";
+      const srcTag = u.reviewed
+        ? '<span class="up-src up-src--user" title="Kết quả do người dùng chốt">Đã chốt</span>'
+        : '<span class="up-src up-src--ai" title="Kết quả do AI đánh giá">AI</span>';
       return `
         <tr>
           <td class="up-id">${u.id}</td>
@@ -1390,10 +1396,13 @@
           </td>
           <td class="up-to">${u.to}</td>
           <td class="up-dur">${u.dur}</td>
-          <td><span class="emp-rate ${rateClass}">${u.rate}%</span></td>
+          <td><span class="emp-rate ${rateClass}">${eff}%</span>${srcTag}</td>
           <td>
-            <button class="btn btn--outline btn--sm up-detail" type="button"
-                    data-file="${escAttr(u.file)}" data-date="${escAttr(u.date)}">Xem chi tiết</button>
+            <div class="up-actions">
+              <button class="btn btn--outline btn--sm up-review" type="button" data-id="${escAttr(u.id)}">Đánh giá lại</button>
+              <button class="btn btn--outline btn--sm up-detail" type="button"
+                      data-file="${escAttr(u.file)}" data-date="${escAttr(u.date)}">Xem chi tiết</button>
+            </div>
           </td>
         </tr>`;
     }).join("");
@@ -1402,6 +1411,8 @@
   renderUploads();
   if (upTbody) {
     upTbody.addEventListener("click", e => {
+      const rev = e.target.closest(".up-review");
+      if (rev) { openReview(rev.dataset.id); return; }
       const btn = e.target.closest(".up-detail");
       if (btn) showSingleResult(btn.dataset.file, btn.dataset.date, "uploads");
     });
@@ -1421,6 +1432,47 @@
     else if (v === "next") upPage = Math.min(pages, upPage + 1);
     else upPage = parseInt(v, 10);
     renderUploads();
+  });
+
+  /* Manual re-evaluation — the user confirms/overrides the AI result. */
+  const reviewModal   = $("#reviewModal");
+  const reviewForm    = $("#reviewForm");
+  const reviewRate    = $("#reviewRate");
+  const reviewRateVal = $("#reviewRateVal");
+  const reviewNote    = $("#reviewNote");
+  const reviewInfo    = $("#reviewInfo");
+  const reviewAiRate  = $("#reviewAiRate");
+  let reviewId = null;
+  function openReview(id) {
+    const u = UPLOAD_LOG.find(x => x.id === id);
+    if (!u || !reviewModal) return;
+    reviewId = id;
+    if (reviewInfo) reviewInfo.textContent = `${u.id} · ${u.agent} (${u.caller}) → ${u.to}`;
+    if (reviewAiRate) reviewAiRate.textContent = u.rate + "%";
+    const eff = effRate(u);
+    if (reviewRate) reviewRate.value = eff;
+    if (reviewRateVal) reviewRateVal.textContent = eff + "%";
+    if (reviewNote) reviewNote.value = u.note || "";
+    reviewModal.hidden = false;
+  }
+  function closeReview() { if (reviewModal) reviewModal.hidden = true; reviewId = null; }
+  if (reviewRate) reviewRate.addEventListener("input", () => {
+    if (reviewRateVal) reviewRateVal.textContent = reviewRate.value + "%";
+  });
+  $$("[data-review-cancel]").forEach(el => el.addEventListener("click", closeReview));
+  document.addEventListener("keydown", e => {
+    if (e.key === "Escape" && reviewModal && !reviewModal.hidden) closeReview();
+  });
+  if (reviewForm) reviewForm.addEventListener("submit", e => {
+    e.preventDefault();
+    const u = UPLOAD_LOG.find(x => x.id === reviewId);
+    if (u) {
+      u.userRate = parseInt(reviewRate.value, 10);
+      u.reviewed = true;
+      u.note = (reviewNote.value || "").trim();
+    }
+    renderUploads();
+    closeReview();
   });
 
   /* -------------------------------------------------------------------------
