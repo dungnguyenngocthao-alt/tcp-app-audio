@@ -123,6 +123,8 @@ button { font-family: inherit; }
 }
 .emp-add { display: inline-flex; align-items: center; gap: 6px; flex: 0 0 auto; }
 .emp-add svg { width: 16px; height: 16px; }
+.emp-filter { margin-bottom: var(--tcp-space-4); }
+.emp-empty { text-align: center; color: var(--tcp-fg-secondary); padding: 28px 16px; white-space: normal; }
 .emp-table-wrap {
   border: 1px solid var(--tcp-border-subtle);
   border-radius: var(--tcp-radius-xl);

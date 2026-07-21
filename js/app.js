@@ -1003,9 +1003,32 @@
   }
 
   const empTbody = $("#empTbody");
+  const empRateFilter  = $("#empRateFilter");
+  const empCallsFilter = $("#empCallsFilter");
+  function passRate(rate) {
+    const f = empRateFilter ? empRateFilter.value : "all";
+    if (f === "80") return rate >= 80;
+    if (f === "60-79") return rate >= 60 && rate <= 79;
+    if (f === "0-59") return rate < 60;
+    return true;
+  }
+  function passCalls(total) {
+    const f = empCallsFilter ? empCallsFilter.value : "all";
+    if (f === "200") return total >= 200;
+    if (f === "100-199") return total >= 100 && total <= 199;
+    if (f === "0-99") return total < 100;
+    return true;
+  }
   function renderEmployees() {
     if (!empTbody) return;
-    empTbody.innerHTML = employees.map(e => {
+    const rows = employees.filter(e =>
+      passRate(e.trend[e.trend.length - 1]) && passCalls(e.inbound + e.outbound)
+    );
+    if (!rows.length) {
+      empTbody.innerHTML = '<tr><td class="emp-empty" colspan="5">Không có nhân viên phù hợp với bộ lọc.</td></tr>';
+      return;
+    }
+    empTbody.innerHTML = rows.map(e => {
       const total = e.inbound + e.outbound;
       const rate = e.trend[e.trend.length - 1];
       const delta = rate - e.trend[0];
@@ -1042,6 +1065,8 @@
     }).join("");
   }
   renderEmployees();
+  if (empRateFilter)  empRateFilter.addEventListener("change", renderEmployees);
+  if (empCallsFilter) empCallsFilter.addEventListener("change", renderEmployees);
 
   /* Add-employee modal */
   const empModal = $("#empModal");
