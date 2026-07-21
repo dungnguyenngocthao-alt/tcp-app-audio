@@ -865,15 +865,13 @@
     const fraction = HISTORY.length ? rows.length / HISTORY.length : 0;
 
     const rateEl = $("#dashAvgRate"), durEl = $("#dashAvgDur"),
-          qualEl = $("#dashAvgQuality"), subEl = $("#dashRateSub"),
-          list = $("#dashTop3");
+          qualEl = $("#dashAvgQuality"), subEl = $("#dashRateSub");
 
     if (!rows.length) {
       if (rateEl) rateEl.textContent = "—";
       if (durEl) durEl.textContent = "—";
       if (qualEl) qualEl.textContent = "—";
       if (subEl) subEl.textContent = "Không có cuộc gọi trong khoảng này";
-      if (list) list.innerHTML = '<div class="top3__empty">Không có dữ liệu.</div>';
       renderCallPie(0);
       return;
     }
@@ -896,24 +894,31 @@
 
     // Volume counts scale with how much of the full range is selected.
     renderCallPie(fraction);
+  }
 
-    const top = [...rows].sort((a, b) => b.conf - a.conf).slice(0, 3);
-    if (list) {
-      list.innerHTML = top.map((r, i) => `
+  // Top 3 employees by success rate (fed by the Nhân viên module, so it's
+  // rendered separately once `employees` exists).
+  function renderDashTop3() {
+    const list = $("#dashTop3");
+    if (!list || typeof employees === "undefined" || !employees.length) return;
+    const top = [...employees]
+      .map(e => ({ e, rate: e.trend[e.trend.length - 1] }))
+      .sort((a, b) => b.rate - a.rate).slice(0, 3);
+    list.innerHTML = top.map((t, i) => {
+      const e = t.e;
+      const color = AVATAR_COLORS[nameHash(e.name) % AVATAR_COLORS.length];
+      const rateClass = t.rate >= 70 ? "emp-rate--good" : t.rate >= 55 ? "emp-rate--mid" : "emp-rate--low";
+      return `
         <div class="top3__row">
           <span class="top3__rank">${i + 1}</span>
+          <span class="emp-avatar top3__avatar" style="background:${color}">${initials(e.name)}</span>
           <div class="top3__info">
-            <div class="top3__name" title="${escAttr(r.file)}">${r.file}</div>
-            <div class="top3__meta">${r.date.split(",")[0]} &bull; ${r.dur} &bull; <b>${r.conf}%</b></div>
+            <div class="top3__name" title="${escAttr(e.name)}">${e.name}</div>
+            <div class="top3__meta">Caller ID · ${escAttr(e.caller)}</div>
           </div>
-          <div class="top3__actions">
-            <button class="btn btn--outline btn--sm" type="button" data-view
-                    data-file="${escAttr(r.file)}" data-date="${escAttr(r.date)}">Xem lại</button>
-            <button class="iconbtn top3__export" type="button" data-dash-export
-                    aria-label="Export transcript" title="Export transcript">${DL_SVG}</button>
-          </div>
-        </div>`).join("");
-    }
+          <span class="emp-rate ${rateClass}">${t.rate}%</span>
+        </div>`;
+    }).join("");
   }
 
   // Re-view (evaluation) / export transcript within a Top-3 row
@@ -1165,6 +1170,7 @@
         </tr>`;
     }).join("");
     populateUploadEmp();
+    if (typeof renderDashTop3 === "function") renderDashTop3();
   }
   function updateSortIndicators() {
     // Sortable headers show a neutral ⇅ by default (so they read as sortable),

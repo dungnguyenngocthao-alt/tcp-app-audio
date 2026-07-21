@@ -1696,6 +1696,7 @@ mark.mark--neg { background: var(--tcp-error-bg); color: var(--tcp-error-900); }
   display: flex; align-items: center; justify-content: center;
   font-size: 13px; font-weight: 600;
 }
+.top3__avatar { width: 32px; height: 32px; flex-shrink: 0; }
 .top3__info { flex: 1; min-width: 0; }
 .top3__name {
   font-size: 14px; font-weight: 500; color: var(--tcp-ink);

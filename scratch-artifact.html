@@ -1887,6 +1887,7 @@ mark.mark--neg { background: var(--tcp-error-bg); color: var(--tcp-error-900); }
   display: flex; align-items: center; justify-content: center;
   font-size: 13px; font-weight: 600;
 }
+.top3__avatar { width: 32px; height: 32px; flex-shrink: 0; }
 .top3__info { flex: 1; min-width: 0; }
 .top3__name {
   font-size: 14px; font-weight: 500; color: var(--tcp-ink);
@@ -3048,17 +3049,13 @@ mark.mark--neg { background: var(--tcp-error-bg); color: var(--tcp-error-900); }
             <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M104,40H56A16,16,0,0,0,40,56v48a16,16,0,0,0,16,16h48a16,16,0,0,0,16-16V56A16,16,0,0,0,104,40Zm0,64H56V56h48v48Zm96-64H152a16,16,0,0,0-16,16v48a16,16,0,0,0,16,16h48a16,16,0,0,0,16-16V56A16,16,0,0,0,200,40Zm0,64H152V56h48v48Zm-96,32H56a16,16,0,0,0-16,16v48a16,16,0,0,0,16,16h48a16,16,0,0,0,16-16V152A16,16,0,0,0,104,136Zm0,64H56V152h48v48Zm96-64H152a16,16,0,0,0-16,16v48a16,16,0,0,0,16,16h48a16,16,0,0,0,16-16V152A16,16,0,0,0,200,136Zm0,64H152V152h48v48Z"/></svg>
             <span>Dashboard</span>
           </button>
-          <button class="drawer__item" role="menuitem" type="button" data-nav="employees">
-            <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M117.25,157.92a60,60,0,1,0-66.5,0A95.83,95.83,0,0,0,3.53,195.63a8,8,0,1,0,13.4,8.74,80,80,0,0,1,134.14,0,8,8,0,0,0,13.4-8.74A95.83,95.83,0,0,0,117.25,157.92ZM40,108a44,44,0,1,1,44,44A44.05,44.05,0,0,1,40,108Zm210.14,98.7a8,8,0,0,1-11.07-2.33A79.83,79.83,0,0,0,172,168a8,8,0,0,1,0-16,44,44,0,1,0-16.34-84.87,8,8,0,1,1-5.94-14.85,60,60,0,0,1,55.53,105.64,95.83,95.83,0,0,1,47.22,37.71A8,8,0,0,1,250.14,206.7Z"/></svg>
-            <span>Nhân viên</span>
-          </button>
           <button class="drawer__item" role="menuitem" type="button" data-nav="uploads">
             <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm0,192a88,88,0,1,1,88-88A88.1,88.1,0,0,1,128,216Zm64-88a8,8,0,0,1-8,8H128a8,8,0,0,1-8-8V72a8,8,0,0,1,16,0v48h48A8,8,0,0,1,192,128Z"/></svg>
             <span>Lịch sử upload</span>
           </button>
-          <button class="drawer__item" role="menuitem" type="button" data-nav="history">
-            <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M216,72H131.31L104,44.69A15.86,15.86,0,0,0,92.69,40H40A16,16,0,0,0,24,56V200.62A15.4,15.4,0,0,0,39.38,216H216.89A15.13,15.13,0,0,0,232,200.89V88A16,16,0,0,0,216,72ZM40,56H92.69l16,16H40ZM216,200H40V88H216Z"/></svg>
-            <span>Lưu trữ</span>
+          <button class="drawer__item" role="menuitem" type="button" data-nav="employees">
+            <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M117.25,157.92a60,60,0,1,0-66.5,0A95.83,95.83,0,0,0,3.53,195.63a8,8,0,1,0,13.4,8.74,80,80,0,0,1,134.14,0,8,8,0,0,0,13.4-8.74A95.83,95.83,0,0,0,117.25,157.92ZM40,108a44,44,0,1,1,44,44A44.05,44.05,0,0,1,40,108Zm210.14,98.7a8,8,0,0,1-11.07-2.33A79.83,79.83,0,0,0,172,168a8,8,0,0,1,0-16,44,44,0,1,0-16.34-84.87,8,8,0,1,1-5.94-14.85,60,60,0,0,1,55.53,105.64,95.83,95.83,0,0,1,47.22,37.71A8,8,0,0,1,250.14,206.7Z"/></svg>
+            <span>Nhân viên</span>
           </button>
           <button class="drawer__item" role="menuitem" type="button" data-nav="settings">
             <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M128,80a48,48,0,1,0,48,48A48.05,48.05,0,0,0,128,80Zm0,80a32,32,0,1,1,32-32A32,32,0,0,1,128,160Zm88-29.84q.06-2.16,0-4.32l14.92-18.64a8,8,0,0,0,1.48-7.06,107.21,107.21,0,0,0-10.88-26.25,8,8,0,0,0-6-3.93l-23.72-2.64q-1.48-1.56-3-3L186,40.54a8,8,0,0,0-3.94-6,107.71,107.71,0,0,0-26.25-10.87,8,8,0,0,0-7.06,1.49L130.16,40Q128,40,125.84,40L107.2,25.11a8,8,0,0,0-7.06-1.48A107.6,107.6,0,0,0,73.89,34.51a8,8,0,0,0-3.93,6L67.32,64.27q-1.56,1.49-3,3L40.54,70a8,8,0,0,0-6,3.94,107.71,107.71,0,0,0-10.87,26.25,8,8,0,0,0,1.49,7.06L40,125.84Q40,128,40,130.16L25.11,148.8a8,8,0,0,0-1.48,7.06,107.21,107.21,0,0,0,10.88,26.25,8,8,0,0,0,6,3.93l23.72,2.64q1.49,1.56,3,3L70,215.46a8,8,0,0,0,3.94,6,107.71,107.71,0,0,0,26.25,10.87,8,8,0,0,0,7.06-1.49L125.84,216q2.16.06,4.32,0l18.64,14.92a8,8,0,0,0,7.06,1.48,107.21,107.21,0,0,0,26.25-10.88,8,8,0,0,0,3.93-6l2.64-23.72q1.56-1.48,3-3L215.46,186a8,8,0,0,0,6-3.94,107.71,107.71,0,0,0,10.87-26.25,8,8,0,0,0-1.49-7.06Zm-16.1-6.5a73.93,73.93,0,0,1,0,8.68,8,8,0,0,0,1.74,5.48l14.19,17.73a91.57,91.57,0,0,1-6.23,15L187,173.11a8,8,0,0,0-5.1,2.64,74.11,74.11,0,0,1-6.14,6.14,8,8,0,0,0-2.64,5.1l-2.51,22.58a91.32,91.32,0,0,1-15,6.23l-17.74-14.19a8,8,0,0,0-5-1.75h-.48a73.93,73.93,0,0,1-8.68,0,8,8,0,0,0-5.48,1.74L100.45,215.8a91.57,91.57,0,0,1-15-6.23L82.89,187a8,8,0,0,0-2.64-5.1,74.11,74.11,0,0,1-6.14-6.14,8,8,0,0,0-5.1-2.64L46.43,170.6a91.32,91.32,0,0,1-6.23-15l14.19-17.74a8,8,0,0,0,1.74-5.48,73.93,73.93,0,0,1,0-8.68,8,8,0,0,0-1.74-5.48L40.2,100.45a91.57,91.57,0,0,1,6.23-15L69,82.89a8,8,0,0,0,5.1-2.64,74.11,74.11,0,0,1,6.14-6.14A8,8,0,0,0,82.89,69L85.4,46.43a91.32,91.32,0,0,1,15-6.23l17.74,14.19a8,8,0,0,0,5.48,1.74,73.93,73.93,0,0,1,8.68,0,8,8,0,0,0,5.48-1.74L155.55,40.2a91.57,91.57,0,0,1,15,6.23L173.11,69a8,8,0,0,0,2.64,5.1,74.11,74.11,0,0,1,6.14,6.14,8,8,0,0,0,5.1,2.64l22.58,2.51a91.32,91.32,0,0,1,6.23,15l-14.19,17.74A8,8,0,0,0,199.87,123.66Z"/></svg>
@@ -3941,15 +3938,13 @@ mark.mark--neg { background: var(--tcp-error-bg); color: var(--tcp-error-900); }
     const fraction = HISTORY.length ? rows.length / HISTORY.length : 0;
 
     const rateEl = $("#dashAvgRate"), durEl = $("#dashAvgDur"),
-          qualEl = $("#dashAvgQuality"), subEl = $("#dashRateSub"),
-          list = $("#dashTop3");
+          qualEl = $("#dashAvgQuality"), subEl = $("#dashRateSub");
 
     if (!rows.length) {
       if (rateEl) rateEl.textContent = "—";
       if (durEl) durEl.textContent = "—";
       if (qualEl) qualEl.textContent = "—";
       if (subEl) subEl.textContent = "Không có cuộc gọi trong khoảng này";
-      if (list) list.innerHTML = '<div class="top3__empty">Không có dữ liệu.</div>';
       renderCallPie(0);
       return;
     }
@@ -3972,24 +3967,31 @@ mark.mark--neg { background: var(--tcp-error-bg); color: var(--tcp-error-900); }
 
     // Volume counts scale with how much of the full range is selected.
     renderCallPie(fraction);
+  }
 
-    const top = [...rows].sort((a, b) => b.conf - a.conf).slice(0, 3);
-    if (list) {
-      list.innerHTML = top.map((r, i) => `
+  // Top 3 employees by success rate (fed by the Nhân viên module, so it's
+  // rendered separately once `employees` exists).
+  function renderDashTop3() {
+    const list = $("#dashTop3");
+    if (!list || typeof employees === "undefined" || !employees.length) return;
+    const top = [...employees]
+      .map(e => ({ e, rate: e.trend[e.trend.length - 1] }))
+      .sort((a, b) => b.rate - a.rate).slice(0, 3);
+    list.innerHTML = top.map((t, i) => {
+      const e = t.e;
+      const color = AVATAR_COLORS[nameHash(e.name) % AVATAR_COLORS.length];
+      const rateClass = t.rate >= 70 ? "emp-rate--good" : t.rate >= 55 ? "emp-rate--mid" : "emp-rate--low";
+      return `
         <div class="top3__row">
           <span class="top3__rank">${i + 1}</span>
+          <span class="emp-avatar top3__avatar" style="background:${color}">${initials(e.name)}</span>
           <div class="top3__info">
-            <div class="top3__name" title="${escAttr(r.file)}">${r.file}</div>
-            <div class="top3__meta">${r.date.split(",")[0]} &bull; ${r.dur} &bull; <b>${r.conf}%</b></div>
+            <div class="top3__name" title="${escAttr(e.name)}">${e.name}</div>
+            <div class="top3__meta">Caller ID · ${escAttr(e.caller)}</div>
           </div>
-          <div class="top3__actions">
-            <button class="btn btn--outline btn--sm" type="button" data-view
-                    data-file="${escAttr(r.file)}" data-date="${escAttr(r.date)}">Xem lại</button>
-            <button class="iconbtn top3__export" type="button" data-dash-export
-                    aria-label="Export transcript" title="Export transcript">${DL_SVG}</button>
-          </div>
-        </div>`).join("");
-    }
+          <span class="emp-rate ${rateClass}">${t.rate}%</span>
+        </div>`;
+    }).join("");
   }
 
   // Re-view (evaluation) / export transcript within a Top-3 row
@@ -4241,6 +4243,7 @@ mark.mark--neg { background: var(--tcp-error-bg); color: var(--tcp-error-900); }
         </tr>`;
     }).join("");
     populateUploadEmp();
+    if (typeof renderDashTop3 === "function") renderDashTop3();
   }
   function updateSortIndicators() {
     // Sortable headers show a neutral ⇅ by default (so they read as sortable),
