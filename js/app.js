@@ -1399,7 +1399,7 @@
           <td><span class="emp-rate ${rateClass}">${eff}%</span>${srcTag}</td>
           <td>
             <div class="up-actions">
-              <button class="btn btn--outline btn--sm up-review" type="button" data-id="${escAttr(u.id)}">Đánh giá lại</button>
+              <button class="btn btn--outline btn--sm up-review" type="button" data-id="${escAttr(u.id)}" ${u.reviewed ? "disabled" : ""}>Đánh giá lại</button>
               <button class="btn btn--outline btn--sm up-detail" type="button"
                       data-file="${escAttr(u.file)}" data-date="${escAttr(u.date)}">Xem chi tiết</button>
             </div>
@@ -1623,7 +1623,7 @@
     if (rec.reviewed) {
       box.innerHTML =
         `<span class="outcome-review__tag outcome-review__tag--user">✓ Đã chốt bởi bạn · ${rec.userRate}%</span>` +
-        `<button class="btn btn--outline btn--sm" type="button" data-outcome-review>Đánh giá lại</button>`;
+        `<button class="btn btn--outline btn--sm" type="button" data-outcome-review disabled>Đánh giá lại</button>`;
     } else {
       box.innerHTML =
         `<span class="outcome-review__tag outcome-review__tag--ai">Kết quả AI · chưa đánh giá tay</span>` +
