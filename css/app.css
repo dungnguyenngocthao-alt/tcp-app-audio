@@ -197,7 +197,8 @@ button { font-family: inherit; }
 .modal__box--form .modal__title,
 .modal__box--form .modal__msg { text-align: left; }
 .modal__box--form .field__label { text-align: left; }
-.modal__box--form .field:last-of-type { margin-bottom: var(--tcp-space-5); }
+.modal__box--form .field:last-of-type { margin-bottom: 0; }
+.modal__box--form .modal__actions { margin-top: var(--tcp-space-5); }
 .emp-mode { display: flex; width: 100%; margin-bottom: var(--tcp-space-4); }
 .emp-mode .seg__btn { flex: 1; text-align: center; }
 .emp-upload {
