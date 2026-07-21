@@ -4,6 +4,8 @@
    Colours, typography, spacing, radii, shadows and motion tokens.
 
    Only the raw tokens live here. Component + app styling lives in app.css.
+   AI / high-tech theme: violet-cast neutrals, electric-indigo accent, glass
+   surfaces and soft (non-neon) glows.
    ============================================================================= */
 
 @import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=JetBrains+Mono:wght@400;500&display=swap");
@@ -17,41 +19,43 @@
   --tcp-white: #FFFFFF;
   --tcp-black: #000000;
 
-  /* Neutral scale */
-  --tcp-neutral-50:  #FAFAFA;
-  --tcp-neutral-100: #F5F5F5;
-  --tcp-neutral-200: #EEEEEE;
-  --tcp-neutral-300: #E0E0E0;
-  --tcp-neutral-400: #BDBDBD;
-  --tcp-neutral-500: #9E9E9E;
-  --tcp-neutral-600: #757575;
-  --tcp-neutral-700: #616161;
-  --tcp-neutral-800: #424242;
-  --tcp-neutral-900: #212121;
+  /* Neutral scale — light, cool-toned surface system with a faint violet cast
+     so greys never read as flat/generic. */
+  --tcp-neutral-50:  #FAFAFD;
+  --tcp-neutral-100: #F4F4FC;
+  --tcp-neutral-200: #EAEAF6;
+  --tcp-neutral-300: #DBDCF0;
+  --tcp-neutral-400: #B9BBDD;
+  --tcp-neutral-500: #9295C2;
+  --tcp-neutral-600: #6E7199;
+  --tcp-neutral-700: #52547A;
+  --tcp-neutral-800: #34364F;
+  --tcp-neutral-900: #1A1C2E;
 
-  /* Brand scale (Indigo) */
-  --tcp-brand-50:  #ECECFF;
-  --tcp-brand-100: #D7D7FF;
-  --tcp-brand-200: #AFAFFF;
-  --tcp-brand-300: #8585F5;
-  --tcp-brand-400: #5555C2;
-  --tcp-brand-500: #1F1F6D;
-  --tcp-brand-600: #19195A;
-  --tcp-brand-700: #131347;
-  --tcp-brand-800: #0D0D34;
-  --tcp-brand-900: #070721;
+  /* Brand scale (Indigo → Violet) — deep and saturated so it still reads
+     as "high-tech" against white/light surfaces. */
+  --tcp-brand-50:  #EEF0FF;
+  --tcp-brand-100: #D9DDFF;
+  --tcp-brand-200: #B3B9FF;
+  --tcp-brand-300: #8288F2;
+  --tcp-brand-400: #5A5FD9;
+  --tcp-brand-500: #4340B8;
+  --tcp-brand-600: #333094;
+  --tcp-brand-700: #262471;
+  --tcp-brand-800: #191A4D;
+  --tcp-brand-900: #0F0F2E;
 
-  /* Feedback */
+  /* Feedback — classic light chips: soft pastel bg, saturated ink text */
   --tcp-success-50:  #F0FDF4;
-  --tcp-success-500: #22C55E;
+  --tcp-success-500: #16A34A;
   --tcp-success-900: #14532D;
 
   --tcp-warning-50:  #FFFBEB;
-  --tcp-warning-500: #F59E0B;
+  --tcp-warning-500: #D97706;
   --tcp-warning-900: #78350F;
 
   --tcp-error-50:  #FEF2F2;
-  --tcp-error-500: #EF4444;
+  --tcp-error-500: #DC2626;
   --tcp-error-900: #7F1D1D;
 
   /* Brand-mark colours — sampled from the official TCP logo artwork. */
@@ -66,38 +70,50 @@
      SEMANTIC TOKENS
      --------------------------------------------------------------------------- */
 
-  /* Surfaces & foreground */
-  --tcp-bg:               var(--tcp-white);
-  --tcp-bg-subtle:        var(--tcp-neutral-50);
-  --tcp-bg-muted:         var(--tcp-neutral-100);
-  --tcp-fg:               #1F2937;
-  --tcp-fg-primary:       var(--tcp-neutral-900);
-  --tcp-fg-secondary:     var(--tcp-neutral-600);
-  --tcp-fg-tertiary:      var(--tcp-neutral-500);
-  --tcp-fg-disabled:      var(--tcp-neutral-400);
+  /* Surfaces & foreground — bright, airy "acoustic intelligence" surface */
+  --tcp-bg:               #FFFFFF;
+  --tcp-bg-subtle:        #F5F6FC;
+  --tcp-bg-muted:         #ECEEF9;
+  --tcp-fg:               #22243A;
+  --tcp-fg-primary:       #12142B;
+  --tcp-fg-secondary:     #5A5D82;
+  --tcp-fg-tertiary:      #8A8DB3;
+  --tcp-fg-disabled:      #C3C5E0;
 
   /* Brand */
-  --tcp-brand:            var(--tcp-brand-500);
-  --tcp-brand-hover:      var(--tcp-brand-600);
-  --tcp-brand-active:     var(--tcp-brand-700);
+  --tcp-brand:            var(--tcp-brand-600);
+  --tcp-brand-hover:      var(--tcp-brand-700);
+  --tcp-brand-active:     var(--tcp-brand-800);
   --tcp-brand-subtle:     var(--tcp-brand-100);
   --tcp-brand-dark:       var(--tcp-brand-900);
   --tcp-on-brand:         var(--tcp-white);
 
-  /* Accent (indigo) — primary call-to-action */
-  --tcp-accent:           #4F46E5;
-  --tcp-accent-hover:     #4338CA;
-  --tcp-accent-subtle:    #EEF2FF;
+  /* Accent (electric indigo) — primary call-to-action */
+  --tcp-accent:           #5B4FE9;
+  --tcp-accent-hover:     #4A3FD1;
+  --tcp-accent-subtle:    #EEEDFF;
   --tcp-on-accent:        var(--tcp-white);
 
-  /* External palette bridge — blue → violet used for the nav-bar gradient.
-     Swap these two hex values for the exact palette colors if needed. */
-  --color-blue-7:         #030422;
-  --color-violet-26:      #280087;
+  /* External palette bridge — blue → violet used for the nav-bar / hero gradient. */
+  --color-blue-7:         #0A0E2C;
+  --color-violet-26:      #3B1A9E;
 
-  /* Ink — deep navy used for headings / dark surfaces in the TCPVoiceAI UI */
-  --tcp-ink:              #0F1B2D;
-  --tcp-ink-soft:         #14233A;
+  /* Ink — deep navy used for headings on light surfaces */
+  --tcp-ink:              #12142F;
+  --tcp-ink-soft:         #1E2148;
+
+  /* ---------------------------------------------------------------------------
+     AI / HIGH-TECH THEME EXTRAS (light mode)
+     --------------------------------------------------------------------------- */
+  --tcp-glass:            rgba(255, 255, 255, 0.72);
+  --tcp-glass-strong:     rgba(255, 255, 255, 0.92);
+  --tcp-glow-border:      rgba(91, 79, 233, 0.25);
+  --tcp-glow-border-soft: rgba(91, 79, 233, 0.12);
+  --tcp-glow-violet:      0 0 0 1px rgba(91, 79, 233, 0.10), 0 10px 30px -10px rgba(59, 26, 158, 0.35);
+  --tcp-glow-accent:      0 0 0 1px rgba(91, 79, 233, 0.35), 0 10px 26px -8px rgba(91, 79, 233, 0.40);
+  --tcp-gradient-hero:    linear-gradient(135deg, #0A0E2C 0%, #191154 38%, #3B1A9E 70%, #6247D9 100%);
+  --tcp-gradient-accent:  linear-gradient(120deg, #4A3FD1 0%, #5B4FE9 50%, #8B6CFF 100%);
+  --tcp-gradient-text:    linear-gradient(120deg, #2A2D8C 0%, #5B4FE9 55%, #9333EA 100%);
 
   /* Borders */
   --tcp-border-subtle:    var(--tcp-neutral-200);
@@ -171,16 +187,16 @@
   --tcp-radius-pill: 999px;
 
   /* Shadows */
-  --tcp-shadow-2xs: 0px 1px 0px 0px rgba(55, 65, 81, 0.05);
-  --tcp-shadow-xs:  0px 1px 2px 0px rgba(55, 65, 81, 0.05);
-  --tcp-shadow-sm:  0px 1px 3px 0px rgba(55, 65, 81, 0.10), 0px 1px 2px -1px rgba(55, 65, 81, 0.10);
-  --tcp-shadow-md:  0px 4px 6px -1px rgba(0, 0, 0, 0.10), 0px 2px 4px -2px rgba(0, 0, 0, 0.10);
-  --tcp-shadow-lg:  0px 10px 15px -3px rgba(55, 65, 81, 0.10), 0px 4px 6px -2px rgba(55, 65, 81, 0.05);
-  --tcp-shadow-xl:  0px 20px 25px -5px rgba(55, 65, 81, 0.10), 0px 8px 10px -6px rgba(55, 65, 81, 0.05);
-  --tcp-shadow-2xl: 0px 25px 50px 12px rgba(55, 65, 81, 0.25);
+  --tcp-shadow-2xs: 0px 1px 0px 0px rgba(31, 31, 45, 0.04);
+  --tcp-shadow-xs:  0px 1px 2px 0px rgba(31, 31, 45, 0.06);
+  --tcp-shadow-sm:  0px 1px 3px 0px rgba(31, 31, 45, 0.08), 0px 1px 2px -1px rgba(91, 79, 233, 0.08);
+  --tcp-shadow-md:  0px 4px 10px -2px rgba(31, 31, 45, 0.08), 0px 2px 6px -2px rgba(91, 79, 233, 0.10);
+  --tcp-shadow-lg:  0px 12px 24px -6px rgba(31, 31, 45, 0.12), 0px 4px 10px -4px rgba(91, 79, 233, 0.14);
+  --tcp-shadow-xl:  0px 24px 48px -12px rgba(31, 31, 45, 0.16), 0px 8px 16px -8px rgba(91, 79, 233, 0.16);
+  --tcp-shadow-2xl: 0px 32px 64px -8px rgba(31, 31, 45, 0.20);
 
-  --tcp-ring:       0 0 0 3px rgba(31, 31, 109, 0.25);
-  --tcp-ring-accent: 0 0 0 3px rgba(79, 70, 229, 0.25);
+  --tcp-ring:       0 0 0 3px rgba(91, 79, 233, 0.22);
+  --tcp-ring-accent: 0 0 0 3px rgba(91, 79, 233, 0.28);
 
   /* Motion */
   --tcp-ease:       cubic-bezier(0.16, 1, 0.3, 1);

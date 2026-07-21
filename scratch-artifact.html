@@ -6,6 +6,8 @@
    Colours, typography, spacing, radii, shadows and motion tokens.
 
    Only the raw tokens live here. Component + app styling lives in app.css.
+   AI / high-tech theme: violet-cast neutrals, electric-indigo accent, glass
+   surfaces and soft (non-neon) glows.
    ============================================================================= */
 
 :root {
@@ -17,41 +19,43 @@
   --tcp-white: #FFFFFF;
   --tcp-black: #000000;
 
-  /* Neutral scale */
-  --tcp-neutral-50:  #FAFAFA;
-  --tcp-neutral-100: #F5F5F5;
-  --tcp-neutral-200: #EEEEEE;
-  --tcp-neutral-300: #E0E0E0;
-  --tcp-neutral-400: #BDBDBD;
-  --tcp-neutral-500: #9E9E9E;
-  --tcp-neutral-600: #757575;
-  --tcp-neutral-700: #616161;
-  --tcp-neutral-800: #424242;
-  --tcp-neutral-900: #212121;
+  /* Neutral scale — light, cool-toned surface system with a faint violet cast
+     so greys never read as flat/generic. */
+  --tcp-neutral-50:  #FAFAFD;
+  --tcp-neutral-100: #F4F4FC;
+  --tcp-neutral-200: #EAEAF6;
+  --tcp-neutral-300: #DBDCF0;
+  --tcp-neutral-400: #B9BBDD;
+  --tcp-neutral-500: #9295C2;
+  --tcp-neutral-600: #6E7199;
+  --tcp-neutral-700: #52547A;
+  --tcp-neutral-800: #34364F;
+  --tcp-neutral-900: #1A1C2E;
 
-  /* Brand scale (Indigo) */
-  --tcp-brand-50:  #ECECFF;
-  --tcp-brand-100: #D7D7FF;
-  --tcp-brand-200: #AFAFFF;
-  --tcp-brand-300: #8585F5;
-  --tcp-brand-400: #5555C2;
-  --tcp-brand-500: #1F1F6D;
-  --tcp-brand-600: #19195A;
-  --tcp-brand-700: #131347;
-  --tcp-brand-800: #0D0D34;
-  --tcp-brand-900: #070721;
+  /* Brand scale (Indigo → Violet) — deep and saturated so it still reads
+     as "high-tech" against white/light surfaces. */
+  --tcp-brand-50:  #EEF0FF;
+  --tcp-brand-100: #D9DDFF;
+  --tcp-brand-200: #B3B9FF;
+  --tcp-brand-300: #8288F2;
+  --tcp-brand-400: #5A5FD9;
+  --tcp-brand-500: #4340B8;
+  --tcp-brand-600: #333094;
+  --tcp-brand-700: #262471;
+  --tcp-brand-800: #191A4D;
+  --tcp-brand-900: #0F0F2E;
 
-  /* Feedback */
+  /* Feedback — classic light chips: soft pastel bg, saturated ink text */
   --tcp-success-50:  #F0FDF4;
-  --tcp-success-500: #22C55E;
+  --tcp-success-500: #16A34A;
   --tcp-success-900: #14532D;
 
   --tcp-warning-50:  #FFFBEB;
-  --tcp-warning-500: #F59E0B;
+  --tcp-warning-500: #D97706;
   --tcp-warning-900: #78350F;
 
   --tcp-error-50:  #FEF2F2;
-  --tcp-error-500: #EF4444;
+  --tcp-error-500: #DC2626;
   --tcp-error-900: #7F1D1D;
 
   /* Brand-mark colours — sampled from the official TCP logo artwork. */
@@ -66,38 +70,50 @@
      SEMANTIC TOKENS
      --------------------------------------------------------------------------- */
 
-  /* Surfaces & foreground */
-  --tcp-bg:               var(--tcp-white);
-  --tcp-bg-subtle:        var(--tcp-neutral-50);
-  --tcp-bg-muted:         var(--tcp-neutral-100);
-  --tcp-fg:               #1F2937;
-  --tcp-fg-primary:       var(--tcp-neutral-900);
-  --tcp-fg-secondary:     var(--tcp-neutral-600);
-  --tcp-fg-tertiary:      var(--tcp-neutral-500);
-  --tcp-fg-disabled:      var(--tcp-neutral-400);
+  /* Surfaces & foreground — bright, airy "acoustic intelligence" surface */
+  --tcp-bg:               #FFFFFF;
+  --tcp-bg-subtle:        #F5F6FC;
+  --tcp-bg-muted:         #ECEEF9;
+  --tcp-fg:               #22243A;
+  --tcp-fg-primary:       #12142B;
+  --tcp-fg-secondary:     #5A5D82;
+  --tcp-fg-tertiary:      #8A8DB3;
+  --tcp-fg-disabled:      #C3C5E0;
 
   /* Brand */
-  --tcp-brand:            var(--tcp-brand-500);
-  --tcp-brand-hover:      var(--tcp-brand-600);
-  --tcp-brand-active:     var(--tcp-brand-700);
+  --tcp-brand:            var(--tcp-brand-600);
+  --tcp-brand-hover:      var(--tcp-brand-700);
+  --tcp-brand-active:     var(--tcp-brand-800);
   --tcp-brand-subtle:     var(--tcp-brand-100);
   --tcp-brand-dark:       var(--tcp-brand-900);
   --tcp-on-brand:         var(--tcp-white);
 
-  /* Accent (indigo) — primary call-to-action */
-  --tcp-accent:           #4F46E5;
-  --tcp-accent-hover:     #4338CA;
-  --tcp-accent-subtle:    #EEF2FF;
+  /* Accent (electric indigo) — primary call-to-action */
+  --tcp-accent:           #5B4FE9;
+  --tcp-accent-hover:     #4A3FD1;
+  --tcp-accent-subtle:    #EEEDFF;
   --tcp-on-accent:        var(--tcp-white);
 
-  /* External palette bridge — blue → violet used for the nav-bar gradient.
-     Swap these two hex values for the exact palette colors if needed. */
-  --color-blue-7:         #030422;
-  --color-violet-26:      #280087;
+  /* External palette bridge — blue → violet used for the nav-bar / hero gradient. */
+  --color-blue-7:         #0A0E2C;
+  --color-violet-26:      #3B1A9E;
 
-  /* Ink — deep navy used for headings / dark surfaces in the TCPVoiceAI UI */
-  --tcp-ink:              #0F1B2D;
-  --tcp-ink-soft:         #14233A;
+  /* Ink — deep navy used for headings on light surfaces */
+  --tcp-ink:              #12142F;
+  --tcp-ink-soft:         #1E2148;
+
+  /* ---------------------------------------------------------------------------
+     AI / HIGH-TECH THEME EXTRAS (light mode)
+     --------------------------------------------------------------------------- */
+  --tcp-glass:            rgba(255, 255, 255, 0.72);
+  --tcp-glass-strong:     rgba(255, 255, 255, 0.92);
+  --tcp-glow-border:      rgba(91, 79, 233, 0.25);
+  --tcp-glow-border-soft: rgba(91, 79, 233, 0.12);
+  --tcp-glow-violet:      0 0 0 1px rgba(91, 79, 233, 0.10), 0 10px 30px -10px rgba(59, 26, 158, 0.35);
+  --tcp-glow-accent:      0 0 0 1px rgba(91, 79, 233, 0.35), 0 10px 26px -8px rgba(91, 79, 233, 0.40);
+  --tcp-gradient-hero:    linear-gradient(135deg, #0A0E2C 0%, #191154 38%, #3B1A9E 70%, #6247D9 100%);
+  --tcp-gradient-accent:  linear-gradient(120deg, #4A3FD1 0%, #5B4FE9 50%, #8B6CFF 100%);
+  --tcp-gradient-text:    linear-gradient(120deg, #2A2D8C 0%, #5B4FE9 55%, #9333EA 100%);
 
   /* Borders */
   --tcp-border-subtle:    var(--tcp-neutral-200);
@@ -171,16 +187,16 @@
   --tcp-radius-pill: 999px;
 
   /* Shadows */
-  --tcp-shadow-2xs: 0px 1px 0px 0px rgba(55, 65, 81, 0.05);
-  --tcp-shadow-xs:  0px 1px 2px 0px rgba(55, 65, 81, 0.05);
-  --tcp-shadow-sm:  0px 1px 3px 0px rgba(55, 65, 81, 0.10), 0px 1px 2px -1px rgba(55, 65, 81, 0.10);
-  --tcp-shadow-md:  0px 4px 6px -1px rgba(0, 0, 0, 0.10), 0px 2px 4px -2px rgba(0, 0, 0, 0.10);
-  --tcp-shadow-lg:  0px 10px 15px -3px rgba(55, 65, 81, 0.10), 0px 4px 6px -2px rgba(55, 65, 81, 0.05);
-  --tcp-shadow-xl:  0px 20px 25px -5px rgba(55, 65, 81, 0.10), 0px 8px 10px -6px rgba(55, 65, 81, 0.05);
-  --tcp-shadow-2xl: 0px 25px 50px 12px rgba(55, 65, 81, 0.25);
+  --tcp-shadow-2xs: 0px 1px 0px 0px rgba(31, 31, 45, 0.04);
+  --tcp-shadow-xs:  0px 1px 2px 0px rgba(31, 31, 45, 0.06);
+  --tcp-shadow-sm:  0px 1px 3px 0px rgba(31, 31, 45, 0.08), 0px 1px 2px -1px rgba(91, 79, 233, 0.08);
+  --tcp-shadow-md:  0px 4px 10px -2px rgba(31, 31, 45, 0.08), 0px 2px 6px -2px rgba(91, 79, 233, 0.10);
+  --tcp-shadow-lg:  0px 12px 24px -6px rgba(31, 31, 45, 0.12), 0px 4px 10px -4px rgba(91, 79, 233, 0.14);
+  --tcp-shadow-xl:  0px 24px 48px -12px rgba(31, 31, 45, 0.16), 0px 8px 16px -8px rgba(91, 79, 233, 0.16);
+  --tcp-shadow-2xl: 0px 32px 64px -8px rgba(31, 31, 45, 0.20);
 
-  --tcp-ring:       0 0 0 3px rgba(31, 31, 109, 0.25);
-  --tcp-ring-accent: 0 0 0 3px rgba(79, 70, 229, 0.25);
+  --tcp-ring:       0 0 0 3px rgba(91, 79, 233, 0.22);
+  --tcp-ring-accent: 0 0 0 3px rgba(91, 79, 233, 0.28);
 
   /* Motion */
   --tcp-ease:       cubic-bezier(0.16, 1, 0.3, 1);
@@ -2043,6 +2059,239 @@ mark.mark--neg { background: var(--tcp-error-bg); color: var(--tcp-error-900); }
   .dash-wordcloud { grid-column: auto; }
   /* Top row: bar chart (wide) + direction pie (narrow) */
   .dash-toprow { grid-template-columns: 2fr 1fr; }
+}
+
+body {
+  background:
+    radial-gradient(1200px 600px at 50% -10%, #EEF0FF 0%, transparent 60%),
+    #F2F3FA;
+}
+
+/* =============================================================================
+   AI / HIGH-TECH THEME LAYER — "Acoustic Intelligence" (light mode)
+   Everything below sits on top of the design-system rules above. It keeps
+   every existing class/id (no HTML or JS was touched) and restyles surfaces,
+   controls and typography into a bright, airy surface with deep navy → violet
+   accents: soft mesh backdrop, frosted-glass cards, gradient CTAs and a
+   glowing (but soft, non-neon) accent system. Fully responsive: it only adds
+   atmosphere, never fixed sizes.
+   ============================================================================= */
+
+/* ---- ambient backdrop: soft colour mesh + faint tech grid, behind everything ---- */
+.phone {
+  background:
+    radial-gradient(900px 520px at 12% -8%, rgba(91, 79, 233, 0.10), transparent 60%),
+    radial-gradient(700px 480px at 108% 8%, rgba(56, 189, 248, 0.09), transparent 55%),
+    radial-gradient(800px 600px at 50% 115%, rgba(147, 51, 234, 0.07), transparent 60%),
+    #F7F7FC;
+  isolation: isolate;
+}
+.phone::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(91, 79, 233, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(91, 79, 233, 0.05) 1px, transparent 1px);
+  background-size: 34px 34px;
+  mask-image: radial-gradient(120% 90% at 50% 0%, #000 40%, transparent 100%);
+}
+.screen { background: transparent; position: absolute; inset: 0; z-index: 1; }
+.screen__scroll { background: transparent; position: relative; z-index: 1; }
+.screen--login { background: transparent !important; }
+
+/* ---- typography: crisper, slightly tighter, gradient accents on headings ---- */
+.page__title, .results-head__title, .analyzing__title,
+.modal__title {
+  background: var(--tcp-gradient-text);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: var(--tcp-fg-primary);
+  letter-spacing: -0.3px;
+}
+.login-title { color: var(--tcp-fg-primary); letter-spacing: -0.3px; }
+.section-title, .dropzone__title, .filelist__name, .filecard__name,
+.hist__name, .folder__name, .stat-card__value:not(.stat-card__value--accent), .quality-score,
+.outcome__title, .action-item__title, .dash-chart__total,
+.pie__center b, .gauge-legend__item b, .top3__name, .hist__conf b,
+.tab.is-active, .subtabs__export:hover, .top3__export:hover {
+  color: var(--tcp-fg-primary) !important;
+}
+.gauge__num { fill: var(--tcp-fg-primary) !important; }
+
+/* ---- glass surfaces: cards, panels, tables, chips ----
+   No !important here on purpose: these selectors are plain single classes,
+   placed after the base rules, so they win by cascade order — while letting
+   more specific state/variant rules defined earlier (e.g. .arch-select-btn.is-active,
+   .up-import-result.is-ok/.is-warn, .card.outcome-card--good/mid/low,
+   .fchip--low, .fchip.is-active) keep winning via higher selector specificity. */
+.card,
+.login-card,
+.emp-table-wrap,
+.filestrip__nav,
+.arch-select-btn,
+.dash-filter__input,
+.filecard,
+.modal__box,
+.up-import-result,
+.emp-upload__result,
+.hist {
+  background: var(--tcp-glass);
+  border: 1px solid var(--tcp-glow-border-soft);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+.card { box-shadow: var(--tcp-shadow-md); }
+.card:hover { border-color: var(--tcp-glow-border); box-shadow: var(--tcp-shadow-lg); }
+.login-card { background: var(--tcp-glass-strong); box-shadow: var(--tcp-glow-violet); }
+.chart-tip { background: var(--tcp-ink); color: #fff; border: 1px solid rgba(255,255,255,0.08); }
+.fchip:not(.fchip--low):not(.is-active) { background: var(--tcp-glass); border-color: var(--tcp-glow-border-soft); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); }
+
+/* Login screen: the one deliberately dark "hero" moment — a cinematic navy →
+   violet splash the light app then opens out of, with a faint animated grid. */
+.screen--login {
+  background: var(--tcp-gradient-hero) !important;
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+.screen--login::before {
+  content: "";
+  position: absolute; inset: -20%;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.08) 1px, transparent 1px);
+  background-size: 42px 42px;
+  animation: aiGridDrift 22s linear infinite;
+  pointer-events: none;
+}
+.screen--login::after {
+  content: "";
+  position: absolute; inset: 0;
+  background: radial-gradient(600px 340px at 50% 15%, rgba(139, 108, 255, 0.35), transparent 70%);
+  pointer-events: none;
+}
+.login-card { position: relative; z-index: 1; }
+.login-wordmark { color: var(--tcp-ink); }
+@keyframes aiGridDrift {
+  from { transform: translate(0, 0); }
+  to   { transform: translate(42px, 42px); }
+}
+
+/* ---- buttons: gradient accent with soft colour glow, glassy secondary ---- */
+.btn--accent {
+  background: var(--tcp-gradient-accent);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  box-shadow: 0 0 0 1px rgba(91, 79, 233, 0.18), 0 6px 18px -6px rgba(91, 79, 233, 0.45);
+}
+.btn--accent:hover { filter: brightness(1.05); box-shadow: var(--tcp-glow-accent); }
+.btn--ink {
+  background: linear-gradient(160deg, #262A5C, #12142F);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  color: #fff;
+}
+.btn--ink:hover { background: linear-gradient(160deg, #313671, #1A1D45); }
+.btn--outline {
+  background: var(--tcp-bg);
+  border-color: var(--tcp-border);
+  color: var(--tcp-fg-primary);
+}
+.btn--outline:hover { background: var(--tcp-accent-subtle); border-color: var(--tcp-glow-border); }
+.btn--inverse {
+  background: #fff;
+  border-color: var(--tcp-accent);
+  color: var(--tcp-accent);
+}
+.btn--inverse:hover { background: var(--tcp-accent-subtle); }
+.page-btn.is-active { background: var(--tcp-gradient-accent) !important; border-color: transparent !important; color: #fff !important; }
+
+/* ---- inputs, selects, sliders, toggles: light fields with accent focus glow ---- */
+.input, .select, .dash-filter__input, .hist__rename {
+  background: #fff !important;
+  border-color: var(--tcp-border) !important;
+  color: var(--tcp-fg-primary) !important;
+}
+.input::placeholder { color: var(--tcp-fg-tertiary); }
+.input:focus, .select:focus, .dash-filter__input:focus-visible {
+  border-color: var(--tcp-accent) !important;
+  box-shadow: var(--tcp-ring-accent) !important;
+}
+.slider { background: var(--tcp-neutral-200); }
+.slider::-webkit-slider-thumb { background: var(--tcp-gradient-accent); box-shadow: 0 0 0 4px rgba(91, 79, 233, 0.16), 0 2px 8px rgba(91, 79, 233, 0.45); }
+.slider::-moz-range-thumb { background: var(--tcp-gradient-accent); border-color: #fff; box-shadow: 0 0 0 4px rgba(91, 79, 233, 0.16), 0 2px 8px rgba(91, 79, 233, 0.45); }
+.toggle__track { background: var(--tcp-neutral-300); }
+.toggle input:checked + .toggle__track { background: var(--tcp-gradient-accent); box-shadow: 0 2px 8px rgba(91, 79, 233, 0.35); }
+
+/* ---- app bar / nav: the same navy → violet band as the login hero, so the
+   product keeps one consistent "tech" accent even though content is light ---- */
+.appbar {
+  background: linear-gradient(100deg, #0A0E2C 0%, #1B1054 55%, #3B1A9E 100%) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 6px 20px -10px rgba(59, 26, 158, 0.45);
+}
+.burger:hover, .iconbtn:hover { background: rgba(91, 79, 233, 0.10) !important; }
+
+/* ---- tabs / subtabs: gradient underline instead of flat ink ---- */
+.tab.is-active::after, .subtab.is-active::after {
+  background: var(--tcp-gradient-accent) !important;
+  box-shadow: 0 1px 6px rgba(91, 79, 233, 0.45);
+}
+
+/* ---- dropzone: soft lavender dashed well ---- */
+.dropzone { background: rgba(91, 79, 233, 0.035); border-color: var(--tcp-glow-border); }
+.dropzone.is-drag { border-color: var(--tcp-accent); background: rgba(91, 79, 233, 0.08); }
+.dropzone__icon { background: var(--tcp-accent-subtle); color: var(--tcp-accent); }
+
+/* ---- pulse / waveform (Analyzing screen): gradient core with a soft glow ---- */
+.pulse__ring { border-color: rgba(91, 79, 233, 0.30); }
+.pulse__core {
+  background: var(--tcp-gradient-accent) !important;
+  box-shadow: 0 10px 30px -6px rgba(91, 79, 233, 0.55), 0 0 0 8px rgba(91, 79, 233, 0.08);
+}
+.model-badge {
+  background: var(--tcp-accent-subtle);
+  border: 1px solid var(--tcp-glow-border-soft);
+  color: var(--tcp-brand);
+}
+.progress__track { background: var(--tcp-neutral-200); }
+.progress__fill { background: var(--tcp-gradient-accent) !important; box-shadow: 0 1px 6px rgba(91, 79, 233, 0.4); }
+
+/* ---- chat bubbles: light glass inbound, soft accent-tinted outbound ---- */
+.msg--in .msg__bubble { background: #fff; border-color: var(--tcp-border-subtle); }
+.msg--out .msg__bubble { background: linear-gradient(135deg, rgba(91, 79, 233, 0.14), rgba(139, 108, 255, 0.08)); border: 1px solid var(--tcp-glow-border-soft); }
+.msg--in .msg__avatar { background: linear-gradient(160deg, #262A5C, #12142F); }
+
+/* ---- tables: light rows, soft accent hover ---- */
+.emp-table thead th, .up-table thead th { background: var(--tcp-bg-subtle); color: var(--tcp-fg-secondary); }
+.emp-table tbody tr:hover, .up-table tbody tr:hover { background: rgba(91, 79, 233, 0.05) !important; }
+
+/* ---- pills / badges / chips: keep semantic hue, muted lavender neutral ---- */
+.pill--neutral, .up-src--ai, .up-badge--neutral { background: var(--tcp-bg-muted); color: var(--tcp-fg-secondary); }
+.up-src--user { background: var(--tcp-accent-subtle); color: var(--tcp-accent-hover); }
+
+/* ---- scrollbars: slim accent-tinted thumbs ---- */
+.filestrip__scroll::-webkit-scrollbar-thumb, .transcript-scroll::-webkit-scrollbar-thumb {
+  background: var(--tcp-glow-border);
+}
+* { scrollbar-color: rgba(91, 79, 233, 0.35) transparent; }
+
+/* ---- misc surfaces used across screens ---- */
+.seg { background: var(--tcp-bg-muted); }
+.seg__btn.is-active { background: #fff; color: var(--tcp-accent); box-shadow: var(--tcp-shadow-xs); }
+.arch-crumb, .arch-back { color: var(--tcp-fg-secondary); }
+
+/* ---- reduced-motion safety net for the new ambient animation ---- */
+@media (prefers-reduced-motion: reduce) {
+  .screen--login::before { animation: none; }
+}
+
+/* ---- small-screen refinement: keep the grid/mesh subtle so text stays crisp ---- */
+@media (max-width: 480px) {
+  .phone::before { background-size: 26px 26px; }
+  .screen--login::before { background-size: 30px 30px; }
 }
 
 

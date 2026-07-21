@@ -1853,3 +1853,236 @@ mark.mark--neg { background: var(--tcp-error-bg); color: var(--tcp-error-900); }
   /* Top row: bar chart (wide) + direction pie (narrow) */
   .dash-toprow { grid-template-columns: 2fr 1fr; }
 }
+
+body {
+  background:
+    radial-gradient(1200px 600px at 50% -10%, #EEF0FF 0%, transparent 60%),
+    #F2F3FA;
+}
+
+/* =============================================================================
+   AI / HIGH-TECH THEME LAYER — "Acoustic Intelligence" (light mode)
+   Everything below sits on top of the design-system rules above. It keeps
+   every existing class/id (no HTML or JS was touched) and restyles surfaces,
+   controls and typography into a bright, airy surface with deep navy → violet
+   accents: soft mesh backdrop, frosted-glass cards, gradient CTAs and a
+   glowing (but soft, non-neon) accent system. Fully responsive: it only adds
+   atmosphere, never fixed sizes.
+   ============================================================================= */
+
+/* ---- ambient backdrop: soft colour mesh + faint tech grid, behind everything ---- */
+.phone {
+  background:
+    radial-gradient(900px 520px at 12% -8%, rgba(91, 79, 233, 0.10), transparent 60%),
+    radial-gradient(700px 480px at 108% 8%, rgba(56, 189, 248, 0.09), transparent 55%),
+    radial-gradient(800px 600px at 50% 115%, rgba(147, 51, 234, 0.07), transparent 60%),
+    #F7F7FC;
+  isolation: isolate;
+}
+.phone::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(91, 79, 233, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(91, 79, 233, 0.05) 1px, transparent 1px);
+  background-size: 34px 34px;
+  mask-image: radial-gradient(120% 90% at 50% 0%, #000 40%, transparent 100%);
+}
+.screen { background: transparent; position: absolute; inset: 0; z-index: 1; }
+.screen__scroll { background: transparent; position: relative; z-index: 1; }
+.screen--login { background: transparent !important; }
+
+/* ---- typography: crisper, slightly tighter, gradient accents on headings ---- */
+.page__title, .results-head__title, .analyzing__title,
+.modal__title {
+  background: var(--tcp-gradient-text);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: var(--tcp-fg-primary);
+  letter-spacing: -0.3px;
+}
+.login-title { color: var(--tcp-fg-primary); letter-spacing: -0.3px; }
+.section-title, .dropzone__title, .filelist__name, .filecard__name,
+.hist__name, .folder__name, .stat-card__value:not(.stat-card__value--accent), .quality-score,
+.outcome__title, .action-item__title, .dash-chart__total,
+.pie__center b, .gauge-legend__item b, .top3__name, .hist__conf b,
+.tab.is-active, .subtabs__export:hover, .top3__export:hover {
+  color: var(--tcp-fg-primary) !important;
+}
+.gauge__num { fill: var(--tcp-fg-primary) !important; }
+
+/* ---- glass surfaces: cards, panels, tables, chips ----
+   No !important here on purpose: these selectors are plain single classes,
+   placed after the base rules, so they win by cascade order — while letting
+   more specific state/variant rules defined earlier (e.g. .arch-select-btn.is-active,
+   .up-import-result.is-ok/.is-warn, .card.outcome-card--good/mid/low,
+   .fchip--low, .fchip.is-active) keep winning via higher selector specificity. */
+.card,
+.login-card,
+.emp-table-wrap,
+.filestrip__nav,
+.arch-select-btn,
+.dash-filter__input,
+.filecard,
+.modal__box,
+.up-import-result,
+.emp-upload__result,
+.hist {
+  background: var(--tcp-glass);
+  border: 1px solid var(--tcp-glow-border-soft);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+.card { box-shadow: var(--tcp-shadow-md); }
+.card:hover { border-color: var(--tcp-glow-border); box-shadow: var(--tcp-shadow-lg); }
+.login-card { background: var(--tcp-glass-strong); box-shadow: var(--tcp-glow-violet); }
+.chart-tip { background: var(--tcp-ink); color: #fff; border: 1px solid rgba(255,255,255,0.08); }
+.fchip:not(.fchip--low):not(.is-active) { background: var(--tcp-glass); border-color: var(--tcp-glow-border-soft); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); }
+
+/* Login screen: the one deliberately dark "hero" moment — a cinematic navy →
+   violet splash the light app then opens out of, with a faint animated grid. */
+.screen--login {
+  background: var(--tcp-gradient-hero) !important;
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+.screen--login::before {
+  content: "";
+  position: absolute; inset: -20%;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.08) 1px, transparent 1px);
+  background-size: 42px 42px;
+  animation: aiGridDrift 22s linear infinite;
+  pointer-events: none;
+}
+.screen--login::after {
+  content: "";
+  position: absolute; inset: 0;
+  background: radial-gradient(600px 340px at 50% 15%, rgba(139, 108, 255, 0.35), transparent 70%);
+  pointer-events: none;
+}
+.login-card { position: relative; z-index: 1; }
+.login-wordmark { color: var(--tcp-ink); }
+@keyframes aiGridDrift {
+  from { transform: translate(0, 0); }
+  to   { transform: translate(42px, 42px); }
+}
+
+/* ---- buttons: gradient accent with soft colour glow, glassy secondary ---- */
+.btn--accent {
+  background: var(--tcp-gradient-accent);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  box-shadow: 0 0 0 1px rgba(91, 79, 233, 0.18), 0 6px 18px -6px rgba(91, 79, 233, 0.45);
+}
+.btn--accent:hover { filter: brightness(1.05); box-shadow: var(--tcp-glow-accent); }
+.btn--ink {
+  background: linear-gradient(160deg, #262A5C, #12142F);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  color: #fff;
+}
+.btn--ink:hover { background: linear-gradient(160deg, #313671, #1A1D45); }
+.btn--outline {
+  background: var(--tcp-bg);
+  border-color: var(--tcp-border);
+  color: var(--tcp-fg-primary);
+}
+.btn--outline:hover { background: var(--tcp-accent-subtle); border-color: var(--tcp-glow-border); }
+.btn--inverse {
+  background: #fff;
+  border-color: var(--tcp-accent);
+  color: var(--tcp-accent);
+}
+.btn--inverse:hover { background: var(--tcp-accent-subtle); }
+.page-btn.is-active { background: var(--tcp-gradient-accent) !important; border-color: transparent !important; color: #fff !important; }
+
+/* ---- inputs, selects, sliders, toggles: light fields with accent focus glow ---- */
+.input, .select, .dash-filter__input, .hist__rename {
+  background: #fff !important;
+  border-color: var(--tcp-border) !important;
+  color: var(--tcp-fg-primary) !important;
+}
+.input::placeholder { color: var(--tcp-fg-tertiary); }
+.input:focus, .select:focus, .dash-filter__input:focus-visible {
+  border-color: var(--tcp-accent) !important;
+  box-shadow: var(--tcp-ring-accent) !important;
+}
+.slider { background: var(--tcp-neutral-200); }
+.slider::-webkit-slider-thumb { background: var(--tcp-gradient-accent); box-shadow: 0 0 0 4px rgba(91, 79, 233, 0.16), 0 2px 8px rgba(91, 79, 233, 0.45); }
+.slider::-moz-range-thumb { background: var(--tcp-gradient-accent); border-color: #fff; box-shadow: 0 0 0 4px rgba(91, 79, 233, 0.16), 0 2px 8px rgba(91, 79, 233, 0.45); }
+.toggle__track { background: var(--tcp-neutral-300); }
+.toggle input:checked + .toggle__track { background: var(--tcp-gradient-accent); box-shadow: 0 2px 8px rgba(91, 79, 233, 0.35); }
+
+/* ---- app bar / nav: the same navy → violet band as the login hero, so the
+   product keeps one consistent "tech" accent even though content is light ---- */
+.appbar {
+  background: linear-gradient(100deg, #0A0E2C 0%, #1B1054 55%, #3B1A9E 100%) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 6px 20px -10px rgba(59, 26, 158, 0.45);
+}
+.burger:hover, .iconbtn:hover { background: rgba(91, 79, 233, 0.10) !important; }
+
+/* ---- tabs / subtabs: gradient underline instead of flat ink ---- */
+.tab.is-active::after, .subtab.is-active::after {
+  background: var(--tcp-gradient-accent) !important;
+  box-shadow: 0 1px 6px rgba(91, 79, 233, 0.45);
+}
+
+/* ---- dropzone: soft lavender dashed well ---- */
+.dropzone { background: rgba(91, 79, 233, 0.035); border-color: var(--tcp-glow-border); }
+.dropzone.is-drag { border-color: var(--tcp-accent); background: rgba(91, 79, 233, 0.08); }
+.dropzone__icon { background: var(--tcp-accent-subtle); color: var(--tcp-accent); }
+
+/* ---- pulse / waveform (Analyzing screen): gradient core with a soft glow ---- */
+.pulse__ring { border-color: rgba(91, 79, 233, 0.30); }
+.pulse__core {
+  background: var(--tcp-gradient-accent) !important;
+  box-shadow: 0 10px 30px -6px rgba(91, 79, 233, 0.55), 0 0 0 8px rgba(91, 79, 233, 0.08);
+}
+.model-badge {
+  background: var(--tcp-accent-subtle);
+  border: 1px solid var(--tcp-glow-border-soft);
+  color: var(--tcp-brand);
+}
+.progress__track { background: var(--tcp-neutral-200); }
+.progress__fill { background: var(--tcp-gradient-accent) !important; box-shadow: 0 1px 6px rgba(91, 79, 233, 0.4); }
+
+/* ---- chat bubbles: light glass inbound, soft accent-tinted outbound ---- */
+.msg--in .msg__bubble { background: #fff; border-color: var(--tcp-border-subtle); }
+.msg--out .msg__bubble { background: linear-gradient(135deg, rgba(91, 79, 233, 0.14), rgba(139, 108, 255, 0.08)); border: 1px solid var(--tcp-glow-border-soft); }
+.msg--in .msg__avatar { background: linear-gradient(160deg, #262A5C, #12142F); }
+
+/* ---- tables: light rows, soft accent hover ---- */
+.emp-table thead th, .up-table thead th { background: var(--tcp-bg-subtle); color: var(--tcp-fg-secondary); }
+.emp-table tbody tr:hover, .up-table tbody tr:hover { background: rgba(91, 79, 233, 0.05) !important; }
+
+/* ---- pills / badges / chips: keep semantic hue, muted lavender neutral ---- */
+.pill--neutral, .up-src--ai, .up-badge--neutral { background: var(--tcp-bg-muted); color: var(--tcp-fg-secondary); }
+.up-src--user { background: var(--tcp-accent-subtle); color: var(--tcp-accent-hover); }
+
+/* ---- scrollbars: slim accent-tinted thumbs ---- */
+.filestrip__scroll::-webkit-scrollbar-thumb, .transcript-scroll::-webkit-scrollbar-thumb {
+  background: var(--tcp-glow-border);
+}
+* { scrollbar-color: rgba(91, 79, 233, 0.35) transparent; }
+
+/* ---- misc surfaces used across screens ---- */
+.seg { background: var(--tcp-bg-muted); }
+.seg__btn.is-active { background: #fff; color: var(--tcp-accent); box-shadow: var(--tcp-shadow-xs); }
+.arch-crumb, .arch-back { color: var(--tcp-fg-secondary); }
+
+/* ---- reduced-motion safety net for the new ambient animation ---- */
+@media (prefers-reduced-motion: reduce) {
+  .screen--login::before { animation: none; }
+}
+
+/* ---- small-screen refinement: keep the grid/mesh subtle so text stays crisp ---- */
+@media (max-width: 480px) {
+  .phone::before { background-size: 26px 26px; }
+  .screen--login::before { background-size: 30px 30px; }
+}
