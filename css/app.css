@@ -62,7 +62,8 @@ button { font-family: inherit; }
   justify-content: safe center;
   padding: var(--tcp-space-6);
   overflow-y: auto;
-  background: var(--tcp-bg-subtle);
+  /* Same blue → violet gradient as the nav bar */
+  background: linear-gradient(60deg, var(--color-blue-7) 0%, var(--color-violet-26) 75%);
 }
 .login-card {
   width: 100%;
@@ -75,7 +76,7 @@ button { font-family: inherit; }
 }
 .login-brand {
   display: flex; flex-direction: column; align-items: center; gap: 10px;
-  margin-bottom: 22px;
+  margin-bottom: 26px;
 }
 .login-brand .brand__logo { width: 54px; height: 48px; }
 .login-wordmark {
