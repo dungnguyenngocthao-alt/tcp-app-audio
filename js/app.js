@@ -18,6 +18,7 @@
     history:    $("#screen-history"),
     dashboard:  $("#screen-dashboard"),
     employees:  $("#screen-employees"),
+    uploads:    $("#screen-uploads"),
     settings:   $("#screen-settings"),
   };
 
@@ -79,7 +80,7 @@
     el.addEventListener("click", () => {
       const target = el.dataset.nav;
       if (el.hasAttribute("data-reset")) resetAnalysis();
-      if (target === "analysis" || target === "results" || target === "history" || target === "dashboard" || target === "employees" || target === "settings" || target === "login") show(target);
+      if (target === "analysis" || target === "results" || target === "history" || target === "dashboard" || target === "employees" || target === "uploads" || target === "settings" || target === "login") show(target);
       closeMenu();
     })
   );
@@ -1189,6 +1190,62 @@
       renderEmployees();
       updateSortIndicators();
       closeEmpModal();
+    });
+  }
+
+  /* -------------------------------------------------------------------------
+     Screen 5c · Upload history — every analysed call, with a detail link
+     ------------------------------------------------------------------------- */
+  const UP_OUTCOME = { success: "Tư vấn xuất sắc", warning: "Tư vấn hiệu quả", neutral: "Cần cải thiện" };
+  const UPLOAD_LOG = [
+    { id: "UP-1042", time: "26/10/2023, 14:30", agent: "Nguyễn Thị Hà", caller: "1001", to: "0901 234 567", dur: "12:45", rate: 82, outcome: "success", file: "Q3_Sales_Call_JohnDoe.wav",  date: "10/26/2023, 2:30 PM" },
+    { id: "UP-1041", time: "26/10/2023, 11:05", agent: "Trần Văn Dũng",  caller: "1002", to: "0912 888 021", dur: "08:33", rate: 47, outcome: "neutral", file: "Cold_Call_Nguyen_Minh.wav",  date: "10/25/2023, 11:20 AM" },
+    { id: "UP-1040", time: "25/10/2023, 16:48", agent: "Lê Hoàng Nam",   caller: "1003", to: "0987 112 233", dur: "15:20", rate: 73, outcome: "warning", file: "Demo_AcmeCorp_Round2.mp3",   date: "10/25/2023, 4:05 PM" },
+    { id: "UP-1039", time: "25/10/2023, 09:20", agent: "Phạm Minh Châu",  caller: "1004", to: "0903 456 789", dur: "22:14", rate: 86, outcome: "success", file: "Renewal_BetaLogistics.flac", date: "10/24/2023, 3:15 PM" },
+    { id: "UP-1038", time: "24/10/2023, 15:12", agent: "Vũ Thanh Tùng",  caller: "1005", to: "0938 220 145", dur: "06:57", rate: 53, outcome: "neutral", file: "Discovery_TechViet.mp3",     date: "10/24/2023, 9:48 AM" },
+    { id: "UP-1037", time: "24/10/2023, 10:02", agent: "Nguyễn Thị Hà",  caller: "1001", to: "0977 654 321", dur: "18:41", rate: 79, outcome: "warning", file: "Upsell_GreenFoods.wav",      date: "10/23/2023, 5:30 PM" },
+    { id: "UP-1036", time: "23/10/2023, 13:47", agent: "Phạm Minh Châu",  caller: "1004", to: "0905 778 990", dur: "27:39", rate: 91, outcome: "success", file: "Pitch_SaigonRetail.wav",     date: "10/22/2023, 10:11 AM" },
+    { id: "UP-1035", time: "23/10/2023, 08:15", agent: "Lê Hoàng Nam",   caller: "1003", to: "0918 003 476", dur: "10:08", rate: 64, outcome: "warning", file: "Q3_Review_HaiPhong.flac",    date: "10/21/2023, 4:44 PM" },
+  ];
+
+  const upTbody = $("#upTbody");
+  function renderUploads() {
+    if (!upTbody) return;
+    upTbody.innerHTML = UPLOAD_LOG.map(u => {
+      const color = AVATAR_COLORS[nameHash(u.agent) % AVATAR_COLORS.length];
+      const rateClass = u.rate >= 70 ? "emp-rate--good" : u.rate >= 55 ? "emp-rate--mid" : "emp-rate--low";
+      const badgeClass = u.outcome === "success" ? "up-badge--success" : u.outcome === "warning" ? "up-badge--warning" : "up-badge--neutral";
+      return `
+        <tr>
+          <td class="up-id">${u.id}</td>
+          <td class="emp-last">${u.time}</td>
+          <td class="emp-col-name">
+            <div class="emp-person">
+              <span class="emp-avatar" style="background:${color}">${initials(u.agent)}</span>
+              <div class="emp-person__meta">
+                <div class="emp-person__name" title="${escAttr(u.agent)}">${u.agent}</div>
+                <div class="emp-person__id">Caller ID · ${escAttr(u.caller)}</div>
+              </div>
+            </div>
+          </td>
+          <td class="up-to">${u.to}</td>
+          <td class="up-dur">${u.dur}</td>
+          <td><span class="emp-rate ${rateClass}">${u.rate}%</span></td>
+          <td>
+            <div class="up-result">
+              <span class="up-badge ${badgeClass}">${UP_OUTCOME[u.outcome]}</span>
+              <button class="btn btn--outline btn--sm up-detail" type="button"
+                      data-file="${escAttr(u.file)}" data-date="${escAttr(u.date)}">Xem chi tiết</button>
+            </div>
+          </td>
+        </tr>`;
+    }).join("");
+  }
+  renderUploads();
+  if (upTbody) {
+    upTbody.addEventListener("click", e => {
+      const btn = e.target.closest(".up-detail");
+      if (btn) showSingleResult(btn.dataset.file, btn.dataset.date, "uploads");
     });
   }
 

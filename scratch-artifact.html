@@ -383,6 +383,23 @@ button { font-family: inherit; }
 .emp-delta--down { color: #DC2626; }
 .emp-last { color: var(--tcp-fg-secondary); font-size: 13px; }
 
+/* Upload history table (7 columns) */
+.up-table { min-width: 860px; }
+.up-id { font-family: var(--tcp-font-mono); font-size: 13px; color: var(--tcp-fg-secondary); }
+.up-to { font-variant-numeric: tabular-nums; }
+.up-dur { font-variant-numeric: tabular-nums; color: var(--tcp-fg-secondary); }
+.up-result { display: flex; align-items: center; gap: 10px; }
+.up-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 12px; font-weight: 500; white-space: nowrap;
+  padding: 3px 10px; border-radius: var(--tcp-radius-pill);
+}
+.up-badge::before { content: ""; width: 6px; height: 6px; border-radius: 999px; background: currentColor; opacity: .9; }
+.up-badge--success { background: var(--tcp-success-bg); color: var(--tcp-success-fg); }
+.up-badge--warning { background: var(--tcp-warning-bg); color: var(--tcp-warning-fg); }
+.up-badge--neutral { background: var(--tcp-neutral-100); color: var(--tcp-fg-secondary); }
+.up-detail { flex: 0 0 auto; white-space: nowrap; }
+
 /* Add-employee modal — left-aligned form variant */
 .modal__box--form { max-width: 400px; text-align: left; }
 .modal__box--form .modal__title,
@@ -2733,6 +2750,49 @@ mark.mark--neg { background: var(--tcp-error-bg); color: var(--tcp-error-900); }
     </section>
 
     <!-- ================================================================= -->
+    <!-- SCREEN 5c · Upload history (call log)                               -->
+    <!-- ================================================================= -->
+    <section class="screen screen--hasnav" id="screen-uploads" data-screen="uploads">
+      <div class="screen__scroll">
+        <header class="appbar">
+          <button class="brand" type="button" data-nav="analysis" aria-label="Về trang tải lên">
+            <span class="brand__logo" aria-hidden="true"></span>
+            <span class="brand__name">Talent Connect +</span>
+          </button>
+          <button class="burger" type="button" aria-label="Open menu" aria-haspopup="true" aria-expanded="false" data-burger>
+            <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M224,128a8,8,0,0,1-8,8H40a8,8,0,0,1,0-16H216A8,8,0,0,1,224,128ZM40,72H216a8,8,0,0,0,0-16H40a8,8,0,0,0,0,16ZM216,184H40a8,8,0,0,0,0,16H216a8,8,0,0,0,0-16Z"/></svg>
+          </button>
+        </header>
+
+        <div class="page">
+          <div class="emp-topbar">
+            <div>
+              <h1 class="page__title">Lịch sử upload</h1>
+              <p class="page__lead">Toàn bộ cuộc gọi đã tải lên và phân tích.</p>
+            </div>
+          </div>
+
+          <div class="emp-table-wrap">
+            <table class="emp-table up-table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Thời gian</th>
+                  <th>Call from</th>
+                  <th>Call to</th>
+                  <th>Thời lượng</th>
+                  <th>Tỷ lệ thành công</th>
+                  <th>Kết quả</th>
+                </tr>
+              </thead>
+              <tbody id="upTbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================================================================= -->
     <!-- SCREEN 6 · Settings                                                -->
     <!-- ================================================================= -->
     <section class="screen screen--hasnav" id="screen-settings" data-screen="settings">
@@ -2865,6 +2925,10 @@ mark.mark--neg { background: var(--tcp-error-bg); color: var(--tcp-error-900); }
             <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M117.25,157.92a60,60,0,1,0-66.5,0A95.83,95.83,0,0,0,3.53,195.63a8,8,0,1,0,13.4,8.74,80,80,0,0,1,134.14,0,8,8,0,0,0,13.4-8.74A95.83,95.83,0,0,0,117.25,157.92ZM40,108a44,44,0,1,1,44,44A44.05,44.05,0,0,1,40,108Zm210.14,98.7a8,8,0,0,1-11.07-2.33A79.83,79.83,0,0,0,172,168a8,8,0,0,1,0-16,44,44,0,1,0-16.34-84.87,8,8,0,1,1-5.94-14.85,60,60,0,0,1,55.53,105.64,95.83,95.83,0,0,1,47.22,37.71A8,8,0,0,1,250.14,206.7Z"/></svg>
             <span>Nhân viên</span>
           </button>
+          <button class="drawer__item" role="menuitem" type="button" data-nav="uploads">
+            <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm0,192a88,88,0,1,1,88-88A88.1,88.1,0,0,1,128,216Zm64-88a8,8,0,0,1-8,8H128a8,8,0,0,1-8-8V72a8,8,0,0,1,16,0v48h48A8,8,0,0,1,192,128Z"/></svg>
+            <span>Lịch sử upload</span>
+          </button>
           <button class="drawer__item" role="menuitem" type="button" data-nav="history">
             <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M216,72H131.31L104,44.69A15.86,15.86,0,0,0,92.69,40H40A16,16,0,0,0,24,56V200.62A15.4,15.4,0,0,0,39.38,216H216.89A15.13,15.13,0,0,0,232,200.89V88A16,16,0,0,0,216,72ZM40,56H92.69l16,16H40ZM216,200H40V88H216Z"/></svg>
             <span>Lưu trữ</span>
@@ -2903,6 +2967,7 @@ mark.mark--neg { background: var(--tcp-error-bg); color: var(--tcp-error-900); }
     history:    $("#screen-history"),
     dashboard:  $("#screen-dashboard"),
     employees:  $("#screen-employees"),
+    uploads:    $("#screen-uploads"),
     settings:   $("#screen-settings"),
   };
 
@@ -2964,7 +3029,7 @@ mark.mark--neg { background: var(--tcp-error-bg); color: var(--tcp-error-900); }
     el.addEventListener("click", () => {
       const target = el.dataset.nav;
       if (el.hasAttribute("data-reset")) resetAnalysis();
-      if (target === "analysis" || target === "results" || target === "history" || target === "dashboard" || target === "employees" || target === "settings" || target === "login") show(target);
+      if (target === "analysis" || target === "results" || target === "history" || target === "dashboard" || target === "employees" || target === "uploads" || target === "settings" || target === "login") show(target);
       closeMenu();
     })
   );
@@ -4074,6 +4139,62 @@ mark.mark--neg { background: var(--tcp-error-bg); color: var(--tcp-error-900); }
       renderEmployees();
       updateSortIndicators();
       closeEmpModal();
+    });
+  }
+
+  /* -------------------------------------------------------------------------
+     Screen 5c · Upload history — every analysed call, with a detail link
+     ------------------------------------------------------------------------- */
+  const UP_OUTCOME = { success: "Tư vấn xuất sắc", warning: "Tư vấn hiệu quả", neutral: "Cần cải thiện" };
+  const UPLOAD_LOG = [
+    { id: "UP-1042", time: "26/10/2023, 14:30", agent: "Nguyễn Thị Hà", caller: "1001", to: "0901 234 567", dur: "12:45", rate: 82, outcome: "success", file: "Q3_Sales_Call_JohnDoe.wav",  date: "10/26/2023, 2:30 PM" },
+    { id: "UP-1041", time: "26/10/2023, 11:05", agent: "Trần Văn Dũng",  caller: "1002", to: "0912 888 021", dur: "08:33", rate: 47, outcome: "neutral", file: "Cold_Call_Nguyen_Minh.wav",  date: "10/25/2023, 11:20 AM" },
+    { id: "UP-1040", time: "25/10/2023, 16:48", agent: "Lê Hoàng Nam",   caller: "1003", to: "0987 112 233", dur: "15:20", rate: 73, outcome: "warning", file: "Demo_AcmeCorp_Round2.mp3",   date: "10/25/2023, 4:05 PM" },
+    { id: "UP-1039", time: "25/10/2023, 09:20", agent: "Phạm Minh Châu",  caller: "1004", to: "0903 456 789", dur: "22:14", rate: 86, outcome: "success", file: "Renewal_BetaLogistics.flac", date: "10/24/2023, 3:15 PM" },
+    { id: "UP-1038", time: "24/10/2023, 15:12", agent: "Vũ Thanh Tùng",  caller: "1005", to: "0938 220 145", dur: "06:57", rate: 53, outcome: "neutral", file: "Discovery_TechViet.mp3",     date: "10/24/2023, 9:48 AM" },
+    { id: "UP-1037", time: "24/10/2023, 10:02", agent: "Nguyễn Thị Hà",  caller: "1001", to: "0977 654 321", dur: "18:41", rate: 79, outcome: "warning", file: "Upsell_GreenFoods.wav",      date: "10/23/2023, 5:30 PM" },
+    { id: "UP-1036", time: "23/10/2023, 13:47", agent: "Phạm Minh Châu",  caller: "1004", to: "0905 778 990", dur: "27:39", rate: 91, outcome: "success", file: "Pitch_SaigonRetail.wav",     date: "10/22/2023, 10:11 AM" },
+    { id: "UP-1035", time: "23/10/2023, 08:15", agent: "Lê Hoàng Nam",   caller: "1003", to: "0918 003 476", dur: "10:08", rate: 64, outcome: "warning", file: "Q3_Review_HaiPhong.flac",    date: "10/21/2023, 4:44 PM" },
+  ];
+
+  const upTbody = $("#upTbody");
+  function renderUploads() {
+    if (!upTbody) return;
+    upTbody.innerHTML = UPLOAD_LOG.map(u => {
+      const color = AVATAR_COLORS[nameHash(u.agent) % AVATAR_COLORS.length];
+      const rateClass = u.rate >= 70 ? "emp-rate--good" : u.rate >= 55 ? "emp-rate--mid" : "emp-rate--low";
+      const badgeClass = u.outcome === "success" ? "up-badge--success" : u.outcome === "warning" ? "up-badge--warning" : "up-badge--neutral";
+      return `
+        <tr>
+          <td class="up-id">${u.id}</td>
+          <td class="emp-last">${u.time}</td>
+          <td class="emp-col-name">
+            <div class="emp-person">
+              <span class="emp-avatar" style="background:${color}">${initials(u.agent)}</span>
+              <div class="emp-person__meta">
+                <div class="emp-person__name" title="${escAttr(u.agent)}">${u.agent}</div>
+                <div class="emp-person__id">Caller ID · ${escAttr(u.caller)}</div>
+              </div>
+            </div>
+          </td>
+          <td class="up-to">${u.to}</td>
+          <td class="up-dur">${u.dur}</td>
+          <td><span class="emp-rate ${rateClass}">${u.rate}%</span></td>
+          <td>
+            <div class="up-result">
+              <span class="up-badge ${badgeClass}">${UP_OUTCOME[u.outcome]}</span>
+              <button class="btn btn--outline btn--sm up-detail" type="button"
+                      data-file="${escAttr(u.file)}" data-date="${escAttr(u.date)}">Xem chi tiết</button>
+            </div>
+          </td>
+        </tr>`;
+    }).join("");
+  }
+  renderUploads();
+  if (upTbody) {
+    upTbody.addEventListener("click", e => {
+      const btn = e.target.closest(".up-detail");
+      if (btn) showSingleResult(btn.dataset.file, btn.dataset.date, "uploads");
     });
   }
 
