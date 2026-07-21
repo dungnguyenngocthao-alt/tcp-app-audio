@@ -11,6 +11,7 @@
      Screen navigation
      ------------------------------------------------------------------------- */
   const screens = {
+    login:      $("#screen-login"),
     analysis:   $("#screen-analysis"),
     processing: $("#screen-processing"),
     results:    $("#screen-results"),
@@ -75,10 +76,22 @@
     el.addEventListener("click", () => {
       const target = el.dataset.nav;
       if (el.hasAttribute("data-reset")) resetAnalysis();
-      if (target === "analysis" || target === "results" || target === "history" || target === "dashboard" || target === "settings") show(target);
+      if (target === "analysis" || target === "results" || target === "history" || target === "dashboard" || target === "settings" || target === "login") show(target);
       closeMenu();
     })
   );
+
+  /* -------------------------------------------------------------------------
+     Screen 0 · Login — a lightweight gate; any credentials proceed to the app
+     ------------------------------------------------------------------------- */
+  const loginForm = $("#loginForm");
+  if (loginForm) {
+    loginForm.addEventListener("submit", e => {
+      e.preventDefault();
+      show("analysis");
+    });
+  }
+  $$("[data-noop]").forEach(a => a.addEventListener("click", e => e.preventDefault()));
 
   /* -------------------------------------------------------------------------
      Screen 1 · upload source tabs

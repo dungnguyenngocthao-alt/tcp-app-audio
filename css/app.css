@@ -55,6 +55,62 @@ button { font-family: inherit; }
 .screen--hasnav .screen__scroll { padding-bottom: var(--tcp-space-8); }
 
 /* ---------------------------------------------------------------------------
+   SCREEN 0 · Login (adapted from the Talent Connect Plus portal design)
+   --------------------------------------------------------------------------- */
+.screen--login {
+  align-items: center;
+  justify-content: safe center;
+  padding: var(--tcp-space-6);
+  overflow-y: auto;
+  background: var(--tcp-bg-subtle);
+}
+.login-card {
+  width: 100%;
+  max-width: 400px;
+  background: var(--tcp-bg);
+  border: 1px solid var(--tcp-border-subtle);
+  border-radius: var(--tcp-radius-2xl);
+  padding: 32px;
+  box-shadow: var(--tcp-shadow-lg);
+}
+.login-brand {
+  display: flex; flex-direction: column; align-items: center; gap: 10px;
+  margin-bottom: 22px;
+}
+.login-brand .brand__logo { width: 54px; height: 48px; }
+.login-wordmark {
+  font-weight: 700; font-size: 17px; letter-spacing: -0.2px;
+  color: var(--tcp-logo-indigo);
+}
+.login-title {
+  font-weight: 700; font-size: 24px; line-height: 28px;
+  color: var(--tcp-fg-primary); margin: 0 0 6px; text-align: center;
+}
+.login-sub {
+  font-size: 14px; line-height: 20px; color: var(--tcp-fg-secondary);
+  margin: 0 0 22px; text-align: center;
+}
+.login-form { display: flex; flex-direction: column; gap: 14px; }
+.login-row {
+  display: flex; align-items: center; justify-content: space-between;
+  font-size: 13px; line-height: 18px;
+}
+.login-remember {
+  display: inline-flex; align-items: center; gap: 6px;
+  color: var(--tcp-fg-secondary); cursor: pointer;
+}
+.login-remember input { accent-color: var(--tcp-accent); }
+.login-forgot { color: var(--tcp-accent); text-decoration: none; }
+.login-forgot:hover { text-decoration: underline; }
+.drawer__item--logout {
+  margin-top: 6px; padding-top: 14px;
+  border-top: 1px solid var(--tcp-border-subtle);
+  border-radius: 0;
+}
+.drawer__item--logout:hover { color: var(--tcp-error-fg); background: var(--tcp-error-bg); }
+.drawer__item--logout:hover svg { color: var(--tcp-error-fg); }
+
+/* ---------------------------------------------------------------------------
    App bar / brand header
    --------------------------------------------------------------------------- */
 .appbar {
