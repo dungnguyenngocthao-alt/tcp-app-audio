@@ -282,7 +282,10 @@ button { font-family: inherit; }
   font-size: 14px; line-height: 20px; color: var(--tcp-fg-secondary);
   margin: 0 0 22px; text-align: center;
 }
-.login-form { display: flex; flex-direction: column; gap: 14px; }
+.login-form { display: flex; flex-direction: column; }
+.login-form .field { margin-bottom: 0; }
+.login-form > * + * { margin-top: 14px; }
+.login-form .field + .field { margin-top: 8px; }
 .login-row {
   display: flex; align-items: center; justify-content: space-between;
   font-size: 13px; line-height: 18px;
@@ -2759,7 +2762,7 @@ mark.mark--neg { background: var(--tcp-error-bg); color: var(--tcp-error-900); }
   if (loginForm) {
     loginForm.addEventListener("submit", e => {
       e.preventDefault();
-      show("analysis");
+      show("dashboard");
     });
   }
   $$("[data-noop]").forEach(a => a.addEventListener("click", e => e.preventDefault()));

@@ -88,7 +88,7 @@
   if (loginForm) {
     loginForm.addEventListener("submit", e => {
       e.preventDefault();
-      show("analysis");
+      show("dashboard");
     });
   }
   $$("[data-noop]").forEach(a => a.addEventListener("click", e => e.preventDefault()));
