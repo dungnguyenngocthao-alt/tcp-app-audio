@@ -1019,11 +1019,34 @@
     if (f === "0-99") return total < 100;
     return true;
   }
+  // Column sorting — click a header to toggle ascending/descending.
+  let empSort = { key: null, dir: 1 };   // dir: 1 = low→high (asc), -1 = high→low
+  function parseEmpDate(s) {
+    const m = /(\d{1,2})\/(\d{1,2})\/(\d{4}),\s*(\d{1,2}):(\d{2})/.exec(s || "");
+    if (!m) return Number.POSITIVE_INFINITY;   // "Chưa có cuộc gọi" sorts as newest
+    return new Date(+m[3], +m[2] - 1, +m[1], +m[4], +m[5]).getTime();
+  }
+  function empSortVal(e, key) {
+    const rate = e.trend[e.trend.length - 1];
+    if (key === "name")  return e.name.toLowerCase();
+    if (key === "calls") return e.inbound + e.outbound;
+    if (key === "rate")  return rate;
+    if (key === "trend") return rate - e.trend[0];
+    if (key === "last")  return parseEmpDate(e.last);
+    return 0;
+  }
   function renderEmployees() {
     if (!empTbody) return;
     const rows = employees.filter(e =>
       passRate(e.trend[e.trend.length - 1]) && passCalls(e.inbound + e.outbound)
     );
+    if (empSort.key) {
+      rows.sort((a, b) => {
+        const va = empSortVal(a, empSort.key), vb = empSortVal(b, empSort.key);
+        const c = typeof va === "string" ? va.localeCompare(vb, "vi") : va - vb;
+        return c * empSort.dir;
+      });
+    }
     if (!rows.length) {
       empTbody.innerHTML = '<tr><td class="emp-empty" colspan="5">Không có nhân viên phù hợp với bộ lọc.</td></tr>';
       return;
@@ -1064,6 +1087,25 @@
         </tr>`;
     }).join("");
   }
+  function updateSortIndicators() {
+    $$(".emp-th").forEach(th => {
+      const active = th.dataset.sort === empSort.key;
+      const caret = $(".emp-sort", th);
+      if (caret) caret.textContent = active ? (empSort.dir === 1 ? "▲" : "▼") : "";
+      th.classList.toggle("is-sorted", active);
+      th.setAttribute("aria-sort", active ? (empSort.dir === 1 ? "ascending" : "descending") : "none");
+    });
+  }
+  $$(".emp-th").forEach(th =>
+    th.addEventListener("click", () => {
+      const key = th.dataset.sort;
+      if (empSort.key === key) empSort.dir *= -1;   // toggle direction
+      else empSort = { key, dir: 1 };               // new column → low→high first
+      renderEmployees();
+      updateSortIndicators();
+    })
+  );
+
   renderEmployees();
   if (empRateFilter)  empRateFilter.addEventListener("change", renderEmployees);
   if (empCallsFilter) empCallsFilter.addEventListener("change", renderEmployees);

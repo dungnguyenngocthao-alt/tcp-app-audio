@@ -142,6 +142,11 @@ button { font-family: inherit; }
   background: var(--tcp-bg-subtle);
   white-space: nowrap;
 }
+.emp-th { cursor: pointer; user-select: none; }
+.emp-th__in { display: inline-flex; align-items: center; gap: 5px; }
+.emp-th:hover { color: var(--tcp-fg-primary); }
+.emp-th.is-sorted { color: var(--tcp-accent); }
+.emp-sort { font-size: 9px; line-height: 1; }
 .emp-table tbody td {
   padding: 14px 16px;
   border-bottom: 1px solid var(--tcp-border-subtle);

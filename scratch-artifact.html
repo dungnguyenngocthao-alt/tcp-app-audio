@@ -333,6 +333,11 @@ button { font-family: inherit; }
   background: var(--tcp-bg-subtle);
   white-space: nowrap;
 }
+.emp-th { cursor: pointer; user-select: none; }
+.emp-th__in { display: inline-flex; align-items: center; gap: 5px; }
+.emp-th:hover { color: var(--tcp-fg-primary); }
+.emp-th.is-sorted { color: var(--tcp-accent); }
+.emp-sort { font-size: 9px; line-height: 1; }
 .emp-table tbody td {
   padding: 14px 16px;
   border-bottom: 1px solid var(--tcp-border-subtle);
@@ -2714,11 +2719,11 @@ mark.mark--neg { background: var(--tcp-error-bg); color: var(--tcp-error-900); }
             <table class="emp-table">
               <thead>
                 <tr>
-                  <th class="emp-col-name">Tên &amp; Caller ID</th>
-                  <th>Tổng cuộc gọi</th>
-                  <th>Tỷ lệ thành công</th>
-                  <th>Xu hướng</th>
-                  <th>Cuộc gọi gần nhất</th>
+                  <th class="emp-col-name emp-th" data-sort="name" aria-sort="none"><span class="emp-th__in">Tên &amp; Caller ID<span class="emp-sort" aria-hidden="true"></span></span></th>
+                  <th class="emp-th" data-sort="calls" aria-sort="none"><span class="emp-th__in">Tổng cuộc gọi<span class="emp-sort" aria-hidden="true"></span></span></th>
+                  <th class="emp-th" data-sort="rate" aria-sort="none"><span class="emp-th__in">Tỷ lệ thành công<span class="emp-sort" aria-hidden="true"></span></span></th>
+                  <th class="emp-th" data-sort="trend" aria-sort="none"><span class="emp-th__in">Xu hướng<span class="emp-sort" aria-hidden="true"></span></span></th>
+                  <th class="emp-th" data-sort="last" aria-sort="none"><span class="emp-th__in">Cuộc gọi gần nhất<span class="emp-sort" aria-hidden="true"></span></span></th>
                 </tr>
               </thead>
               <tbody id="empTbody"></tbody>
@@ -3881,11 +3886,34 @@ mark.mark--neg { background: var(--tcp-error-bg); color: var(--tcp-error-900); }
     if (f === "0-99") return total < 100;
     return true;
   }
+  // Column sorting — click a header to toggle ascending/descending.
+  let empSort = { key: null, dir: 1 };   // dir: 1 = low→high (asc), -1 = high→low
+  function parseEmpDate(s) {
+    const m = /(\d{1,2})\/(\d{1,2})\/(\d{4}),\s*(\d{1,2}):(\d{2})/.exec(s || "");
+    if (!m) return Number.POSITIVE_INFINITY;   // "Chưa có cuộc gọi" sorts as newest
+    return new Date(+m[3], +m[2] - 1, +m[1], +m[4], +m[5]).getTime();
+  }
+  function empSortVal(e, key) {
+    const rate = e.trend[e.trend.length - 1];
+    if (key === "name")  return e.name.toLowerCase();
+    if (key === "calls") return e.inbound + e.outbound;
+    if (key === "rate")  return rate;
+    if (key === "trend") return rate - e.trend[0];
+    if (key === "last")  return parseEmpDate(e.last);
+    return 0;
+  }
   function renderEmployees() {
     if (!empTbody) return;
     const rows = employees.filter(e =>
       passRate(e.trend[e.trend.length - 1]) && passCalls(e.inbound + e.outbound)
     );
+    if (empSort.key) {
+      rows.sort((a, b) => {
+        const va = empSortVal(a, empSort.key), vb = empSortVal(b, empSort.key);
+        const c = typeof va === "string" ? va.localeCompare(vb, "vi") : va - vb;
+        return c * empSort.dir;
+      });
+    }
     if (!rows.length) {
       empTbody.innerHTML = '<tr><td class="emp-empty" colspan="5">Không có nhân viên phù hợp với bộ lọc.</td></tr>';
       return;
@@ -3926,6 +3954,25 @@ mark.mark--neg { background: var(--tcp-error-bg); color: var(--tcp-error-900); }
         </tr>`;
     }).join("");
   }
+  function updateSortIndicators() {
+    $$(".emp-th").forEach(th => {
+      const active = th.dataset.sort === empSort.key;
+      const caret = $(".emp-sort", th);
+      if (caret) caret.textContent = active ? (empSort.dir === 1 ? "▲" : "▼") : "";
+      th.classList.toggle("is-sorted", active);
+      th.setAttribute("aria-sort", active ? (empSort.dir === 1 ? "ascending" : "descending") : "none");
+    });
+  }
+  $$(".emp-th").forEach(th =>
+    th.addEventListener("click", () => {
+      const key = th.dataset.sort;
+      if (empSort.key === key) empSort.dir *= -1;   // toggle direction
+      else empSort = { key, dir: 1 };               // new column → low→high first
+      renderEmployees();
+      updateSortIndicators();
+    })
+  );
+
   renderEmployees();
   if (empRateFilter)  empRateFilter.addEventListener("change", renderEmployees);
   if (empCallsFilter) empCallsFilter.addEventListener("change", renderEmployees);
