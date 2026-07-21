@@ -1003,22 +1003,6 @@
   }
 
   const empTbody = $("#empTbody");
-  const empRateFilter  = $("#empRateFilter");
-  const empCallsFilter = $("#empCallsFilter");
-  function passRate(rate) {
-    const f = empRateFilter ? empRateFilter.value : "all";
-    if (f === "80") return rate >= 80;
-    if (f === "60-79") return rate >= 60 && rate <= 79;
-    if (f === "0-59") return rate < 60;
-    return true;
-  }
-  function passCalls(total) {
-    const f = empCallsFilter ? empCallsFilter.value : "all";
-    if (f === "200") return total >= 200;
-    if (f === "100-199") return total >= 100 && total <= 199;
-    if (f === "0-99") return total < 100;
-    return true;
-  }
   // Column sorting — click a header to toggle ascending/descending.
   let empSort = { key: null, dir: 1 };   // dir: 1 = low→high (asc), -1 = high→low
   function parseEmpDate(s) {
@@ -1037,9 +1021,7 @@
   }
   function renderEmployees() {
     if (!empTbody) return;
-    const rows = employees.filter(e =>
-      passRate(e.trend[e.trend.length - 1]) && passCalls(e.inbound + e.outbound)
-    );
+    const rows = employees.slice();
     if (empSort.key) {
       rows.sort((a, b) => {
         const va = empSortVal(a, empSort.key), vb = empSortVal(b, empSort.key);
@@ -1088,10 +1070,12 @@
     }).join("");
   }
   function updateSortIndicators() {
+    // Sortable headers show a neutral ⇅ by default (so they read as sortable),
+    // and the active one shows the current direction.
     $$(".emp-th").forEach(th => {
       const active = th.dataset.sort === empSort.key;
       const caret = $(".emp-sort", th);
-      if (caret) caret.textContent = active ? (empSort.dir === 1 ? "▲" : "▼") : "";
+      if (caret) caret.textContent = active ? (empSort.dir === 1 ? "▲" : "▼") : "⇅";
       th.classList.toggle("is-sorted", active);
       th.setAttribute("aria-sort", active ? (empSort.dir === 1 ? "ascending" : "descending") : "none");
     });
@@ -1107,17 +1091,80 @@
   );
 
   renderEmployees();
-  if (empRateFilter)  empRateFilter.addEventListener("change", renderEmployees);
-  if (empCallsFilter) empCallsFilter.addEventListener("change", renderEmployees);
+  updateSortIndicators();
 
-  /* Add-employee modal */
-  const empModal = $("#empModal");
-  const empForm  = $("#empForm");
-  const empName  = $("#empName");
-  const empCaller = $("#empCallerId");
+  /* Add-employee modal (manual entry or Excel/CSV bulk upload) */
+  const empModal   = $("#empModal");
+  const empForm    = $("#empForm");
+  const empName    = $("#empName");
+  const empCaller  = $("#empCallerId");
+  const empMode    = $("#empMode");
+  const empFile    = $("#empFile");
+  const empFileResult = $("#empFileResult");
+  let empModeVal = "manual";
+  let empImport = [];   // parsed rows pending from an uploaded file
+
+  // Add one agent with plausible, deterministic seeded stats.
+  function addEmployee(name, caller) {
+    const h = nameHash(name + "|" + caller + "|" + (++empSeq));
+    const base = 52 + (h % 34);
+    const trend = Array.from({ length: 7 }, (_, i) =>
+      Math.max(20, Math.min(96, base + Math.round((i - 3) * (((h >> (i + 1)) % 5) - 2)))));
+    employees.unshift({
+      id: empSeq, name, caller: caller || String(1000 + (h % 9000)),
+      inbound: 20 + (h % 160), outbound: 20 + ((h >> 4) % 160),
+      trend, last: "Chưa có cuộc gọi",
+    });
+  }
+
+  // Parse CSV/TSV text → [{name, caller}]. Skips an obvious header row.
+  function parseImport(text) {
+    const out = [];
+    text.split(/\r?\n/).forEach((line, i) => {
+      if (!line.trim()) return;
+      const cells = line.split(/[,;\t]/).map(c => c.trim().replace(/^"|"$/g, ""));
+      if (i === 0 && /tên|name|họ|caller/i.test(line)) return;   // header
+      if (cells[0]) out.push({ name: cells[0], caller: cells[1] || "" });
+    });
+    return out;
+  }
+
+  function setEmpMode(mode) {
+    empModeVal = mode;
+    if (empMode) $$(".seg__btn", empMode).forEach(b => b.classList.toggle("is-active", b.dataset.empmode === mode));
+    $$("[data-emppane]").forEach(p => { p.hidden = p.dataset.emppane !== mode; });
+  }
+  if (empMode) empMode.addEventListener("click", e => {
+    const btn = e.target.closest(".seg__btn");
+    if (btn) setEmpMode(btn.dataset.empmode);
+  });
+
+  if (empFile) {
+    empFile.addEventListener("change", () => {
+      const f = empFile.files[0];
+      empImport = [];
+      if (!f) { if (empFileResult) empFileResult.hidden = true; return; }
+      const reader = new FileReader();
+      reader.onload = () => {
+        empImport = parseImport(String(reader.result || ""));
+        if (empFileResult) {
+          empFileResult.hidden = false;
+          empFileResult.className = "emp-upload__result" + (empImport.length ? " is-ok" : " is-warn");
+          empFileResult.textContent = empImport.length
+            ? `${f.name} · đọc được ${empImport.length} nhân viên`
+            : `${f.name} · không đọc được dữ liệu. Dùng file .csv với cột: Họ tên, Caller ID.`;
+        }
+      };
+      reader.readAsText(f);
+    });
+  }
+
   function openEmpModal() {
     if (!empModal) return;
     empForm.reset();
+    empImport = [];
+    if (empFileResult) empFileResult.hidden = true;
+    setEmpMode("manual");
     empModal.hidden = false;
     setTimeout(() => empName && empName.focus(), 30);
   }
@@ -1131,20 +1178,16 @@
   if (empForm) {
     empForm.addEventListener("submit", e => {
       e.preventDefault();
-      const name = (empName.value || "").trim();
-      if (!name) { empName.focus(); return; }
-      const h = nameHash(name + Date.now());
-      // Seed plausible, deterministic stats for the new agent.
-      const base = 52 + (h % 34);                    // starting success rate 52–85
-      const trend = Array.from({ length: 7 }, (_, i) =>
-        Math.max(20, Math.min(96, base + Math.round((i - 3) * (((h >> (i + 1)) % 5) - 2)))));
-      const caller = (empCaller.value || "").trim() || String(1000 + (h % 9000));
-      employees.unshift({
-        id: ++empSeq, name, caller,
-        inbound: 20 + (h % 160), outbound: 20 + ((h >> 4) % 160),
-        trend, last: "Chưa có cuộc gọi",
-      });
+      if (empModeVal === "excel") {
+        if (!empImport.length) { if (empFile) empFile.click(); return; }
+        empImport.forEach(r => addEmployee(r.name, r.caller));
+      } else {
+        const name = (empName.value || "").trim();
+        if (!name) { empName.focus(); return; }
+        addEmployee(name, (empCaller.value || "").trim());
+      }
       renderEmployees();
+      updateSortIndicators();
       closeEmpModal();
     });
   }

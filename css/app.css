@@ -146,7 +146,8 @@ button { font-family: inherit; }
 .emp-th__in { display: inline-flex; align-items: center; gap: 5px; }
 .emp-th:hover { color: var(--tcp-fg-primary); }
 .emp-th.is-sorted { color: var(--tcp-accent); }
-.emp-sort { font-size: 9px; line-height: 1; }
+.emp-sort { font-size: 10px; line-height: 1; color: var(--tcp-fg-tertiary); }
+.emp-th.is-sorted .emp-sort { color: var(--tcp-accent); }
 .emp-table tbody td {
   padding: 14px 16px;
   border-bottom: 1px solid var(--tcp-border-subtle);
@@ -193,8 +194,30 @@ button { font-family: inherit; }
 
 /* Add-employee modal — left-aligned form variant */
 .modal__box--form { max-width: 400px; text-align: left; }
-.modal__box--form .modal__title { text-align: left; }
+.modal__box--form .modal__title,
+.modal__box--form .modal__msg { text-align: left; }
+.modal__box--form .field__label { text-align: left; }
 .modal__box--form .field:last-of-type { margin-bottom: var(--tcp-space-5); }
+.emp-mode { display: flex; width: 100%; margin-bottom: var(--tcp-space-4); }
+.emp-mode .seg__btn { flex: 1; text-align: center; }
+.emp-upload {
+  display: flex; flex-direction: column; align-items: center; gap: 3px;
+  padding: 22px 16px; text-align: center; cursor: pointer;
+  border: 1.5px dashed var(--tcp-border-strong);
+  border-radius: var(--tcp-radius-lg);
+  background: var(--tcp-bg-subtle);
+  transition: border-color var(--tcp-dur-fast) var(--tcp-ease), background var(--tcp-dur-fast) var(--tcp-ease);
+}
+.emp-upload:hover { border-color: var(--tcp-accent); background: var(--tcp-accent-subtle); }
+.emp-upload svg { width: 26px; height: 26px; color: var(--tcp-accent); margin-bottom: 4px; }
+.emp-upload__title { font-weight: 500; font-size: 14px; color: var(--tcp-fg-primary); }
+.emp-upload__hint { font-size: 12px; color: var(--tcp-fg-secondary); }
+.emp-upload__result {
+  margin-top: 10px; font-size: 13px; line-height: 18px;
+  padding: 8px 12px; border-radius: var(--tcp-radius-sm);
+}
+.emp-upload__result.is-ok { background: var(--tcp-success-bg); color: var(--tcp-success-fg); }
+.emp-upload__result.is-warn { background: var(--tcp-warning-bg); color: var(--tcp-warning-fg); }
 
 /* ---------------------------------------------------------------------------
    App bar / brand header

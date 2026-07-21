@@ -751,40 +751,15 @@
             </button>
           </div>
 
-          <div class="dash-filter emp-filter" id="empFilter">
-            <span class="dash-filter__label">
-              <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M230.6,49.53A15.81,15.81,0,0,0,216,40H40A16,16,0,0,0,28.19,66.76l.08.09L96,139.17V216a16,16,0,0,0,24.87,13.32l32-21.34A16,16,0,0,0,160,194.66V139.17l67.74-72.32.08-.09A15.8,15.8,0,0,0,230.6,49.53ZM40,56h0Zm106.18,74.58A8,8,0,0,0,144,136v58.66L112,216V136a8,8,0,0,0-2.16-5.47L40,56H216Z"/></svg>
-              Lọc
-            </span>
-            <div class="dash-filter__field">
-              <label for="empRateFilter">Tỷ lệ thành công</label>
-              <select class="select select--sm" id="empRateFilter">
-                <option value="all">Tất cả</option>
-                <option value="80">≥ 80%</option>
-                <option value="60-79">60–79%</option>
-                <option value="0-59">&lt; 60%</option>
-              </select>
-            </div>
-            <div class="dash-filter__field">
-              <label for="empCallsFilter">Tổng cuộc gọi</label>
-              <select class="select select--sm" id="empCallsFilter">
-                <option value="all">Tất cả</option>
-                <option value="200">≥ 200</option>
-                <option value="100-199">100–199</option>
-                <option value="0-99">&lt; 100</option>
-              </select>
-            </div>
-          </div>
-
           <div class="emp-table-wrap">
             <table class="emp-table">
               <thead>
                 <tr>
-                  <th class="emp-col-name emp-th" data-sort="name" aria-sort="none"><span class="emp-th__in">Tên &amp; Caller ID<span class="emp-sort" aria-hidden="true"></span></span></th>
+                  <th class="emp-col-name">Tên &amp; Caller ID</th>
                   <th class="emp-th" data-sort="calls" aria-sort="none"><span class="emp-th__in">Tổng cuộc gọi<span class="emp-sort" aria-hidden="true"></span></span></th>
                   <th class="emp-th" data-sort="rate" aria-sort="none"><span class="emp-th__in">Tỷ lệ thành công<span class="emp-sort" aria-hidden="true"></span></span></th>
-                  <th class="emp-th" data-sort="trend" aria-sort="none"><span class="emp-th__in">Xu hướng<span class="emp-sort" aria-hidden="true"></span></span></th>
-                  <th class="emp-th" data-sort="last" aria-sort="none"><span class="emp-th__in">Cuộc gọi gần nhất<span class="emp-sort" aria-hidden="true"></span></span></th>
+                  <th>Xu hướng</th>
+                  <th>Cuộc gọi gần nhất</th>
                 </tr>
               </thead>
               <tbody id="empTbody"></tbody>
@@ -869,15 +844,34 @@
       <div class="modal__backdrop" data-emp-cancel></div>
       <form class="modal__box modal__box--form" id="empForm" role="dialog" aria-modal="true" aria-labelledby="empModalTitle" novalidate>
         <h2 class="modal__title" id="empModalTitle">Thêm nhân viên</h2>
-        <p class="modal__msg">Nhập thông tin để thêm nhân viên vào danh sách theo dõi.</p>
-        <div class="field">
-          <label class="field__label" for="empName">Họ tên</label>
-          <input class="input" id="empName" type="text" placeholder="VD: Trần Minh Quân" maxlength="40" autocomplete="off" required>
+        <p class="modal__msg">Nhập thủ công hoặc tải lên file Excel để thêm nhiều nhân viên cùng lúc.</p>
+
+        <div class="seg emp-mode" id="empMode" role="tablist" aria-label="Cách thêm">
+          <button class="seg__btn is-active" type="button" data-empmode="manual">Nhập thủ công</button>
+          <button class="seg__btn" type="button" data-empmode="excel">Tải lên Excel</button>
         </div>
-        <div class="field">
-          <label class="field__label" for="empCallerId">Caller ID</label>
-          <input class="input" id="empCallerId" type="text" placeholder="VD: 1042" maxlength="12" inputmode="numeric" autocomplete="off">
+
+        <div data-emppane="manual">
+          <div class="field">
+            <label class="field__label" for="empName">Họ tên</label>
+            <input class="input" id="empName" type="text" placeholder="VD: Trần Minh Quân" maxlength="40" autocomplete="off">
+          </div>
+          <div class="field">
+            <label class="field__label" for="empCallerId">Caller ID</label>
+            <input class="input" id="empCallerId" type="text" placeholder="VD: 1042" maxlength="12" inputmode="numeric" autocomplete="off">
+          </div>
         </div>
+
+        <div data-emppane="excel" hidden>
+          <label class="emp-upload" for="empFile">
+            <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M240,136v64a16,16,0,0,1-16,16H32a16,16,0,0,1-16-16V136a8,8,0,0,1,16,0v64H224V136a8,8,0,0,1,16,0ZM88.49,79.51,120,48V136a8,8,0,0,0,16,0V48l31.51,31.51a8,8,0,0,0,11.32-11.32l-45.17-45.16a8,8,0,0,0-11.32,0L77.17,68.19A8,8,0,0,0,88.49,79.51Z"/></svg>
+            <span class="emp-upload__title">Chọn file Excel</span>
+            <span class="emp-upload__hint">.xlsx hoặc .csv · Cột 1: Họ tên · Cột 2: Caller ID</span>
+            <input type="file" id="empFile" accept=".xlsx,.xls,.csv" hidden>
+          </label>
+          <div class="emp-upload__result" id="empFileResult" hidden></div>
+        </div>
+
         <div class="modal__actions">
           <button class="btn btn--outline" type="button" data-emp-cancel>Hủy</button>
           <button class="btn btn--accent" type="submit" id="empSave">Thêm</button>

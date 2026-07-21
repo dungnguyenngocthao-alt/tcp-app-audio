@@ -337,7 +337,8 @@ button { font-family: inherit; }
 .emp-th__in { display: inline-flex; align-items: center; gap: 5px; }
 .emp-th:hover { color: var(--tcp-fg-primary); }
 .emp-th.is-sorted { color: var(--tcp-accent); }
-.emp-sort { font-size: 9px; line-height: 1; }
+.emp-sort { font-size: 10px; line-height: 1; color: var(--tcp-fg-tertiary); }
+.emp-th.is-sorted .emp-sort { color: var(--tcp-accent); }
 .emp-table tbody td {
   padding: 14px 16px;
   border-bottom: 1px solid var(--tcp-border-subtle);
@@ -384,8 +385,30 @@ button { font-family: inherit; }
 
 /* Add-employee modal — left-aligned form variant */
 .modal__box--form { max-width: 400px; text-align: left; }
-.modal__box--form .modal__title { text-align: left; }
+.modal__box--form .modal__title,
+.modal__box--form .modal__msg { text-align: left; }
+.modal__box--form .field__label { text-align: left; }
 .modal__box--form .field:last-of-type { margin-bottom: var(--tcp-space-5); }
+.emp-mode { display: flex; width: 100%; margin-bottom: var(--tcp-space-4); }
+.emp-mode .seg__btn { flex: 1; text-align: center; }
+.emp-upload {
+  display: flex; flex-direction: column; align-items: center; gap: 3px;
+  padding: 22px 16px; text-align: center; cursor: pointer;
+  border: 1.5px dashed var(--tcp-border-strong);
+  border-radius: var(--tcp-radius-lg);
+  background: var(--tcp-bg-subtle);
+  transition: border-color var(--tcp-dur-fast) var(--tcp-ease), background var(--tcp-dur-fast) var(--tcp-ease);
+}
+.emp-upload:hover { border-color: var(--tcp-accent); background: var(--tcp-accent-subtle); }
+.emp-upload svg { width: 26px; height: 26px; color: var(--tcp-accent); margin-bottom: 4px; }
+.emp-upload__title { font-weight: 500; font-size: 14px; color: var(--tcp-fg-primary); }
+.emp-upload__hint { font-size: 12px; color: var(--tcp-fg-secondary); }
+.emp-upload__result {
+  margin-top: 10px; font-size: 13px; line-height: 18px;
+  padding: 8px 12px; border-radius: var(--tcp-radius-sm);
+}
+.emp-upload__result.is-ok { background: var(--tcp-success-bg); color: var(--tcp-success-fg); }
+.emp-upload__result.is-warn { background: var(--tcp-warning-bg); color: var(--tcp-warning-fg); }
 
 /* ---------------------------------------------------------------------------
    App bar / brand header
@@ -2690,40 +2713,15 @@ mark.mark--neg { background: var(--tcp-error-bg); color: var(--tcp-error-900); }
             </button>
           </div>
 
-          <div class="dash-filter emp-filter" id="empFilter">
-            <span class="dash-filter__label">
-              <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M230.6,49.53A15.81,15.81,0,0,0,216,40H40A16,16,0,0,0,28.19,66.76l.08.09L96,139.17V216a16,16,0,0,0,24.87,13.32l32-21.34A16,16,0,0,0,160,194.66V139.17l67.74-72.32.08-.09A15.8,15.8,0,0,0,230.6,49.53ZM40,56h0Zm106.18,74.58A8,8,0,0,0,144,136v58.66L112,216V136a8,8,0,0,0-2.16-5.47L40,56H216Z"/></svg>
-              Lọc
-            </span>
-            <div class="dash-filter__field">
-              <label for="empRateFilter">Tỷ lệ thành công</label>
-              <select class="select select--sm" id="empRateFilter">
-                <option value="all">Tất cả</option>
-                <option value="80">≥ 80%</option>
-                <option value="60-79">60–79%</option>
-                <option value="0-59">&lt; 60%</option>
-              </select>
-            </div>
-            <div class="dash-filter__field">
-              <label for="empCallsFilter">Tổng cuộc gọi</label>
-              <select class="select select--sm" id="empCallsFilter">
-                <option value="all">Tất cả</option>
-                <option value="200">≥ 200</option>
-                <option value="100-199">100–199</option>
-                <option value="0-99">&lt; 100</option>
-              </select>
-            </div>
-          </div>
-
           <div class="emp-table-wrap">
             <table class="emp-table">
               <thead>
                 <tr>
-                  <th class="emp-col-name emp-th" data-sort="name" aria-sort="none"><span class="emp-th__in">Tên &amp; Caller ID<span class="emp-sort" aria-hidden="true"></span></span></th>
+                  <th class="emp-col-name">Tên &amp; Caller ID</th>
                   <th class="emp-th" data-sort="calls" aria-sort="none"><span class="emp-th__in">Tổng cuộc gọi<span class="emp-sort" aria-hidden="true"></span></span></th>
                   <th class="emp-th" data-sort="rate" aria-sort="none"><span class="emp-th__in">Tỷ lệ thành công<span class="emp-sort" aria-hidden="true"></span></span></th>
-                  <th class="emp-th" data-sort="trend" aria-sort="none"><span class="emp-th__in">Xu hướng<span class="emp-sort" aria-hidden="true"></span></span></th>
-                  <th class="emp-th" data-sort="last" aria-sort="none"><span class="emp-th__in">Cuộc gọi gần nhất<span class="emp-sort" aria-hidden="true"></span></span></th>
+                  <th>Xu hướng</th>
+                  <th>Cuộc gọi gần nhất</th>
                 </tr>
               </thead>
               <tbody id="empTbody"></tbody>
@@ -2808,15 +2806,34 @@ mark.mark--neg { background: var(--tcp-error-bg); color: var(--tcp-error-900); }
       <div class="modal__backdrop" data-emp-cancel></div>
       <form class="modal__box modal__box--form" id="empForm" role="dialog" aria-modal="true" aria-labelledby="empModalTitle" novalidate>
         <h2 class="modal__title" id="empModalTitle">Thêm nhân viên</h2>
-        <p class="modal__msg">Nhập thông tin để thêm nhân viên vào danh sách theo dõi.</p>
-        <div class="field">
-          <label class="field__label" for="empName">Họ tên</label>
-          <input class="input" id="empName" type="text" placeholder="VD: Trần Minh Quân" maxlength="40" autocomplete="off" required>
+        <p class="modal__msg">Nhập thủ công hoặc tải lên file Excel để thêm nhiều nhân viên cùng lúc.</p>
+
+        <div class="seg emp-mode" id="empMode" role="tablist" aria-label="Cách thêm">
+          <button class="seg__btn is-active" type="button" data-empmode="manual">Nhập thủ công</button>
+          <button class="seg__btn" type="button" data-empmode="excel">Tải lên Excel</button>
         </div>
-        <div class="field">
-          <label class="field__label" for="empCallerId">Caller ID</label>
-          <input class="input" id="empCallerId" type="text" placeholder="VD: 1042" maxlength="12" inputmode="numeric" autocomplete="off">
+
+        <div data-emppane="manual">
+          <div class="field">
+            <label class="field__label" for="empName">Họ tên</label>
+            <input class="input" id="empName" type="text" placeholder="VD: Trần Minh Quân" maxlength="40" autocomplete="off">
+          </div>
+          <div class="field">
+            <label class="field__label" for="empCallerId">Caller ID</label>
+            <input class="input" id="empCallerId" type="text" placeholder="VD: 1042" maxlength="12" inputmode="numeric" autocomplete="off">
+          </div>
         </div>
+
+        <div data-emppane="excel" hidden>
+          <label class="emp-upload" for="empFile">
+            <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M240,136v64a16,16,0,0,1-16,16H32a16,16,0,0,1-16-16V136a8,8,0,0,1,16,0v64H224V136a8,8,0,0,1,16,0ZM88.49,79.51,120,48V136a8,8,0,0,0,16,0V48l31.51,31.51a8,8,0,0,0,11.32-11.32l-45.17-45.16a8,8,0,0,0-11.32,0L77.17,68.19A8,8,0,0,0,88.49,79.51Z"/></svg>
+            <span class="emp-upload__title">Chọn file Excel</span>
+            <span class="emp-upload__hint">.xlsx hoặc .csv · Cột 1: Họ tên · Cột 2: Caller ID</span>
+            <input type="file" id="empFile" accept=".xlsx,.xls,.csv" hidden>
+          </label>
+          <div class="emp-upload__result" id="empFileResult" hidden></div>
+        </div>
+
         <div class="modal__actions">
           <button class="btn btn--outline" type="button" data-emp-cancel>Hủy</button>
           <button class="btn btn--accent" type="submit" id="empSave">Thêm</button>
@@ -3870,22 +3887,6 @@ mark.mark--neg { background: var(--tcp-error-bg); color: var(--tcp-error-900); }
   }
 
   const empTbody = $("#empTbody");
-  const empRateFilter  = $("#empRateFilter");
-  const empCallsFilter = $("#empCallsFilter");
-  function passRate(rate) {
-    const f = empRateFilter ? empRateFilter.value : "all";
-    if (f === "80") return rate >= 80;
-    if (f === "60-79") return rate >= 60 && rate <= 79;
-    if (f === "0-59") return rate < 60;
-    return true;
-  }
-  function passCalls(total) {
-    const f = empCallsFilter ? empCallsFilter.value : "all";
-    if (f === "200") return total >= 200;
-    if (f === "100-199") return total >= 100 && total <= 199;
-    if (f === "0-99") return total < 100;
-    return true;
-  }
   // Column sorting — click a header to toggle ascending/descending.
   let empSort = { key: null, dir: 1 };   // dir: 1 = low→high (asc), -1 = high→low
   function parseEmpDate(s) {
@@ -3904,9 +3905,7 @@ mark.mark--neg { background: var(--tcp-error-bg); color: var(--tcp-error-900); }
   }
   function renderEmployees() {
     if (!empTbody) return;
-    const rows = employees.filter(e =>
-      passRate(e.trend[e.trend.length - 1]) && passCalls(e.inbound + e.outbound)
-    );
+    const rows = employees.slice();
     if (empSort.key) {
       rows.sort((a, b) => {
         const va = empSortVal(a, empSort.key), vb = empSortVal(b, empSort.key);
@@ -3955,10 +3954,12 @@ mark.mark--neg { background: var(--tcp-error-bg); color: var(--tcp-error-900); }
     }).join("");
   }
   function updateSortIndicators() {
+    // Sortable headers show a neutral ⇅ by default (so they read as sortable),
+    // and the active one shows the current direction.
     $$(".emp-th").forEach(th => {
       const active = th.dataset.sort === empSort.key;
       const caret = $(".emp-sort", th);
-      if (caret) caret.textContent = active ? (empSort.dir === 1 ? "▲" : "▼") : "";
+      if (caret) caret.textContent = active ? (empSort.dir === 1 ? "▲" : "▼") : "⇅";
       th.classList.toggle("is-sorted", active);
       th.setAttribute("aria-sort", active ? (empSort.dir === 1 ? "ascending" : "descending") : "none");
     });
@@ -3974,17 +3975,80 @@ mark.mark--neg { background: var(--tcp-error-bg); color: var(--tcp-error-900); }
   );
 
   renderEmployees();
-  if (empRateFilter)  empRateFilter.addEventListener("change", renderEmployees);
-  if (empCallsFilter) empCallsFilter.addEventListener("change", renderEmployees);
+  updateSortIndicators();
 
-  /* Add-employee modal */
-  const empModal = $("#empModal");
-  const empForm  = $("#empForm");
-  const empName  = $("#empName");
-  const empCaller = $("#empCallerId");
+  /* Add-employee modal (manual entry or Excel/CSV bulk upload) */
+  const empModal   = $("#empModal");
+  const empForm    = $("#empForm");
+  const empName    = $("#empName");
+  const empCaller  = $("#empCallerId");
+  const empMode    = $("#empMode");
+  const empFile    = $("#empFile");
+  const empFileResult = $("#empFileResult");
+  let empModeVal = "manual";
+  let empImport = [];   // parsed rows pending from an uploaded file
+
+  // Add one agent with plausible, deterministic seeded stats.
+  function addEmployee(name, caller) {
+    const h = nameHash(name + "|" + caller + "|" + (++empSeq));
+    const base = 52 + (h % 34);
+    const trend = Array.from({ length: 7 }, (_, i) =>
+      Math.max(20, Math.min(96, base + Math.round((i - 3) * (((h >> (i + 1)) % 5) - 2)))));
+    employees.unshift({
+      id: empSeq, name, caller: caller || String(1000 + (h % 9000)),
+      inbound: 20 + (h % 160), outbound: 20 + ((h >> 4) % 160),
+      trend, last: "Chưa có cuộc gọi",
+    });
+  }
+
+  // Parse CSV/TSV text → [{name, caller}]. Skips an obvious header row.
+  function parseImport(text) {
+    const out = [];
+    text.split(/\r?\n/).forEach((line, i) => {
+      if (!line.trim()) return;
+      const cells = line.split(/[,;\t]/).map(c => c.trim().replace(/^"|"$/g, ""));
+      if (i === 0 && /tên|name|họ|caller/i.test(line)) return;   // header
+      if (cells[0]) out.push({ name: cells[0], caller: cells[1] || "" });
+    });
+    return out;
+  }
+
+  function setEmpMode(mode) {
+    empModeVal = mode;
+    if (empMode) $$(".seg__btn", empMode).forEach(b => b.classList.toggle("is-active", b.dataset.empmode === mode));
+    $$("[data-emppane]").forEach(p => { p.hidden = p.dataset.emppane !== mode; });
+  }
+  if (empMode) empMode.addEventListener("click", e => {
+    const btn = e.target.closest(".seg__btn");
+    if (btn) setEmpMode(btn.dataset.empmode);
+  });
+
+  if (empFile) {
+    empFile.addEventListener("change", () => {
+      const f = empFile.files[0];
+      empImport = [];
+      if (!f) { if (empFileResult) empFileResult.hidden = true; return; }
+      const reader = new FileReader();
+      reader.onload = () => {
+        empImport = parseImport(String(reader.result || ""));
+        if (empFileResult) {
+          empFileResult.hidden = false;
+          empFileResult.className = "emp-upload__result" + (empImport.length ? " is-ok" : " is-warn");
+          empFileResult.textContent = empImport.length
+            ? `${f.name} · đọc được ${empImport.length} nhân viên`
+            : `${f.name} · không đọc được dữ liệu. Dùng file .csv với cột: Họ tên, Caller ID.`;
+        }
+      };
+      reader.readAsText(f);
+    });
+  }
+
   function openEmpModal() {
     if (!empModal) return;
     empForm.reset();
+    empImport = [];
+    if (empFileResult) empFileResult.hidden = true;
+    setEmpMode("manual");
     empModal.hidden = false;
     setTimeout(() => empName && empName.focus(), 30);
   }
@@ -3998,20 +4062,16 @@ mark.mark--neg { background: var(--tcp-error-bg); color: var(--tcp-error-900); }
   if (empForm) {
     empForm.addEventListener("submit", e => {
       e.preventDefault();
-      const name = (empName.value || "").trim();
-      if (!name) { empName.focus(); return; }
-      const h = nameHash(name + Date.now());
-      // Seed plausible, deterministic stats for the new agent.
-      const base = 52 + (h % 34);                    // starting success rate 52–85
-      const trend = Array.from({ length: 7 }, (_, i) =>
-        Math.max(20, Math.min(96, base + Math.round((i - 3) * (((h >> (i + 1)) % 5) - 2)))));
-      const caller = (empCaller.value || "").trim() || String(1000 + (h % 9000));
-      employees.unshift({
-        id: ++empSeq, name, caller,
-        inbound: 20 + (h % 160), outbound: 20 + ((h >> 4) % 160),
-        trend, last: "Chưa có cuộc gọi",
-      });
+      if (empModeVal === "excel") {
+        if (!empImport.length) { if (empFile) empFile.click(); return; }
+        empImport.forEach(r => addEmployee(r.name, r.caller));
+      } else {
+        const name = (empName.value || "").trim();
+        if (!name) { empName.focus(); return; }
+        addEmployee(name, (empCaller.value || "").trim());
+      }
       renderEmployees();
+      updateSortIndicators();
       closeEmpModal();
     });
   }
