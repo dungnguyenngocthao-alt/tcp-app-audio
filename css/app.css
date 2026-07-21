@@ -208,6 +208,50 @@ button { font-family: inherit; }
 .up-badge--warning { background: var(--tcp-warning-bg); color: var(--tcp-warning-fg); }
 .up-badge--neutral { background: var(--tcp-neutral-100); color: var(--tcp-fg-secondary); }
 .up-detail { flex: 0 0 auto; white-space: nowrap; }
+.up-stats { margin-bottom: var(--tcp-space-5); }
+.up-filter { margin-bottom: var(--tcp-space-4); }
+
+/* Upload screen — single-call employee field + bulk import (Excel / Sheet) */
+.upload-emp { margin-top: var(--tcp-space-4); margin-bottom: 0; }
+.up-or {
+  display: flex; align-items: center; gap: 10px;
+  margin: var(--tcp-space-4) 0;
+  font-size: 12px; color: var(--tcp-fg-tertiary);
+}
+.up-or::before, .up-or::after { content: ""; flex: 1; height: 1px; background: var(--tcp-border-subtle); }
+.bulk-import-btn { margin-top: var(--tcp-space-4); }
+.up-import-result {
+  margin-top: 12px; font-size: 13px; line-height: 18px;
+  padding: 8px 12px; border-radius: var(--tcp-radius-sm);
+}
+.up-import-result.is-ok { background: var(--tcp-success-bg); color: var(--tcp-success-fg); }
+.up-import-result.is-warn { background: var(--tcp-warning-bg); color: var(--tcp-warning-fg); }
+
+/* Results · audio preview player */
+.audioprev { display: flex; align-items: center; gap: 14px; }
+.audioprev__play {
+  flex: 0 0 auto; width: 44px; height: 44px; border: 0; border-radius: 999px;
+  background: var(--tcp-accent); color: var(--tcp-on-accent); cursor: pointer;
+  display: grid; place-items: center; box-shadow: var(--tcp-shadow-sm);
+  transition: background var(--tcp-dur-fast) var(--tcp-ease), transform var(--tcp-dur-fast) var(--tcp-ease);
+}
+.audioprev__play:hover { background: var(--tcp-accent-hover); }
+.audioprev__play:active { transform: scale(0.96); }
+.audioprev__play:focus-visible { outline: 0; box-shadow: var(--tcp-ring-accent); }
+.audioprev__play svg { width: 20px; height: 20px; }
+.audioprev__main { flex: 1 1 auto; min-width: 0; }
+.audioprev__wave { display: flex; align-items: flex-end; gap: 2px; height: 40px; }
+.audioprev__bar {
+  flex: 1 1 0; min-width: 0; border-radius: 2px;
+  background: var(--tcp-neutral-200);
+  transition: background var(--tcp-dur-fast) var(--tcp-ease);
+}
+.audioprev__bar.is-played { background: var(--tcp-accent); }
+.audioprev__time {
+  display: flex; justify-content: space-between;
+  margin-top: 6px; font-size: 12px; color: var(--tcp-fg-secondary);
+  font-variant-numeric: tabular-nums;
+}
 
 /* Add-employee modal — left-aligned form variant */
 .modal__box--form { max-width: 400px; text-align: left; }

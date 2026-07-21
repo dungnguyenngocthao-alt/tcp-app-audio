@@ -63,8 +63,8 @@
           <!-- Upload card -->
           <div class="card card--upload">
             <div class="tabs" role="tablist">
-              <button class="tab is-active" role="tab" aria-selected="true" data-uptab="file">Chọn file</button>
-              <button class="tab" role="tab" aria-selected="false" data-uptab="link">Chèn link</button>
+              <button class="tab is-active" role="tab" aria-selected="true" data-uptab="file">Tải cuộc gọi</button>
+              <button class="tab" role="tab" aria-selected="false" data-uptab="bulk">Excel / Google Sheet</button>
             </div>
 
             <div data-uppane="file">
@@ -73,20 +73,33 @@
                 <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M178.34,165.66,160,147.31V208a8,8,0,0,1-16,0V147.31l-18.34,18.35a8,8,0,0,1-11.32-11.32l32-32a8,8,0,0,1,11.32,0l32,32a8,8,0,0,1-11.32,11.32ZM160,40A88.08,88.08,0,0,0,81.29,88.68,64,64,0,1,0,72,216h40a8,8,0,0,0,0-16H72a48,48,0,0,1,0-96c1.1,0,2.2,0,3.29.12A88,88,0,0,0,72,128a8,8,0,0,0,16,0,72,72,0,1,1,100.8,66,8,8,0,0,0,3.2,15.34,7.9,7.9,0,0,0,3.2-.68A88,88,0,0,0,160,40Z"/></svg>
               </div>
               <h2 class="dropzone__title">Kéo và thả tệp</h2>
-              <p class="dropzone__hint">Chọn hoặc kéo thả nhiều tệp · WAV, MP3, FLAC (Max 500MB)</p>
+              <p class="dropzone__hint">Chọn hoặc kéo thả tệp · WAV, MP3, FLAC (Max 500MB)</p>
               <button class="btn btn--ink" id="browseBtn" type="button">Chọn file</button>
               <input type="file" id="fileInput" accept=".wav,.mp3,.flac,audio/*" multiple hidden>
               <button class="dropzone__sample" id="sampleBtn" type="button">Chưa có tệp? Nạp 4 tệp mẫu để xem thử &rarr;</button>
               </div>
               <div class="filelist" id="fileList" hidden></div>
+              <div class="field upload-emp">
+                <label class="field__label" for="uploadEmp">Nhân viên phụ trách cuộc gọi</label>
+                <select class="select" id="uploadEmp"></select>
+              </div>
             </div>
 
-            <div data-uppane="link" hidden>
+            <div data-uppane="bulk" hidden>
+              <label class="emp-upload" for="bulkFile">
+                <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M240,136v64a16,16,0,0,1-16,16H32a16,16,0,0,1-16-16V136a8,8,0,0,1,16,0v64H224V136a8,8,0,0,1,16,0ZM88.49,79.51,120,48V136a8,8,0,0,0,16,0V48l31.51,31.51a8,8,0,0,0,11.32-11.32l-45.17-45.16a8,8,0,0,0-11.32,0L77.17,68.19A8,8,0,0,0,88.49,79.51Z"/></svg>
+                <span class="emp-upload__title">Tải lên file Excel</span>
+                <span class="emp-upload__hint">.xlsx hoặc .csv — đủ cột theo bảng Lịch sử upload</span>
+                <input type="file" id="bulkFile" accept=".xlsx,.xls,.csv" hidden>
+              </label>
+              <div class="up-or"><span>hoặc</span></div>
               <div class="field">
-                <label class="field__label" for="linkInput">Audio URL</label>
-                <input class="input" id="linkInput" type="url" placeholder="https://example.com/call-recording.wav" inputmode="url">
+                <label class="field__label" for="bulkSheet">Link Google Sheet</label>
+                <input class="input" id="bulkSheet" type="url" placeholder="https://docs.google.com/spreadsheets/d/…" inputmode="url">
               </div>
-              <p class="dropzone__hint" style="margin:0;">We'll fetch and process the audio from the link you provide.</p>
+              <p class="field-help">Cần đủ cột: ID · Thời gian · Call from · Call to · Thời lượng · Tỷ lệ thành công · Kết quả.</p>
+              <div class="up-import-result" id="bulkResult" hidden></div>
+              <button class="btn btn--accent btn--block bulk-import-btn" id="bulkImportBtn" type="button">Nhập vào Lịch sử upload</button>
             </div>
           </div>
 
@@ -229,6 +242,27 @@
               <div class="outcome__title">Tư vấn hiệu quả</div>
               <div class="outcome__pct">78%</div>
               <div class="outcome__caption">Tỷ lệ tư vấn</div>
+            </div>
+          </div>
+
+          <!-- Audio preview -->
+          <div class="card card--audio-preview">
+            <div class="result-card__label">
+              <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M155.51,24.81a8,8,0,0,0-8.42.88L77.25,80H32A16,16,0,0,0,16,96v64a16,16,0,0,0,16,16H77.25l69.84,54.31A8,8,0,0,0,160,224V32A8,8,0,0,0,155.51,24.81ZM32,96H72v64H32ZM144,207.64,88,164.09V91.91l56-43.55Zm54-106.08a40,40,0,0,1,0,52.88,8,8,0,0,1-12-10.58,24,24,0,0,0,0-31.72,8,8,0,0,1,12-10.58ZM248,128a79.9,79.9,0,0,1-20.37,53.34,8,8,0,0,1-11.92-10.67,64,64,0,0,0,0-85.33,8,8,0,1,1,11.92-10.67A79.83,79.83,0,0,1,248,128Z"/></svg>
+              Nghe lại cuộc gọi
+            </div>
+            <div class="audioprev">
+              <button class="audioprev__play" id="audioPlay" type="button" aria-label="Phát">
+                <svg class="audioprev__ico-play" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M232.4,114.49,88.32,26.35a16,16,0,0,0-16.2-.3A15.86,15.86,0,0,0,64,39.87V216.13A15.94,15.94,0,0,0,80,232a16.07,16.07,0,0,0,8.36-2.35L232.4,141.51a15.81,15.81,0,0,0,0-27ZM80,215.94V40l143.83,88Z"/></svg>
+                <svg class="audioprev__ico-pause" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true" hidden><path d="M200,32H164a16,16,0,0,0-16,16V208a16,16,0,0,0,16,16h36a16,16,0,0,0,16-16V48A16,16,0,0,0,200,32Zm0,176H164V48h36ZM92,32H56A16,16,0,0,0,40,48V208a16,16,0,0,0,16,16H92a16,16,0,0,0,16-16V48A16,16,0,0,0,92,32Zm0,176H56V48H92Z"/></svg>
+              </button>
+              <div class="audioprev__main">
+                <div class="audioprev__wave" id="audioWave"></div>
+                <div class="audioprev__time">
+                  <span id="audioCur">0:00</span>
+                  <span id="audioDur">0:00</span>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -792,6 +826,54 @@
             </div>
           </div>
 
+          <div class="dash-stats up-stats">
+            <div class="card stat-card">
+              <div class="result-card__label">
+                <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M232,208a8,8,0,0,1-8,8H32a8,8,0,0,1-8-8V48a8,8,0,0,1,16,0V156.69l50.34-50.35a8,8,0,0,1,11.32,0L128,132.69,180.69,80H160a8,8,0,0,1,0-16h40a8,8,0,0,1,8,8v40a8,8,0,0,1-16,0V91.31l-58.34,58.35a8,8,0,0,1-11.32,0L96,123.31l-56,56V200H224A8,8,0,0,1,232,208Z"/></svg>
+                Cuộc gọi đã upload
+              </div>
+              <div class="stat-card__value stat-card__value--accent" id="upStatCount">—</div>
+              <div class="stat-card__sub">tổng số cuộc gọi</div>
+            </div>
+            <div class="card stat-card">
+              <div class="result-card__label">
+                <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm0,192a88,88,0,1,1,88-88A88.1,88.1,0,0,1,128,216Zm64-88a8,8,0,0,1-8,8H128a8,8,0,0,1-8-8V72a8,8,0,0,1,16,0v48h48A8,8,0,0,1,192,128Z"/></svg>
+                Thời lượng gọi TB
+              </div>
+              <div class="stat-card__value" id="upStatDur">—</div>
+              <div class="stat-card__sub">phút mỗi cuộc gọi</div>
+            </div>
+            <div class="card stat-card">
+              <div class="result-card__label">
+                <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M240,56v64a8,8,0,0,1-16,0V75.31l-82.34,82.35a8,8,0,0,1-11.32,0L96,123.31,29.66,189.66a8,8,0,0,1-11.32-11.32l72-72a8,8,0,0,1,11.32,0L136,140.69,212.69,64H168a8,8,0,0,1,0-16h64A8,8,0,0,1,240,56Z"/></svg>
+                TB tỷ lệ thành công
+              </div>
+              <div class="stat-card__value stat-card__value--accent" id="upStatRate">—</div>
+              <div class="stat-card__sub">trên tổng số cuộc gọi</div>
+            </div>
+          </div>
+
+          <div class="dash-filter up-filter" id="upFilter">
+            <span class="dash-filter__label">
+              <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M230.6,49.53A15.81,15.81,0,0,0,216,40H40A16,16,0,0,0,28.19,66.76l.08.09L96,139.17V216a16,16,0,0,0,24.87,13.32l32-21.34A16,16,0,0,0,160,194.66V139.17l67.74-72.32.08-.09A15.8,15.8,0,0,0,230.6,49.53ZM40,56h0Zm106.18,74.58A8,8,0,0,0,144,136v58.66L112,216V136a8,8,0,0,0-2.16-5.47L40,56H216Z"/></svg>
+              Lọc
+            </span>
+            <div class="dash-filter__field">
+              <label for="upFrom">Từ</label>
+              <input type="date" id="upFrom" class="dash-filter__input">
+            </div>
+            <span class="dash-filter__sep">–</span>
+            <div class="dash-filter__field">
+              <label for="upTo">Đến</label>
+              <input type="date" id="upTo" class="dash-filter__input">
+            </div>
+            <div class="dash-filter__field">
+              <label for="upAgent">Nhân viên</label>
+              <select class="select select--sm" id="upAgent"><option value="all">Tất cả</option></select>
+            </div>
+            <button class="btn btn--outline btn--sm" id="upReset" type="button">Đặt lại</button>
+          </div>
+
           <div class="emp-table-wrap">
             <table class="emp-table up-table">
               <thead>
@@ -808,6 +890,7 @@
               <tbody id="upTbody"></tbody>
             </table>
           </div>
+          <nav class="pagination" id="upPager" aria-label="Phân trang lịch sử upload"></nav>
         </div>
       </div>
     </section>

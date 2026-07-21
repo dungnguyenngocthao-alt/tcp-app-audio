@@ -111,6 +111,11 @@
       $$("[data-uppane]").forEach(p =>
         p.hidden = p.dataset.uppane !== which
       );
+      // The config card only applies to single-call analysis; hide it for the
+      // Excel / Google Sheet bulk-import tab.
+      const pc = $("#screen-analysis .card--profile");
+      if (pc) pc.hidden = which === "bulk";
+      if (typeof syncProfileHeight === "function") syncProfileHeight();
     })
   );
 
@@ -178,6 +183,91 @@
       procMeta.textContent = n + " tệp âm thanh" + (total ? " • " + humanSize(total) : "");
     }
   }
+
+  /* Employee assignment (single-call upload) — the dropdown is kept in sync
+     with the Nhân viên module. */
+  const uploadEmp = $("#uploadEmp");
+  function populateUploadEmp() {
+    if (!uploadEmp) return;
+    const cur = uploadEmp.value;
+    uploadEmp.innerHTML = employees.map(e =>
+      `<option value="${e.id}">${escAttr(e.name)} · ${escAttr(e.caller)}</option>`).join("");
+    if (cur && employees.some(e => String(e.id) === cur)) uploadEmp.value = cur;
+  }
+
+  /* Upload-history helpers shared by single-call logging and bulk import. */
+  let upIdSeq = 1043;
+  function vnStamp(offsetMin) {
+    const d = new Date(Date.now() - offsetMin * 60000);
+    const p = n => String(n).padStart(2, "0");
+    return `${p(d.getDate())}/${p(d.getMonth() + 1)}/${d.getFullYear()}, ${p(d.getHours())}:${p(d.getMinutes())}`;
+  }
+  function randPhone(h) {
+    return "09" + String(10 + (h % 89)) + " " +
+      String(100 + ((h >> 3) % 900)) + " " + String(100 + ((h >> 6) % 900));
+  }
+  // Record the just-analysed call(s) into the upload history, assigned to the
+  // employee chosen on the upload screen.
+  function logAnalyzedCall() {
+    if (!selectedFiles.length || typeof UPLOAD_LOG === "undefined") return;
+    const ag = employees.find(e => String(e.id) === String(uploadEmp && uploadEmp.value)) || employees[0];
+    selectedFiles.forEach((f, i) => {
+      const m = mockCall(f.name);
+      const h = nameHash(f.name);
+      UPLOAD_LOG.unshift({
+        id: "UP-" + (upIdSeq++), time: vnStamp(i),
+        agent: ag ? ag.name : "—", caller: ag ? ag.caller : "—",
+        to: randPhone(h), dur: m.dur, rate: m.conf, outcome: m.type,
+        file: f.name, date: resultDate || todayLabel(),
+      });
+    });
+    if (typeof renderUploads === "function") renderUploads();
+  }
+  // Build a batch of call-log rows from a bulk source (Excel file / Sheet link).
+  function genLogBatch(seed, n) {
+    let h = nameHash(seed);
+    const rows = [];
+    for (let i = 0; i < n; i++) {
+      h = (h * 31 + i * 97 + 13) >>> 0;
+      const ag = employees[h % employees.length];
+      const rate = 45 + (h % 50);
+      const outcome = rate >= 80 ? "success" : rate >= 60 ? "warning" : "neutral";
+      const id = "UP-" + (upIdSeq++);
+      rows.push({
+        id, time: vnStamp(i * 43 + (h % 30)),
+        agent: ag.name, caller: ag.caller, to: randPhone(h),
+        dur: (5 + (h % 25)) + ":" + String((h >> 2) % 60).padStart(2, "0"),
+        rate, outcome, file: "Import_" + id + ".wav", date: todayLabel(),
+      });
+    }
+    return rows;
+  }
+
+  const bulkFile   = $("#bulkFile");
+  const bulkSheet  = $("#bulkSheet");
+  const bulkResult = $("#bulkResult");
+  const bulkImportBtn = $("#bulkImportBtn");
+  function showBulkResult(msg, ok) {
+    if (!bulkResult) return;
+    bulkResult.hidden = false;
+    bulkResult.className = "up-import-result " + (ok ? "is-ok" : "is-warn");
+    bulkResult.textContent = msg;
+  }
+  if (bulkFile) bulkFile.addEventListener("change", () => {
+    const f = bulkFile.files[0];
+    if (f) showBulkResult("Đã chọn: " + f.name, true);
+  });
+  if (bulkImportBtn) bulkImportBtn.addEventListener("click", () => {
+    const f = bulkFile && bulkFile.files[0];
+    const link = bulkSheet ? bulkSheet.value.trim() : "";
+    if (!f && !link) { showBulkResult("Chọn file Excel hoặc dán link Google Sheet để nhập.", false); return; }
+    const src = f ? f.name : "Google Sheet";
+    const rows = genLogBatch(f ? f.name : link, 5 + (nameHash(f ? f.name : link) % 4));
+    if (typeof UPLOAD_LOG !== "undefined") UPLOAD_LOG.unshift(...rows);
+    if (typeof renderUploads === "function") renderUploads();
+    showBulkResult(`Đã nhập ${rows.length} cuộc gọi từ ${src} vào Lịch sử upload.`, true);
+    setTimeout(() => show("uploads"), 600);
+  });
 
   /* In the 2-column layout (>=768) lock the config card to the *empty* upload
      card's height so the two line up before any file is added — and stay put
@@ -319,13 +409,18 @@
     if (fileInput) fileInput.value = "";
     selectedFiles = [];
     renderFileList();
-    const link = $("#linkInput");
-    if (link) link.value = "";
+    // Return the upload card to the "Tải cuộc gọi" tab and clear bulk inputs.
+    const fileTab = $('[data-uptab="file"]');
+    if (fileTab) fileTab.click();
+    if (bulkFile) bulkFile.value = "";
+    if (bulkSheet) bulkSheet.value = "";
+    if (bulkResult) bulkResult.hidden = true;
     setProgress(0, STAGES[0].label);
   }
 
   processBtn.addEventListener("click", () => {
     if (procModelName) procModelName.textContent = currentModelName();
+    if (typeof logAnalyzedCall === "function") logAnalyzedCall();
     show("processing");
     runProcessing();
   });
@@ -1069,6 +1164,7 @@
           <td class="emp-last">${e.last}</td>
         </tr>`;
     }).join("");
+    populateUploadEmp();
   }
   function updateSortIndicators() {
     // Sortable headers show a neutral ⇅ by default (so they read as sortable),
@@ -1208,13 +1304,71 @@
     { id: "UP-1035", time: "23/10/2023, 08:15", agent: "Lê Hoàng Nam",   caller: "1003", to: "0918 003 476", dur: "10:08", rate: 64, outcome: "warning", file: "Q3_Review_HaiPhong.flac",    date: "10/21/2023, 4:44 PM" },
   ];
 
-  const upTbody = $("#upTbody");
+  const upTbody   = $("#upTbody");
+  const upPager   = $("#upPager");
+  const upFrom    = $("#upFrom");
+  const upTo      = $("#upTo");
+  const upAgent   = $("#upAgent");
+  const upReset   = $("#upReset");
+  const UP_PER_PAGE = 6;
+  let upPage = 1;
+
+  function parseUpTime(s) {          // "dd/mm/yyyy, HH:MM" → epoch (day precision)
+    const m = /(\d{1,2})\/(\d{1,2})\/(\d{4})/.exec(s || "");
+    return m ? new Date(+m[3], +m[2] - 1, +m[1]).getTime() : 0;
+  }
+  function durToSec(d) { const [m, s] = String(d).split(":").map(Number); return (m || 0) * 60 + (s || 0); }
+
+  function populateUpAgent() {
+    if (!upAgent) return;
+    const names = [...new Set(UPLOAD_LOG.map(u => u.agent))];
+    const cur = upAgent.value;
+    upAgent.innerHTML = '<option value="all">Tất cả</option>' +
+      names.map(n => `<option value="${escAttr(n)}">${n}</option>`).join("");
+    if (cur && (cur === "all" || names.includes(cur))) upAgent.value = cur;
+  }
+  function filteredUploads() {
+    const lo = upFrom && upFrom.value ? new Date(upFrom.value).getTime() : -Infinity;
+    const hi = upTo && upTo.value ? new Date(upTo.value).getTime() : Infinity;
+    const ag = upAgent ? upAgent.value : "all";
+    return UPLOAD_LOG.filter(u => {
+      const t = parseUpTime(u.time);
+      return t >= lo && t <= hi && (ag === "all" || u.agent === ag);
+    });
+  }
+  function renderUpStats(list) {
+    const set = (id, v) => { const el = $("#" + id); if (el) el.textContent = v; };
+    set("upStatCount", list.length.toLocaleString("vi-VN"));
+    if (!list.length) { set("upStatDur", "—"); set("upStatRate", "—"); return; }
+    const avgSec = Math.round(list.reduce((a, u) => a + durToSec(u.dur), 0) / list.length);
+    set("upStatDur", Math.floor(avgSec / 60) + ":" + String(avgSec % 60).padStart(2, "0"));
+    set("upStatRate", Math.round(list.reduce((a, u) => a + u.rate, 0) / list.length) + "%");
+  }
+  function renderUpPager(pages) {
+    if (!upPager) return;
+    if (pages <= 1) { upPager.innerHTML = ""; return; }
+    let html = `<button class="page-btn" type="button" data-uppage="prev" ${upPage === 1 ? "disabled" : ""} aria-label="Trang trước">&lsaquo;</button>`;
+    for (let i = 1; i <= pages; i++)
+      html += `<button class="page-btn ${i === upPage ? "is-active" : ""}" type="button" data-uppage="${i}" ${i === upPage ? 'aria-current="page"' : ""}>${i}</button>`;
+    html += `<button class="page-btn" type="button" data-uppage="next" ${upPage === pages ? "disabled" : ""} aria-label="Trang sau">&rsaquo;</button>`;
+    upPager.innerHTML = html;
+  }
   function renderUploads() {
     if (!upTbody) return;
-    upTbody.innerHTML = UPLOAD_LOG.map(u => {
+    populateUpAgent();
+    const list = filteredUploads();
+    renderUpStats(list);
+    const pages = Math.max(1, Math.ceil(list.length / UP_PER_PAGE));
+    if (upPage > pages) upPage = pages;
+    const slice = list.slice((upPage - 1) * UP_PER_PAGE, upPage * UP_PER_PAGE);
+    if (!slice.length) {
+      upTbody.innerHTML = '<tr><td class="emp-empty" colspan="7">Không có cuộc gọi phù hợp với bộ lọc.</td></tr>';
+      renderUpPager(pages);
+      return;
+    }
+    upTbody.innerHTML = slice.map(u => {
       const color = AVATAR_COLORS[nameHash(u.agent) % AVATAR_COLORS.length];
       const rateClass = u.rate >= 70 ? "emp-rate--good" : u.rate >= 55 ? "emp-rate--mid" : "emp-rate--low";
-      const badgeClass = u.outcome === "success" ? "up-badge--success" : u.outcome === "warning" ? "up-badge--warning" : "up-badge--neutral";
       return `
         <tr>
           <td class="up-id">${u.id}</td>
@@ -1232,14 +1386,12 @@
           <td class="up-dur">${u.dur}</td>
           <td><span class="emp-rate ${rateClass}">${u.rate}%</span></td>
           <td>
-            <div class="up-result">
-              <span class="up-badge ${badgeClass}">${UP_OUTCOME[u.outcome]}</span>
-              <button class="btn btn--outline btn--sm up-detail" type="button"
-                      data-file="${escAttr(u.file)}" data-date="${escAttr(u.date)}">Xem chi tiết</button>
-            </div>
+            <button class="btn btn--outline btn--sm up-detail" type="button"
+                    data-file="${escAttr(u.file)}" data-date="${escAttr(u.date)}">Xem chi tiết</button>
           </td>
         </tr>`;
     }).join("");
+    renderUpPager(pages);
   }
   renderUploads();
   if (upTbody) {
@@ -1248,6 +1400,22 @@
       if (btn) showSingleResult(btn.dataset.file, btn.dataset.date, "uploads");
     });
   }
+  [upFrom, upTo, upAgent].forEach(el => el && el.addEventListener("change", () => { upPage = 1; renderUploads(); }));
+  if (upReset) upReset.addEventListener("click", () => {
+    if (upFrom) upFrom.value = ""; if (upTo) upTo.value = ""; if (upAgent) upAgent.value = "all";
+    upPage = 1; renderUploads();
+  });
+  if (upPager) upPager.addEventListener("click", e => {
+    const btn = e.target.closest(".page-btn");
+    if (!btn) return;
+    const list = filteredUploads();
+    const pages = Math.max(1, Math.ceil(list.length / UP_PER_PAGE));
+    const v = btn.dataset.uppage;
+    if (v === "prev") upPage = Math.max(1, upPage - 1);
+    else if (v === "next") upPage = Math.min(pages, upPage + 1);
+    else upPage = parseInt(v, 10);
+    renderUploads();
+  });
 
   /* -------------------------------------------------------------------------
      File strip — when several files are analysed together, show them as a
@@ -1371,7 +1539,62 @@
       const active = fileStripScroll.querySelector(".fchip.is-active");
       if (active) active.scrollIntoView({ block: "nearest", inline: "nearest" });
     }
+    if (typeof resetAudioPreview === "function") resetAudioPreview(m.dur);
   }
+
+  /* Results · mock audio preview player (play/pause sweeps the waveform) */
+  const audioPlay  = $("#audioPlay");
+  const audioWave  = $("#audioWave");
+  const audioCur   = $("#audioCur");
+  const audioDurEl = $("#audioDur");
+  let audioTimer = null, audioProg = 0, audioTotalSec = 0;
+  (function buildAudioWave() {
+    if (!audioWave) return;
+    let h = 987654321, html = "";
+    for (let i = 0; i < 44; i++) {
+      h = (h * 1103515245 + 12345) & 0x7fffffff;
+      html += `<span class="audioprev__bar" style="height:${24 + (h % 74)}%"></span>`;
+    }
+    audioWave.innerHTML = html;
+  })();
+  function fmtSec(s) { return Math.floor(s / 60) + ":" + String(Math.floor(s % 60)).padStart(2, "0"); }
+  function togglePlayIcons(playing) {
+    // Use the attribute (SVGElement.hidden doesn't reflect to the DOM attribute).
+    const pl = audioPlay && audioPlay.querySelector(".audioprev__ico-play");
+    const pa = audioPlay && audioPlay.querySelector(".audioprev__ico-pause");
+    if (pl) pl.toggleAttribute("hidden", playing);
+    if (pa) pa.toggleAttribute("hidden", !playing);
+  }
+  function paintAudioProgress() {
+    const bars = audioWave ? audioWave.children : [];
+    const k = Math.round(audioProg * bars.length);
+    for (let i = 0; i < bars.length; i++) bars[i].classList.toggle("is-played", i < k);
+    if (audioCur) audioCur.textContent = fmtSec(audioProg * audioTotalSec);
+  }
+  function stopAudio() {
+    if (audioTimer) { clearInterval(audioTimer); audioTimer = null; }
+    if (audioPlay) audioPlay.classList.remove("is-playing");
+    togglePlayIcons(false);
+  }
+  function resetAudioPreview(durStr) {
+    stopAudio();
+    audioProg = 0;
+    audioTotalSec = durToSec(durStr || "0:00");
+    if (audioDurEl) audioDurEl.textContent = durStr || "0:00";
+    paintAudioProgress();
+  }
+  if (audioPlay) audioPlay.addEventListener("click", () => {
+    if (audioTimer) { stopAudio(); return; }
+    if (audioProg >= 1) audioProg = 0;
+    audioPlay.classList.add("is-playing");
+    togglePlayIcons(true);
+    const step = 80 / 9000;   // full sweep in ~9s
+    audioTimer = setInterval(() => {
+      audioProg = Math.min(1, audioProg + step);
+      paintAudioProgress();
+      if (audioProg >= 1) stopAudio();
+    }, 80);
+  });
 
   if (fileStripScroll) {
     fileStripScroll.addEventListener("click", e => {
@@ -1413,21 +1636,21 @@
         resultsPage.children, el => el.classList.contains("card")
       );
     }
-    if (resultsCards.length < 8) return;
+    if (resultsCards.length < 9) return;
 
     const w = window.innerWidth;
     const bp = w >= 1200 ? "d" : w >= 768 ? "t" : "m";
     if (bp === lastBp && resultsPage.classList.contains("is-cols")) return;
     lastBp = bp;
 
-    // cards: 0 outcome, 1 audio-quality, 2 keywords, 3 sentiment,
-    //        4 talk, 5 summary, 6 actions, 7 transcript.
-    // Audio-quality (1) sits directly under the outcome (0) card.
+    // cards: 0 outcome, 1 audio-preview, 2 audio-quality, 3 keywords,
+    //        4 sentiment, 5 talk, 6 summary, 7 actions, 8 transcript.
+    // Audio-preview (1) sits directly under the outcome (0) card.
     // Desktop: outcome fills col 1, actions (Gợi ý) fills col 2, transcript
     // absorbs/scrolls in col 3 — so all three columns are equal height.
-    const groups = bp === "d" ? [[0, 1, 2, 3], [4, 5, 6], [7]]
-                 : bp === "t" ? [[0, 1, 2, 3, 4], [5, 6, 7]]
-                 : [[0, 1, 2, 3, 4, 5, 6, 7]];
+    const groups = bp === "d" ? [[0, 1, 2, 3, 4], [5, 6, 7], [8]]
+                 : bp === "t" ? [[0, 1, 2, 3, 4, 5], [6, 7, 8]]
+                 : [[0, 1, 2, 3, 4, 5, 6, 7, 8]];
 
     while (resultsPage.firstChild) resultsPage.removeChild(resultsPage.firstChild);
     groups.forEach(group => {
