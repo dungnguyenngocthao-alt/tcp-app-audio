@@ -17,6 +17,7 @@
     results:    $("#screen-results"),
     history:    $("#screen-history"),
     dashboard:  $("#screen-dashboard"),
+    employees:  $("#screen-employees"),
     settings:   $("#screen-settings"),
   };
 
@@ -78,7 +79,7 @@
     el.addEventListener("click", () => {
       const target = el.dataset.nav;
       if (el.hasAttribute("data-reset")) resetAnalysis();
-      if (target === "analysis" || target === "results" || target === "history" || target === "dashboard" || target === "settings" || target === "login") show(target);
+      if (target === "analysis" || target === "results" || target === "history" || target === "dashboard" || target === "employees" || target === "settings" || target === "login") show(target);
       closeMenu();
     })
   );
@@ -955,6 +956,130 @@
     set("pieTotal", total.toLocaleString("vi-VN"));
     set("pieIn", inPct + "%");
     set("pieOut", (total ? 100 - inPct : 0) + "%");
+  }
+
+  /* -------------------------------------------------------------------------
+     Screen 5b · Employees — per-agent calling performance, with add support
+     ------------------------------------------------------------------------- */
+  const AVATAR_COLORS = ["#6366F1", "#F97316", "#0EA5E9", "#10B981", "#E11D48", "#8B5CF6", "#F59E0B", "#14B8A6"];
+  function initials(name) {
+    const parts = name.trim().split(/\s+/);
+    const a = parts[0] ? parts[0][0] : "";
+    const b = parts.length > 1 ? parts[parts.length - 1][0] : "";
+    return (a + b).toUpperCase();
+  }
+  function nameHash(s) {
+    let h = 0;
+    for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) >>> 0;
+    return h;
+  }
+
+  let empSeq = 0;
+  const employees = [
+    { id: ++empSeq, name: "Nguyễn Thị Hà",  caller: "1001", inbound: 142, outbound: 98,  trend: [61, 64, 68, 66, 72, 75, 78], last: "26/10/2023, 14:30" },
+    { id: ++empSeq, name: "Trần Văn Dũng",   caller: "1002", inbound: 88,  outbound: 133, trend: [70, 69, 66, 64, 63, 60, 58], last: "26/10/2023, 11:05" },
+    { id: ++empSeq, name: "Lê Hoàng Nam",    caller: "1003", inbound: 120, outbound: 120, trend: [55, 58, 60, 63, 67, 70, 73], last: "25/10/2023, 16:48" },
+    { id: ++empSeq, name: "Phạm Minh Châu",  caller: "1004", inbound: 165, outbound: 71,  trend: [80, 82, 79, 83, 85, 84, 86], last: "25/10/2023, 09:20" },
+    { id: ++empSeq, name: "Vũ Thanh Tùng",   caller: "1005", inbound: 64,  outbound: 96,  trend: [48, 50, 49, 52, 51, 54, 53], last: "24/10/2023, 15:12" },
+  ];
+
+  // Compact success-rate sparkline; green when trending up, red when down.
+  function sparkline(vals) {
+    const w = 88, h = 30, pad = 4;
+    const min = Math.min(...vals), max = Math.max(...vals), span = (max - min) || 1;
+    const xy = vals.map((v, i) => {
+      const x = pad + i * (w - 2 * pad) / (vals.length - 1);
+      const y = h - pad - (v - min) / span * (h - 2 * pad);
+      return [x, y];
+    });
+    const up = vals[vals.length - 1] >= vals[0];
+    const color = up ? "#16A34A" : "#DC2626";
+    const pts = xy.map(p => p[0].toFixed(1) + "," + p[1].toFixed(1)).join(" ");
+    const last = xy[xy.length - 1];
+    return `<svg class="spark" viewBox="0 0 ${w} ${h}" width="${w}" height="${h}" preserveAspectRatio="none" aria-hidden="true">
+      <polyline points="${pts}" fill="none" stroke="${color}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      <circle cx="${last[0].toFixed(1)}" cy="${last[1].toFixed(1)}" r="2.6" fill="${color}"/>
+    </svg>`;
+  }
+
+  const empTbody = $("#empTbody");
+  function renderEmployees() {
+    if (!empTbody) return;
+    empTbody.innerHTML = employees.map(e => {
+      const total = e.inbound + e.outbound;
+      const rate = e.trend[e.trend.length - 1];
+      const delta = rate - e.trend[0];
+      const up = delta >= 0;
+      const color = AVATAR_COLORS[nameHash(e.name) % AVATAR_COLORS.length];
+      const rateClass = rate >= 70 ? "emp-rate--good" : rate >= 55 ? "emp-rate--mid" : "emp-rate--low";
+      return `
+        <tr>
+          <td class="emp-col-name">
+            <div class="emp-person">
+              <span class="emp-avatar" style="background:${color}">${initials(e.name)}</span>
+              <div class="emp-person__meta">
+                <div class="emp-person__name" title="${escAttr(e.name)}">${e.name}</div>
+                <div class="emp-person__id">Caller ID · ${escAttr(e.caller)}</div>
+              </div>
+            </div>
+          </td>
+          <td>
+            <div class="emp-total">${total.toLocaleString("vi-VN")}</div>
+            <div class="emp-inout">
+              <span><span class="cl-dot cl-dot--in"></span>${e.inbound} đến</span>
+              <span><span class="cl-dot cl-dot--out"></span>${e.outbound} đi</span>
+            </div>
+          </td>
+          <td><span class="emp-rate ${rateClass}">${rate}%</span></td>
+          <td>
+            <div class="emp-trend">
+              ${sparkline(e.trend)}
+              <span class="emp-delta ${up ? "emp-delta--up" : "emp-delta--down"}">${up ? "▲" : "▼"} ${Math.abs(delta)}%</span>
+            </div>
+          </td>
+          <td class="emp-last">${e.last}</td>
+        </tr>`;
+    }).join("");
+  }
+  renderEmployees();
+
+  /* Add-employee modal */
+  const empModal = $("#empModal");
+  const empForm  = $("#empForm");
+  const empName  = $("#empName");
+  const empCaller = $("#empCallerId");
+  function openEmpModal() {
+    if (!empModal) return;
+    empForm.reset();
+    empModal.hidden = false;
+    setTimeout(() => empName && empName.focus(), 30);
+  }
+  function closeEmpModal() { if (empModal) empModal.hidden = true; }
+  const empAddBtn = $("#empAddBtn");
+  if (empAddBtn) empAddBtn.addEventListener("click", openEmpModal);
+  $$("[data-emp-cancel]").forEach(el => el.addEventListener("click", closeEmpModal));
+  document.addEventListener("keydown", e => {
+    if (e.key === "Escape" && empModal && !empModal.hidden) closeEmpModal();
+  });
+  if (empForm) {
+    empForm.addEventListener("submit", e => {
+      e.preventDefault();
+      const name = (empName.value || "").trim();
+      if (!name) { empName.focus(); return; }
+      const h = nameHash(name + Date.now());
+      // Seed plausible, deterministic stats for the new agent.
+      const base = 52 + (h % 34);                    // starting success rate 52–85
+      const trend = Array.from({ length: 7 }, (_, i) =>
+        Math.max(20, Math.min(96, base + Math.round((i - 3) * (((h >> (i + 1)) % 5) - 2)))));
+      const caller = (empCaller.value || "").trim() || String(1000 + (h % 9000));
+      employees.unshift({
+        id: ++empSeq, name, caller,
+        inbound: 20 + (h % 160), outbound: 20 + ((h >> 4) % 160),
+        trend, last: "Chưa có cuộc gọi",
+      });
+      renderEmployees();
+      closeEmpModal();
+    });
   }
 
   /* -------------------------------------------------------------------------

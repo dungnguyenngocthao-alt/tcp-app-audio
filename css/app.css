@@ -115,6 +115,81 @@ button { font-family: inherit; }
 .drawer__item--logout:hover svg { color: var(--tcp-error-fg); }
 
 /* ---------------------------------------------------------------------------
+   SCREEN 5b · Employees
+   --------------------------------------------------------------------------- */
+.emp-topbar {
+  display: flex; align-items: flex-start; justify-content: space-between;
+  gap: var(--tcp-space-4); flex-wrap: wrap; margin-bottom: var(--tcp-space-5);
+}
+.emp-add { display: inline-flex; align-items: center; gap: 6px; flex: 0 0 auto; }
+.emp-add svg { width: 16px; height: 16px; }
+.emp-table-wrap {
+  border: 1px solid var(--tcp-border-subtle);
+  border-radius: var(--tcp-radius-xl);
+  background: var(--tcp-bg);
+  box-shadow: var(--tcp-shadow-xs);
+  overflow-x: auto;
+}
+.emp-table { width: 100%; min-width: 620px; border-collapse: collapse; }
+.emp-table thead th {
+  text-align: left;
+  font-size: 11px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase;
+  color: var(--tcp-fg-secondary);
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--tcp-border-subtle);
+  background: var(--tcp-bg-subtle);
+  white-space: nowrap;
+}
+.emp-table tbody td {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--tcp-border-subtle);
+  font-size: 14px; color: var(--tcp-fg-primary); vertical-align: middle;
+  white-space: nowrap;
+}
+.emp-table tbody tr:last-child td { border-bottom: 0; }
+.emp-table tbody tr { transition: background var(--tcp-dur-fast) var(--tcp-ease); }
+.emp-table tbody tr:hover { background: var(--tcp-bg-subtle); }
+.emp-col-name { min-width: 200px; }
+
+.emp-person { display: flex; align-items: center; gap: 10px; }
+.emp-avatar {
+  flex: 0 0 auto; width: 36px; height: 36px; border-radius: 999px;
+  display: grid; place-items: center;
+  color: #fff; font-size: 12px; font-weight: 600;
+}
+.emp-person__meta { min-width: 0; }
+.emp-person__name {
+  font-weight: 500; color: var(--tcp-fg-primary);
+  overflow: hidden; text-overflow: ellipsis; max-width: 190px;
+}
+.emp-person__id { font-size: 12px; color: var(--tcp-fg-tertiary); margin-top: 1px; }
+
+.emp-total { font-weight: 600; font-size: 15px; color: var(--tcp-fg-primary); }
+.emp-inout { display: flex; gap: 12px; margin-top: 2px; font-size: 12px; color: var(--tcp-fg-secondary); }
+.emp-inout .cl-dot { width: 8px; height: 8px; margin-right: 5px; }
+
+.emp-rate {
+  display: inline-flex; align-items: center;
+  font-weight: 600; font-size: 14px;
+  padding: 3px 10px; border-radius: var(--tcp-radius-pill);
+}
+.emp-rate--good { background: var(--tcp-success-bg); color: var(--tcp-success-fg); }
+.emp-rate--mid  { background: var(--tcp-warning-bg); color: var(--tcp-warning-fg); }
+.emp-rate--low  { background: var(--tcp-error-bg);   color: var(--tcp-error-fg); }
+
+.emp-trend { display: flex; align-items: center; gap: 10px; }
+.spark { display: block; flex: 0 0 auto; }
+.emp-delta { font-size: 12px; font-weight: 600; white-space: nowrap; }
+.emp-delta--up { color: #16A34A; }
+.emp-delta--down { color: #DC2626; }
+.emp-last { color: var(--tcp-fg-secondary); font-size: 13px; }
+
+/* Add-employee modal — left-aligned form variant */
+.modal__box--form { max-width: 400px; text-align: left; }
+.modal__box--form .modal__title { text-align: left; }
+.modal__box--form .field:last-of-type { margin-bottom: var(--tcp-space-5); }
+
+/* ---------------------------------------------------------------------------
    App bar / brand header
    --------------------------------------------------------------------------- */
 .appbar {

@@ -306,6 +306,81 @@ button { font-family: inherit; }
 .drawer__item--logout:hover svg { color: var(--tcp-error-fg); }
 
 /* ---------------------------------------------------------------------------
+   SCREEN 5b · Employees
+   --------------------------------------------------------------------------- */
+.emp-topbar {
+  display: flex; align-items: flex-start; justify-content: space-between;
+  gap: var(--tcp-space-4); flex-wrap: wrap; margin-bottom: var(--tcp-space-5);
+}
+.emp-add { display: inline-flex; align-items: center; gap: 6px; flex: 0 0 auto; }
+.emp-add svg { width: 16px; height: 16px; }
+.emp-table-wrap {
+  border: 1px solid var(--tcp-border-subtle);
+  border-radius: var(--tcp-radius-xl);
+  background: var(--tcp-bg);
+  box-shadow: var(--tcp-shadow-xs);
+  overflow-x: auto;
+}
+.emp-table { width: 100%; min-width: 620px; border-collapse: collapse; }
+.emp-table thead th {
+  text-align: left;
+  font-size: 11px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase;
+  color: var(--tcp-fg-secondary);
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--tcp-border-subtle);
+  background: var(--tcp-bg-subtle);
+  white-space: nowrap;
+}
+.emp-table tbody td {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--tcp-border-subtle);
+  font-size: 14px; color: var(--tcp-fg-primary); vertical-align: middle;
+  white-space: nowrap;
+}
+.emp-table tbody tr:last-child td { border-bottom: 0; }
+.emp-table tbody tr { transition: background var(--tcp-dur-fast) var(--tcp-ease); }
+.emp-table tbody tr:hover { background: var(--tcp-bg-subtle); }
+.emp-col-name { min-width: 200px; }
+
+.emp-person { display: flex; align-items: center; gap: 10px; }
+.emp-avatar {
+  flex: 0 0 auto; width: 36px; height: 36px; border-radius: 999px;
+  display: grid; place-items: center;
+  color: #fff; font-size: 12px; font-weight: 600;
+}
+.emp-person__meta { min-width: 0; }
+.emp-person__name {
+  font-weight: 500; color: var(--tcp-fg-primary);
+  overflow: hidden; text-overflow: ellipsis; max-width: 190px;
+}
+.emp-person__id { font-size: 12px; color: var(--tcp-fg-tertiary); margin-top: 1px; }
+
+.emp-total { font-weight: 600; font-size: 15px; color: var(--tcp-fg-primary); }
+.emp-inout { display: flex; gap: 12px; margin-top: 2px; font-size: 12px; color: var(--tcp-fg-secondary); }
+.emp-inout .cl-dot { width: 8px; height: 8px; margin-right: 5px; }
+
+.emp-rate {
+  display: inline-flex; align-items: center;
+  font-weight: 600; font-size: 14px;
+  padding: 3px 10px; border-radius: var(--tcp-radius-pill);
+}
+.emp-rate--good { background: var(--tcp-success-bg); color: var(--tcp-success-fg); }
+.emp-rate--mid  { background: var(--tcp-warning-bg); color: var(--tcp-warning-fg); }
+.emp-rate--low  { background: var(--tcp-error-bg);   color: var(--tcp-error-fg); }
+
+.emp-trend { display: flex; align-items: center; gap: 10px; }
+.spark { display: block; flex: 0 0 auto; }
+.emp-delta { font-size: 12px; font-weight: 600; white-space: nowrap; }
+.emp-delta--up { color: #16A34A; }
+.emp-delta--down { color: #DC2626; }
+.emp-last { color: var(--tcp-fg-secondary); font-size: 13px; }
+
+/* Add-employee modal — left-aligned form variant */
+.modal__box--form { max-width: 400px; text-align: left; }
+.modal__box--form .modal__title { text-align: left; }
+.modal__box--form .field:last-of-type { margin-bottom: var(--tcp-space-5); }
+
+/* ---------------------------------------------------------------------------
    App bar / brand header
    --------------------------------------------------------------------------- */
 .appbar {
@@ -2582,6 +2657,51 @@ mark.mark--neg { background: var(--tcp-error-bg); color: var(--tcp-error-900); }
     </section>
 
     <!-- ================================================================= -->
+    <!-- SCREEN 5b · Employees                                              -->
+    <!-- ================================================================= -->
+    <section class="screen screen--hasnav" id="screen-employees" data-screen="employees">
+      <div class="screen__scroll">
+        <header class="appbar">
+          <button class="brand" type="button" data-nav="analysis" aria-label="Về trang tải lên">
+            <span class="brand__logo" aria-hidden="true"></span>
+            <span class="brand__name">Talent Connect +</span>
+          </button>
+          <button class="burger" type="button" aria-label="Open menu" aria-haspopup="true" aria-expanded="false" data-burger>
+            <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M224,128a8,8,0,0,1-8,8H40a8,8,0,0,1,0-16H216A8,8,0,0,1,224,128ZM40,72H216a8,8,0,0,0,0-16H40a8,8,0,0,0,0,16ZM216,184H40a8,8,0,0,0,0,16H216a8,8,0,0,0,0-16Z"/></svg>
+          </button>
+        </header>
+
+        <div class="page">
+          <div class="emp-topbar">
+            <div>
+              <h1 class="page__title">Nhân viên</h1>
+              <p class="page__lead">Theo dõi hiệu suất gọi của từng nhân viên.</p>
+            </div>
+            <button class="btn btn--accent btn--sm emp-add" id="empAddBtn" type="button">
+              <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M256,136a8,8,0,0,1-8,8H232v16a8,8,0,0,1-16,0V144H200a8,8,0,0,1,0-16h16V112a8,8,0,0,1,16,0v16h16A8,8,0,0,1,256,136Zm-57.87,58.85a8,8,0,0,1-6.4,12.79H14.34a8,8,0,0,1-6.4-12.79C22.91,174.28,45,159.82,69.6,153a72,72,0,1,1,76.8,0C171,159.82,193.09,174.28,208,194.85ZM74,131.61a8,8,0,0,0,8-8V120a55.94,55.94,0,0,1,110.9-9.42A56,56,0,1,0,74,131.61Z"/></svg>
+              Thêm nhân viên
+            </button>
+          </div>
+
+          <div class="emp-table-wrap">
+            <table class="emp-table">
+              <thead>
+                <tr>
+                  <th class="emp-col-name">Tên &amp; Caller ID</th>
+                  <th>Tổng cuộc gọi</th>
+                  <th>Tỷ lệ thành công</th>
+                  <th>Xu hướng</th>
+                  <th>Cuộc gọi gần nhất</th>
+                </tr>
+              </thead>
+              <tbody id="empTbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================================================================= -->
     <!-- SCREEN 6 · Settings                                                -->
     <!-- ================================================================= -->
     <section class="screen screen--hasnav" id="screen-settings" data-screen="settings">
@@ -2651,6 +2771,27 @@ mark.mark--neg { background: var(--tcp-error-bg); color: var(--tcp-error-900); }
       </div>
     </div>
 
+    <!-- Add-employee dialog -->
+    <div class="modal" id="empModal" hidden>
+      <div class="modal__backdrop" data-emp-cancel></div>
+      <form class="modal__box modal__box--form" id="empForm" role="dialog" aria-modal="true" aria-labelledby="empModalTitle" novalidate>
+        <h2 class="modal__title" id="empModalTitle">Thêm nhân viên</h2>
+        <p class="modal__msg">Nhập thông tin để thêm nhân viên vào danh sách theo dõi.</p>
+        <div class="field">
+          <label class="field__label" for="empName">Họ tên</label>
+          <input class="input" id="empName" type="text" placeholder="VD: Trần Minh Quân" maxlength="40" autocomplete="off" required>
+        </div>
+        <div class="field">
+          <label class="field__label" for="empCallerId">Caller ID</label>
+          <input class="input" id="empCallerId" type="text" placeholder="VD: 1042" maxlength="12" inputmode="numeric" autocomplete="off">
+        </div>
+        <div class="modal__actions">
+          <button class="btn btn--outline" type="button" data-emp-cancel>Hủy</button>
+          <button class="btn btn--accent" type="submit" id="empSave">Thêm</button>
+        </div>
+      </form>
+    </div>
+
     <!-- Slide-in navigation menu -->
     <div class="drawer" id="menu" hidden>
       <div class="drawer__backdrop" data-menu-close></div>
@@ -2669,6 +2810,10 @@ mark.mark--neg { background: var(--tcp-error-bg); color: var(--tcp-error-900); }
           <button class="drawer__item" role="menuitem" type="button" data-nav="dashboard">
             <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M104,40H56A16,16,0,0,0,40,56v48a16,16,0,0,0,16,16h48a16,16,0,0,0,16-16V56A16,16,0,0,0,104,40Zm0,64H56V56h48v48Zm96-64H152a16,16,0,0,0-16,16v48a16,16,0,0,0,16,16h48a16,16,0,0,0,16-16V56A16,16,0,0,0,200,40Zm0,64H152V56h48v48Zm-96,32H56a16,16,0,0,0-16,16v48a16,16,0,0,0,16,16h48a16,16,0,0,0,16-16V152A16,16,0,0,0,104,136Zm0,64H56V152h48v48Zm96-64H152a16,16,0,0,0-16,16v48a16,16,0,0,0,16,16h48a16,16,0,0,0,16-16V152A16,16,0,0,0,200,136Zm0,64H152V152h48v48Z"/></svg>
             <span>Dashboard</span>
+          </button>
+          <button class="drawer__item" role="menuitem" type="button" data-nav="employees">
+            <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M117.25,157.92a60,60,0,1,0-66.5,0A95.83,95.83,0,0,0,3.53,195.63a8,8,0,1,0,13.4,8.74,80,80,0,0,1,134.14,0,8,8,0,0,0,13.4-8.74A95.83,95.83,0,0,0,117.25,157.92ZM40,108a44,44,0,1,1,44,44A44.05,44.05,0,0,1,40,108Zm210.14,98.7a8,8,0,0,1-11.07-2.33A79.83,79.83,0,0,0,172,168a8,8,0,0,1,0-16,44,44,0,1,0-16.34-84.87,8,8,0,1,1-5.94-14.85,60,60,0,0,1,55.53,105.64,95.83,95.83,0,0,1,47.22,37.71A8,8,0,0,1,250.14,206.7Z"/></svg>
+            <span>Nhân viên</span>
           </button>
           <button class="drawer__item" role="menuitem" type="button" data-nav="history">
             <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M216,72H131.31L104,44.69A15.86,15.86,0,0,0,92.69,40H40A16,16,0,0,0,24,56V200.62A15.4,15.4,0,0,0,39.38,216H216.89A15.13,15.13,0,0,0,232,200.89V88A16,16,0,0,0,216,72ZM40,56H92.69l16,16H40ZM216,200H40V88H216Z"/></svg>
@@ -2707,6 +2852,7 @@ mark.mark--neg { background: var(--tcp-error-bg); color: var(--tcp-error-900); }
     results:    $("#screen-results"),
     history:    $("#screen-history"),
     dashboard:  $("#screen-dashboard"),
+    employees:  $("#screen-employees"),
     settings:   $("#screen-settings"),
   };
 
@@ -2768,7 +2914,7 @@ mark.mark--neg { background: var(--tcp-error-bg); color: var(--tcp-error-900); }
     el.addEventListener("click", () => {
       const target = el.dataset.nav;
       if (el.hasAttribute("data-reset")) resetAnalysis();
-      if (target === "analysis" || target === "results" || target === "history" || target === "dashboard" || target === "settings" || target === "login") show(target);
+      if (target === "analysis" || target === "results" || target === "history" || target === "dashboard" || target === "employees" || target === "settings" || target === "login") show(target);
       closeMenu();
     })
   );
@@ -3645,6 +3791,130 @@ mark.mark--neg { background: var(--tcp-error-bg); color: var(--tcp-error-900); }
     set("pieTotal", total.toLocaleString("vi-VN"));
     set("pieIn", inPct + "%");
     set("pieOut", (total ? 100 - inPct : 0) + "%");
+  }
+
+  /* -------------------------------------------------------------------------
+     Screen 5b · Employees — per-agent calling performance, with add support
+     ------------------------------------------------------------------------- */
+  const AVATAR_COLORS = ["#6366F1", "#F97316", "#0EA5E9", "#10B981", "#E11D48", "#8B5CF6", "#F59E0B", "#14B8A6"];
+  function initials(name) {
+    const parts = name.trim().split(/\s+/);
+    const a = parts[0] ? parts[0][0] : "";
+    const b = parts.length > 1 ? parts[parts.length - 1][0] : "";
+    return (a + b).toUpperCase();
+  }
+  function nameHash(s) {
+    let h = 0;
+    for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) >>> 0;
+    return h;
+  }
+
+  let empSeq = 0;
+  const employees = [
+    { id: ++empSeq, name: "Nguyễn Thị Hà",  caller: "1001", inbound: 142, outbound: 98,  trend: [61, 64, 68, 66, 72, 75, 78], last: "26/10/2023, 14:30" },
+    { id: ++empSeq, name: "Trần Văn Dũng",   caller: "1002", inbound: 88,  outbound: 133, trend: [70, 69, 66, 64, 63, 60, 58], last: "26/10/2023, 11:05" },
+    { id: ++empSeq, name: "Lê Hoàng Nam",    caller: "1003", inbound: 120, outbound: 120, trend: [55, 58, 60, 63, 67, 70, 73], last: "25/10/2023, 16:48" },
+    { id: ++empSeq, name: "Phạm Minh Châu",  caller: "1004", inbound: 165, outbound: 71,  trend: [80, 82, 79, 83, 85, 84, 86], last: "25/10/2023, 09:20" },
+    { id: ++empSeq, name: "Vũ Thanh Tùng",   caller: "1005", inbound: 64,  outbound: 96,  trend: [48, 50, 49, 52, 51, 54, 53], last: "24/10/2023, 15:12" },
+  ];
+
+  // Compact success-rate sparkline; green when trending up, red when down.
+  function sparkline(vals) {
+    const w = 88, h = 30, pad = 4;
+    const min = Math.min(...vals), max = Math.max(...vals), span = (max - min) || 1;
+    const xy = vals.map((v, i) => {
+      const x = pad + i * (w - 2 * pad) / (vals.length - 1);
+      const y = h - pad - (v - min) / span * (h - 2 * pad);
+      return [x, y];
+    });
+    const up = vals[vals.length - 1] >= vals[0];
+    const color = up ? "#16A34A" : "#DC2626";
+    const pts = xy.map(p => p[0].toFixed(1) + "," + p[1].toFixed(1)).join(" ");
+    const last = xy[xy.length - 1];
+    return `<svg class="spark" viewBox="0 0 ${w} ${h}" width="${w}" height="${h}" preserveAspectRatio="none" aria-hidden="true">
+      <polyline points="${pts}" fill="none" stroke="${color}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      <circle cx="${last[0].toFixed(1)}" cy="${last[1].toFixed(1)}" r="2.6" fill="${color}"/>
+    </svg>`;
+  }
+
+  const empTbody = $("#empTbody");
+  function renderEmployees() {
+    if (!empTbody) return;
+    empTbody.innerHTML = employees.map(e => {
+      const total = e.inbound + e.outbound;
+      const rate = e.trend[e.trend.length - 1];
+      const delta = rate - e.trend[0];
+      const up = delta >= 0;
+      const color = AVATAR_COLORS[nameHash(e.name) % AVATAR_COLORS.length];
+      const rateClass = rate >= 70 ? "emp-rate--good" : rate >= 55 ? "emp-rate--mid" : "emp-rate--low";
+      return `
+        <tr>
+          <td class="emp-col-name">
+            <div class="emp-person">
+              <span class="emp-avatar" style="background:${color}">${initials(e.name)}</span>
+              <div class="emp-person__meta">
+                <div class="emp-person__name" title="${escAttr(e.name)}">${e.name}</div>
+                <div class="emp-person__id">Caller ID · ${escAttr(e.caller)}</div>
+              </div>
+            </div>
+          </td>
+          <td>
+            <div class="emp-total">${total.toLocaleString("vi-VN")}</div>
+            <div class="emp-inout">
+              <span><span class="cl-dot cl-dot--in"></span>${e.inbound} đến</span>
+              <span><span class="cl-dot cl-dot--out"></span>${e.outbound} đi</span>
+            </div>
+          </td>
+          <td><span class="emp-rate ${rateClass}">${rate}%</span></td>
+          <td>
+            <div class="emp-trend">
+              ${sparkline(e.trend)}
+              <span class="emp-delta ${up ? "emp-delta--up" : "emp-delta--down"}">${up ? "▲" : "▼"} ${Math.abs(delta)}%</span>
+            </div>
+          </td>
+          <td class="emp-last">${e.last}</td>
+        </tr>`;
+    }).join("");
+  }
+  renderEmployees();
+
+  /* Add-employee modal */
+  const empModal = $("#empModal");
+  const empForm  = $("#empForm");
+  const empName  = $("#empName");
+  const empCaller = $("#empCallerId");
+  function openEmpModal() {
+    if (!empModal) return;
+    empForm.reset();
+    empModal.hidden = false;
+    setTimeout(() => empName && empName.focus(), 30);
+  }
+  function closeEmpModal() { if (empModal) empModal.hidden = true; }
+  const empAddBtn = $("#empAddBtn");
+  if (empAddBtn) empAddBtn.addEventListener("click", openEmpModal);
+  $$("[data-emp-cancel]").forEach(el => el.addEventListener("click", closeEmpModal));
+  document.addEventListener("keydown", e => {
+    if (e.key === "Escape" && empModal && !empModal.hidden) closeEmpModal();
+  });
+  if (empForm) {
+    empForm.addEventListener("submit", e => {
+      e.preventDefault();
+      const name = (empName.value || "").trim();
+      if (!name) { empName.focus(); return; }
+      const h = nameHash(name + Date.now());
+      // Seed plausible, deterministic stats for the new agent.
+      const base = 52 + (h % 34);                    // starting success rate 52–85
+      const trend = Array.from({ length: 7 }, (_, i) =>
+        Math.max(20, Math.min(96, base + Math.round((i - 3) * (((h >> (i + 1)) % 5) - 2)))));
+      const caller = (empCaller.value || "").trim() || String(1000 + (h % 9000));
+      employees.unshift({
+        id: ++empSeq, name, caller,
+        inbound: 20 + (h % 160), outbound: 20 + ((h >> 4) % 160),
+        trend, last: "Chưa có cuộc gọi",
+      });
+      renderEmployees();
+      closeEmpModal();
+    });
   }
 
   /* -------------------------------------------------------------------------
