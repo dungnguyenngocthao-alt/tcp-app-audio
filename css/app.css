@@ -1807,13 +1807,9 @@ mark.mark--neg { background: var(--tcp-error-bg); color: var(--tcp-error-900); }
   }
   #screen-analysis .page > .page__title,
   #screen-analysis .page > .page__lead { grid-column: 1 / -1; margin-bottom: 0; }
-  /* Keep each card at its natural height — uploading files must not stretch
-     the profile card to match the upload column. The profile card is locked
-     (via JS) to the empty upload card's height so the two line up before any
-     file is added; make it a flex column so its CTA settles at the bottom. */
+  /* Each card hugs its own content — the config card is not stretched to
+     match the upload column. */
   #screen-analysis .card { margin-top: 0; align-self: start; }
-  #screen-analysis .card--profile { display: flex; flex-direction: column; }
-  #screen-analysis .card--profile .profile-submit { margin-top: auto; }
 
   /* Results columns (2 at this width) are assembled by JS; see base rules. */
 

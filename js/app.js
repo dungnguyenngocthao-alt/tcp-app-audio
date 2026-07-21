@@ -268,27 +268,11 @@
     setTimeout(() => show("uploads"), 600);
   });
 
-  /* In the 2-column layout (>=768) lock the config card to the *empty* upload
-     card's height so the two line up before any file is added — and stay put
-     when the upload card grows with the file list. We measure the upload card
-     with its file list momentarily hidden, so the locked height is the same
-     regardless of how many files are selected. */
-  const uploadCard  = $("#screen-analysis .card--upload");
+  /* The config card hugs its own content (no height matching with the upload
+     column). Kept as a no-op so existing callers stay valid. */
   const profileCard = $("#screen-analysis .card--profile");
   function syncProfileHeight() {
-    if (!uploadCard || !profileCard) return;
-    // Only lock in the 2-col layout and only when the screen is actually
-    // visible — measuring a hidden (display:none) card returns 0 and would
-    // collapse the config card.
-    if (window.innerWidth < 768 || uploadCard.offsetParent === null) {
-      profileCard.style.height = "";
-      return;
-    }
-    const wasHidden = fileListEl.hidden;
-    fileListEl.hidden = true;                 // measure the empty-state height
-    const h = uploadCard.getBoundingClientRect().height;
-    fileListEl.hidden = wasHidden;            // restore (synchronous — no flash)
-    if (h > 0) profileCard.style.height = Math.round(h) + "px";
+    if (profileCard) profileCard.style.height = "";
   }
 
   browseBtn.addEventListener("click", () => fileInput.click());
