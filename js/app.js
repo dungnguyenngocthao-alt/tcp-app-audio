@@ -111,10 +111,9 @@
       $$("[data-uppane]").forEach(p =>
         p.hidden = p.dataset.uppane !== which
       );
-      // The config card only applies to single-call analysis; hide it for the
-      // Excel / Google Sheet bulk-import tab.
+      // Keep the AI config card available on both tabs.
       const pc = $("#screen-analysis .card--profile");
-      if (pc) pc.hidden = which === "bulk";
+      if (pc) pc.hidden = false;
       if (typeof syncProfileHeight === "function") syncProfileHeight();
     })
   );
