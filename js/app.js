@@ -29,6 +29,8 @@
     const scroller = $(".screen__scroll", active);
     if (scroller) scroller.scrollTop = 0;
     setActiveMenu(name);
+    // The config card can only be measured once the analysis screen is visible.
+    if (name === "analysis" && typeof syncProfileHeight === "function") syncProfileHeight();
   }
 
   /* -------------------------------------------------------------------------
@@ -184,12 +186,18 @@
   const profileCard = $("#screen-analysis .card--profile");
   function syncProfileHeight() {
     if (!uploadCard || !profileCard) return;
-    if (window.innerWidth < 768) { profileCard.style.height = ""; return; }
+    // Only lock in the 2-col layout and only when the screen is actually
+    // visible — measuring a hidden (display:none) card returns 0 and would
+    // collapse the config card.
+    if (window.innerWidth < 768 || uploadCard.offsetParent === null) {
+      profileCard.style.height = "";
+      return;
+    }
     const wasHidden = fileListEl.hidden;
     fileListEl.hidden = true;                 // measure the empty-state height
     const h = uploadCard.getBoundingClientRect().height;
     fileListEl.hidden = wasHidden;            // restore (synchronous — no flash)
-    profileCard.style.height = Math.round(h) + "px";
+    if (h > 0) profileCard.style.height = Math.round(h) + "px";
   }
 
   browseBtn.addEventListener("click", () => fileInput.click());
