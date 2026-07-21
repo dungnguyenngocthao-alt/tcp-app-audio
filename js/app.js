@@ -1471,8 +1471,11 @@
       u.reviewed = true;
       u.note = (reviewNote.value || "").trim();
     }
+    const wasCurrentResult = reviewId === resultUploadId;
     renderUploads();
     closeReview();
+    // Reflect the confirmed result on the Results screen if it's showing it.
+    if (wasCurrentResult && typeof selectResultFile === "function") selectResultFile(currentResultIndex);
   });
 
   /* -------------------------------------------------------------------------
@@ -1573,21 +1576,30 @@
     updateStripNav();
   }
 
+  let currentResultIndex = 0;
+  let resultUploadId = null;
+
   // Swap the analysis below to a given file (by index into resultFiles)
   function selectResultFile(index) {
+    currentResultIndex = index;
     const name = resultFiles[index] || DEFAULT_PROC_NAME;
     const m = mockCall(name);
+    // Link this result to its upload-history record (so it can be evaluated).
+    const rec = (typeof UPLOAD_LOG !== "undefined") ? UPLOAD_LOG.find(u => u.file === name) : null;
+    resultUploadId = rec ? rec.id : null;
+    const shownRate = rec ? effRate(rec) : m.conf;
+
     const title = $("#screen-results .outcome__title");
     const pct   = $("#screen-results .outcome__pct");
     if (title) title.textContent = m.outcome;
-    if (pct)   pct.textContent = m.conf + "%";
+    if (pct)   pct.textContent = shownRate + "%";
 
     // Tint the outcome card by consultation rate: >60 green, 40–60 amber, <40 pink
     const outcome = $("#screen-results .outcome");
     const card = outcome && outcome.closest(".card");
     if (card) {
       card.classList.remove("outcome-card--good", "outcome-card--mid", "outcome-card--low");
-      card.classList.add(m.conf > 60 ? "outcome-card--good" : m.conf >= 40 ? "outcome-card--mid" : "outcome-card--low");
+      card.classList.add(shownRate > 60 ? "outcome-card--good" : shownRate >= 40 ? "outcome-card--mid" : "outcome-card--low");
     }
 
     if (fileStripScroll) {
@@ -1598,6 +1610,31 @@
       if (active) active.scrollIntoView({ block: "nearest", inline: "nearest" });
     }
     if (typeof resetAudioPreview === "function") resetAudioPreview(m.dur);
+    renderOutcomeReview();
+  }
+
+  // In-result evaluation panel — confirm the AI result or override it.
+  function renderOutcomeReview() {
+    const box = $("#outcomeReview");
+    if (!box) return;
+    const rec = (typeof UPLOAD_LOG !== "undefined") ? UPLOAD_LOG.find(u => u.id === resultUploadId) : null;
+    if (!rec) { box.hidden = true; box.innerHTML = ""; return; }
+    box.hidden = false;
+    if (rec.reviewed) {
+      box.innerHTML =
+        `<span class="outcome-review__tag outcome-review__tag--user">✓ Đã chốt bởi bạn · ${rec.userRate}%</span>` +
+        `<button class="btn btn--outline btn--sm" type="button" data-outcome-review>Đánh giá lại</button>`;
+    } else {
+      box.innerHTML =
+        `<span class="outcome-review__tag outcome-review__tag--ai">Kết quả AI · chưa đánh giá tay</span>` +
+        `<button class="btn btn--accent btn--sm" type="button" data-outcome-review>Đánh giá &amp; chốt kết quả</button>`;
+    }
+  }
+  {
+    const box = $("#outcomeReview");
+    if (box) box.addEventListener("click", e => {
+      if (e.target.closest("[data-outcome-review]") && resultUploadId) openReview(resultUploadId);
+    });
   }
 
   /* Results · mock audio preview player (play/pause sweeps the waveform) */

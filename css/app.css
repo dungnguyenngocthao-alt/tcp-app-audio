@@ -224,6 +224,15 @@ button { font-family: inherit; }
 .review-ai b { color: var(--tcp-fg-primary); }
 #reviewRateVal { color: var(--tcp-accent); font-weight: 600; }
 .review-note { resize: vertical; min-height: 42px; font-family: inherit; line-height: 1.4; }
+/* In-result evaluation panel (inside the outcome card) */
+.outcome-review {
+  display: flex; align-items: center; justify-content: center; flex-wrap: wrap;
+  gap: 10px; margin-top: var(--tcp-space-4);
+  padding-top: var(--tcp-space-4); border-top: 1px dashed var(--tcp-border);
+}
+.outcome-review__tag { font-size: 12px; font-weight: 500; padding: 3px 10px; border-radius: var(--tcp-radius-pill); }
+.outcome-review__tag--ai { background: var(--tcp-neutral-100); color: var(--tcp-fg-secondary); }
+.outcome-review__tag--user { background: var(--tcp-success-bg); color: var(--tcp-success-fg); }
 .up-stats { margin-bottom: var(--tcp-space-5); }
 .up-filter { margin-bottom: var(--tcp-space-4); }
 
