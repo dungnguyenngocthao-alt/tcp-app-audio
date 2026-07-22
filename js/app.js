@@ -33,6 +33,8 @@
     setActiveMenu(name);
     // The config card can only be measured once the analysis screen is visible.
     if (name === "analysis" && typeof syncProfileHeight === "function") syncProfileHeight();
+    // Settings always opens on its menu (hub) view.
+    if (name === "settings" && typeof showSettingsPane === "function") showSettingsPane("menu");
   }
 
   /* -------------------------------------------------------------------------
@@ -1866,6 +1868,19 @@
   setupKwEditor("failureKwList", "failureKwInput", "failureKwAdd", negativeKeywords, "neg");
   highlightTranscript();
   colorKeywordChips();
+
+  /* -------------------------------------------------------------------------
+     Settings hub — a menu that opens one of two detail panes.
+     ------------------------------------------------------------------------- */
+  function showSettingsPane(name) {
+    $$("[data-setpane]").forEach(p => { p.hidden = p.dataset.setpane !== name; });
+    const sc = $("#screen-settings .screen__scroll");
+    if (sc) sc.scrollTop = 0;
+  }
+  $$("[data-setnav]").forEach(el =>
+    el.addEventListener("click", () => showSettingsPane(el.dataset.setnav)));
+  $$("[data-setback]").forEach(el =>
+    el.addEventListener("click", () => showSettingsPane("menu")));
 
   /* -------------------------------------------------------------------------
      Settings · login-account management (create / edit / delete)

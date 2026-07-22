@@ -451,6 +451,30 @@ button { font-family: inherit; }
 .acc-table { min-width: 520px; }
 .acc-email { color: var(--tcp-fg-secondary); }
 .acc-pw { font-family: var(--tcp-font-mono); letter-spacing: 2px; color: var(--tcp-fg-tertiary); }
+
+/* Settings hub — menu of sub-sections + detail-view back header */
+.settings-menu { display: flex; flex-direction: column; gap: var(--tcp-space-4); }
+.set-item {
+  display: flex; align-items: center; gap: var(--tcp-space-4);
+  width: 100%; text-align: left; cursor: pointer;
+}
+.set-item__icon {
+  flex: 0 0 auto; width: 44px; height: 44px; border-radius: var(--tcp-radius-lg);
+  display: grid; place-items: center;
+  background: var(--tcp-accent-subtle); color: var(--tcp-accent);
+}
+.set-item__icon svg { width: 22px; height: 22px; }
+.set-item__body { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.set-item__title { font-size: 16px; font-weight: 500; color: var(--tcp-fg-primary); }
+.set-item__desc { font-size: 13px; color: var(--tcp-fg-secondary); }
+.set-item__chev { flex: 0 0 auto; width: 18px; height: 18px; color: var(--tcp-fg-tertiary); }
+.set-item:hover .set-item__chev { color: var(--tcp-accent); }
+
+.set-detail-head {
+  display: flex; align-items: center; gap: var(--tcp-space-2);
+  margin: 6px 0 var(--tcp-space-5);
+}
+.set-detail-head .results-head__title { margin: 0; }
 .up-src {
   display: inline-block; margin-left: 8px; vertical-align: middle;
   font-size: 10px; font-weight: 600; padding: 1px 7px; border-radius: var(--tcp-radius-pill);
@@ -3243,68 +3267,110 @@ body {
         </header>
 
         <div class="page">
-          <h1 class="page__title">Cài đặt</h1>
-          <p class="page__lead">Tùy chỉnh bộ từ khóa và quản lý tài khoản đăng nhập.</p>
-
-          <div class="card">
-            <div class="result-card__label result-card__label--success">
-              <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M240,56v64a8,8,0,0,1-16,0V75.31l-82.34,82.35a8,8,0,0,1-11.32,0L96,123.31,29.66,189.66a8,8,0,0,1-11.32-11.32l72-72a8,8,0,0,1,11.32,0L136,140.69,212.69,64H168a8,8,0,0,1,0-16h64A8,8,0,0,1,240,56Z"/></svg>
-              Từ khóa cảm xúc tích cực
-            </div>
-            <p class="kw-hint">Khi xuất hiện trong bản ghi ở những lần phân tích sau, các từ này được tô màu tích cực.</p>
-            <div class="kw-list" id="successKwList"></div>
-            <div class="kw-add">
-              <input class="input" id="successKwInput" type="text" placeholder="Thêm từ khóa..." maxlength="30" autocomplete="off">
-              <button class="btn btn--ink btn--sm kw-add__btn" id="successKwAdd" type="button">
-                <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M224,128a8,8,0,0,1-8,8H136v80a8,8,0,0,1-16,0V136H40a8,8,0,0,1,0-16h80V40a8,8,0,0,1,16,0v80h80A8,8,0,0,1,224,128Z"/></svg>
-                Thêm
+          <!-- Settings hub -->
+          <div data-setpane="menu">
+            <h1 class="page__title">Cài đặt</h1>
+            <p class="page__lead">Chọn mục bạn muốn quản lý.</p>
+            <div class="settings-menu">
+              <button class="card set-item" type="button" data-setnav="accounts">
+                <span class="set-item__icon">
+                  <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M230.92,212c-15.23-26.33-38.7-45.21-66.09-54.16a72,72,0,1,0-73.66,0C63.78,166.78,40.31,185.66,25.08,212a8,8,0,1,0,13.85,8c18.84-32.56,52.14-52,89.07-52s70.23,19.44,89.07,52a8,8,0,1,0,13.85-8ZM72,96a56,56,0,1,1,56,56A56.06,56.06,0,0,1,72,96Z"/></svg>
+                </span>
+                <span class="set-item__body">
+                  <span class="set-item__title">Quản lý tài khoản</span>
+                  <span class="set-item__desc">Tạo, sửa và xóa tài khoản đăng nhập.</span>
+                </span>
+                <svg class="set-item__chev" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M181.66,133.66l-80,80a8,8,0,0,1-11.32-11.32L164.69,128,90.34,53.66a8,8,0,0,1,11.32-11.32l80,80A8,8,0,0,1,181.66,133.66Z"/></svg>
               </button>
-            </div>
-          </div>
-
-          <div class="card">
-            <div class="result-card__label result-card__label--error">
-              <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M240,128v64a8,8,0,0,1-8,8H168a8,8,0,0,1,0-16h44.69L136,107.31l-34.34,34.35a8,8,0,0,1-11.32,0l-72-72A8,8,0,0,1,29.66,58.34L96,124.69l34.34-34.35a8,8,0,0,1,11.32,0L224,172.69V128a8,8,0,0,1,16,0Z"/></svg>
-              Từ khóa cảm xúc tiêu cực
-            </div>
-            <p class="kw-hint">Khi xuất hiện trong bản ghi ở những lần phân tích sau, các từ này được tô màu tiêu cực.</p>
-            <div class="kw-list" id="failureKwList"></div>
-            <div class="kw-add">
-              <input class="input" id="failureKwInput" type="text" placeholder="Thêm từ khóa..." maxlength="30" autocomplete="off">
-              <button class="btn btn--ink btn--sm kw-add__btn" id="failureKwAdd" type="button">
-                <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M224,128a8,8,0,0,1-8,8H136v80a8,8,0,0,1-16,0V136H40a8,8,0,0,1,0-16h80V40a8,8,0,0,1,16,0v80h80A8,8,0,0,1,224,128Z"/></svg>
-                Thêm
+              <button class="card set-item" type="button" data-setnav="keywords">
+                <span class="set-item__icon">
+                  <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M243.31,136,144,36.69A15.86,15.86,0,0,0,132.69,32H40a8,8,0,0,0-8,8v92.69A15.86,15.86,0,0,0,36.69,144L136,243.31a16,16,0,0,0,22.63,0l84.68-84.68a16,16,0,0,0,0-22.63Zm-96,96L48,132.69V48h84.69L232,147.31ZM88,68a20,20,0,1,1-20,20A20,20,0,0,1,88,68Z"/></svg>
+                </span>
+                <span class="set-item__body">
+                  <span class="set-item__title">Bộ từ khoá cảm xúc</span>
+                  <span class="set-item__desc">Từ khoá tích cực / tiêu cực ảnh hưởng đánh giá.</span>
+                </span>
+                <svg class="set-item__chev" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M181.66,133.66l-80,80a8,8,0,0,1-11.32-11.32L164.69,128,90.34,53.66a8,8,0,0,1,11.32-11.32l80,80A8,8,0,0,1,181.66,133.66Z"/></svg>
               </button>
             </div>
           </div>
 
           <!-- Account management -->
-          <div class="card">
-            <div class="acc-head">
-              <div>
-                <div class="result-card__label">
-                  <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M230.92,212c-15.23-26.33-38.7-45.21-66.09-54.16a72,72,0,1,0-73.66,0C63.78,166.78,40.31,185.66,25.08,212a8,8,0,1,0,13.85,8c18.84-32.56,52.14-52,89.07-52s70.23,19.44,89.07,52a8,8,0,1,0,13.85-8ZM72,96a56,56,0,1,1,56,56A56.06,56.06,0,0,1,72,96Z"/></svg>
-                  Tài khoản đăng nhập
-                </div>
-                <p class="kw-hint">Tạo và quản lý tài khoản người dùng đăng nhập vào hệ thống.</p>
-              </div>
-              <button class="btn btn--accent btn--sm acc-add" id="accAddBtn" type="button">
-                <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M256,136a8,8,0,0,1-8,8H232v16a8,8,0,0,1-16,0V144H200a8,8,0,0,1,0-16h16V112a8,8,0,0,1,16,0v16h16A8,8,0,0,1,256,136Zm-57.87,58.85a8,8,0,0,1-6.4,12.79H14.34a8,8,0,0,1-6.4-12.79C22.91,174.28,45,159.82,69.6,153a72,72,0,1,1,76.8,0C171,159.82,193.09,174.28,208,194.85ZM74,131.61a8,8,0,0,0,8-8V120a55.94,55.94,0,0,1,110.9-9.42A56,56,0,1,0,74,131.61Z"/></svg>
-                Thêm tài khoản
+          <div data-setpane="accounts" hidden>
+            <div class="set-detail-head">
+              <button class="iconbtn" type="button" data-setback aria-label="Quay lại">
+                <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M224,128a8,8,0,0,1-8,8H59.31l58.35,58.34a8,8,0,0,1-11.32,11.32l-72-72a8,8,0,0,1,0-11.32l72-72a8,8,0,0,1,11.32,11.32L59.31,120H216A8,8,0,0,1,224,128Z"/></svg>
               </button>
+              <h1 class="results-head__title">Quản lý tài khoản</h1>
             </div>
-            <div class="emp-table-wrap acc-table-wrap">
-              <table class="emp-table acc-table">
-                <thead>
-                  <tr>
-                    <th>Tên user</th>
-                    <th>Email</th>
-                    <th>Mật khẩu</th>
-                    <th class="tbl-act-col" aria-label="Thao tác"></th>
-                  </tr>
-                </thead>
-                <tbody id="accTbody"></tbody>
-              </table>
+            <div class="card">
+              <div class="acc-head">
+                <div>
+                  <div class="result-card__label">
+                    <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M230.92,212c-15.23-26.33-38.7-45.21-66.09-54.16a72,72,0,1,0-73.66,0C63.78,166.78,40.31,185.66,25.08,212a8,8,0,1,0,13.85,8c18.84-32.56,52.14-52,89.07-52s70.23,19.44,89.07,52a8,8,0,1,0,13.85-8ZM72,96a56,56,0,1,1,56,56A56.06,56.06,0,0,1,72,96Z"/></svg>
+                    Tài khoản đăng nhập
+                  </div>
+                  <p class="kw-hint">Tạo và quản lý tài khoản người dùng đăng nhập vào hệ thống.</p>
+                </div>
+                <button class="btn btn--accent btn--sm acc-add" id="accAddBtn" type="button">
+                  <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M256,136a8,8,0,0,1-8,8H232v16a8,8,0,0,1-16,0V144H200a8,8,0,0,1,0-16h16V112a8,8,0,0,1,16,0v16h16A8,8,0,0,1,256,136Zm-57.87,58.85a8,8,0,0,1-6.4,12.79H14.34a8,8,0,0,1-6.4-12.79C22.91,174.28,45,159.82,69.6,153a72,72,0,1,1,76.8,0C171,159.82,193.09,174.28,208,194.85ZM74,131.61a8,8,0,0,0,8-8V120a55.94,55.94,0,0,1,110.9-9.42A56,56,0,1,0,74,131.61Z"/></svg>
+                  Thêm tài khoản
+                </button>
+              </div>
+              <div class="emp-table-wrap acc-table-wrap">
+                <table class="emp-table acc-table">
+                  <thead>
+                    <tr>
+                      <th>Tên user</th>
+                      <th>Email</th>
+                      <th>Mật khẩu</th>
+                      <th class="tbl-act-col" aria-label="Thao tác"></th>
+                    </tr>
+                  </thead>
+                  <tbody id="accTbody"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- Sentiment keyword sets -->
+          <div data-setpane="keywords" hidden>
+            <div class="set-detail-head">
+              <button class="iconbtn" type="button" data-setback aria-label="Quay lại">
+                <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M224,128a8,8,0,0,1-8,8H59.31l58.35,58.34a8,8,0,0,1-11.32,11.32l-72-72a8,8,0,0,1,0-11.32l72-72a8,8,0,0,1,11.32,11.32L59.31,120H216A8,8,0,0,1,224,128Z"/></svg>
+              </button>
+              <h1 class="results-head__title">Bộ từ khoá cảm xúc</h1>
+            </div>
+            <div class="card">
+              <div class="result-card__label result-card__label--success">
+                <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M240,56v64a8,8,0,0,1-16,0V75.31l-82.34,82.35a8,8,0,0,1-11.32,0L96,123.31,29.66,189.66a8,8,0,0,1-11.32-11.32l72-72a8,8,0,0,1,11.32,0L136,140.69,212.69,64H168a8,8,0,0,1,0-16h64A8,8,0,0,1,240,56Z"/></svg>
+                Từ khóa cảm xúc tích cực
+              </div>
+              <p class="kw-hint">Khi xuất hiện trong bản ghi ở những lần phân tích sau, các từ này được tô màu tích cực.</p>
+              <div class="kw-list" id="successKwList"></div>
+              <div class="kw-add">
+                <input class="input" id="successKwInput" type="text" placeholder="Thêm từ khóa..." maxlength="30" autocomplete="off">
+                <button class="btn btn--ink btn--sm kw-add__btn" id="successKwAdd" type="button">
+                  <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M224,128a8,8,0,0,1-8,8H136v80a8,8,0,0,1-16,0V136H40a8,8,0,0,1,0-16h80V40a8,8,0,0,1,16,0v80h80A8,8,0,0,1,224,128Z"/></svg>
+                  Thêm
+                </button>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="result-card__label result-card__label--error">
+                <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M240,128v64a8,8,0,0,1-8,8H168a8,8,0,0,1,0-16h44.69L136,107.31l-34.34,34.35a8,8,0,0,1-11.32,0l-72-72A8,8,0,0,1,29.66,58.34L96,124.69l34.34-34.35a8,8,0,0,1,11.32,0L224,172.69V128a8,8,0,0,1,16,0Z"/></svg>
+                Từ khóa cảm xúc tiêu cực
+              </div>
+              <p class="kw-hint">Khi xuất hiện trong bản ghi ở những lần phân tích sau, các từ này được tô màu tiêu cực.</p>
+              <div class="kw-list" id="failureKwList"></div>
+              <div class="kw-add">
+                <input class="input" id="failureKwInput" type="text" placeholder="Thêm từ khóa..." maxlength="30" autocomplete="off">
+                <button class="btn btn--ink btn--sm kw-add__btn" id="failureKwAdd" type="button">
+                  <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M224,128a8,8,0,0,1-8,8H136v80a8,8,0,0,1-16,0V136H40a8,8,0,0,1,0-16h80V40a8,8,0,0,1,16,0v80h80A8,8,0,0,1,224,128Z"/></svg>
+                  Thêm
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -3491,6 +3557,8 @@ body {
     setActiveMenu(name);
     // The config card can only be measured once the analysis screen is visible.
     if (name === "analysis" && typeof syncProfileHeight === "function") syncProfileHeight();
+    // Settings always opens on its menu (hub) view.
+    if (name === "settings" && typeof showSettingsPane === "function") showSettingsPane("menu");
   }
 
   /* -------------------------------------------------------------------------
@@ -5324,6 +5392,19 @@ body {
   setupKwEditor("failureKwList", "failureKwInput", "failureKwAdd", negativeKeywords, "neg");
   highlightTranscript();
   colorKeywordChips();
+
+  /* -------------------------------------------------------------------------
+     Settings hub — a menu that opens one of two detail panes.
+     ------------------------------------------------------------------------- */
+  function showSettingsPane(name) {
+    $$("[data-setpane]").forEach(p => { p.hidden = p.dataset.setpane !== name; });
+    const sc = $("#screen-settings .screen__scroll");
+    if (sc) sc.scrollTop = 0;
+  }
+  $$("[data-setnav]").forEach(el =>
+    el.addEventListener("click", () => showSettingsPane(el.dataset.setnav)));
+  $$("[data-setback]").forEach(el =>
+    el.addEventListener("click", () => showSettingsPane("menu")));
 
   /* -------------------------------------------------------------------------
      Settings · login-account management (create / edit / delete)
