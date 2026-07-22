@@ -222,6 +222,28 @@ button { font-family: inherit; }
 .tbl-del svg { width: 17px; height: 17px; }
 .tbl-del:hover { background: var(--tcp-error-bg); color: var(--tcp-error-fg); }
 .tbl-del:focus-visible { outline: 0; box-shadow: 0 0 0 3px var(--tcp-error-bg); }
+.tbl-edit {
+  appearance: none; border: 0; background: none; cursor: pointer;
+  width: 30px; height: 30px; border-radius: var(--tcp-radius-sm);
+  display: inline-grid; place-items: center; flex: 0 0 auto;
+  color: var(--tcp-fg-tertiary);
+  transition: background var(--tcp-dur-fast) var(--tcp-ease), color var(--tcp-dur-fast) var(--tcp-ease);
+}
+.tbl-edit svg { width: 16px; height: 16px; }
+.tbl-edit:hover { background: var(--tcp-accent-subtle); color: var(--tcp-accent); }
+.tbl-edit:focus-visible { outline: 0; box-shadow: 0 0 0 3px var(--tcp-accent-subtle); }
+.tbl-act .tbl-edit + .tbl-del { margin-left: 2px; }
+
+/* Settings · account management */
+.acc-head {
+  display: flex; align-items: flex-start; justify-content: space-between;
+  gap: var(--tcp-space-4); flex-wrap: wrap; margin-bottom: var(--tcp-space-4);
+}
+.acc-add { display: inline-flex; align-items: center; gap: 6px; flex: 0 0 auto; }
+.acc-add svg { width: 16px; height: 16px; }
+.acc-table { min-width: 520px; }
+.acc-email { color: var(--tcp-fg-secondary); }
+.acc-pw { font-family: var(--tcp-font-mono); letter-spacing: 2px; color: var(--tcp-fg-tertiary); }
 .up-src {
   display: inline-block; margin-left: 8px; vertical-align: middle;
   font-size: 10px; font-weight: 600; padding: 1px 7px; border-radius: var(--tcp-radius-pill);

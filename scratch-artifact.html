@@ -429,6 +429,28 @@ button { font-family: inherit; }
 .tbl-del svg { width: 17px; height: 17px; }
 .tbl-del:hover { background: var(--tcp-error-bg); color: var(--tcp-error-fg); }
 .tbl-del:focus-visible { outline: 0; box-shadow: 0 0 0 3px var(--tcp-error-bg); }
+.tbl-edit {
+  appearance: none; border: 0; background: none; cursor: pointer;
+  width: 30px; height: 30px; border-radius: var(--tcp-radius-sm);
+  display: inline-grid; place-items: center; flex: 0 0 auto;
+  color: var(--tcp-fg-tertiary);
+  transition: background var(--tcp-dur-fast) var(--tcp-ease), color var(--tcp-dur-fast) var(--tcp-ease);
+}
+.tbl-edit svg { width: 16px; height: 16px; }
+.tbl-edit:hover { background: var(--tcp-accent-subtle); color: var(--tcp-accent); }
+.tbl-edit:focus-visible { outline: 0; box-shadow: 0 0 0 3px var(--tcp-accent-subtle); }
+.tbl-act .tbl-edit + .tbl-del { margin-left: 2px; }
+
+/* Settings · account management */
+.acc-head {
+  display: flex; align-items: flex-start; justify-content: space-between;
+  gap: var(--tcp-space-4); flex-wrap: wrap; margin-bottom: var(--tcp-space-4);
+}
+.acc-add { display: inline-flex; align-items: center; gap: 6px; flex: 0 0 auto; }
+.acc-add svg { width: 16px; height: 16px; }
+.acc-table { min-width: 520px; }
+.acc-email { color: var(--tcp-fg-secondary); }
+.acc-pw { font-family: var(--tcp-font-mono); letter-spacing: 2px; color: var(--tcp-fg-tertiary); }
 .up-src {
   display: inline-block; margin-left: 8px; vertical-align: middle;
   font-size: 10px; font-weight: 600; padding: 1px 7px; border-radius: var(--tcp-radius-pill);
@@ -3222,7 +3244,7 @@ body {
 
         <div class="page">
           <h1 class="page__title">Cài đặt</h1>
-          <p class="page__lead">Tùy chỉnh bộ từ khóa ảnh hưởng đến đánh giá cuộc gọi.</p>
+          <p class="page__lead">Tùy chỉnh bộ từ khóa và quản lý tài khoản đăng nhập.</p>
 
           <div class="card">
             <div class="result-card__label result-card__label--success">
@@ -3253,6 +3275,36 @@ body {
                 <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M224,128a8,8,0,0,1-8,8H136v80a8,8,0,0,1-16,0V136H40a8,8,0,0,1,0-16h80V40a8,8,0,0,1,16,0v80h80A8,8,0,0,1,224,128Z"/></svg>
                 Thêm
               </button>
+            </div>
+          </div>
+
+          <!-- Account management -->
+          <div class="card">
+            <div class="acc-head">
+              <div>
+                <div class="result-card__label">
+                  <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M230.92,212c-15.23-26.33-38.7-45.21-66.09-54.16a72,72,0,1,0-73.66,0C63.78,166.78,40.31,185.66,25.08,212a8,8,0,1,0,13.85,8c18.84-32.56,52.14-52,89.07-52s70.23,19.44,89.07,52a8,8,0,1,0,13.85-8ZM72,96a56,56,0,1,1,56,56A56.06,56.06,0,0,1,72,96Z"/></svg>
+                  Tài khoản đăng nhập
+                </div>
+                <p class="kw-hint">Tạo và quản lý tài khoản người dùng đăng nhập vào hệ thống.</p>
+              </div>
+              <button class="btn btn--accent btn--sm acc-add" id="accAddBtn" type="button">
+                <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M256,136a8,8,0,0,1-8,8H232v16a8,8,0,0,1-16,0V144H200a8,8,0,0,1,0-16h16V112a8,8,0,0,1,16,0v16h16A8,8,0,0,1,256,136Zm-57.87,58.85a8,8,0,0,1-6.4,12.79H14.34a8,8,0,0,1-6.4-12.79C22.91,174.28,45,159.82,69.6,153a72,72,0,1,1,76.8,0C171,159.82,193.09,174.28,208,194.85ZM74,131.61a8,8,0,0,0,8-8V120a55.94,55.94,0,0,1,110.9-9.42A56,56,0,1,0,74,131.61Z"/></svg>
+                Thêm tài khoản
+              </button>
+            </div>
+            <div class="emp-table-wrap acc-table-wrap">
+              <table class="emp-table acc-table">
+                <thead>
+                  <tr>
+                    <th>Tên user</th>
+                    <th>Email</th>
+                    <th>Mật khẩu</th>
+                    <th class="tbl-act-col" aria-label="Thao tác"></th>
+                  </tr>
+                </thead>
+                <tbody id="accTbody"></tbody>
+              </table>
             </div>
           </div>
         </div>
@@ -3334,6 +3386,31 @@ body {
         <div class="modal__actions">
           <button class="btn btn--outline" type="button" data-review-cancel>Hủy</button>
           <button class="btn btn--accent" type="submit">Chốt kết quả</button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Account create / edit dialog -->
+    <div class="modal" id="accModal" hidden>
+      <div class="modal__backdrop" data-acc-cancel></div>
+      <form class="modal__box modal__box--form" id="accForm" role="dialog" aria-modal="true" aria-labelledby="accModalTitle" novalidate>
+        <h2 class="modal__title" id="accModalTitle">Thêm tài khoản</h2>
+        <p class="modal__msg">Nhập thông tin tài khoản đăng nhập.</p>
+        <div class="field">
+          <label class="field__label" for="accName">Tên user</label>
+          <input class="input" id="accName" type="text" placeholder="VD: Nguyễn Thị Hà" maxlength="40" autocomplete="off">
+        </div>
+        <div class="field">
+          <label class="field__label" for="accEmail">Email</label>
+          <input class="input" id="accEmail" type="email" placeholder="ten@talentconnect.plus" autocomplete="off">
+        </div>
+        <div class="field">
+          <label class="field__label" for="accPw">Mật khẩu</label>
+          <input class="input" id="accPw" type="password" placeholder="Ít nhất 6 ký tự" autocomplete="new-password">
+        </div>
+        <div class="modal__actions">
+          <button class="btn btn--outline" type="button" data-acc-cancel>Hủy</button>
+          <button class="btn btn--accent" type="submit" id="accSave">Lưu</button>
         </div>
       </form>
     </div>
@@ -5247,6 +5324,100 @@ body {
   setupKwEditor("failureKwList", "failureKwInput", "failureKwAdd", negativeKeywords, "neg");
   highlightTranscript();
   colorKeywordChips();
+
+  /* -------------------------------------------------------------------------
+     Settings · login-account management (create / edit / delete)
+     ------------------------------------------------------------------------- */
+  let accSeq = 0;
+  const ACCOUNTS = [
+    { id: ++accSeq, name: "Nguyễn Thị Hà", email: "ha.nguyen@talentconnect.plus", pw: "Tcp@2024" },
+    { id: ++accSeq, name: "Trần Văn Dũng",  email: "dung.tran@talentconnect.plus", pw: "Dung#1988" },
+    { id: ++accSeq, name: "Quản trị viên",  email: "admin@talentconnect.plus",     pw: "Admin@123" },
+  ];
+  const accTbody = $("#accTbody");
+  function renderAccounts() {
+    if (!accTbody) return;
+    accTbody.innerHTML = ACCOUNTS.map(a => {
+      const color = AVATAR_COLORS[nameHash(a.name) % AVATAR_COLORS.length];
+      return `
+        <tr>
+          <td class="emp-col-name">
+            <div class="emp-person">
+              <span class="emp-avatar" style="background:${color}">${initials(a.name)}</span>
+              <div class="emp-person__name" title="${escAttr(a.name)}">${a.name}</div>
+            </div>
+          </td>
+          <td class="acc-email">${escAttr(a.email)}</td>
+          <td class="acc-pw">${"•".repeat(Math.min(10, a.pw.length))}</td>
+          <td class="tbl-act">
+            <button class="tbl-edit acc-edit" type="button" data-id="${a.id}" aria-label="Sửa tài khoản" title="Sửa">${PENCIL_SVG}</button>
+            <button class="tbl-del acc-del" type="button" data-id="${a.id}" aria-label="Xóa tài khoản" title="Xóa">${TRASH_SVG}</button>
+          </td>
+        </tr>`;
+    }).join("");
+  }
+  renderAccounts();
+
+  const accModal = $("#accModal");
+  const accForm  = $("#accForm");
+  const accName  = $("#accName");
+  const accEmail = $("#accEmail");
+  const accPw    = $("#accPw");
+  const accTitle = $("#accModalTitle");
+  let accEditId = null;
+  function openAccModal(id) {
+    if (!accModal) return;
+    accForm.reset();
+    accEditId = id || null;
+    const a = id ? ACCOUNTS.find(x => x.id === id) : null;
+    if (accTitle) accTitle.textContent = a ? "Sửa tài khoản" : "Thêm tài khoản";
+    if (a) { accName.value = a.name; accEmail.value = a.email; accPw.value = a.pw; }
+    accModal.hidden = false;
+    setTimeout(() => accName && accName.focus(), 30);
+  }
+  function closeAccModal() { if (accModal) accModal.hidden = true; accEditId = null; }
+  const accAddBtn = $("#accAddBtn");
+  if (accAddBtn) accAddBtn.addEventListener("click", () => openAccModal());
+  $$("[data-acc-cancel]").forEach(el => el.addEventListener("click", closeAccModal));
+  document.addEventListener("keydown", e => {
+    if (e.key === "Escape" && accModal && !accModal.hidden) closeAccModal();
+  });
+  if (accForm) accForm.addEventListener("submit", e => {
+    e.preventDefault();
+    const name = (accName.value || "").trim();
+    const email = (accEmail.value || "").trim();
+    const pw = accPw.value || "";
+    if (!name) { accName.focus(); return; }
+    if (!email) { accEmail.focus(); return; }
+    if (pw.length < 6) { accPw.focus(); return; }
+    if (accEditId) {
+      const a = ACCOUNTS.find(x => x.id === accEditId);
+      if (a) { a.name = name; a.email = email; a.pw = pw; }
+    } else {
+      ACCOUNTS.push({ id: ++accSeq, name, email, pw });
+    }
+    renderAccounts();
+    closeAccModal();
+  });
+  if (accTbody) accTbody.addEventListener("click", e => {
+    const ed = e.target.closest(".acc-edit");
+    if (ed) { openAccModal(parseInt(ed.dataset.id, 10)); return; }
+    const del = e.target.closest(".acc-del");
+    if (del) {
+      const id = parseInt(del.dataset.id, 10);
+      const a = ACCOUNTS.find(x => x.id === id);
+      showConfirm({
+        title: "Xóa tài khoản?",
+        message: `Tài khoản "${a ? a.name : ""}"${a ? ` (${a.email})` : ""} sẽ bị xóa.`,
+        confirmLabel: "Xóa",
+        onConfirm: () => {
+          const i = ACCOUNTS.findIndex(x => x.id === id);
+          if (i >= 0) ACCOUNTS.splice(i, 1);
+          renderAccounts();
+        },
+      });
+    }
+  });
 
   /* -------------------------------------------------------------------------
      Dashboard export — build a real .xlsx (3 sheets), dependency-free

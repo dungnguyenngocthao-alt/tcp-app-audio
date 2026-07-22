@@ -913,7 +913,7 @@
 
         <div class="page">
           <h1 class="page__title">Cài đặt</h1>
-          <p class="page__lead">Tùy chỉnh bộ từ khóa ảnh hưởng đến đánh giá cuộc gọi.</p>
+          <p class="page__lead">Tùy chỉnh bộ từ khóa và quản lý tài khoản đăng nhập.</p>
 
           <div class="card">
             <div class="result-card__label result-card__label--success">
@@ -944,6 +944,36 @@
                 <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M224,128a8,8,0,0,1-8,8H136v80a8,8,0,0,1-16,0V136H40a8,8,0,0,1,0-16h80V40a8,8,0,0,1,16,0v80h80A8,8,0,0,1,224,128Z"/></svg>
                 Thêm
               </button>
+            </div>
+          </div>
+
+          <!-- Account management -->
+          <div class="card">
+            <div class="acc-head">
+              <div>
+                <div class="result-card__label">
+                  <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M230.92,212c-15.23-26.33-38.7-45.21-66.09-54.16a72,72,0,1,0-73.66,0C63.78,166.78,40.31,185.66,25.08,212a8,8,0,1,0,13.85,8c18.84-32.56,52.14-52,89.07-52s70.23,19.44,89.07,52a8,8,0,1,0,13.85-8ZM72,96a56,56,0,1,1,56,56A56.06,56.06,0,0,1,72,96Z"/></svg>
+                  Tài khoản đăng nhập
+                </div>
+                <p class="kw-hint">Tạo và quản lý tài khoản người dùng đăng nhập vào hệ thống.</p>
+              </div>
+              <button class="btn btn--accent btn--sm acc-add" id="accAddBtn" type="button">
+                <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M256,136a8,8,0,0,1-8,8H232v16a8,8,0,0,1-16,0V144H200a8,8,0,0,1,0-16h16V112a8,8,0,0,1,16,0v16h16A8,8,0,0,1,256,136Zm-57.87,58.85a8,8,0,0,1-6.4,12.79H14.34a8,8,0,0,1-6.4-12.79C22.91,174.28,45,159.82,69.6,153a72,72,0,1,1,76.8,0C171,159.82,193.09,174.28,208,194.85ZM74,131.61a8,8,0,0,0,8-8V120a55.94,55.94,0,0,1,110.9-9.42A56,56,0,1,0,74,131.61Z"/></svg>
+                Thêm tài khoản
+              </button>
+            </div>
+            <div class="emp-table-wrap acc-table-wrap">
+              <table class="emp-table acc-table">
+                <thead>
+                  <tr>
+                    <th>Tên user</th>
+                    <th>Email</th>
+                    <th>Mật khẩu</th>
+                    <th class="tbl-act-col" aria-label="Thao tác"></th>
+                  </tr>
+                </thead>
+                <tbody id="accTbody"></tbody>
+              </table>
             </div>
           </div>
         </div>
@@ -1025,6 +1055,31 @@
         <div class="modal__actions">
           <button class="btn btn--outline" type="button" data-review-cancel>Hủy</button>
           <button class="btn btn--accent" type="submit">Chốt kết quả</button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Account create / edit dialog -->
+    <div class="modal" id="accModal" hidden>
+      <div class="modal__backdrop" data-acc-cancel></div>
+      <form class="modal__box modal__box--form" id="accForm" role="dialog" aria-modal="true" aria-labelledby="accModalTitle" novalidate>
+        <h2 class="modal__title" id="accModalTitle">Thêm tài khoản</h2>
+        <p class="modal__msg">Nhập thông tin tài khoản đăng nhập.</p>
+        <div class="field">
+          <label class="field__label" for="accName">Tên user</label>
+          <input class="input" id="accName" type="text" placeholder="VD: Nguyễn Thị Hà" maxlength="40" autocomplete="off">
+        </div>
+        <div class="field">
+          <label class="field__label" for="accEmail">Email</label>
+          <input class="input" id="accEmail" type="email" placeholder="ten@talentconnect.plus" autocomplete="off">
+        </div>
+        <div class="field">
+          <label class="field__label" for="accPw">Mật khẩu</label>
+          <input class="input" id="accPw" type="password" placeholder="Ít nhất 6 ký tự" autocomplete="new-password">
+        </div>
+        <div class="modal__actions">
+          <button class="btn btn--outline" type="button" data-acc-cancel>Hủy</button>
+          <button class="btn btn--accent" type="submit" id="accSave">Lưu</button>
         </div>
       </form>
     </div>
