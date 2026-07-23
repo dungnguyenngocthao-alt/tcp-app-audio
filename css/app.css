@@ -2159,3 +2159,52 @@ body {
   .phone::before { background-size: 26px 26px; }
   .screen--login::before { background-size: 30px 30px; }
 }
+
+/* =============================================================================
+   Settings · my profile
+   ============================================================================= */
+.profile-card { padding-top: 20px; }
+.profile-hero {
+  display: flex; align-items: center; gap: 14px;
+  padding-bottom: 18px; margin-bottom: 18px;
+  border-bottom: 1px solid var(--tcp-border-subtle);
+}
+.profile-avatar {
+  flex: 0 0 auto; width: 64px; height: 64px; border-radius: 999px;
+  display: grid; place-items: center;
+  color: #fff; font-size: 22px; font-weight: 500;
+  background: var(--tcp-gradient-accent);
+  box-shadow: var(--tcp-glow-accent);
+}
+.profile-hero__meta { min-width: 0; }
+.profile-hero__name {
+  font-size: 20px; font-weight: 500; color: var(--tcp-fg-primary);
+  line-height: 26px;
+}
+.profile-hero__mail {
+  display: flex; align-items: center; gap: 6px; margin-top: 4px;
+  font-size: 14px; color: var(--tcp-fg-secondary);
+  overflow: hidden; text-overflow: ellipsis;
+}
+.profile-google { width: 16px; height: 16px; flex: 0 0 auto; }
+.profile-actions { display: flex; align-items: center; gap: 14px; margin-top: 6px; }
+.profile-saved { font-size: 14px; font-weight: 500; color: var(--tcp-success-solid); }
+.input[readonly] { background: var(--tcp-bg-subtle); color: var(--tcp-fg-secondary); cursor: default; }
+
+/* =============================================================================
+   Call history — raw imported sheet
+   ============================================================================= */
+.ch-count {
+  align-self: center; white-space: nowrap;
+  font-size: 13px; font-weight: 500; color: var(--tcp-fg-secondary);
+  padding: 5px 12px; border-radius: var(--tcp-radius-pill);
+  background: var(--tcp-bg-muted);
+}
+.ch-out {
+  display: inline-flex; align-items: center;
+  font-size: 13px; font-weight: 500;
+  padding: 3px 10px; border-radius: var(--tcp-radius-pill);
+}
+.ch-out--good { background: var(--tcp-success-bg); color: var(--tcp-success-fg); }
+.ch-out--mid  { background: var(--tcp-warning-bg); color: var(--tcp-warning-fg); }
+.ch-out--low  { background: var(--tcp-error-bg);   color: var(--tcp-error-fg); }

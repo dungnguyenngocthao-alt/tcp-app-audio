@@ -19,6 +19,7 @@
     dashboard:  $("#screen-dashboard"),
     employees:  $("#screen-employees"),
     uploads:    $("#screen-uploads"),
+    callhistory:$("#screen-callhistory"),
     settings:   $("#screen-settings"),
   };
 
@@ -33,6 +34,8 @@
     setActiveMenu(name);
     // The config card can only be measured once the analysis screen is visible.
     if (name === "analysis" && typeof syncProfileHeight === "function") syncProfileHeight();
+    if (name === "callhistory" && typeof renderCallHistory === "function") renderCallHistory();
+    if (name === "settings" && typeof showSettingsPane === "function") showSettingsPane("menu");
   }
 
   /* -------------------------------------------------------------------------
@@ -1452,6 +1455,46 @@
     renderUploads();
   });
 
+  /* -------------------------------------------------------------------------
+     Screen 5d · Call history — the imported call sheet, rendered as a plain
+     read-only table (same columns as Lịch sử upload, no filter/pagination).
+     ------------------------------------------------------------------------- */
+  const chTbody = $("#chTbody");
+  const chCount = $("#chCount");
+  function renderCallHistory() {
+    if (!chTbody) return;
+    if (chCount) chCount.textContent = UPLOAD_LOG.length.toLocaleString("vi-VN") + " cuộc gọi";
+    if (!UPLOAD_LOG.length) {
+      chTbody.innerHTML = '<tr><td class="emp-empty" colspan="7">Chưa có cuộc gọi nào.</td></tr>';
+      return;
+    }
+    chTbody.innerHTML = UPLOAD_LOG.map(u => {
+      const color = AVATAR_COLORS[nameHash(u.agent) % AVATAR_COLORS.length];
+      const eff = effRate(u);
+      const rateClass = eff >= 70 ? "emp-rate--good" : eff >= 55 ? "emp-rate--mid" : "emp-rate--low";
+      const oClass = u.outcome === "success" ? "ch-out--good" : u.outcome === "warning" ? "ch-out--mid" : "ch-out--low";
+      return `
+        <tr>
+          <td class="up-id">${u.id}</td>
+          <td class="emp-last">${u.time}</td>
+          <td class="emp-col-name">
+            <div class="emp-person">
+              <span class="emp-avatar" style="background:${color}">${initials(u.agent)}</span>
+              <div class="emp-person__meta">
+                <div class="emp-person__name" title="${escAttr(u.agent)}">${u.agent}</div>
+                <div class="emp-person__id">Caller ID · ${escAttr(u.caller)}</div>
+              </div>
+            </div>
+          </td>
+          <td class="up-to">${u.to}</td>
+          <td class="up-dur">${u.dur}</td>
+          <td><span class="emp-rate ${rateClass}">${eff}%</span></td>
+          <td><span class="ch-out ${oClass}">${UP_OUTCOME[u.outcome]}</span></td>
+        </tr>`;
+    }).join("");
+  }
+  renderCallHistory();
+
   /* Manual re-evaluation — the user confirms/overrides the AI result. */
   const reviewModal   = $("#reviewModal");
   const reviewForm    = $("#reviewForm");
@@ -1861,6 +1904,42 @@
   setupKwEditor("failureKwList", "failureKwInput", "failureKwAdd", negativeKeywords, "neg");
   highlightTranscript();
   colorKeywordChips();
+
+  /* -------------------------------------------------------------------------
+     Settings hub — a menu that opens one of two detail panes.
+     ------------------------------------------------------------------------- */
+  function showSettingsPane(name) {
+    $$("[data-setpane]").forEach(p => { p.hidden = p.dataset.setpane !== name; });
+    const sc = $("#screen-settings .screen__scroll");
+    if (sc) sc.scrollTop = 0;
+  }
+  $$("[data-setnav]").forEach(el =>
+    el.addEventListener("click", () => showSettingsPane(el.dataset.setnav)));
+  $$("[data-setback]").forEach(el =>
+    el.addEventListener("click", () => showSettingsPane("menu")));
+
+  /* -------------------------------------------------------------------------
+     Settings · my profile — the signed-in Google user's own details.
+     ------------------------------------------------------------------------- */
+  const profForm  = $("#profForm");
+  const profName  = $("#profName");
+  const profRole  = $("#profRole");
+  const profPhone = $("#profPhone");
+  const profNameLabel = $("#profNameLabel");
+  const profAvatar    = $("#profAvatar");
+  const profSaved     = $("#profSaved");
+  if (profForm) profForm.addEventListener("submit", e => {
+    e.preventDefault();
+    const name = (profName.value || "").trim();
+    if (!name) { profName.focus(); return; }
+    if (profNameLabel) profNameLabel.textContent = name;
+    if (profAvatar) profAvatar.textContent = initials(name);
+    if (profSaved) {
+      profSaved.hidden = false;
+      clearTimeout(profForm._t);
+      profForm._t = setTimeout(() => { profSaved.hidden = true; }, 2000);
+    }
+  });
 
   /* -------------------------------------------------------------------------
      Dashboard export — build a real .xlsx (3 sheets), dependency-free

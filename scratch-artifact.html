@@ -2368,6 +2368,55 @@ body {
   .screen--login::before { background-size: 30px 30px; }
 }
 
+/* =============================================================================
+   Settings · my profile
+   ============================================================================= */
+.profile-card { padding-top: 20px; }
+.profile-hero {
+  display: flex; align-items: center; gap: 14px;
+  padding-bottom: 18px; margin-bottom: 18px;
+  border-bottom: 1px solid var(--tcp-border-subtle);
+}
+.profile-avatar {
+  flex: 0 0 auto; width: 64px; height: 64px; border-radius: 999px;
+  display: grid; place-items: center;
+  color: #fff; font-size: 22px; font-weight: 500;
+  background: var(--tcp-gradient-accent);
+  box-shadow: var(--tcp-glow-accent);
+}
+.profile-hero__meta { min-width: 0; }
+.profile-hero__name {
+  font-size: 20px; font-weight: 500; color: var(--tcp-fg-primary);
+  line-height: 26px;
+}
+.profile-hero__mail {
+  display: flex; align-items: center; gap: 6px; margin-top: 4px;
+  font-size: 14px; color: var(--tcp-fg-secondary);
+  overflow: hidden; text-overflow: ellipsis;
+}
+.profile-google { width: 16px; height: 16px; flex: 0 0 auto; }
+.profile-actions { display: flex; align-items: center; gap: 14px; margin-top: 6px; }
+.profile-saved { font-size: 14px; font-weight: 500; color: var(--tcp-success-solid); }
+.input[readonly] { background: var(--tcp-bg-subtle); color: var(--tcp-fg-secondary); cursor: default; }
+
+/* =============================================================================
+   Call history — raw imported sheet
+   ============================================================================= */
+.ch-count {
+  align-self: center; white-space: nowrap;
+  font-size: 13px; font-weight: 500; color: var(--tcp-fg-secondary);
+  padding: 5px 12px; border-radius: var(--tcp-radius-pill);
+  background: var(--tcp-bg-muted);
+}
+.ch-out {
+  display: inline-flex; align-items: center;
+  font-size: 13px; font-weight: 500;
+  padding: 3px 10px; border-radius: var(--tcp-radius-pill);
+}
+.ch-out--good { background: var(--tcp-success-bg); color: var(--tcp-success-fg); }
+.ch-out--mid  { background: var(--tcp-warning-bg); color: var(--tcp-warning-fg); }
+.ch-out--low  { background: var(--tcp-error-bg);   color: var(--tcp-error-fg); }
+
 
 /* Artifact preview: adapt the surrounding backdrop to the viewer theme.
    The phone screen itself stays light — it's the product being previewed. */
@@ -3259,6 +3308,50 @@ body {
     </section>
 
     <!-- ================================================================= -->
+    <!-- SCREEN 5d · Call history (raw sheet)                                -->
+    <!-- ================================================================= -->
+    <section class="screen screen--hasnav" id="screen-callhistory" data-screen="callhistory">
+      <div class="screen__scroll">
+        <header class="appbar">
+          <button class="brand" type="button" data-nav="analysis" aria-label="Về trang tải lên">
+            <span class="brand__logo" aria-hidden="true"></span>
+            <span class="brand__name">Talent Connect +</span>
+          </button>
+          <button class="burger" type="button" aria-label="Open menu" aria-haspopup="true" aria-expanded="false" data-burger>
+            <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M224,128a8,8,0,0,1-8,8H40a8,8,0,0,1,0-16H216A8,8,0,0,1,224,128ZM40,72H216a8,8,0,0,0,0-16H40a8,8,0,0,0,0,16ZM216,184H40a8,8,0,0,0,0,16H216a8,8,0,0,0,0-16Z"/></svg>
+          </button>
+        </header>
+
+        <div class="page">
+          <div class="emp-topbar">
+            <div>
+              <h1 class="page__title">Lịch sử cuộc gọi</h1>
+              <p class="page__lead">Bảng dữ liệu cuộc gọi đã nhập từ file / Google Sheet.</p>
+            </div>
+            <span class="ch-count" id="chCount">—</span>
+          </div>
+
+          <div class="emp-table-wrap ch-sheet-wrap">
+            <table class="emp-table up-table ch-sheet">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Thời gian</th>
+                  <th>Call from</th>
+                  <th>Call to</th>
+                  <th>Thời lượng</th>
+                  <th>Tỷ lệ thành công</th>
+                  <th>Kết quả</th>
+                </tr>
+              </thead>
+              <tbody id="chTbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================================================================= -->
     <!-- SCREEN 6 · Settings                                                -->
     <!-- ================================================================= -->
     <section class="screen screen--hasnav" id="screen-settings" data-screen="settings">
@@ -3274,11 +3367,92 @@ body {
         </header>
 
         <div class="page">
-          <h1 class="page__title">Cài đặt</h1>
-          <p class="page__lead">Quản lý bộ từ khoá cảm xúc dùng cho phân tích.</p>
+          <!-- Settings hub -->
+          <div data-setpane="menu">
+            <h1 class="page__title">Cài đặt</h1>
+            <p class="page__lead">Chọn mục bạn muốn quản lý.</p>
+            <div class="settings-menu">
+              <button class="card set-item" type="button" data-setnav="profile">
+                <span class="set-item__icon">
+                  <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M230.92,212c-15.23-26.33-38.7-45.21-66.09-54.16a72,72,0,1,0-73.66,0C63.78,166.78,40.31,185.66,25.08,212a8,8,0,1,0,13.85,8c18.84-32.56,52.14-52,89.07-52s70.23,19.44,89.07,52a8,8,0,1,0,13.85-8ZM72,96a56,56,0,1,1,56,56A56.06,56.06,0,0,1,72,96Z"/></svg>
+                </span>
+                <span class="set-item__body">
+                  <span class="set-item__title">Hồ sơ của tôi</span>
+                  <span class="set-item__desc">Thông tin tài khoản đang đăng nhập.</span>
+                </span>
+                <svg class="set-item__chev" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M181.66,133.66l-80,80a8,8,0,0,1-11.32-11.32L164.69,128,90.34,53.66a8,8,0,0,1,11.32-11.32l80,80A8,8,0,0,1,181.66,133.66Z"/></svg>
+              </button>
+              <button class="card set-item" type="button" data-setnav="keywords">
+                <span class="set-item__icon">
+                  <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M243.31,136,144,36.69A15.86,15.86,0,0,0,132.69,32H40a8,8,0,0,0-8,8v92.69A15.86,15.86,0,0,0,36.69,144L136,243.31a16,16,0,0,0,22.63,0l84.68-84.68a16,16,0,0,0,0-22.63Zm-96,96L48,132.69V48h84.69L232,147.31ZM88,68a20,20,0,1,1-20,20A20,20,0,0,1,88,68Z"/></svg>
+                </span>
+                <span class="set-item__body">
+                  <span class="set-item__title">Bộ từ khoá cảm xúc</span>
+                  <span class="set-item__desc">Từ khoá tích cực / tiêu cực ảnh hưởng đánh giá.</span>
+                </span>
+                <svg class="set-item__chev" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M181.66,133.66l-80,80a8,8,0,0,1-11.32-11.32L164.69,128,90.34,53.66a8,8,0,0,1,11.32-11.32l80,80A8,8,0,0,1,181.66,133.66Z"/></svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- My profile -->
+          <div data-setpane="profile" hidden>
+            <div class="set-detail-head">
+              <button class="iconbtn" type="button" data-setback aria-label="Quay lại">
+                <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M224,128a8,8,0,0,1-8,8H59.31l58.35,58.34a8,8,0,0,1-11.32,11.32l-72-72a8,8,0,0,1,0-11.32l72-72a8,8,0,0,1,11.32,11.32L59.31,120H216A8,8,0,0,1,224,128Z"/></svg>
+              </button>
+              <h1 class="results-head__title">Hồ sơ của tôi</h1>
+            </div>
+            <div class="card profile-card">
+              <div class="profile-hero">
+                <span class="profile-avatar" id="profAvatar">NH</span>
+                <div class="profile-hero__meta">
+                  <div class="profile-hero__name" id="profNameLabel">Nguyễn Thị Hà</div>
+                  <div class="profile-hero__mail">
+                    <svg class="profile-google" viewBox="0 0 48 48" aria-hidden="true">
+                      <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
+                      <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
+                      <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
+                      <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+                    </svg>
+                    <span id="profMailLabel">ha.nguyen@talentconnect.plus</span>
+                  </div>
+                </div>
+              </div>
+              <form id="profForm" novalidate>
+                <div class="field">
+                  <label class="field__label" for="profName">Họ tên</label>
+                  <input class="input" id="profName" type="text" value="Nguyễn Thị Hà" maxlength="40" autocomplete="name">
+                </div>
+                <div class="field">
+                  <label class="field__label" for="profEmail">Email đăng nhập (Google)</label>
+                  <input class="input" id="profEmail" type="email" value="ha.nguyen@talentconnect.plus" readonly>
+                  <p class="kw-hint">Email lấy từ tài khoản Google, không thể chỉnh sửa tại đây.</p>
+                </div>
+                <div class="field">
+                  <label class="field__label" for="profRole">Vai trò</label>
+                  <input class="input" id="profRole" type="text" value="Trưởng nhóm tư vấn" maxlength="40" autocomplete="off">
+                </div>
+                <div class="field">
+                  <label class="field__label" for="profPhone">Số điện thoại</label>
+                  <input class="input" id="profPhone" type="tel" value="0901 234 567" maxlength="20" autocomplete="tel">
+                </div>
+                <div class="profile-actions">
+                  <button class="btn btn--accent" type="submit" id="profSave">Lưu thay đổi</button>
+                  <span class="profile-saved" id="profSaved" hidden>Đã lưu ✓</span>
+                </div>
+              </form>
+            </div>
+          </div>
 
           <!-- Sentiment keyword sets -->
-          <div>
+          <div data-setpane="keywords" hidden>
+            <div class="set-detail-head">
+              <button class="iconbtn" type="button" data-setback aria-label="Quay lại">
+                <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M224,128a8,8,0,0,1-8,8H59.31l58.35,58.34a8,8,0,0,1-11.32,11.32l-72-72a8,8,0,0,1,0-11.32l72-72a8,8,0,0,1,11.32,11.32L59.31,120H216A8,8,0,0,1,224,128Z"/></svg>
+              </button>
+              <h1 class="results-head__title">Bộ từ khoá cảm xúc</h1>
+            </div>
             <div class="card">
               <div class="result-card__label result-card__label--success">
                 <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M240,56v64a8,8,0,0,1-16,0V75.31l-82.34,82.35a8,8,0,0,1-11.32,0L96,123.31,29.66,189.66a8,8,0,0,1-11.32-11.32l72-72a8,8,0,0,1,11.32,0L136,140.69,212.69,64H168a8,8,0,0,1,0-16h64A8,8,0,0,1,240,56Z"/></svg>
@@ -3417,6 +3591,10 @@ body {
             <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm0,192a88,88,0,1,1,88-88A88.1,88.1,0,0,1,128,216Zm64-88a8,8,0,0,1-8,8H128a8,8,0,0,1-8-8V72a8,8,0,0,1,16,0v48h48A8,8,0,0,1,192,128Z"/></svg>
             <span>Lịch sử upload</span>
           </button>
+          <button class="drawer__item" role="menuitem" type="button" data-nav="callhistory">
+            <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M231.88,175.08A56.26,56.26,0,0,1,176,224C96.6,224,32,159.4,32,80A56.26,56.26,0,0,1,80.92,24.12a16,16,0,0,1,16.62,9.52l21.12,47.15,0,.12A16,16,0,0,1,117.39,96c-.18.27-.37.52-.57.77L96,121.45c7.49,15.22,23.41,31,38.83,38.51l24.34-20.71a8.12,8.12,0,0,1,.75-.56,16,16,0,0,1,15.17-1.4l.13.06,47.11,21.11A16,16,0,0,1,231.88,175.08Z"/></svg>
+            <span>Lịch sử cuộc gọi</span>
+          </button>
           <button class="drawer__item" role="menuitem" type="button" data-nav="employees">
             <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M117.25,157.92a60,60,0,1,0-66.5,0A95.83,95.83,0,0,0,3.53,195.63a8,8,0,1,0,13.4,8.74,80,80,0,0,1,134.14,0,8,8,0,0,0,13.4-8.74A95.83,95.83,0,0,0,117.25,157.92ZM40,108a44,44,0,1,1,44,44A44.05,44.05,0,0,1,40,108Zm210.14,98.7a8,8,0,0,1-11.07-2.33A79.83,79.83,0,0,0,172,168a8,8,0,0,1,0-16,44,44,0,1,0-16.34-84.87,8,8,0,1,1-5.94-14.85,60,60,0,0,1,55.53,105.64,95.83,95.83,0,0,1,47.22,37.71A8,8,0,0,1,250.14,206.7Z"/></svg>
             <span>Nhân viên</span>
@@ -3456,6 +3634,7 @@ body {
     dashboard:  $("#screen-dashboard"),
     employees:  $("#screen-employees"),
     uploads:    $("#screen-uploads"),
+    callhistory:$("#screen-callhistory"),
     settings:   $("#screen-settings"),
   };
 
@@ -3470,6 +3649,8 @@ body {
     setActiveMenu(name);
     // The config card can only be measured once the analysis screen is visible.
     if (name === "analysis" && typeof syncProfileHeight === "function") syncProfileHeight();
+    if (name === "callhistory" && typeof renderCallHistory === "function") renderCallHistory();
+    if (name === "settings" && typeof showSettingsPane === "function") showSettingsPane("menu");
   }
 
   /* -------------------------------------------------------------------------
@@ -4889,6 +5070,46 @@ body {
     renderUploads();
   });
 
+  /* -------------------------------------------------------------------------
+     Screen 5d · Call history — the imported call sheet, rendered as a plain
+     read-only table (same columns as Lịch sử upload, no filter/pagination).
+     ------------------------------------------------------------------------- */
+  const chTbody = $("#chTbody");
+  const chCount = $("#chCount");
+  function renderCallHistory() {
+    if (!chTbody) return;
+    if (chCount) chCount.textContent = UPLOAD_LOG.length.toLocaleString("vi-VN") + " cuộc gọi";
+    if (!UPLOAD_LOG.length) {
+      chTbody.innerHTML = '<tr><td class="emp-empty" colspan="7">Chưa có cuộc gọi nào.</td></tr>';
+      return;
+    }
+    chTbody.innerHTML = UPLOAD_LOG.map(u => {
+      const color = AVATAR_COLORS[nameHash(u.agent) % AVATAR_COLORS.length];
+      const eff = effRate(u);
+      const rateClass = eff >= 70 ? "emp-rate--good" : eff >= 55 ? "emp-rate--mid" : "emp-rate--low";
+      const oClass = u.outcome === "success" ? "ch-out--good" : u.outcome === "warning" ? "ch-out--mid" : "ch-out--low";
+      return `
+        <tr>
+          <td class="up-id">${u.id}</td>
+          <td class="emp-last">${u.time}</td>
+          <td class="emp-col-name">
+            <div class="emp-person">
+              <span class="emp-avatar" style="background:${color}">${initials(u.agent)}</span>
+              <div class="emp-person__meta">
+                <div class="emp-person__name" title="${escAttr(u.agent)}">${u.agent}</div>
+                <div class="emp-person__id">Caller ID · ${escAttr(u.caller)}</div>
+              </div>
+            </div>
+          </td>
+          <td class="up-to">${u.to}</td>
+          <td class="up-dur">${u.dur}</td>
+          <td><span class="emp-rate ${rateClass}">${eff}%</span></td>
+          <td><span class="ch-out ${oClass}">${UP_OUTCOME[u.outcome]}</span></td>
+        </tr>`;
+    }).join("");
+  }
+  renderCallHistory();
+
   /* Manual re-evaluation — the user confirms/overrides the AI result. */
   const reviewModal   = $("#reviewModal");
   const reviewForm    = $("#reviewForm");
@@ -5298,6 +5519,42 @@ body {
   setupKwEditor("failureKwList", "failureKwInput", "failureKwAdd", negativeKeywords, "neg");
   highlightTranscript();
   colorKeywordChips();
+
+  /* -------------------------------------------------------------------------
+     Settings hub — a menu that opens one of two detail panes.
+     ------------------------------------------------------------------------- */
+  function showSettingsPane(name) {
+    $$("[data-setpane]").forEach(p => { p.hidden = p.dataset.setpane !== name; });
+    const sc = $("#screen-settings .screen__scroll");
+    if (sc) sc.scrollTop = 0;
+  }
+  $$("[data-setnav]").forEach(el =>
+    el.addEventListener("click", () => showSettingsPane(el.dataset.setnav)));
+  $$("[data-setback]").forEach(el =>
+    el.addEventListener("click", () => showSettingsPane("menu")));
+
+  /* -------------------------------------------------------------------------
+     Settings · my profile — the signed-in Google user's own details.
+     ------------------------------------------------------------------------- */
+  const profForm  = $("#profForm");
+  const profName  = $("#profName");
+  const profRole  = $("#profRole");
+  const profPhone = $("#profPhone");
+  const profNameLabel = $("#profNameLabel");
+  const profAvatar    = $("#profAvatar");
+  const profSaved     = $("#profSaved");
+  if (profForm) profForm.addEventListener("submit", e => {
+    e.preventDefault();
+    const name = (profName.value || "").trim();
+    if (!name) { profName.focus(); return; }
+    if (profNameLabel) profNameLabel.textContent = name;
+    if (profAvatar) profAvatar.textContent = initials(name);
+    if (profSaved) {
+      profSaved.hidden = false;
+      clearTimeout(profForm._t);
+      profForm._t = setTimeout(() => { profSaved.hidden = true; }, 2000);
+    }
+  });
 
   /* -------------------------------------------------------------------------
      Dashboard export — build a real .xlsx (3 sheets), dependency-free
