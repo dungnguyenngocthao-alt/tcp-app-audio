@@ -262,7 +262,7 @@
     const rows = genLogBatch(f ? f.name : link, 5 + (nameHash(f ? f.name : link) % 4));
     if (typeof UPLOAD_LOG !== "undefined") UPLOAD_LOG.unshift(...rows);
     if (typeof renderUploads === "function") renderUploads();
-    showBulkResult(`Đã nhập ${rows.length} cuộc gọi từ ${src} vào Lịch sử upload.`, true);
+    showBulkResult(`Đã nhập ${rows.length} cuộc gọi từ ${src} vào Đánh giá cuộc gọi.`, true);
     setTimeout(() => show("uploads"), 600);
   });
 
@@ -1422,7 +1422,7 @@
         const u = UPLOAD_LOG.find(x => x.id === id);
         showConfirm({
           title: "Xóa cuộc gọi?",
-          message: `Cuộc gọi ${id}${u ? ` (${u.agent})` : ""} sẽ bị xóa khỏi Lịch sử upload.`,
+          message: `Cuộc gọi ${id}${u ? ` (${u.agent})` : ""} sẽ bị xóa khỏi Đánh giá cuộc gọi.`,
           confirmLabel: "Xóa",
           onConfirm: () => {
             const i = UPLOAD_LOG.findIndex(x => x.id === id);
@@ -1457,7 +1457,7 @@
 
   /* -------------------------------------------------------------------------
      Screen 5d · Call history — the imported call sheet, rendered as a plain
-     read-only table (same columns as Lịch sử upload, no filter/pagination).
+     read-only table (same columns as Đánh giá cuộc gọi, no filter/pagination).
      ------------------------------------------------------------------------- */
   const chTbody = $("#chTbody");
   const chCount = $("#chCount");

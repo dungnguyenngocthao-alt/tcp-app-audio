@@ -81,7 +81,7 @@
               <label class="emp-upload" for="bulkFile">
                 <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M240,136v64a16,16,0,0,1-16,16H32a16,16,0,0,1-16-16V136a8,8,0,0,1,16,0v64H224V136a8,8,0,0,1,16,0ZM88.49,79.51,120,48V136a8,8,0,0,0,16,0V48l31.51,31.51a8,8,0,0,0,11.32-11.32l-45.17-45.16a8,8,0,0,0-11.32,0L77.17,68.19A8,8,0,0,0,88.49,79.51Z"/></svg>
                 <span class="emp-upload__title">Tải lên file Excel</span>
-                <span class="emp-upload__hint">.xlsx hoặc .csv — đủ cột theo bảng Lịch sử upload</span>
+                <span class="emp-upload__hint">.xlsx hoặc .csv — đủ cột theo bảng Đánh giá cuộc gọi</span>
                 <input type="file" id="bulkFile" accept=".xlsx,.xls,.csv" hidden>
               </label>
               <div class="up-or"><span>hoặc</span></div>
@@ -90,7 +90,7 @@
                 <input class="input" id="bulkSheet" type="url" placeholder="https://docs.google.com/spreadsheets/d/…" inputmode="url">
               </div>
               <div class="up-import-result" id="bulkResult" hidden></div>
-              <button class="btn btn--accent btn--block bulk-import-btn" id="bulkImportBtn" type="button">Nhập vào Lịch sử upload</button>
+              <button class="btn btn--accent btn--block bulk-import-btn" id="bulkImportBtn" type="button">Nhập vào Đánh giá cuộc gọi</button>
             </div>
           </div>
 
@@ -814,7 +814,7 @@
         <div class="page">
           <div class="emp-topbar">
             <div>
-              <h1 class="page__title">Lịch sử upload</h1>
+              <h1 class="page__title">Đánh giá cuộc gọi</h1>
               <p class="page__lead">Toàn bộ cuộc gọi đã tải lên và phân tích.</p>
             </div>
           </div>
@@ -883,7 +883,7 @@
               <tbody id="upTbody"></tbody>
             </table>
           </div>
-          <nav class="pagination" id="upPager" aria-label="Phân trang lịch sử upload"></nav>
+          <nav class="pagination" id="upPager" aria-label="Phân trang đánh giá cuộc gọi"></nav>
         </div>
       </div>
     </section>
@@ -1170,7 +1170,7 @@
           </button>
           <button class="drawer__item" role="menuitem" type="button" data-nav="uploads">
             <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm0,192a88,88,0,1,1,88-88A88.1,88.1,0,0,1,128,216Zm64-88a8,8,0,0,1-8,8H128a8,8,0,0,1-8-8V72a8,8,0,0,1,16,0v48h48A8,8,0,0,1,192,128Z"/></svg>
-            <span>Lịch sử upload</span>
+            <span>Đánh giá cuộc gọi</span>
           </button>
           <button class="drawer__item" role="menuitem" type="button" data-nav="callhistory">
             <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M231.88,175.08A56.26,56.26,0,0,1,176,224C96.6,224,32,159.4,32,80A56.26,56.26,0,0,1,80.92,24.12a16,16,0,0,1,16.62,9.52l21.12,47.15,0,.12A16,16,0,0,1,117.39,96c-.18.27-.37.52-.57.77L96,121.45c7.49,15.22,23.41,31,38.83,38.51l24.34-20.71a8.12,8.12,0,0,1,.75-.56,16,16,0,0,1,15.17-1.4l.13.06,47.11,21.11A16,16,0,0,1,231.88,175.08Z"/></svg>
