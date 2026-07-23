@@ -1932,10 +1932,10 @@ body {
 /* ---- ambient backdrop: soft colour mesh + faint tech grid, behind everything ---- */
 .phone {
   background:
-    radial-gradient(900px 520px at 12% -8%, rgba(91, 79, 233, 0.10), transparent 60%),
+    radial-gradient(900px 520px at 12% -8%, rgba(58, 84, 204, 0.11), transparent 60%),
     radial-gradient(700px 480px at 108% 8%, rgba(56, 189, 248, 0.09), transparent 55%),
-    radial-gradient(800px 600px at 50% 115%, rgba(147, 51, 234, 0.07), transparent 60%),
-    #F7F7FC;
+    radial-gradient(800px 600px at 50% 115%, rgba(40, 70, 160, 0.07), transparent 60%),
+    #F6F7FC;
   isolation: isolate;
 }
 .phone::before {
@@ -2023,7 +2023,7 @@ body {
 .screen--login::after {
   content: "";
   position: absolute; inset: 0;
-  background: radial-gradient(600px 340px at 50% 15%, rgba(139, 108, 255, 0.35), transparent 70%);
+  background: radial-gradient(600px 340px at 50% 15%, rgba(90, 120, 255, 0.32), transparent 70%);
   pointer-events: none;
 }
 .login-card { position: relative; z-index: 1; }
@@ -2080,9 +2080,9 @@ body {
 /* ---- app bar / nav: the same navy → violet band as the login hero, so the
    product keeps one consistent "tech" accent even though content is light ---- */
 .appbar {
-  background: linear-gradient(100deg, #0A0E2C 0%, #1B1054 55%, #3B1A9E 100%) !important;
+  background: linear-gradient(100deg, #070B26 0%, #121C52 55%, #22307F 100%) !important;
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: 0 6px 20px -10px rgba(59, 26, 158, 0.45);
+  box-shadow: 0 6px 20px -10px rgba(26, 40, 120, 0.45);
 }
 .burger:hover, .iconbtn:hover { background: rgba(91, 79, 233, 0.10) !important; }
 

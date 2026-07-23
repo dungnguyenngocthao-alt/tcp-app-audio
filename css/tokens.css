@@ -94,9 +94,10 @@
   --tcp-accent-subtle:    #EEEDFF;
   --tcp-on-accent:        var(--tcp-white);
 
-  /* External palette bridge — blue → violet used for the nav-bar / hero gradient. */
+  /* External palette bridge — blue → violet used for the nav-bar / hero gradient.
+     Tuned to lean navy (less purple). */
   --color-blue-7:         #0A0E2C;
-  --color-violet-26:      #3B1A9E;
+  --color-violet-26:      #263086;
 
   /* Ink — deep navy used for headings on light surfaces */
   --tcp-ink:              #12142F;
@@ -111,9 +112,9 @@
   --tcp-glow-border-soft: rgba(91, 79, 233, 0.12);
   --tcp-glow-violet:      0 0 0 1px rgba(91, 79, 233, 0.10), 0 10px 30px -10px rgba(59, 26, 158, 0.35);
   --tcp-glow-accent:      0 0 0 1px rgba(91, 79, 233, 0.35), 0 10px 26px -8px rgba(91, 79, 233, 0.40);
-  --tcp-gradient-hero:    linear-gradient(135deg, #0A0E2C 0%, #191154 38%, #3B1A9E 70%, #6247D9 100%);
+  --tcp-gradient-hero:    linear-gradient(135deg, #070B26 0%, #101A4C 38%, #22307F 70%, #35459E 100%);
   --tcp-gradient-accent:  linear-gradient(120deg, #4A3FD1 0%, #5B4FE9 50%, #8B6CFF 100%);
-  --tcp-gradient-text:    linear-gradient(120deg, #2A2D8C 0%, #5B4FE9 55%, #9333EA 100%);
+  --tcp-gradient-text:    linear-gradient(120deg, #16205C 0%, #2C3EA8 55%, #3A54CC 100%);
 
   /* Borders */
   --tcp-border-subtle:    var(--tcp-neutral-200);
