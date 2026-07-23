@@ -91,6 +91,20 @@ button { font-family: inherit; }
   font-size: 14px; line-height: 20px; color: var(--tcp-fg-secondary);
   margin: 0 0 22px; text-align: center;
 }
+.login-hint {
+  font-size: 14px; line-height: 20px; color: var(--tcp-fg-secondary);
+  margin: 0 0 20px; text-align: center;
+}
+/* Google sign-in button — white surface, subtle border, coloured G */
+.btn--google {
+  background: #fff;
+  color: #3C4043;
+  border: 1px solid var(--tcp-border);
+  box-shadow: var(--tcp-shadow-xs);
+}
+.btn--google:hover { background: var(--tcp-neutral-50); border-color: var(--tcp-border-strong); }
+.btn--google:focus-visible { box-shadow: var(--tcp-ring-accent); }
+.google-g { width: 20px; height: 20px; flex: 0 0 auto; }
 .login-form { display: flex; flex-direction: column; }
 .login-form .field { margin-bottom: 0; }
 .login-form > * + * { margin-top: 14px; }

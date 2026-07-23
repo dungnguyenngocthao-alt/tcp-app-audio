@@ -299,6 +299,20 @@ button { font-family: inherit; }
   font-size: 14px; line-height: 20px; color: var(--tcp-fg-secondary);
   margin: 0 0 22px; text-align: center;
 }
+.login-hint {
+  font-size: 14px; line-height: 20px; color: var(--tcp-fg-secondary);
+  margin: 0 0 20px; text-align: center;
+}
+/* Google sign-in button — white surface, subtle border, coloured G */
+.btn--google {
+  background: #fff;
+  color: #3C4043;
+  border: 1px solid var(--tcp-border);
+  box-shadow: var(--tcp-shadow-xs);
+}
+.btn--google:hover { background: var(--tcp-neutral-50); border-color: var(--tcp-border-strong); }
+.btn--google:focus-visible { box-shadow: var(--tcp-ring-accent); }
+.google-g { width: 20px; height: 20px; flex: 0 0 auto; }
 .login-form { display: flex; flex-direction: column; }
 .login-form .field { margin-bottom: 0; }
 .login-form > * + * { margin-top: 14px; }
@@ -2377,24 +2391,16 @@ body {
           <span class="login-wordmark">Talent Connect +</span>
         </div>
 
-        <form class="login-form" id="loginForm" novalidate>
-          <div class="field">
-            <label class="field__label" for="loginEmail">Email</label>
-            <input class="input" id="loginEmail" type="email" value="ha.nguyen@talentconnect.plus" autocomplete="username">
-          </div>
-          <div class="field">
-            <label class="field__label" for="loginPw">Mật khẩu</label>
-            <input class="input" id="loginPw" type="password" value="password" autocomplete="current-password">
-          </div>
-          <div class="login-row">
-            <label class="login-remember">
-              <input type="checkbox" checked>
-              Ghi nhớ đăng nhập
-            </label>
-            <a class="login-forgot" href="#" data-noop>Quên mật khẩu?</a>
-          </div>
-          <button class="btn btn--accent btn--lg btn--block" type="submit" id="loginBtn">Đăng nhập</button>
-        </form>
+        <p class="login-hint">Đăng nhập bằng tài khoản Google của bạn để tiếp tục.</p>
+        <button class="btn btn--google btn--lg btn--block" type="button" id="googleLoginBtn">
+          <svg class="google-g" viewBox="0 0 48 48" aria-hidden="true">
+            <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
+            <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
+            <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
+            <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+          </svg>
+          Đăng nhập với Google
+        </button>
       </div>
     </section>
 
@@ -3268,80 +3274,11 @@ body {
         </header>
 
         <div class="page">
-          <!-- Settings hub -->
-          <div data-setpane="menu">
-            <h1 class="page__title">Cài đặt</h1>
-            <p class="page__lead">Chọn mục bạn muốn quản lý.</p>
-            <div class="settings-menu">
-              <button class="card set-item" type="button" data-setnav="accounts">
-                <span class="set-item__icon">
-                  <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M230.92,212c-15.23-26.33-38.7-45.21-66.09-54.16a72,72,0,1,0-73.66,0C63.78,166.78,40.31,185.66,25.08,212a8,8,0,1,0,13.85,8c18.84-32.56,52.14-52,89.07-52s70.23,19.44,89.07,52a8,8,0,1,0,13.85-8ZM72,96a56,56,0,1,1,56,56A56.06,56.06,0,0,1,72,96Z"/></svg>
-                </span>
-                <span class="set-item__body">
-                  <span class="set-item__title">Quản lý tài khoản</span>
-                  <span class="set-item__desc">Tạo, sửa và xóa tài khoản đăng nhập.</span>
-                </span>
-                <svg class="set-item__chev" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M181.66,133.66l-80,80a8,8,0,0,1-11.32-11.32L164.69,128,90.34,53.66a8,8,0,0,1,11.32-11.32l80,80A8,8,0,0,1,181.66,133.66Z"/></svg>
-              </button>
-              <button class="card set-item" type="button" data-setnav="keywords">
-                <span class="set-item__icon">
-                  <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M243.31,136,144,36.69A15.86,15.86,0,0,0,132.69,32H40a8,8,0,0,0-8,8v92.69A15.86,15.86,0,0,0,36.69,144L136,243.31a16,16,0,0,0,22.63,0l84.68-84.68a16,16,0,0,0,0-22.63Zm-96,96L48,132.69V48h84.69L232,147.31ZM88,68a20,20,0,1,1-20,20A20,20,0,0,1,88,68Z"/></svg>
-                </span>
-                <span class="set-item__body">
-                  <span class="set-item__title">Bộ từ khoá cảm xúc</span>
-                  <span class="set-item__desc">Từ khoá tích cực / tiêu cực ảnh hưởng đánh giá.</span>
-                </span>
-                <svg class="set-item__chev" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M181.66,133.66l-80,80a8,8,0,0,1-11.32-11.32L164.69,128,90.34,53.66a8,8,0,0,1,11.32-11.32l80,80A8,8,0,0,1,181.66,133.66Z"/></svg>
-              </button>
-            </div>
-          </div>
-
-          <!-- Account management -->
-          <div data-setpane="accounts" hidden>
-            <div class="set-detail-head">
-              <button class="iconbtn" type="button" data-setback aria-label="Quay lại">
-                <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M224,128a8,8,0,0,1-8,8H59.31l58.35,58.34a8,8,0,0,1-11.32,11.32l-72-72a8,8,0,0,1,0-11.32l72-72a8,8,0,0,1,11.32,11.32L59.31,120H216A8,8,0,0,1,224,128Z"/></svg>
-              </button>
-              <h1 class="results-head__title">Quản lý tài khoản</h1>
-            </div>
-            <div class="card">
-              <div class="acc-head">
-                <div>
-                  <div class="result-card__label">
-                    <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M230.92,212c-15.23-26.33-38.7-45.21-66.09-54.16a72,72,0,1,0-73.66,0C63.78,166.78,40.31,185.66,25.08,212a8,8,0,1,0,13.85,8c18.84-32.56,52.14-52,89.07-52s70.23,19.44,89.07,52a8,8,0,1,0,13.85-8ZM72,96a56,56,0,1,1,56,56A56.06,56.06,0,0,1,72,96Z"/></svg>
-                    Tài khoản đăng nhập
-                  </div>
-                  <p class="kw-hint">Tạo và quản lý tài khoản người dùng đăng nhập vào hệ thống.</p>
-                </div>
-                <button class="btn btn--accent btn--sm acc-add" id="accAddBtn" type="button">
-                  <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M256,136a8,8,0,0,1-8,8H232v16a8,8,0,0,1-16,0V144H200a8,8,0,0,1,0-16h16V112a8,8,0,0,1,16,0v16h16A8,8,0,0,1,256,136Zm-57.87,58.85a8,8,0,0,1-6.4,12.79H14.34a8,8,0,0,1-6.4-12.79C22.91,174.28,45,159.82,69.6,153a72,72,0,1,1,76.8,0C171,159.82,193.09,174.28,208,194.85ZM74,131.61a8,8,0,0,0,8-8V120a55.94,55.94,0,0,1,110.9-9.42A56,56,0,1,0,74,131.61Z"/></svg>
-                  Thêm tài khoản
-                </button>
-              </div>
-              <div class="emp-table-wrap acc-table-wrap">
-                <table class="emp-table acc-table">
-                  <thead>
-                    <tr>
-                      <th>Tên user</th>
-                      <th>Email</th>
-                      <th>Mật khẩu</th>
-                      <th class="tbl-act-col" aria-label="Thao tác"></th>
-                    </tr>
-                  </thead>
-                  <tbody id="accTbody"></tbody>
-                </table>
-              </div>
-            </div>
-          </div>
+          <h1 class="page__title">Cài đặt</h1>
+          <p class="page__lead">Quản lý bộ từ khoá cảm xúc dùng cho phân tích.</p>
 
           <!-- Sentiment keyword sets -->
-          <div data-setpane="keywords" hidden>
-            <div class="set-detail-head">
-              <button class="iconbtn" type="button" data-setback aria-label="Quay lại">
-                <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M224,128a8,8,0,0,1-8,8H59.31l58.35,58.34a8,8,0,0,1-11.32,11.32l-72-72a8,8,0,0,1,0-11.32l72-72a8,8,0,0,1,11.32,11.32L59.31,120H216A8,8,0,0,1,224,128Z"/></svg>
-              </button>
-              <h1 class="results-head__title">Bộ từ khoá cảm xúc</h1>
-            </div>
+          <div>
             <div class="card">
               <div class="result-card__label result-card__label--success">
                 <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M240,56v64a8,8,0,0,1-16,0V75.31l-82.34,82.35a8,8,0,0,1-11.32,0L96,123.31,29.66,189.66a8,8,0,0,1-11.32-11.32l72-72a8,8,0,0,1,11.32,0L136,140.69,212.69,64H168a8,8,0,0,1,0-16h64A8,8,0,0,1,240,56Z"/></svg>
@@ -3457,31 +3394,6 @@ body {
       </form>
     </div>
 
-    <!-- Account create / edit dialog -->
-    <div class="modal" id="accModal" hidden>
-      <div class="modal__backdrop" data-acc-cancel></div>
-      <form class="modal__box modal__box--form" id="accForm" role="dialog" aria-modal="true" aria-labelledby="accModalTitle" novalidate>
-        <h2 class="modal__title" id="accModalTitle">Thêm tài khoản</h2>
-        <p class="modal__msg">Nhập thông tin tài khoản đăng nhập.</p>
-        <div class="field">
-          <label class="field__label" for="accName">Tên user</label>
-          <input class="input" id="accName" type="text" placeholder="VD: Nguyễn Thị Hà" maxlength="40" autocomplete="off">
-        </div>
-        <div class="field">
-          <label class="field__label" for="accEmail">Email</label>
-          <input class="input" id="accEmail" type="email" placeholder="ten@talentconnect.plus" autocomplete="off">
-        </div>
-        <div class="field">
-          <label class="field__label" for="accPw">Mật khẩu</label>
-          <input class="input" id="accPw" type="password" placeholder="Ít nhất 6 ký tự" autocomplete="new-password">
-        </div>
-        <div class="modal__actions">
-          <button class="btn btn--outline" type="button" data-acc-cancel>Hủy</button>
-          <button class="btn btn--accent" type="submit" id="accSave">Lưu</button>
-        </div>
-      </form>
-    </div>
-
     <!-- Slide-in navigation menu -->
     <div class="drawer" id="menu" hidden>
       <div class="drawer__backdrop" data-menu-close></div>
@@ -3558,8 +3470,6 @@ body {
     setActiveMenu(name);
     // The config card can only be measured once the analysis screen is visible.
     if (name === "analysis" && typeof syncProfileHeight === "function") syncProfileHeight();
-    // Settings always opens on its menu (hub) view.
-    if (name === "settings" && typeof showSettingsPane === "function") showSettingsPane("menu");
   }
 
   /* -------------------------------------------------------------------------
@@ -3613,15 +3523,10 @@ body {
   );
 
   /* -------------------------------------------------------------------------
-     Screen 0 · Login — a lightweight gate; any credentials proceed to the app
+     Screen 0 · Login — Google sign-in only (mock gate → enters the app)
      ------------------------------------------------------------------------- */
-  const loginForm = $("#loginForm");
-  if (loginForm) {
-    loginForm.addEventListener("submit", e => {
-      e.preventDefault();
-      show("dashboard");
-    });
-  }
+  const googleLoginBtn = $("#googleLoginBtn");
+  if (googleLoginBtn) googleLoginBtn.addEventListener("click", () => show("dashboard"));
   $$("[data-noop]").forEach(a => a.addEventListener("click", e => e.preventDefault()));
 
   /* -------------------------------------------------------------------------
@@ -5393,113 +5298,6 @@ body {
   setupKwEditor("failureKwList", "failureKwInput", "failureKwAdd", negativeKeywords, "neg");
   highlightTranscript();
   colorKeywordChips();
-
-  /* -------------------------------------------------------------------------
-     Settings hub — a menu that opens one of two detail panes.
-     ------------------------------------------------------------------------- */
-  function showSettingsPane(name) {
-    $$("[data-setpane]").forEach(p => { p.hidden = p.dataset.setpane !== name; });
-    const sc = $("#screen-settings .screen__scroll");
-    if (sc) sc.scrollTop = 0;
-  }
-  $$("[data-setnav]").forEach(el =>
-    el.addEventListener("click", () => showSettingsPane(el.dataset.setnav)));
-  $$("[data-setback]").forEach(el =>
-    el.addEventListener("click", () => showSettingsPane("menu")));
-
-  /* -------------------------------------------------------------------------
-     Settings · login-account management (create / edit / delete)
-     ------------------------------------------------------------------------- */
-  let accSeq = 0;
-  const ACCOUNTS = [
-    { id: ++accSeq, name: "Nguyễn Thị Hà", email: "ha.nguyen@talentconnect.plus", pw: "Tcp@2024" },
-    { id: ++accSeq, name: "Trần Văn Dũng",  email: "dung.tran@talentconnect.plus", pw: "Dung#1988" },
-    { id: ++accSeq, name: "Quản trị viên",  email: "admin@talentconnect.plus",     pw: "Admin@123" },
-  ];
-  const accTbody = $("#accTbody");
-  function renderAccounts() {
-    if (!accTbody) return;
-    accTbody.innerHTML = ACCOUNTS.map(a => {
-      const color = AVATAR_COLORS[nameHash(a.name) % AVATAR_COLORS.length];
-      return `
-        <tr>
-          <td class="emp-col-name">
-            <div class="emp-person">
-              <span class="emp-avatar" style="background:${color}">${initials(a.name)}</span>
-              <div class="emp-person__name" title="${escAttr(a.name)}">${a.name}</div>
-            </div>
-          </td>
-          <td class="acc-email">${escAttr(a.email)}</td>
-          <td class="acc-pw">${"•".repeat(Math.min(10, a.pw.length))}</td>
-          <td class="tbl-act">
-            <button class="tbl-edit acc-edit" type="button" data-id="${a.id}" aria-label="Sửa tài khoản" title="Sửa">${PENCIL_SVG}</button>
-            <button class="tbl-del acc-del" type="button" data-id="${a.id}" aria-label="Xóa tài khoản" title="Xóa">${TRASH_SVG}</button>
-          </td>
-        </tr>`;
-    }).join("");
-  }
-  renderAccounts();
-
-  const accModal = $("#accModal");
-  const accForm  = $("#accForm");
-  const accName  = $("#accName");
-  const accEmail = $("#accEmail");
-  const accPw    = $("#accPw");
-  const accTitle = $("#accModalTitle");
-  let accEditId = null;
-  function openAccModal(id) {
-    if (!accModal) return;
-    accForm.reset();
-    accEditId = id || null;
-    const a = id ? ACCOUNTS.find(x => x.id === id) : null;
-    if (accTitle) accTitle.textContent = a ? "Sửa tài khoản" : "Thêm tài khoản";
-    if (a) { accName.value = a.name; accEmail.value = a.email; accPw.value = a.pw; }
-    accModal.hidden = false;
-    setTimeout(() => accName && accName.focus(), 30);
-  }
-  function closeAccModal() { if (accModal) accModal.hidden = true; accEditId = null; }
-  const accAddBtn = $("#accAddBtn");
-  if (accAddBtn) accAddBtn.addEventListener("click", () => openAccModal());
-  $$("[data-acc-cancel]").forEach(el => el.addEventListener("click", closeAccModal));
-  document.addEventListener("keydown", e => {
-    if (e.key === "Escape" && accModal && !accModal.hidden) closeAccModal();
-  });
-  if (accForm) accForm.addEventListener("submit", e => {
-    e.preventDefault();
-    const name = (accName.value || "").trim();
-    const email = (accEmail.value || "").trim();
-    const pw = accPw.value || "";
-    if (!name) { accName.focus(); return; }
-    if (!email) { accEmail.focus(); return; }
-    if (pw.length < 6) { accPw.focus(); return; }
-    if (accEditId) {
-      const a = ACCOUNTS.find(x => x.id === accEditId);
-      if (a) { a.name = name; a.email = email; a.pw = pw; }
-    } else {
-      ACCOUNTS.push({ id: ++accSeq, name, email, pw });
-    }
-    renderAccounts();
-    closeAccModal();
-  });
-  if (accTbody) accTbody.addEventListener("click", e => {
-    const ed = e.target.closest(".acc-edit");
-    if (ed) { openAccModal(parseInt(ed.dataset.id, 10)); return; }
-    const del = e.target.closest(".acc-del");
-    if (del) {
-      const id = parseInt(del.dataset.id, 10);
-      const a = ACCOUNTS.find(x => x.id === id);
-      showConfirm({
-        title: "Xóa tài khoản?",
-        message: `Tài khoản "${a ? a.name : ""}"${a ? ` (${a.email})` : ""} sẽ bị xóa.`,
-        confirmLabel: "Xóa",
-        onConfirm: () => {
-          const i = ACCOUNTS.findIndex(x => x.id === id);
-          if (i >= 0) ACCOUNTS.splice(i, 1);
-          renderAccounts();
-        },
-      });
-    }
-  });
 
   /* -------------------------------------------------------------------------
      Dashboard export — build a real .xlsx (3 sheets), dependency-free

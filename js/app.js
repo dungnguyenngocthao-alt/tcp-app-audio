@@ -33,8 +33,6 @@
     setActiveMenu(name);
     // The config card can only be measured once the analysis screen is visible.
     if (name === "analysis" && typeof syncProfileHeight === "function") syncProfileHeight();
-    // Settings always opens on its menu (hub) view.
-    if (name === "settings" && typeof showSettingsPane === "function") showSettingsPane("menu");
   }
 
   /* -------------------------------------------------------------------------
@@ -88,15 +86,10 @@
   );
 
   /* -------------------------------------------------------------------------
-     Screen 0 · Login — a lightweight gate; any credentials proceed to the app
+     Screen 0 · Login — Google sign-in only (mock gate → enters the app)
      ------------------------------------------------------------------------- */
-  const loginForm = $("#loginForm");
-  if (loginForm) {
-    loginForm.addEventListener("submit", e => {
-      e.preventDefault();
-      show("dashboard");
-    });
-  }
+  const googleLoginBtn = $("#googleLoginBtn");
+  if (googleLoginBtn) googleLoginBtn.addEventListener("click", () => show("dashboard"));
   $$("[data-noop]").forEach(a => a.addEventListener("click", e => e.preventDefault()));
 
   /* -------------------------------------------------------------------------
@@ -1868,113 +1861,6 @@
   setupKwEditor("failureKwList", "failureKwInput", "failureKwAdd", negativeKeywords, "neg");
   highlightTranscript();
   colorKeywordChips();
-
-  /* -------------------------------------------------------------------------
-     Settings hub — a menu that opens one of two detail panes.
-     ------------------------------------------------------------------------- */
-  function showSettingsPane(name) {
-    $$("[data-setpane]").forEach(p => { p.hidden = p.dataset.setpane !== name; });
-    const sc = $("#screen-settings .screen__scroll");
-    if (sc) sc.scrollTop = 0;
-  }
-  $$("[data-setnav]").forEach(el =>
-    el.addEventListener("click", () => showSettingsPane(el.dataset.setnav)));
-  $$("[data-setback]").forEach(el =>
-    el.addEventListener("click", () => showSettingsPane("menu")));
-
-  /* -------------------------------------------------------------------------
-     Settings · login-account management (create / edit / delete)
-     ------------------------------------------------------------------------- */
-  let accSeq = 0;
-  const ACCOUNTS = [
-    { id: ++accSeq, name: "Nguyễn Thị Hà", email: "ha.nguyen@talentconnect.plus", pw: "Tcp@2024" },
-    { id: ++accSeq, name: "Trần Văn Dũng",  email: "dung.tran@talentconnect.plus", pw: "Dung#1988" },
-    { id: ++accSeq, name: "Quản trị viên",  email: "admin@talentconnect.plus",     pw: "Admin@123" },
-  ];
-  const accTbody = $("#accTbody");
-  function renderAccounts() {
-    if (!accTbody) return;
-    accTbody.innerHTML = ACCOUNTS.map(a => {
-      const color = AVATAR_COLORS[nameHash(a.name) % AVATAR_COLORS.length];
-      return `
-        <tr>
-          <td class="emp-col-name">
-            <div class="emp-person">
-              <span class="emp-avatar" style="background:${color}">${initials(a.name)}</span>
-              <div class="emp-person__name" title="${escAttr(a.name)}">${a.name}</div>
-            </div>
-          </td>
-          <td class="acc-email">${escAttr(a.email)}</td>
-          <td class="acc-pw">${"•".repeat(Math.min(10, a.pw.length))}</td>
-          <td class="tbl-act">
-            <button class="tbl-edit acc-edit" type="button" data-id="${a.id}" aria-label="Sửa tài khoản" title="Sửa">${PENCIL_SVG}</button>
-            <button class="tbl-del acc-del" type="button" data-id="${a.id}" aria-label="Xóa tài khoản" title="Xóa">${TRASH_SVG}</button>
-          </td>
-        </tr>`;
-    }).join("");
-  }
-  renderAccounts();
-
-  const accModal = $("#accModal");
-  const accForm  = $("#accForm");
-  const accName  = $("#accName");
-  const accEmail = $("#accEmail");
-  const accPw    = $("#accPw");
-  const accTitle = $("#accModalTitle");
-  let accEditId = null;
-  function openAccModal(id) {
-    if (!accModal) return;
-    accForm.reset();
-    accEditId = id || null;
-    const a = id ? ACCOUNTS.find(x => x.id === id) : null;
-    if (accTitle) accTitle.textContent = a ? "Sửa tài khoản" : "Thêm tài khoản";
-    if (a) { accName.value = a.name; accEmail.value = a.email; accPw.value = a.pw; }
-    accModal.hidden = false;
-    setTimeout(() => accName && accName.focus(), 30);
-  }
-  function closeAccModal() { if (accModal) accModal.hidden = true; accEditId = null; }
-  const accAddBtn = $("#accAddBtn");
-  if (accAddBtn) accAddBtn.addEventListener("click", () => openAccModal());
-  $$("[data-acc-cancel]").forEach(el => el.addEventListener("click", closeAccModal));
-  document.addEventListener("keydown", e => {
-    if (e.key === "Escape" && accModal && !accModal.hidden) closeAccModal();
-  });
-  if (accForm) accForm.addEventListener("submit", e => {
-    e.preventDefault();
-    const name = (accName.value || "").trim();
-    const email = (accEmail.value || "").trim();
-    const pw = accPw.value || "";
-    if (!name) { accName.focus(); return; }
-    if (!email) { accEmail.focus(); return; }
-    if (pw.length < 6) { accPw.focus(); return; }
-    if (accEditId) {
-      const a = ACCOUNTS.find(x => x.id === accEditId);
-      if (a) { a.name = name; a.email = email; a.pw = pw; }
-    } else {
-      ACCOUNTS.push({ id: ++accSeq, name, email, pw });
-    }
-    renderAccounts();
-    closeAccModal();
-  });
-  if (accTbody) accTbody.addEventListener("click", e => {
-    const ed = e.target.closest(".acc-edit");
-    if (ed) { openAccModal(parseInt(ed.dataset.id, 10)); return; }
-    const del = e.target.closest(".acc-del");
-    if (del) {
-      const id = parseInt(del.dataset.id, 10);
-      const a = ACCOUNTS.find(x => x.id === id);
-      showConfirm({
-        title: "Xóa tài khoản?",
-        message: `Tài khoản "${a ? a.name : ""}"${a ? ` (${a.email})` : ""} sẽ bị xóa.`,
-        confirmLabel: "Xóa",
-        onConfirm: () => {
-          const i = ACCOUNTS.findIndex(x => x.id === id);
-          if (i >= 0) ACCOUNTS.splice(i, 1);
-          renderAccounts();
-        },
-      });
-    }
-  });
 
   /* -------------------------------------------------------------------------
      Dashboard export — build a real .xlsx (3 sheets), dependency-free
