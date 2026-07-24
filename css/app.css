@@ -2048,36 +2048,45 @@ body {
   to   { transform: translate(42px, 42px); }
 }
 
-/* Login backdrop icons — faint voice-call / data-insight motifs that drift
-   gently behind the sign-in card. */
+/* Login backdrop icons — a faint, high-tech constellation of voice-call and
+   data-insight motifs that drift gently behind the sign-in card. */
 .login-decor { position: absolute; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
 .login-ico {
   position: absolute; display: block;
   color: #fff; opacity: 0;
-  filter: drop-shadow(0 6px 18px rgba(10, 14, 44, 0.35));
+  filter: drop-shadow(0 8px 26px rgba(10, 14, 44, 0.40));
   animation: loginFloat 12s ease-in-out infinite;
   will-change: transform, opacity;
 }
 .login-ico svg { width: 100%; height: 100%; display: block; }
-/* scatter around the centred card, kept to the edges */
-.login-ico--1 { top: 9%;  left: 8%;   width: 56px; height: 56px; --op: .12; animation-duration: 13s; animation-delay: -1s;  }
-.login-ico--2 { top: 15%; right: 10%; width: 64px; height: 64px; --op: .10; animation-duration: 15s; animation-delay: -4s;  }
-.login-ico--3 { top: 30%; left: 13%;  width: 44px; height: 44px; --op: .09; animation-duration: 14s; animation-delay: -6s;  }
-.login-ico--4 { bottom: 20%; right: 12%; width: 50px; height: 50px; --op: .11; animation-duration: 12s; animation-delay: -2s; }
-.login-ico--5 { bottom: 12%; left: 10%;  width: 58px; height: 58px; --op: .12; animation-duration: 16s; animation-delay: -8s; }
-.login-ico--6 { top: 46%; right: 6%;   width: 46px; height: 46px; --op: .08; animation-duration: 13s; animation-delay: -3s;  }
-.login-ico--7 { bottom: 30%; left: 6%;  width: 40px; height: 40px; --op: .08; animation-duration: 17s; animation-delay: -10s; }
-.login-ico--8 { top: 7%;  right: 34%;  width: 38px; height: 38px; --op: .07; animation-duration: 15s; animation-delay: -5s;  }
+/* scatter around the centred card, kept to the edges — bigger, high-tech feel */
+.login-ico--1  { top: 6%;   left: 7%;   width: 92px;  height: 92px;  --op: .13; animation-duration: 13s; animation-delay: -1s;  }
+.login-ico--2  { top: 11%;  right: 8%;  width: 104px; height: 104px; --op: .11; animation-duration: 15s; animation-delay: -4s;  }
+.login-ico--3  { top: 26%;  left: 12%;  width: 70px;  height: 70px;  --op: .10; animation-duration: 14s; animation-delay: -6s;  }
+.login-ico--4  { bottom: 16%; right: 10%; width: 84px; height: 84px; --op: .12; animation-duration: 12s; animation-delay: -2s;  }
+.login-ico--5  { bottom: 8%;  left: 8%;   width: 90px;  height: 90px;  --op: .13; animation-duration: 16s; animation-delay: -8s;  }
+.login-ico--6  { top: 44%;  right: 5%;   width: 66px;  height: 66px;  --op: .09; animation-duration: 13s; animation-delay: -3s;  }
+.login-ico--7  { bottom: 26%; left: 5%;   width: 78px;  height: 78px;  --op: .12; animation-duration: 17s; animation-delay: -10s; }
+.login-ico--8  { top: 5%;    right: 32%;  width: 60px;  height: 60px;  --op: .10; animation-duration: 15s; animation-delay: -5s;  }
+.login-ico--9  { bottom: 6%;  right: 30%; width: 88px;  height: 88px;  --op: .12; animation-duration: 18s; animation-delay: -7s;  }
+.login-ico--10 { top: 20%;   left: 40%;  width: 56px;  height: 56px;  --op: .09; animation-duration: 14s; animation-delay: -9s;  }
+.login-ico--11 { top: 40%;   left: 4%;   width: 64px;  height: 64px;  --op: .09; animation-duration: 16s; animation-delay: -12s; }
+.login-ico--12 { bottom: 40%; right: 6%; width: 62px;  height: 62px;  --op: .09; animation-duration: 15s; animation-delay: -2.5s;}
+.login-ico--13 { bottom: 30%; right: 40%; width: 54px; height: 54px;  --op: .08; animation-duration: 19s; animation-delay: -6.5s;}
+.login-ico--14 { top: 14%;   left: 30%;  width: 58px;  height: 58px;  --op: .08; animation-duration: 17s; animation-delay: -11s; }
 @keyframes loginFloat {
-  0%   { opacity: 0; transform: translateY(14px) rotate(-4deg) scale(.96); }
+  0%   { opacity: 0; transform: translateY(16px) rotate(-5deg) scale(.94); }
   20%  { opacity: var(--op, .1); }
-  50%  { transform: translateY(-14px) rotate(4deg) scale(1.02); }
+  50%  { transform: translateY(-16px) rotate(5deg) scale(1.04); }
   80%  { opacity: var(--op, .1); }
-  100% { opacity: 0; transform: translateY(14px) rotate(-4deg) scale(.96); }
+  100% { opacity: 0; transform: translateY(16px) rotate(-5deg) scale(.94); }
 }
-@media (max-width: 480px) {
-  .login-ico--3, .login-ico--6, .login-ico--7, .login-ico--8 { display: none; }
+/* keep the middle clear of the card on smaller screens + thin the crowd */
+@media (max-width: 560px) {
+  .login-ico--10, .login-ico--11, .login-ico--12, .login-ico--13, .login-ico--14 { display: none; }
   .login-ico { filter: none; }
+  .login-ico--1, .login-ico--5 { width: 76px; height: 76px; }
+  .login-ico--2, .login-ico--4, .login-ico--9 { width: 82px; height: 82px; }
 }
 
 /* ---- buttons: gradient accent with soft colour glow, glassy secondary ---- */

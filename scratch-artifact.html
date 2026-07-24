@@ -2256,36 +2256,45 @@ body {
   to   { transform: translate(42px, 42px); }
 }
 
-/* Login backdrop icons — faint voice-call / data-insight motifs that drift
-   gently behind the sign-in card. */
+/* Login backdrop icons — a faint, high-tech constellation of voice-call and
+   data-insight motifs that drift gently behind the sign-in card. */
 .login-decor { position: absolute; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
 .login-ico {
   position: absolute; display: block;
   color: #fff; opacity: 0;
-  filter: drop-shadow(0 6px 18px rgba(10, 14, 44, 0.35));
+  filter: drop-shadow(0 8px 26px rgba(10, 14, 44, 0.40));
   animation: loginFloat 12s ease-in-out infinite;
   will-change: transform, opacity;
 }
 .login-ico svg { width: 100%; height: 100%; display: block; }
-/* scatter around the centred card, kept to the edges */
-.login-ico--1 { top: 9%;  left: 8%;   width: 56px; height: 56px; --op: .12; animation-duration: 13s; animation-delay: -1s;  }
-.login-ico--2 { top: 15%; right: 10%; width: 64px; height: 64px; --op: .10; animation-duration: 15s; animation-delay: -4s;  }
-.login-ico--3 { top: 30%; left: 13%;  width: 44px; height: 44px; --op: .09; animation-duration: 14s; animation-delay: -6s;  }
-.login-ico--4 { bottom: 20%; right: 12%; width: 50px; height: 50px; --op: .11; animation-duration: 12s; animation-delay: -2s; }
-.login-ico--5 { bottom: 12%; left: 10%;  width: 58px; height: 58px; --op: .12; animation-duration: 16s; animation-delay: -8s; }
-.login-ico--6 { top: 46%; right: 6%;   width: 46px; height: 46px; --op: .08; animation-duration: 13s; animation-delay: -3s;  }
-.login-ico--7 { bottom: 30%; left: 6%;  width: 40px; height: 40px; --op: .08; animation-duration: 17s; animation-delay: -10s; }
-.login-ico--8 { top: 7%;  right: 34%;  width: 38px; height: 38px; --op: .07; animation-duration: 15s; animation-delay: -5s;  }
+/* scatter around the centred card, kept to the edges — bigger, high-tech feel */
+.login-ico--1  { top: 6%;   left: 7%;   width: 92px;  height: 92px;  --op: .13; animation-duration: 13s; animation-delay: -1s;  }
+.login-ico--2  { top: 11%;  right: 8%;  width: 104px; height: 104px; --op: .11; animation-duration: 15s; animation-delay: -4s;  }
+.login-ico--3  { top: 26%;  left: 12%;  width: 70px;  height: 70px;  --op: .10; animation-duration: 14s; animation-delay: -6s;  }
+.login-ico--4  { bottom: 16%; right: 10%; width: 84px; height: 84px; --op: .12; animation-duration: 12s; animation-delay: -2s;  }
+.login-ico--5  { bottom: 8%;  left: 8%;   width: 90px;  height: 90px;  --op: .13; animation-duration: 16s; animation-delay: -8s;  }
+.login-ico--6  { top: 44%;  right: 5%;   width: 66px;  height: 66px;  --op: .09; animation-duration: 13s; animation-delay: -3s;  }
+.login-ico--7  { bottom: 26%; left: 5%;   width: 78px;  height: 78px;  --op: .12; animation-duration: 17s; animation-delay: -10s; }
+.login-ico--8  { top: 5%;    right: 32%;  width: 60px;  height: 60px;  --op: .10; animation-duration: 15s; animation-delay: -5s;  }
+.login-ico--9  { bottom: 6%;  right: 30%; width: 88px;  height: 88px;  --op: .12; animation-duration: 18s; animation-delay: -7s;  }
+.login-ico--10 { top: 20%;   left: 40%;  width: 56px;  height: 56px;  --op: .09; animation-duration: 14s; animation-delay: -9s;  }
+.login-ico--11 { top: 40%;   left: 4%;   width: 64px;  height: 64px;  --op: .09; animation-duration: 16s; animation-delay: -12s; }
+.login-ico--12 { bottom: 40%; right: 6%; width: 62px;  height: 62px;  --op: .09; animation-duration: 15s; animation-delay: -2.5s;}
+.login-ico--13 { bottom: 30%; right: 40%; width: 54px; height: 54px;  --op: .08; animation-duration: 19s; animation-delay: -6.5s;}
+.login-ico--14 { top: 14%;   left: 30%;  width: 58px;  height: 58px;  --op: .08; animation-duration: 17s; animation-delay: -11s; }
 @keyframes loginFloat {
-  0%   { opacity: 0; transform: translateY(14px) rotate(-4deg) scale(.96); }
+  0%   { opacity: 0; transform: translateY(16px) rotate(-5deg) scale(.94); }
   20%  { opacity: var(--op, .1); }
-  50%  { transform: translateY(-14px) rotate(4deg) scale(1.02); }
+  50%  { transform: translateY(-16px) rotate(5deg) scale(1.04); }
   80%  { opacity: var(--op, .1); }
-  100% { opacity: 0; transform: translateY(14px) rotate(-4deg) scale(.96); }
+  100% { opacity: 0; transform: translateY(16px) rotate(-5deg) scale(.94); }
 }
-@media (max-width: 480px) {
-  .login-ico--3, .login-ico--6, .login-ico--7, .login-ico--8 { display: none; }
+/* keep the middle clear of the card on smaller screens + thin the crowd */
+@media (max-width: 560px) {
+  .login-ico--10, .login-ico--11, .login-ico--12, .login-ico--13, .login-ico--14 { display: none; }
   .login-ico { filter: none; }
+  .login-ico--1, .login-ico--5 { width: 76px; height: 76px; }
+  .login-ico--2, .login-ico--4, .login-ico--9 { width: 82px; height: 82px; }
 }
 
 /* ---- buttons: gradient accent with soft colour glow, glassy secondary ---- */
@@ -2515,14 +2524,34 @@ body {
     <!-- ================================================================= -->
     <section class="screen screen--login is-active" id="screen-login" data-screen="login">
       <div class="login-decor" aria-hidden="true">
+        <!-- voice / call -->
         <span class="login-ico login-ico--1"><svg viewBox="0 0 256 256" fill="currentColor"><path d="M222.37,158.46l-47.11-21.11-.13-.06a16,16,0,0,0-15.17,1.4,8.12,8.12,0,0,0-.75.56L134.87,160c-15.42-7.49-31.34-23.29-38.83-38.51l20.78-24.71c.2-.25.39-.51.57-.78a16,16,0,0,0,1.32-15.06l0-.12L97.54,33.64a16,16,0,0,0-16.62-9.52A56.26,56.26,0,0,0,32,80c0,79.4,64.6,144,144,144a56.26,56.26,0,0,0,55.88-48.92A16,16,0,0,0,222.37,158.46Z"/></svg></span>
+        <!-- equalizer / audio -->
         <span class="login-ico login-ico--2"><svg viewBox="0 0 256 256" fill="currentColor"><path d="M56,96v64a8,8,0,0,1-16,0V96a8,8,0,0,1,16,0ZM88,24a8,8,0,0,0-8,8V224a8,8,0,0,0,16,0V32A8,8,0,0,0,88,24Zm40,32a8,8,0,0,0-8,8V192a8,8,0,0,0,16,0V64A8,8,0,0,0,128,56Zm40,32a8,8,0,0,0-8,8v64a8,8,0,0,0,16,0V96A8,8,0,0,0,168,88Zm40-16a8,8,0,0,0-8,8v96a8,8,0,0,0,16,0V80A8,8,0,0,0,208,72Z"/></svg></span>
+        <!-- chart bar / insight -->
         <span class="login-ico login-ico--3"><svg viewBox="0 0 256 256" fill="currentColor"><path d="M224,200h-8V40a8,8,0,0,0-8-8H152a8,8,0,0,0-8,8V80H96a8,8,0,0,0-8,8v40H48a8,8,0,0,0-8,8v64H32a8,8,0,0,0,0,16H224a8,8,0,0,0,0-16ZM160,48h40V200H160ZM104,96h40V200H104ZM56,144H88v56H56Z"/></svg></span>
+        <!-- microphone -->
         <span class="login-ico login-ico--4"><svg viewBox="0 0 256 256" fill="currentColor"><path d="M128,176a48.05,48.05,0,0,0,48-48V64a48,48,0,0,0-96,0v64A48.05,48.05,0,0,0,128,176ZM96,64a32,32,0,0,1,64,0v64a32,32,0,0,1-64,0Zm40,143.6V232a8,8,0,0,1-16,0V207.6A80.11,80.11,0,0,1,48,128a8,8,0,0,1,16,0,64,64,0,0,0,128,0,8,8,0,0,1,16,0A80.11,80.11,0,0,1,136,207.6Z"/></svg></span>
+        <!-- trend up -->
         <span class="login-ico login-ico--5"><svg viewBox="0 0 256 256" fill="currentColor"><path d="M240,56v64a8,8,0,0,1-16,0V75.31l-82.34,82.35a8,8,0,0,1-11.32,0L96,123.31,29.66,189.66a8,8,0,0,1-11.32-11.32l72-72a8,8,0,0,1,11.32,0L136,140.69,212.69,64H168a8,8,0,0,1,0-16h64A8,8,0,0,1,240,56Z"/></svg></span>
+        <!-- chat dots -->
         <span class="login-ico login-ico--6"><svg viewBox="0 0 256 256" fill="currentColor"><path d="M128,24A104,104,0,0,0,36.18,176.88L24.83,210.93a16,16,0,0,0,20.24,20.24l34.05-11.35A104,104,0,1,0,128,24ZM84,120a12,12,0,1,1-12,12A12,12,0,0,1,84,120Zm44,0a12,12,0,1,1-12,12A12,12,0,0,1,128,120Zm44,0a12,12,0,1,1-12,12A12,12,0,0,1,172,120Z"/></svg></span>
-        <span class="login-ico login-ico--7"><svg viewBox="0 0 256 256" fill="currentColor"><path d="M232.49,215.51,185,168a92.12,92.12,0,1,0-17,17l47.53,47.54a12,12,0,0,0,17-17ZM44,112a68,68,0,1,1,68,68A68.07,68.07,0,0,1,44,112Z"/></svg></span>
-        <span class="login-ico login-ico--8"><svg viewBox="0 0 256 256" fill="currentColor"><path d="M56,96v64a8,8,0,0,1-16,0V96a8,8,0,0,1,16,0ZM88,24a8,8,0,0,0-8,8V224a8,8,0,0,0,16,0V32A8,8,0,0,0,88,24Zm40,32a8,8,0,0,0-8,8V192a8,8,0,0,0,16,0V64A8,8,0,0,0,128,56Zm40,32a8,8,0,0,0-8,8v64a8,8,0,0,0,16,0V96A8,8,0,0,0,168,88Zm40-16a8,8,0,0,0-8,8v96a8,8,0,0,0,16,0V80A8,8,0,0,0,208,72Z"/></svg></span>
+        <!-- cpu / chip -->
+        <span class="login-ico login-ico--7"><svg viewBox="0 0 256 256" fill="currentColor"><path d="M232,88a8,8,0,0,0,0-16H208V56a16,16,0,0,0-16-16H176V16a8,8,0,0,0-16,0V40H136V16a8,8,0,0,0-16,0V40H96V16a8,8,0,0,0-16,0V40H64A16,16,0,0,0,48,56V72H24a8,8,0,0,0,0,16H48v32H24a8,8,0,0,0,0,16H48v32H24a8,8,0,0,0,0,16H48v16a16,16,0,0,0,16,16H80v24a8,8,0,0,0,16,0V216h24v24a8,8,0,0,0,16,0V216h24v24a8,8,0,0,0,16,0V216h16a16,16,0,0,0,16-16V184h24a8,8,0,0,0,0-16H208V136h24a8,8,0,0,0,0-16H208V88ZM192,200H64V56H192Zm-32-96H96a8,8,0,0,0-8,8v48a8,8,0,0,0,8,8h64a8,8,0,0,0,8-8V112A8,8,0,0,0,160,104Zm-8,48H104V120h48Z"/></svg></span>
+        <!-- lightning / speed -->
+        <span class="login-ico login-ico--8"><svg viewBox="0 0 256 256" fill="currentColor"><path d="M215.79,118.17a8,8,0,0,0-5-5.66L153.18,90.9l14.66-73.33a8,8,0,0,0-13.69-7l-112,120a8,8,0,0,0,3,13l57.63,21.61L88.16,238.43a8,8,0,0,0,13.69,7l112-120A8,8,0,0,0,215.79,118.17Z"/></svg></span>
+        <!-- robot / AI -->
+        <span class="login-ico login-ico--9"><svg viewBox="0 0 256 256" fill="currentColor"><path d="M200,48H136V16a8,8,0,0,0-16,0V48H56A32,32,0,0,0,24,80V192a32,32,0,0,0,32,32H200a32,32,0,0,0,32-32V80A32,32,0,0,0,200,48ZM104,140a12,12,0,1,1-12-12A12,12,0,0,1,104,140Zm60,0a12,12,0,1,1-12-12A12,12,0,0,1,164,140ZM24,120H8V152a8,8,0,0,0,16,0Zm224,0v32a8,8,0,0,0,16,0V120Z"/></svg></span>
+        <!-- sparkle / AI -->
+        <span class="login-ico login-ico--10"><svg viewBox="0 0 256 256" fill="currentColor"><path d="M208,144a15.78,15.78,0,0,1-10.42,14.94L146,178l-19.06,51.62a15.92,15.92,0,0,1-29.88,0L78,178l-51.62-19.06a15.92,15.92,0,0,1,0-29.88L78,110l19.06-51.62a15.92,15.92,0,0,1,29.88,0L146,110l51.62,19.06A15.78,15.78,0,0,1,208,144ZM152,48h16V64a8,8,0,0,0,16,0V48h16a8,8,0,0,0,0-16H184V16a8,8,0,0,0-16,0V32H152a8,8,0,0,0,0,16Zm88,32h-8V72a8,8,0,0,0-16,0v8h-8a8,8,0,0,0,0,16h8v8a8,8,0,0,0,16,0V96h8a8,8,0,0,0,0-16Z"/></svg></span>
+        <!-- grid / dashboard -->
+        <span class="login-ico login-ico--11"><svg viewBox="0 0 256 256" fill="currentColor"><path d="M104,40H56A16,16,0,0,0,40,56v48a16,16,0,0,0,16,16h48a16,16,0,0,0,16-16V56A16,16,0,0,0,104,40Zm96,0H152a16,16,0,0,0-16,16v48a16,16,0,0,0,16,16h48a16,16,0,0,0,16-16V56A16,16,0,0,0,200,40ZM104,136H56a16,16,0,0,0-16,16v48a16,16,0,0,0,16,16h48a16,16,0,0,0,16-16V152A16,16,0,0,0,104,136Zm96,0H152a16,16,0,0,0-16,16v48a16,16,0,0,0,16,16h48a16,16,0,0,0,16-16V152A16,16,0,0,0,200,136Z"/></svg></span>
+        <!-- magnifier / search insight -->
+        <span class="login-ico login-ico--12"><svg viewBox="0 0 256 256" fill="currentColor"><path d="M229.66,218.34l-50.07-50.06a88.11,88.11,0,1,0-11.31,11.31l50.06,50.07a8,8,0,0,0,11.32-11.32ZM40,112a72,72,0,1,1,72,72A72.08,72.08,0,0,1,40,112Z"/></svg></span>
+        <!-- equalizer (repeat) -->
+        <span class="login-ico login-ico--13"><svg viewBox="0 0 256 256" fill="currentColor"><path d="M56,96v64a8,8,0,0,1-16,0V96a8,8,0,0,1,16,0ZM88,24a8,8,0,0,0-8,8V224a8,8,0,0,0,16,0V32A8,8,0,0,0,88,24Zm40,32a8,8,0,0,0-8,8V192a8,8,0,0,0,16,0V64A8,8,0,0,0,128,56Zm40,32a8,8,0,0,0-8,8v64a8,8,0,0,0,16,0V96A8,8,0,0,0,168,88Zm40-16a8,8,0,0,0-8,8v96a8,8,0,0,0,16,0V80A8,8,0,0,0,208,72Z"/></svg></span>
+        <!-- phone (repeat) -->
+        <span class="login-ico login-ico--14"><svg viewBox="0 0 256 256" fill="currentColor"><path d="M222.37,158.46l-47.11-21.11-.13-.06a16,16,0,0,0-15.17,1.4,8.12,8.12,0,0,0-.75.56L134.87,160c-15.42-7.49-31.34-23.29-38.83-38.51l20.78-24.71c.2-.25.39-.51.57-.78a16,16,0,0,0,1.32-15.06l0-.12L97.54,33.64a16,16,0,0,0-16.62-9.52A56.26,56.26,0,0,0,32,80c0,79.4,64.6,144,144,144a56.26,56.26,0,0,0,55.88-48.92A16,16,0,0,0,222.37,158.46Z"/></svg></span>
       </div>
       <div class="login-card">
         <div class="login-brand">
