@@ -2187,8 +2187,10 @@ body {
   .login-ico { animation: none; opacity: var(--op, .1); transform: none; }
 }
 
-/* ---- desktop: move the menu to the LEFT corner (mobile & tablet stay right) ---- */
+/* ---- desktop: move the menu to the LEFT corner, logo sits right beside it
+       (mobile & tablet keep the menu on the right) ---- */
 @media (min-width: 1200px) {
+  .appbar { justify-content: flex-start; gap: var(--tcp-space-4); }
   .appbar .burger { order: -1; }
   .drawer__panel {
     right: auto; left: 0;
