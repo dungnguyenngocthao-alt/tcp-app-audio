@@ -1374,7 +1374,7 @@
     if (upPage > pages) upPage = pages;
     const slice = list.slice((upPage - 1) * UP_PER_PAGE, upPage * UP_PER_PAGE);
     if (!slice.length) {
-      upTbody.innerHTML = '<tr><td class="emp-empty" colspan="7">Không có cuộc gọi phù hợp với bộ lọc.</td></tr>';
+      upTbody.innerHTML = '<tr><td class="emp-empty" colspan="8">Không có cuộc gọi phù hợp với bộ lọc.</td></tr>';
       renderUpPager(pages);
       return;
     }
@@ -1401,6 +1401,7 @@
           <td class="up-to">${u.to}</td>
           <td class="up-dur">${u.dur}</td>
           <td><span class="emp-rate ${rateClass}">${eff}%</span>${srcTag}</td>
+          <td class="up-note">${u.reviewed && u.note ? `<span class="up-note__text" title="${escAttr(u.note)}">${escAttr(u.note)}</span>` : '<span class="up-note__empty">—</span>'}</td>
           <td>
             <div class="up-actions">
               <button class="btn btn--outline btn--sm up-review" type="button" data-id="${escAttr(u.id)}" ${u.reviewed ? "disabled" : ""}>Đánh giá lại</button>
@@ -1461,22 +1462,49 @@
      ------------------------------------------------------------------------- */
   const chTbody = $("#chTbody");
   const chCount = $("#chCount");
+  const CH_HOTLINE = "1900 6068";
+  const CH_TRANSCRIPTS = [
+    "Xin chào anh/chị, em gọi từ Talent Connect Plus để tư vấn gói dịch vụ mới…",
+    "Cảm ơn anh đã dành thời gian, mình xin phép trao đổi nhanh về nhu cầu tuyển dụng…",
+    "Dạ bên em đang có chương trình ưu đãi cho khách hàng đăng ký trong tháng này…",
+    "Em hiểu băn khoăn của chị về chi phí, để em phân tích ROI cụ thể hơn ạ…",
+    "Anh cho em xin thông tin quy mô đội ngũ hiện tại để tư vấn chính xác nhất…",
+    "Vâng ạ, em sẽ gửi bản demo và báo giá qua email ngay sau cuộc gọi này…",
+    "Mình xác nhận lại lịch triển khai và các đầu mục bàn giao như đã trao đổi…",
+    "Cảm ơn chị đã tin tưởng, em sẽ theo sát để đảm bảo trải nghiệm tốt nhất ạ…",
+  ];
+  // Derived sheet fields, stable per call id (doesn't touch the shared model).
+  function chMeta(u) {
+    const h = nameHash(u.id + "|" + u.agent);
+    const inbound = h % 2 === 0;
+    const sec = durToSec(u.dur);
+    const sizeMb = Math.max(0.4, (sec * 0.13) / 60 * 8).toFixed(1); // ~mono voice recording
+    return {
+      type: inbound ? "Inbound" : "Outbound",
+      from: inbound ? u.to : CH_HOTLINE,
+      to:   inbound ? CH_HOTLINE : u.to,
+      size: sizeMb + " MB",
+      url:  "https://rec.talentconnect.plus/calls/" + u.id + ".wav",
+      transcript: CH_TRANSCRIPTS[h % CH_TRANSCRIPTS.length],
+    };
+  }
   function renderCallHistory() {
     if (!chTbody) return;
     if (chCount) chCount.textContent = UPLOAD_LOG.length.toLocaleString("vi-VN") + " cuộc gọi";
     if (!UPLOAD_LOG.length) {
-      chTbody.innerHTML = '<tr><td class="emp-empty" colspan="7">Chưa có cuộc gọi nào.</td></tr>';
+      chTbody.innerHTML = '<tr><td class="emp-empty" colspan="10">Chưa có cuộc gọi nào.</td></tr>';
       return;
     }
     chTbody.innerHTML = UPLOAD_LOG.map(u => {
       const color = AVATAR_COLORS[nameHash(u.agent) % AVATAR_COLORS.length];
-      const eff = effRate(u);
-      const rateClass = eff >= 70 ? "emp-rate--good" : eff >= 55 ? "emp-rate--mid" : "emp-rate--low";
-      const oClass = u.outcome === "success" ? "ch-out--good" : u.outcome === "warning" ? "ch-out--mid" : "ch-out--low";
+      const m = chMeta(u);
+      const typeClass = m.type === "Inbound" ? "ch-type--in" : "ch-type--out";
       return `
         <tr>
           <td class="up-id">${u.id}</td>
           <td class="emp-last">${u.time}</td>
+          <td class="up-to">${escAttr(m.from)}</td>
+          <td class="up-to">${escAttr(m.to)}</td>
           <td class="emp-col-name">
             <div class="emp-person">
               <span class="emp-avatar" style="background:${color}">${initials(u.agent)}</span>
@@ -1486,10 +1514,11 @@
               </div>
             </div>
           </td>
-          <td class="up-to">${u.to}</td>
+          <td><span class="ch-type ${typeClass}">${m.type}</span></td>
           <td class="up-dur">${u.dur}</td>
-          <td><span class="emp-rate ${rateClass}">${eff}%</span></td>
-          <td><span class="ch-out ${oClass}">${UP_OUTCOME[u.outcome]}</span></td>
+          <td class="ch-size">${m.size}</td>
+          <td class="ch-url-cell"><a class="ch-url" href="${escAttr(m.url)}" target="_blank" rel="noopener" title="${escAttr(m.url)}">${u.id}.wav</a></td>
+          <td class="ch-transcript" title="${escAttr(m.transcript)}">${escAttr(m.transcript)}</td>
         </tr>`;
     }).join("");
   }

@@ -2200,11 +2200,26 @@ body {
   padding: 5px 12px; border-radius: var(--tcp-radius-pill);
   background: var(--tcp-bg-muted);
 }
-.ch-out {
-  display: inline-flex; align-items: center;
-  font-size: 13px; font-weight: 500;
+.ch-type {
+  display: inline-flex; align-items: center; white-space: nowrap;
+  font-size: 12px; font-weight: 500;
   padding: 3px 10px; border-radius: var(--tcp-radius-pill);
 }
-.ch-out--good { background: var(--tcp-success-bg); color: var(--tcp-success-fg); }
-.ch-out--mid  { background: var(--tcp-warning-bg); color: var(--tcp-warning-fg); }
-.ch-out--low  { background: var(--tcp-error-bg);   color: var(--tcp-error-fg); }
+.ch-type--out { background: var(--tcp-accent-subtle); color: var(--tcp-accent-hover); }
+.ch-type--in  { background: var(--tcp-success-bg);     color: var(--tcp-success-fg); }
+.ch-size { white-space: nowrap; color: var(--tcp-fg-secondary); font-variant-numeric: tabular-nums; }
+.ch-url { color: var(--tcp-accent); text-decoration: none; white-space: nowrap; }
+.ch-url:hover { text-decoration: underline; }
+.ch-transcript {
+  max-width: 260px; color: var(--tcp-fg-secondary);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+
+/* Đánh giá cuộc gọi · reviewer note column */
+.up-note { max-width: 220px; }
+.up-note__text {
+  display: block; max-width: 220px;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  color: var(--tcp-fg-secondary); font-size: 13px;
+}
+.up-note__empty { color: var(--tcp-fg-tertiary); }
