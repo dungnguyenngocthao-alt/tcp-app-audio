@@ -2059,34 +2059,26 @@ body {
   will-change: transform, opacity;
 }
 .login-ico svg { width: 100%; height: 100%; display: block; }
-/* scatter around the centred card, kept to the edges — bigger, high-tech feel */
-.login-ico--1  { top: 6%;   left: 7%;   width: 92px;  height: 92px;  --op: .13; animation-duration: 13s; animation-delay: -1s;  }
-.login-ico--2  { top: 11%;  right: 8%;  width: 104px; height: 104px; --op: .11; animation-duration: 15s; animation-delay: -4s;  }
-.login-ico--3  { top: 26%;  left: 12%;  width: 70px;  height: 70px;  --op: .10; animation-duration: 14s; animation-delay: -6s;  }
-.login-ico--4  { bottom: 16%; right: 10%; width: 84px; height: 84px; --op: .12; animation-duration: 12s; animation-delay: -2s;  }
-.login-ico--5  { bottom: 8%;  left: 8%;   width: 90px;  height: 90px;  --op: .13; animation-duration: 16s; animation-delay: -8s;  }
-.login-ico--6  { top: 44%;  right: 5%;   width: 66px;  height: 66px;  --op: .09; animation-duration: 13s; animation-delay: -3s;  }
-.login-ico--7  { bottom: 26%; left: 5%;   width: 78px;  height: 78px;  --op: .12; animation-duration: 17s; animation-delay: -10s; }
-.login-ico--8  { top: 5%;    right: 32%;  width: 60px;  height: 60px;  --op: .10; animation-duration: 15s; animation-delay: -5s;  }
-.login-ico--9  { bottom: 6%;  right: 30%; width: 88px;  height: 88px;  --op: .12; animation-duration: 18s; animation-delay: -7s;  }
-.login-ico--10 { top: 20%;   left: 40%;  width: 56px;  height: 56px;  --op: .09; animation-duration: 14s; animation-delay: -9s;  }
-.login-ico--11 { top: 40%;   left: 4%;   width: 64px;  height: 64px;  --op: .09; animation-duration: 16s; animation-delay: -12s; }
-.login-ico--12 { bottom: 40%; right: 6%; width: 62px;  height: 62px;  --op: .09; animation-duration: 15s; animation-delay: -2.5s;}
-.login-ico--13 { bottom: 30%; right: 40%; width: 54px; height: 54px;  --op: .08; animation-duration: 19s; animation-delay: -6.5s;}
-.login-ico--14 { top: 14%;   left: 30%;  width: 58px;  height: 58px;  --op: .08; animation-duration: 17s; animation-delay: -11s; }
+/* 7 large motifs spread evenly around the edges, kept clear of the card */
+.login-ico--1 { top: 8%;    left: 9%;   width: 116px; height: 116px; --op: .07; animation-duration: 15s; animation-delay: -1s;  }
+.login-ico--2 { top: 10%;   right: 9%;  width: 128px; height: 128px; --op: .06; animation-duration: 17s; animation-delay: -5s;  }
+.login-ico--3 { top: 42%;   left: 5%;   width: 108px; height: 108px; --op: .06; animation-duration: 16s; animation-delay: -9s;  }
+.login-ico--4 { top: 44%;   right: 5%;  width: 120px; height: 120px; --op: .07; animation-duration: 18s; animation-delay: -3s;  }
+.login-ico--5 { bottom: 9%; left: 10%;  width: 104px; height: 104px; --op: .06; animation-duration: 14s; animation-delay: -7s;  }
+.login-ico--6 { bottom: 7%; left: 44%;  width: 112px; height: 112px; --op: .055;animation-duration: 19s; animation-delay: -12s; }
+.login-ico--7 { bottom: 11%;right: 9%;  width: 116px; height: 116px; --op: .07; animation-duration: 16s; animation-delay: -4s;  }
 @keyframes loginFloat {
-  0%   { opacity: 0; transform: translateY(16px) rotate(-5deg) scale(.94); }
-  20%  { opacity: var(--op, .1); }
-  50%  { transform: translateY(-16px) rotate(5deg) scale(1.04); }
-  80%  { opacity: var(--op, .1); }
-  100% { opacity: 0; transform: translateY(16px) rotate(-5deg) scale(.94); }
+  0%   { opacity: 0; transform: translateY(18px) rotate(-5deg) scale(.94); }
+  22%  { opacity: var(--op, .07); }
+  50%  { transform: translateY(-18px) rotate(5deg) scale(1.04); }
+  78%  { opacity: var(--op, .07); }
+  100% { opacity: 0; transform: translateY(18px) rotate(-5deg) scale(.94); }
 }
-/* keep the middle clear of the card on smaller screens + thin the crowd */
+/* on small screens keep the middle clear + soften */
 @media (max-width: 560px) {
-  .login-ico--10, .login-ico--11, .login-ico--12, .login-ico--13, .login-ico--14 { display: none; }
+  .login-ico--3, .login-ico--4 { display: none; }
   .login-ico { filter: none; }
-  .login-ico--1, .login-ico--5 { width: 76px; height: 76px; }
-  .login-ico--2, .login-ico--4, .login-ico--9 { width: 82px; height: 82px; }
+  .login-ico--1, .login-ico--2, .login-ico--5, .login-ico--6, .login-ico--7 { width: 96px; height: 96px; }
 }
 
 /* ---- buttons: gradient accent with soft colour glow, glassy secondary ---- */
