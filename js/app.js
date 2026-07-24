@@ -83,7 +83,7 @@
     el.addEventListener("click", () => {
       const target = el.dataset.nav;
       if (el.hasAttribute("data-reset")) resetAnalysis();
-      if (target === "analysis" || target === "results" || target === "history" || target === "dashboard" || target === "employees" || target === "uploads" || target === "settings" || target === "login") show(target);
+      if (target === "analysis" || target === "results" || target === "history" || target === "dashboard" || target === "employees" || target === "uploads" || target === "callhistory" || target === "settings" || target === "login") show(target);
       closeMenu();
     })
   );
