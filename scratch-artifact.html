@@ -593,8 +593,8 @@ button { font-family: inherit; }
 .appbar {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: var(--tcp-space-2);
+  justify-content: flex-start;
+  gap: var(--tcp-space-4);
   padding: 14px var(--tcp-space-5) 12px var(--tcp-space-6);
   /* Blue → violet gradient nav bar */
   background: linear-gradient(60deg, var(--color-blue-7) 0%, var(--color-violet-26) 75%);
@@ -603,7 +603,8 @@ button { font-family: inherit; }
 /* On the accent bar the wordmark and burger switch to a light treatment
    so they keep clear contrast. */
 .appbar .brand__name { color: var(--tcp-white); }
-.appbar .burger { color: var(--tcp-white); }
+/* Menu button always sits in the left corner, logo right beside it. */
+.appbar .burger { color: var(--tcp-white); order: -1; }
 .appbar .burger:hover { background: rgba(255, 255, 255, 0.14); }
 .appbar .burger:focus-visible { box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.4); }
 
@@ -1808,13 +1809,13 @@ mark.mark--neg { background: var(--tcp-error-bg); color: var(--tcp-error-900); }
   animation: drawer-fade var(--tcp-dur-base) var(--tcp-ease) forwards;
 }
 .drawer__panel {
-  position: absolute; top: 0; right: 0; bottom: 0;
+  position: absolute; top: 0; left: 0; bottom: 0;
   width: 80%; max-width: 300px;
   background: var(--tcp-bg);
-  box-shadow: var(--tcp-shadow-2xl);
+  box-shadow: 8px 0 40px -8px rgba(31, 31, 45, 0.28);
   display: flex; flex-direction: column;
   padding: var(--tcp-space-5);
-  transform: translateX(100%);
+  transform: translateX(-100%);
   animation: drawer-slide var(--tcp-dur-slow) var(--tcp-ease) forwards;
 }
 @keyframes drawer-fade  { to { opacity: 1; } }
@@ -2395,17 +2396,6 @@ body {
   .login-ico { animation: none; opacity: var(--op, .1); transform: none; }
 }
 
-/* ---- desktop: move the menu to the LEFT corner, logo sits right beside it
-       (mobile & tablet keep the menu on the right) ---- */
-@media (min-width: 1200px) {
-  .appbar { justify-content: flex-start; gap: var(--tcp-space-4); }
-  .appbar .burger { order: -1; }
-  .drawer__panel {
-    right: auto; left: 0;
-    transform: translateX(-100%);
-    box-shadow: 8px 0 40px -8px rgba(31, 31, 45, 0.28);
-  }
-}
 
 /* ---- small-screen refinement: keep the grid/mesh subtle so text stays crisp ---- */
 @media (max-width: 480px) {
