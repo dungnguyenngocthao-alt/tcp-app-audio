@@ -2255,6 +2255,38 @@ body {
   to   { transform: translate(42px, 42px); }
 }
 
+/* Login backdrop icons — faint voice-call / data-insight motifs that drift
+   gently behind the sign-in card. */
+.login-decor { position: absolute; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
+.login-ico {
+  position: absolute; display: block;
+  color: #fff; opacity: 0;
+  filter: drop-shadow(0 6px 18px rgba(10, 14, 44, 0.35));
+  animation: loginFloat 12s ease-in-out infinite;
+  will-change: transform, opacity;
+}
+.login-ico svg { width: 100%; height: 100%; display: block; }
+/* scatter around the centred card, kept to the edges */
+.login-ico--1 { top: 9%;  left: 8%;   width: 56px; height: 56px; --op: .12; animation-duration: 13s; animation-delay: -1s;  }
+.login-ico--2 { top: 15%; right: 10%; width: 64px; height: 64px; --op: .10; animation-duration: 15s; animation-delay: -4s;  }
+.login-ico--3 { top: 30%; left: 13%;  width: 44px; height: 44px; --op: .09; animation-duration: 14s; animation-delay: -6s;  }
+.login-ico--4 { bottom: 20%; right: 12%; width: 50px; height: 50px; --op: .11; animation-duration: 12s; animation-delay: -2s; }
+.login-ico--5 { bottom: 12%; left: 10%;  width: 58px; height: 58px; --op: .12; animation-duration: 16s; animation-delay: -8s; }
+.login-ico--6 { top: 46%; right: 6%;   width: 46px; height: 46px; --op: .08; animation-duration: 13s; animation-delay: -3s;  }
+.login-ico--7 { bottom: 30%; left: 6%;  width: 40px; height: 40px; --op: .08; animation-duration: 17s; animation-delay: -10s; }
+.login-ico--8 { top: 7%;  right: 34%;  width: 38px; height: 38px; --op: .07; animation-duration: 15s; animation-delay: -5s;  }
+@keyframes loginFloat {
+  0%   { opacity: 0; transform: translateY(14px) rotate(-4deg) scale(.96); }
+  20%  { opacity: var(--op, .1); }
+  50%  { transform: translateY(-14px) rotate(4deg) scale(1.02); }
+  80%  { opacity: var(--op, .1); }
+  100% { opacity: 0; transform: translateY(14px) rotate(-4deg) scale(.96); }
+}
+@media (max-width: 480px) {
+  .login-ico--3, .login-ico--6, .login-ico--7, .login-ico--8 { display: none; }
+  .login-ico { filter: none; }
+}
+
 /* ---- buttons: gradient accent with soft colour glow, glassy secondary ---- */
 .btn--accent {
   background: var(--tcp-gradient-accent);
@@ -2360,6 +2392,17 @@ body {
 /* ---- reduced-motion safety net for the new ambient animation ---- */
 @media (prefers-reduced-motion: reduce) {
   .screen--login::before { animation: none; }
+  .login-ico { animation: none; opacity: var(--op, .1); transform: none; }
+}
+
+/* ---- desktop: move the menu to the LEFT corner (mobile & tablet stay right) ---- */
+@media (min-width: 1200px) {
+  .appbar .burger { order: -1; }
+  .drawer__panel {
+    right: auto; left: 0;
+    transform: translateX(-100%);
+    box-shadow: 8px 0 40px -8px rgba(31, 31, 45, 0.28);
+  }
 }
 
 /* ---- small-screen refinement: keep the grid/mesh subtle so text stays crisp ---- */
@@ -2479,6 +2522,16 @@ body {
     <!-- SCREEN 0 · Login                                                   -->
     <!-- ================================================================= -->
     <section class="screen screen--login is-active" id="screen-login" data-screen="login">
+      <div class="login-decor" aria-hidden="true">
+        <span class="login-ico login-ico--1"><svg viewBox="0 0 256 256" fill="currentColor"><path d="M222.37,158.46l-47.11-21.11-.13-.06a16,16,0,0,0-15.17,1.4,8.12,8.12,0,0,0-.75.56L134.87,160c-15.42-7.49-31.34-23.29-38.83-38.51l20.78-24.71c.2-.25.39-.51.57-.78a16,16,0,0,0,1.32-15.06l0-.12L97.54,33.64a16,16,0,0,0-16.62-9.52A56.26,56.26,0,0,0,32,80c0,79.4,64.6,144,144,144a56.26,56.26,0,0,0,55.88-48.92A16,16,0,0,0,222.37,158.46Z"/></svg></span>
+        <span class="login-ico login-ico--2"><svg viewBox="0 0 256 256" fill="currentColor"><path d="M56,96v64a8,8,0,0,1-16,0V96a8,8,0,0,1,16,0ZM88,24a8,8,0,0,0-8,8V224a8,8,0,0,0,16,0V32A8,8,0,0,0,88,24Zm40,32a8,8,0,0,0-8,8V192a8,8,0,0,0,16,0V64A8,8,0,0,0,128,56Zm40,32a8,8,0,0,0-8,8v64a8,8,0,0,0,16,0V96A8,8,0,0,0,168,88Zm40-16a8,8,0,0,0-8,8v96a8,8,0,0,0,16,0V80A8,8,0,0,0,208,72Z"/></svg></span>
+        <span class="login-ico login-ico--3"><svg viewBox="0 0 256 256" fill="currentColor"><path d="M224,200h-8V40a8,8,0,0,0-8-8H152a8,8,0,0,0-8,8V80H96a8,8,0,0,0-8,8v40H48a8,8,0,0,0-8,8v64H32a8,8,0,0,0,0,16H224a8,8,0,0,0,0-16ZM160,48h40V200H160ZM104,96h40V200H104ZM56,144H88v56H56Z"/></svg></span>
+        <span class="login-ico login-ico--4"><svg viewBox="0 0 256 256" fill="currentColor"><path d="M128,176a48.05,48.05,0,0,0,48-48V64a48,48,0,0,0-96,0v64A48.05,48.05,0,0,0,128,176ZM96,64a32,32,0,0,1,64,0v64a32,32,0,0,1-64,0Zm40,143.6V232a8,8,0,0,1-16,0V207.6A80.11,80.11,0,0,1,48,128a8,8,0,0,1,16,0,64,64,0,0,0,128,0,8,8,0,0,1,16,0A80.11,80.11,0,0,1,136,207.6Z"/></svg></span>
+        <span class="login-ico login-ico--5"><svg viewBox="0 0 256 256" fill="currentColor"><path d="M240,56v64a8,8,0,0,1-16,0V75.31l-82.34,82.35a8,8,0,0,1-11.32,0L96,123.31,29.66,189.66a8,8,0,0,1-11.32-11.32l72-72a8,8,0,0,1,11.32,0L136,140.69,212.69,64H168a8,8,0,0,1,0-16h64A8,8,0,0,1,240,56Z"/></svg></span>
+        <span class="login-ico login-ico--6"><svg viewBox="0 0 256 256" fill="currentColor"><path d="M128,24A104,104,0,0,0,36.18,176.88L24.83,210.93a16,16,0,0,0,20.24,20.24l34.05-11.35A104,104,0,1,0,128,24ZM84,120a12,12,0,1,1-12,12A12,12,0,0,1,84,120Zm44,0a12,12,0,1,1-12,12A12,12,0,0,1,128,120Zm44,0a12,12,0,1,1-12,12A12,12,0,0,1,172,120Z"/></svg></span>
+        <span class="login-ico login-ico--7"><svg viewBox="0 0 256 256" fill="currentColor"><path d="M232.49,215.51,185,168a92.12,92.12,0,1,0-17,17l47.53,47.54a12,12,0,0,0,17-17ZM44,112a68,68,0,1,1,68,68A68.07,68.07,0,0,1,44,112Z"/></svg></span>
+        <span class="login-ico login-ico--8"><svg viewBox="0 0 256 256" fill="currentColor"><path d="M56,96v64a8,8,0,0,1-16,0V96a8,8,0,0,1,16,0ZM88,24a8,8,0,0,0-8,8V224a8,8,0,0,0,16,0V32A8,8,0,0,0,88,24Zm40,32a8,8,0,0,0-8,8V192a8,8,0,0,0,16,0V64A8,8,0,0,0,128,56Zm40,32a8,8,0,0,0-8,8v64a8,8,0,0,0,16,0V96A8,8,0,0,0,168,88Zm40-16a8,8,0,0,0-8,8v96a8,8,0,0,0,16,0V80A8,8,0,0,0,208,72Z"/></svg></span>
+      </div>
       <div class="login-card">
         <div class="login-brand">
           <span class="brand__logo" role="img" aria-label="Talent Connect Plus"></span>

@@ -2047,6 +2047,38 @@ body {
   to   { transform: translate(42px, 42px); }
 }
 
+/* Login backdrop icons — faint voice-call / data-insight motifs that drift
+   gently behind the sign-in card. */
+.login-decor { position: absolute; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
+.login-ico {
+  position: absolute; display: block;
+  color: #fff; opacity: 0;
+  filter: drop-shadow(0 6px 18px rgba(10, 14, 44, 0.35));
+  animation: loginFloat 12s ease-in-out infinite;
+  will-change: transform, opacity;
+}
+.login-ico svg { width: 100%; height: 100%; display: block; }
+/* scatter around the centred card, kept to the edges */
+.login-ico--1 { top: 9%;  left: 8%;   width: 56px; height: 56px; --op: .12; animation-duration: 13s; animation-delay: -1s;  }
+.login-ico--2 { top: 15%; right: 10%; width: 64px; height: 64px; --op: .10; animation-duration: 15s; animation-delay: -4s;  }
+.login-ico--3 { top: 30%; left: 13%;  width: 44px; height: 44px; --op: .09; animation-duration: 14s; animation-delay: -6s;  }
+.login-ico--4 { bottom: 20%; right: 12%; width: 50px; height: 50px; --op: .11; animation-duration: 12s; animation-delay: -2s; }
+.login-ico--5 { bottom: 12%; left: 10%;  width: 58px; height: 58px; --op: .12; animation-duration: 16s; animation-delay: -8s; }
+.login-ico--6 { top: 46%; right: 6%;   width: 46px; height: 46px; --op: .08; animation-duration: 13s; animation-delay: -3s;  }
+.login-ico--7 { bottom: 30%; left: 6%;  width: 40px; height: 40px; --op: .08; animation-duration: 17s; animation-delay: -10s; }
+.login-ico--8 { top: 7%;  right: 34%;  width: 38px; height: 38px; --op: .07; animation-duration: 15s; animation-delay: -5s;  }
+@keyframes loginFloat {
+  0%   { opacity: 0; transform: translateY(14px) rotate(-4deg) scale(.96); }
+  20%  { opacity: var(--op, .1); }
+  50%  { transform: translateY(-14px) rotate(4deg) scale(1.02); }
+  80%  { opacity: var(--op, .1); }
+  100% { opacity: 0; transform: translateY(14px) rotate(-4deg) scale(.96); }
+}
+@media (max-width: 480px) {
+  .login-ico--3, .login-ico--6, .login-ico--7, .login-ico--8 { display: none; }
+  .login-ico { filter: none; }
+}
+
 /* ---- buttons: gradient accent with soft colour glow, glassy secondary ---- */
 .btn--accent {
   background: var(--tcp-gradient-accent);
@@ -2152,6 +2184,17 @@ body {
 /* ---- reduced-motion safety net for the new ambient animation ---- */
 @media (prefers-reduced-motion: reduce) {
   .screen--login::before { animation: none; }
+  .login-ico { animation: none; opacity: var(--op, .1); transform: none; }
+}
+
+/* ---- desktop: move the menu to the LEFT corner (mobile & tablet stay right) ---- */
+@media (min-width: 1200px) {
+  .appbar .burger { order: -1; }
+  .drawer__panel {
+    right: auto; left: 0;
+    transform: translateX(-100%);
+    box-shadow: 8px 0 40px -8px rgba(31, 31, 45, 0.28);
+  }
 }
 
 /* ---- small-screen refinement: keep the grid/mesh subtle so text stays crisp ---- */
