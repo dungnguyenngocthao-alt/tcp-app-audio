@@ -1857,21 +1857,21 @@
         resultsPage.children, el => el.classList.contains("card")
       );
     }
-    if (resultsCards.length < 9) return;
+    if (resultsCards.length < 10) return;
 
     const w = window.innerWidth;
     const bp = w >= 1200 ? "d" : w >= 768 ? "t" : "m";
     if (bp === lastBp && resultsPage.classList.contains("is-cols")) return;
     lastBp = bp;
 
-    // cards: 0 outcome, 1 audio-preview, 2 audio-quality, 3 keywords,
-    //        4 sentiment, 5 talk, 6 summary, 7 actions, 8 transcript.
-    // Audio-preview (1) sits directly under the outcome (0) card.
-    // Desktop: outcome fills col 1, actions (Gợi ý) fills col 2, transcript
-    // absorbs/scrolls in col 3 — so all three columns are equal height.
-    const groups = bp === "d" ? [[0, 1, 2, 3, 4], [5, 6, 7], [8]]
-                 : bp === "t" ? [[0, 1, 2, 3, 4, 5], [6, 7, 8]]
-                 : [[0, 1, 2, 3, 4, 5, 6, 7, 8]];
+    // cards: 0 outcome, 1 eval-detail, 2 audio-preview, 3 audio-quality,
+    //        4 keywords, 5 sentiment, 6 talk, 7 summary, 8 actions, 9 transcript.
+    // Eval-detail (1) and audio-preview (2) sit directly under the outcome (0)
+    // card. Desktop: outcome col fills col 1, actions (Gợi ý) fills col 2,
+    // transcript absorbs/scrolls in col 3 — so all three columns are equal height.
+    const groups = bp === "d" ? [[0, 1, 2, 3, 4, 5], [6, 7, 8], [9]]
+                 : bp === "t" ? [[0, 1, 2, 3, 4, 5, 6], [7, 8, 9]]
+                 : [[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]];
 
     while (resultsPage.firstChild) resultsPage.removeChild(resultsPage.firstChild);
     groups.forEach(group => {
