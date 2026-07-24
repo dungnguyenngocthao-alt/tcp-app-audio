@@ -1708,7 +1708,7 @@
     const box = $("#outcomeReview");
     if (!box) return;
     const rec = (typeof UPLOAD_LOG !== "undefined") ? UPLOAD_LOG.find(u => u.id === resultUploadId) : null;
-    if (!rec) { box.hidden = true; box.innerHTML = ""; return; }
+    if (!rec) { box.hidden = true; box.innerHTML = ""; renderOutcomeDetail(null); return; }
     box.hidden = false;
     if (rec.reviewed) {
       box.innerHTML =
@@ -1719,6 +1719,42 @@
         `<span class="outcome-review__tag outcome-review__tag--ai">Kết quả AI · chưa đánh giá tay</span>` +
         `<button class="btn btn--accent btn--sm" type="button" data-outcome-review>Đánh giá &amp; chốt kết quả</button>`;
     }
+    renderOutcomeDetail(rec);
+  }
+
+  // Evaluation detail card — appears below "Tỷ lệ tư vấn" once reviewed.
+  function renderOutcomeDetail(rec) {
+    const box = $("#outcomeDetail");
+    if (!box) return;
+    if (!rec || !rec.reviewed) { box.hidden = true; box.innerHTML = ""; return; }
+    const diff = rec.userRate - rec.rate;
+    const diffTxt = (diff > 0 ? "+" : "") + diff + "%";
+    const diffClass = diff > 0 ? "review-detail__delta--up" : diff < 0 ? "review-detail__delta--down" : "review-detail__delta--flat";
+    const note = (rec.note || "").trim();
+    box.hidden = false;
+    box.innerHTML =
+      `<div class="result-card__label">
+        <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M243.28,68.24l-24-23.56a16,16,0,0,0-22.59,0L104,136.94V152h16l92.68-92.24,24,23.56L144,175.6V192h16l83.28-82.76a16,16,0,0,0,0-22.62ZM216,208H40V32h96a8,8,0,0,0,0-16H40A16,16,0,0,0,24,32V208a16,16,0,0,0,16,16H216a16,16,0,0,0,16-16V152a8,8,0,0,0-16,0Z"/></svg>
+        Chi tiết đánh giá
+      </div>
+      <div class="review-detail__grid">
+        <div class="review-detail__item">
+          <span class="review-detail__k">Đánh giá của AI</span>
+          <span class="review-detail__v">${rec.rate}%</span>
+        </div>
+        <div class="review-detail__item">
+          <span class="review-detail__k">Bạn chốt</span>
+          <span class="review-detail__v review-detail__v--user">${rec.userRate}%</span>
+        </div>
+        <div class="review-detail__item">
+          <span class="review-detail__k">Chênh lệch</span>
+          <span class="review-detail__v ${diffClass}">${diffTxt}</span>
+        </div>
+      </div>
+      <div class="review-detail__note">
+        <span class="review-detail__k">Chú thích</span>
+        <p class="review-detail__notetext">${note ? escAttr(note) : "Không có ghi chú."}</p>
+      </div>`;
   }
   {
     const box = $("#outcomeReview");

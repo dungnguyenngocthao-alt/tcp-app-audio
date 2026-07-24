@@ -2223,3 +2223,33 @@ body {
   color: var(--tcp-fg-secondary); font-size: 13px;
 }
 .up-note__empty { color: var(--tcp-fg-tertiary); }
+
+/* Results · evaluation detail card (below "Tỷ lệ tư vấn") */
+.review-detail__grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;
+  margin-top: 14px;
+}
+.review-detail__item {
+  display: flex; flex-direction: column; gap: 4px;
+  padding: 12px; border-radius: var(--tcp-radius-lg);
+  background: var(--tcp-bg-subtle); border: 1px solid var(--tcp-border-subtle);
+}
+.review-detail__k {
+  font-size: 12px; color: var(--tcp-fg-tertiary);
+  text-transform: uppercase; letter-spacing: .02em;
+}
+.review-detail__v {
+  font-size: 20px; font-weight: 500; color: var(--tcp-fg-primary);
+  font-variant-numeric: tabular-nums;
+}
+.review-detail__v--user { color: var(--tcp-accent); }
+.review-detail__delta--up   { color: var(--tcp-success-solid); }
+.review-detail__delta--down { color: var(--tcp-error-solid); }
+.review-detail__delta--flat { color: var(--tcp-fg-secondary); }
+.review-detail__note {
+  display: flex; flex-direction: column; gap: 4px; margin-top: 14px;
+  padding-top: 14px; border-top: 1px solid var(--tcp-border-subtle);
+}
+.review-detail__notetext {
+  margin: 0; font-size: 14px; line-height: 21px; color: var(--tcp-fg-secondary);
+}
