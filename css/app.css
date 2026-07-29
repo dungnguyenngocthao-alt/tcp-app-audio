@@ -2300,9 +2300,18 @@ body {
 .dash-analyze { margin-bottom: var(--tcp-space-5); }
 .dash-analyze__title { margin: 0 0 var(--tcp-space-3); }
 .dash-analyze__grid { display: grid; grid-template-columns: 1fr; gap: var(--tcp-space-4); }
-.dash-analyze .card { margin: 0; }
+.dash-analyze .card { margin: 0; display: flex; flex-direction: column; }
+/* Keep the upload card a stable height; a long file list scrolls inside it
+   instead of growing the card (so both cards stay the same height). */
+.dash-analyze .card--upload { min-height: 460px; }
+.dash-analyze .card--upload [data-uppane="file"] { display: flex; flex-direction: column; flex: 1 1 auto; min-height: 0; }
+.dash-analyze .filelist { max-height: 168px; overflow-y: auto; }
 @media (min-width: 768px) {
-  .dash-analyze__grid { grid-template-columns: 1fr 1fr; align-items: start; }
+  /* Config card stretches to match the upload card's height. */
+  .dash-analyze__grid { grid-template-columns: 1fr 1fr; align-items: stretch; }
+  .dash-analyze .card { height: 100%; }
+  /* Anchor the primary action to the bottom of the config card. */
+  .dash-analyze .card--profile .profile-submit { margin-top: auto; }
 }
 
 /* Processing popup (was a full screen — now a modal over the dashboard) */

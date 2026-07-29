@@ -2508,9 +2508,18 @@ body {
 .dash-analyze { margin-bottom: var(--tcp-space-5); }
 .dash-analyze__title { margin: 0 0 var(--tcp-space-3); }
 .dash-analyze__grid { display: grid; grid-template-columns: 1fr; gap: var(--tcp-space-4); }
-.dash-analyze .card { margin: 0; }
+.dash-analyze .card { margin: 0; display: flex; flex-direction: column; }
+/* Keep the upload card a stable height; a long file list scrolls inside it
+   instead of growing the card (so both cards stay the same height). */
+.dash-analyze .card--upload { min-height: 460px; }
+.dash-analyze .card--upload [data-uppane="file"] { display: flex; flex-direction: column; flex: 1 1 auto; min-height: 0; }
+.dash-analyze .filelist { max-height: 168px; overflow-y: auto; }
 @media (min-width: 768px) {
-  .dash-analyze__grid { grid-template-columns: 1fr 1fr; align-items: start; }
+  /* Config card stretches to match the upload card's height. */
+  .dash-analyze__grid { grid-template-columns: 1fr 1fr; align-items: stretch; }
+  .dash-analyze .card { height: 100%; }
+  /* Anchor the primary action to the bottom of the config card. */
+  .dash-analyze .card--profile .profile-submit { margin-top: auto; }
 }
 
 /* Processing popup (was a full screen — now a modal over the dashboard) */
@@ -3159,8 +3168,11 @@ body {
             </div>
           </div>
 
+          <!-- Mount point — the shared upload+config panel is relocated here on
+               the dashboard, and into the Đánh giá cuộc gọi module when active. -->
+          <div data-upload-mount>
           <!-- Phân tích cuộc gọi — upload + config, embedded in the dashboard -->
-          <section class="dash-analyze" aria-label="Phân tích cuộc gọi">
+          <section class="dash-analyze" id="analyzePanel" aria-label="Phân tích cuộc gọi">
             <h2 class="section-title dash-analyze__title">Phân tích cuộc gọi</h2>
             <div class="dash-analyze__grid">
               <!-- Upload card -->
@@ -3244,6 +3256,7 @@ body {
               </div>
             </div>
           </section>
+          </div><!-- /upload-mount -->
 
           <!-- Date range filter for dashboard analysis -->
           <div class="dash-filter" id="dashFilter">
@@ -3480,13 +3493,12 @@ body {
           <div class="emp-topbar">
             <div>
               <h1 class="page__title">Đánh giá cuộc gọi</h1>
-              <p class="page__lead">Toàn bộ cuộc gọi đã tải lên và phân tích.</p>
+              <p class="page__lead">Tải cuộc gọi và quản lý kết quả phân tích.</p>
             </div>
-            <button class="btn btn--accent btn--sm" type="button" data-upload-jump>
-              <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M240,136v64a16,16,0,0,1-16,16H32a16,16,0,0,1-16-16V136a8,8,0,0,1,16,0v64H224V136a8,8,0,0,1,16,0ZM88.49,79.51,120,48V136a8,8,0,0,0,16,0V48l31.51,31.51a8,8,0,0,0,11.32-11.32l-45.17-45.16a8,8,0,0,0-11.32,0L77.17,68.19A8,8,0,0,0,88.49,79.51Z"/></svg>
-              Upload cuộc gọi
-            </button>
           </div>
+
+          <!-- Shared upload+config panel is relocated here when this module is active. -->
+          <div data-upload-mount></div>
 
           <div class="seg up-view" id="upView" role="tablist" aria-label="Chế độ xem">
             <button class="seg__btn is-active" type="button" role="tab" aria-selected="true" data-upview="eval">Đánh giá</button>
@@ -3848,7 +3860,11 @@ body {
     const scroller = $(".screen__scroll", active);
     if (scroller) scroller.scrollTop = 0;
     setActiveMenu(name);
-    // The config card can only be measured once the analysis screen is visible.
+    // Relocate the single upload+config panel into the active module's mount
+    // (dashboard or Đánh giá cuộc gọi), so it appears inline in either.
+    const panel = $("#analyzePanel");
+    const mount = active ? active.querySelector("[data-upload-mount]") : null;
+    if (panel && mount && panel.parentElement !== mount) mount.appendChild(panel);
   }
 
   /* -------------------------------------------------------------------------
@@ -3907,7 +3923,7 @@ body {
     closeMenu();
     show("dashboard");
     requestAnimationFrame(() => {
-      const panel = $("#screen-dashboard .dash-analyze");
+      const panel = $("#analyzePanel");
       if (panel) panel.scrollIntoView({ behavior: "smooth", block: "start" });
     });
   }));
@@ -3934,7 +3950,7 @@ body {
         p.hidden = p.dataset.uppane !== which
       );
       // Keep the AI config card available on both tabs.
-      const pc = $("#screen-dashboard .card--profile");
+      const pc = $("#analyzePanel .card--profile");
       if (pc) pc.hidden = false;
       if (typeof syncProfileHeight === "function") syncProfileHeight();
     })
@@ -4092,7 +4108,7 @@ body {
 
   /* The config card hugs its own content (no height matching with the upload
      column). Kept as a no-op so existing callers stay valid. */
-  const profileCard = $("#screen-dashboard .card--profile");
+  const profileCard = $("#analyzePanel .card--profile");
   function syncProfileHeight() {
     if (profileCard) profileCard.style.height = "";
   }

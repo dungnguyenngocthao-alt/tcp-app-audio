@@ -29,7 +29,11 @@
     const scroller = $(".screen__scroll", active);
     if (scroller) scroller.scrollTop = 0;
     setActiveMenu(name);
-    // The config card can only be measured once the analysis screen is visible.
+    // Relocate the single upload+config panel into the active module's mount
+    // (dashboard or Đánh giá cuộc gọi), so it appears inline in either.
+    const panel = $("#analyzePanel");
+    const mount = active ? active.querySelector("[data-upload-mount]") : null;
+    if (panel && mount && panel.parentElement !== mount) mount.appendChild(panel);
   }
 
   /* -------------------------------------------------------------------------
@@ -88,7 +92,7 @@
     closeMenu();
     show("dashboard");
     requestAnimationFrame(() => {
-      const panel = $("#screen-dashboard .dash-analyze");
+      const panel = $("#analyzePanel");
       if (panel) panel.scrollIntoView({ behavior: "smooth", block: "start" });
     });
   }));
@@ -115,7 +119,7 @@
         p.hidden = p.dataset.uppane !== which
       );
       // Keep the AI config card available on both tabs.
-      const pc = $("#screen-dashboard .card--profile");
+      const pc = $("#analyzePanel .card--profile");
       if (pc) pc.hidden = false;
       if (typeof syncProfileHeight === "function") syncProfileHeight();
     })
@@ -273,7 +277,7 @@
 
   /* The config card hugs its own content (no height matching with the upload
      column). Kept as a no-op so existing callers stay valid. */
-  const profileCard = $("#screen-dashboard .card--profile");
+  const profileCard = $("#analyzePanel .card--profile");
   function syncProfileHeight() {
     if (profileCard) profileCard.style.height = "";
   }

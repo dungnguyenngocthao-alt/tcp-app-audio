@@ -528,8 +528,11 @@
             </div>
           </div>
 
+          <!-- Mount point — the shared upload+config panel is relocated here on
+               the dashboard, and into the Đánh giá cuộc gọi module when active. -->
+          <div data-upload-mount>
           <!-- Phân tích cuộc gọi — upload + config, embedded in the dashboard -->
-          <section class="dash-analyze" aria-label="Phân tích cuộc gọi">
+          <section class="dash-analyze" id="analyzePanel" aria-label="Phân tích cuộc gọi">
             <h2 class="section-title dash-analyze__title">Phân tích cuộc gọi</h2>
             <div class="dash-analyze__grid">
               <!-- Upload card -->
@@ -613,6 +616,7 @@
               </div>
             </div>
           </section>
+          </div><!-- /upload-mount -->
 
           <!-- Date range filter for dashboard analysis -->
           <div class="dash-filter" id="dashFilter">
@@ -849,13 +853,12 @@
           <div class="emp-topbar">
             <div>
               <h1 class="page__title">Đánh giá cuộc gọi</h1>
-              <p class="page__lead">Toàn bộ cuộc gọi đã tải lên và phân tích.</p>
+              <p class="page__lead">Tải cuộc gọi và quản lý kết quả phân tích.</p>
             </div>
-            <button class="btn btn--accent btn--sm" type="button" data-upload-jump>
-              <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M240,136v64a16,16,0,0,1-16,16H32a16,16,0,0,1-16-16V136a8,8,0,0,1,16,0v64H224V136a8,8,0,0,1,16,0ZM88.49,79.51,120,48V136a8,8,0,0,0,16,0V48l31.51,31.51a8,8,0,0,0,11.32-11.32l-45.17-45.16a8,8,0,0,0-11.32,0L77.17,68.19A8,8,0,0,0,88.49,79.51Z"/></svg>
-              Upload cuộc gọi
-            </button>
           </div>
+
+          <!-- Shared upload+config panel is relocated here when this module is active. -->
+          <div data-upload-mount></div>
 
           <div class="seg up-view" id="upView" role="tablist" aria-label="Chế độ xem">
             <button class="seg__btn is-active" type="button" role="tab" aria-selected="true" data-upview="eval">Đánh giá</button>
