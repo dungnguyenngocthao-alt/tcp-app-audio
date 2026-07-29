@@ -1796,29 +1796,25 @@
     if (!box) return;
     const rec = (typeof UPLOAD_LOG !== "undefined") ? UPLOAD_LOG.find(u => u.id === resultUploadId) : null;
     if (!rec) { box.hidden = true; box.innerHTML = ""; renderOutcomeDetail(null); return; }
+    // The evaluation editor is always shown, beside the outcome.
+    const cur = effRate(rec);
     box.hidden = false;
-    if (rec.reviewed && !outcomeEditing) {
-      box.classList.remove("outcome-review--edit");
-      box.innerHTML =
-        `<span class="outcome-review__tag outcome-review__tag--user">✓ Đã chốt bởi bạn · ${rec.userRate}%</span>` +
-        `<button class="btn btn--outline btn--sm" type="button" data-outcome-edit>Điều chỉnh</button>`;
-    } else {
-      const cur = effRate(rec);
-      box.classList.add("outcome-review--edit");
-      box.innerHTML =
-        `<div class="outcome-review__head">
-           <span class="outcome-review__title">Đánh giá lại cuộc gọi</span>
-           <span class="outcome-review__ai">AI: ${rec.rate}%</span>
-         </div>
-         <p class="outcome-review__hint">Xác nhận hoặc điều chỉnh tỷ lệ thành công. Kết quả bạn chốt sẽ thay cho đánh giá của AI.</p>
-         <div class="outcome-review__slide">
-           <input class="slider" id="inlineRate" type="range" min="0" max="100" value="${cur}" aria-label="Tỷ lệ bạn chốt">
-           <span class="outcome-review__val" id="inlineRateVal">${cur}%</span>
-         </div>
-         <textarea class="input outcome-review__note" id="inlineNote" rows="2" placeholder="Lý do điều chỉnh (tuỳ chọn)…">${escAttr(rec.note || "")}</textarea>
-         <button class="btn btn--accent btn--sm" type="button" data-outcome-confirm>Chốt kết quả</button>`;
-    }
-    renderOutcomeDetail(rec);
+    box.classList.add("outcome-review--edit");
+    box.innerHTML =
+      `<div class="outcome-review__head">
+         <span class="outcome-review__title">Đánh giá lại cuộc gọi</span>
+         ${rec.reviewed
+           ? `<span class="outcome-review__done">✓ Đã chốt · ${rec.userRate}%</span>`
+           : `<span class="outcome-review__ai">AI: ${rec.rate}%</span>`}
+       </div>
+       <p class="outcome-review__hint">Xác nhận hoặc điều chỉnh tỷ lệ thành công. Kết quả bạn chốt sẽ thay cho đánh giá của AI.</p>
+       <div class="outcome-review__slide">
+         <input class="slider" id="inlineRate" type="range" min="0" max="100" value="${cur}" aria-label="Tỷ lệ bạn chốt">
+         <span class="outcome-review__val" id="inlineRateVal">${cur}%</span>
+       </div>
+       <textarea class="input outcome-review__note" id="inlineNote" rows="3" placeholder="Lý do điều chỉnh (tuỳ chọn)…">${escAttr(rec.note || "")}</textarea>
+       <button class="btn btn--accent btn--sm" type="button" data-outcome-confirm>Chốt kết quả</button>`;
+    renderOutcomeDetail(null);
   }
   function confirmOutcomeInline() {
     const rec = (typeof UPLOAD_LOG !== "undefined") ? UPLOAD_LOG.find(u => u.id === resultUploadId) : null;
@@ -2054,29 +2050,30 @@
       );
     }
     if (resultsCards.length < 10) return;
-
-    const w = window.innerWidth;
-    const bp = w >= 1200 ? "d" : w >= 768 ? "t" : "m";
-    if (bp === lastBp && resultsPage.classList.contains("is-cols")) return;
-    lastBp = bp;
+    if (resultsPage.classList.contains("is-cols")) return;   // build once; CSS is responsive
 
     // cards: 0 outcome, 1 eval-detail, 2 audio-preview, 3 audio-quality,
     //        4 keywords, 5 sentiment, 6 talk, 7 summary, 8 actions, 9 transcript.
-    // Eval-detail (1) and audio-preview (2) sit directly under the outcome (0)
-    // card. Desktop: outcome col fills col 1, actions (Gợi ý) fills col 2,
-    // transcript absorbs/scrolls in col 3 — so all three columns are equal height.
-    const groups = bp === "d" ? [[0, 1, 2, 3, 4, 5], [6, 7, 8], [9]]
-                 : bp === "t" ? [[0, 1, 2, 3, 4, 5, 6], [7, 8, 9]]
-                 : [[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]];
+    // Layout: a wide MAIN column (outcome + a 2-col grid of analysis cards) and
+    // a right RAIL (audio player + transcript). The eval editor sits beside the
+    // outcome inside the outcome card. The standalone detail card is retired.
+    resultsCards[0].classList.add("results-outcome-card");
+    if (resultsCards[1]) resultsCards[1].hidden = true;
+
+    const main = document.createElement("div"); main.className = "results-main";
+    const cardsWrap = document.createElement("div"); cardsWrap.className = "results-cards";
+    const side = document.createElement("div"); side.className = "results-side";
+
+    main.appendChild(resultsCards[0]);                       // outcome (+ inline eval)
+    [5, 6, 7, 3, 4, 8].forEach(i => cardsWrap.appendChild(resultsCards[i]));
+    main.appendChild(cardsWrap);
+    side.appendChild(resultsCards[2]);                       // audio preview
+    side.appendChild(resultsCards[9]);                       // transcript
 
     while (resultsPage.firstChild) resultsPage.removeChild(resultsPage.firstChild);
-    groups.forEach(group => {
-      const col = document.createElement("div");
-      col.className = "rcol";
-      group.forEach(i => col.appendChild(resultsCards[i]));
-      resultsPage.appendChild(col);
-    });
-    resultsPage.classList.add("is-cols");
+    resultsPage.appendChild(main);
+    resultsPage.appendChild(side);
+    resultsPage.classList.add("is-cols", "results-grid");
   }
 
   layoutResults();

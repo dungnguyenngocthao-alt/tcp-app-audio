@@ -2046,52 +2046,39 @@ mark.mark--neg { background: var(--tcp-error-bg); color: var(--tcp-error-900); }
 /* Results columns are built by JS (see layoutResults). Until then — and in
    static contexts like the tablet gallery — the cards stack in one column. */
 #screen-results .card { margin: 0 0 16px; }
-#screen-results .page.is-cols { display: flex; gap: 20px; align-items: stretch; }
-#screen-results .page.is-cols > .rcol {
-  flex: 1 1 0;
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-#screen-results .page.is-cols > .rcol > .card { margin: 0; }
-@media (min-width: 768px) {
-  /* The transcript is the flexible card — it grows to fill its column and
-     scrolls inside, so every column stretches to the same height. */
-  #screen-results .page.is-cols .card--transcript {
-    flex: 1 1 auto;
-    min-height: 0;
-    display: flex;
-    flex-direction: column;
-  }
-  #screen-results .page.is-cols .transcript-scroll {
-    flex: 1 1 auto;
-    min-height: 0;
-    overflow-y: auto;
-  }
-}
+/* Results — two-column shell: a wide MAIN column (outcome + analysis grid) and
+   a right RAIL (audio player + transcript). Built once by layoutResults(). */
+#screen-results .page.results-grid { display: flex; flex-direction: column; gap: 20px; align-items: stretch; }
+.results-main { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+.results-side { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+.results-main > .card, .results-side > .card { margin: 0; }
+.results-cards { display: flex; flex-direction: column; gap: 16px; }
+.results-cards > .card { margin: 0; }
 
-/* Tablet only (2 columns): column 1 holds the audio-quality, sentiment and
-   talk-duration cards. Let all three share the leftover space so no single
-   card ends up with a large gap, and both columns finish at equal height
-   (the transcript already grows in column 2). At >=1200 the layout is 3 cols
-   and these cards regroup, where different rules apply. */
-@media (min-width: 768px) and (max-width: 1199px) {
-  #screen-results .page.is-cols .card--audio,
-  #screen-results .page.is-cols .card--sentiment,
-  #screen-results .page.is-cols .card--talk {
-    flex: 1 1 auto;
-    display: flex;
-    flex-direction: column;
+/* Outcome + inline evaluation, side by side inside one card */
+.results-outcome-card { display: flex; flex-direction: column; gap: 16px; }
+.results-outcome-card .outcome { text-align: center; }
+.results-outcome-card .outcome-review--edit { margin-top: 0; padding-top: 16px; border-top: 1px dashed var(--tcp-border); }
+
+@media (min-width: 900px) {
+  #screen-results .page.results-grid { flex-direction: row; align-items: flex-start; }
+  .results-main { flex: 1 1 auto; }
+  .results-side { flex: 0 0 clamp(300px, 33%, 400px); position: sticky; top: var(--tcp-space-4); }
+  /* Transcript fills the rail and scrolls inside it. */
+  .results-side .card--transcript { display: flex; flex-direction: column; max-height: calc(100dvh - 300px); }
+  .results-side .transcript-scroll { flex: 1 1 auto; min-height: 0; overflow-y: auto; }
+  /* Outcome (left) and the eval editor (right). */
+  .results-outcome-card { flex-direction: row; align-items: stretch; gap: 0; }
+  .results-outcome-card .outcome {
+    flex: 0 0 40%; display: flex; flex-direction: column; justify-content: center;
+    padding-right: var(--tcp-space-6); border-right: 1px solid var(--tcp-border-subtle);
   }
-  /* Center each card's body (everything after the section label) within the
-     extra height it receives, so the slack is shared, not dumped on one card. */
-  #screen-results .page.is-cols .card--audio .quality-head,
-  #screen-results .page.is-cols .card--sentiment .senti-head,
-  #screen-results .page.is-cols .card--talk .talk { margin-top: auto; }
-  #screen-results .page.is-cols .card--audio .bar-row:last-child,
-  #screen-results .page.is-cols .card--sentiment .bar-row:last-child,
-  #screen-results .page.is-cols .card--talk .talk { margin-bottom: auto; }
+  .results-outcome-card .outcome-review--edit {
+    flex: 1 1 auto; margin-top: 0; padding: 0 0 0 var(--tcp-space-6); border-top: 0;
+  }
+  /* Analysis cards: 2-column masonry. */
+  .results-cards { display: block; column-count: 2; column-gap: 16px; }
+  .results-cards > .card { break-inside: avoid; width: 100%; margin: 0 0 16px; }
 }
 
 /* ===========================================================================
@@ -5725,29 +5712,25 @@ body {
     if (!box) return;
     const rec = (typeof UPLOAD_LOG !== "undefined") ? UPLOAD_LOG.find(u => u.id === resultUploadId) : null;
     if (!rec) { box.hidden = true; box.innerHTML = ""; renderOutcomeDetail(null); return; }
+    // The evaluation editor is always shown, beside the outcome.
+    const cur = effRate(rec);
     box.hidden = false;
-    if (rec.reviewed && !outcomeEditing) {
-      box.classList.remove("outcome-review--edit");
-      box.innerHTML =
-        `<span class="outcome-review__tag outcome-review__tag--user">✓ Đã chốt bởi bạn · ${rec.userRate}%</span>` +
-        `<button class="btn btn--outline btn--sm" type="button" data-outcome-edit>Điều chỉnh</button>`;
-    } else {
-      const cur = effRate(rec);
-      box.classList.add("outcome-review--edit");
-      box.innerHTML =
-        `<div class="outcome-review__head">
-           <span class="outcome-review__title">Đánh giá lại cuộc gọi</span>
-           <span class="outcome-review__ai">AI: ${rec.rate}%</span>
-         </div>
-         <p class="outcome-review__hint">Xác nhận hoặc điều chỉnh tỷ lệ thành công. Kết quả bạn chốt sẽ thay cho đánh giá của AI.</p>
-         <div class="outcome-review__slide">
-           <input class="slider" id="inlineRate" type="range" min="0" max="100" value="${cur}" aria-label="Tỷ lệ bạn chốt">
-           <span class="outcome-review__val" id="inlineRateVal">${cur}%</span>
-         </div>
-         <textarea class="input outcome-review__note" id="inlineNote" rows="2" placeholder="Lý do điều chỉnh (tuỳ chọn)…">${escAttr(rec.note || "")}</textarea>
-         <button class="btn btn--accent btn--sm" type="button" data-outcome-confirm>Chốt kết quả</button>`;
-    }
-    renderOutcomeDetail(rec);
+    box.classList.add("outcome-review--edit");
+    box.innerHTML =
+      `<div class="outcome-review__head">
+         <span class="outcome-review__title">Đánh giá lại cuộc gọi</span>
+         ${rec.reviewed
+           ? `<span class="outcome-review__done">✓ Đã chốt · ${rec.userRate}%</span>`
+           : `<span class="outcome-review__ai">AI: ${rec.rate}%</span>`}
+       </div>
+       <p class="outcome-review__hint">Xác nhận hoặc điều chỉnh tỷ lệ thành công. Kết quả bạn chốt sẽ thay cho đánh giá của AI.</p>
+       <div class="outcome-review__slide">
+         <input class="slider" id="inlineRate" type="range" min="0" max="100" value="${cur}" aria-label="Tỷ lệ bạn chốt">
+         <span class="outcome-review__val" id="inlineRateVal">${cur}%</span>
+       </div>
+       <textarea class="input outcome-review__note" id="inlineNote" rows="3" placeholder="Lý do điều chỉnh (tuỳ chọn)…">${escAttr(rec.note || "")}</textarea>
+       <button class="btn btn--accent btn--sm" type="button" data-outcome-confirm>Chốt kết quả</button>`;
+    renderOutcomeDetail(null);
   }
   function confirmOutcomeInline() {
     const rec = (typeof UPLOAD_LOG !== "undefined") ? UPLOAD_LOG.find(u => u.id === resultUploadId) : null;
@@ -5983,29 +5966,30 @@ body {
       );
     }
     if (resultsCards.length < 10) return;
-
-    const w = window.innerWidth;
-    const bp = w >= 1200 ? "d" : w >= 768 ? "t" : "m";
-    if (bp === lastBp && resultsPage.classList.contains("is-cols")) return;
-    lastBp = bp;
+    if (resultsPage.classList.contains("is-cols")) return;   // build once; CSS is responsive
 
     // cards: 0 outcome, 1 eval-detail, 2 audio-preview, 3 audio-quality,
     //        4 keywords, 5 sentiment, 6 talk, 7 summary, 8 actions, 9 transcript.
-    // Eval-detail (1) and audio-preview (2) sit directly under the outcome (0)
-    // card. Desktop: outcome col fills col 1, actions (Gợi ý) fills col 2,
-    // transcript absorbs/scrolls in col 3 — so all three columns are equal height.
-    const groups = bp === "d" ? [[0, 1, 2, 3, 4, 5], [6, 7, 8], [9]]
-                 : bp === "t" ? [[0, 1, 2, 3, 4, 5, 6], [7, 8, 9]]
-                 : [[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]];
+    // Layout: a wide MAIN column (outcome + a 2-col grid of analysis cards) and
+    // a right RAIL (audio player + transcript). The eval editor sits beside the
+    // outcome inside the outcome card. The standalone detail card is retired.
+    resultsCards[0].classList.add("results-outcome-card");
+    if (resultsCards[1]) resultsCards[1].hidden = true;
+
+    const main = document.createElement("div"); main.className = "results-main";
+    const cardsWrap = document.createElement("div"); cardsWrap.className = "results-cards";
+    const side = document.createElement("div"); side.className = "results-side";
+
+    main.appendChild(resultsCards[0]);                       // outcome (+ inline eval)
+    [5, 6, 7, 3, 4, 8].forEach(i => cardsWrap.appendChild(resultsCards[i]));
+    main.appendChild(cardsWrap);
+    side.appendChild(resultsCards[2]);                       // audio preview
+    side.appendChild(resultsCards[9]);                       // transcript
 
     while (resultsPage.firstChild) resultsPage.removeChild(resultsPage.firstChild);
-    groups.forEach(group => {
-      const col = document.createElement("div");
-      col.className = "rcol";
-      group.forEach(i => col.appendChild(resultsCards[i]));
-      resultsPage.appendChild(col);
-    });
-    resultsPage.classList.add("is-cols");
+    resultsPage.appendChild(main);
+    resultsPage.appendChild(side);
+    resultsPage.classList.add("is-cols", "results-grid");
   }
 
   layoutResults();

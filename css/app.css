@@ -1838,52 +1838,39 @@ mark.mark--neg { background: var(--tcp-error-bg); color: var(--tcp-error-900); }
 /* Results columns are built by JS (see layoutResults). Until then — and in
    static contexts like the tablet gallery — the cards stack in one column. */
 #screen-results .card { margin: 0 0 16px; }
-#screen-results .page.is-cols { display: flex; gap: 20px; align-items: stretch; }
-#screen-results .page.is-cols > .rcol {
-  flex: 1 1 0;
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-#screen-results .page.is-cols > .rcol > .card { margin: 0; }
-@media (min-width: 768px) {
-  /* The transcript is the flexible card — it grows to fill its column and
-     scrolls inside, so every column stretches to the same height. */
-  #screen-results .page.is-cols .card--transcript {
-    flex: 1 1 auto;
-    min-height: 0;
-    display: flex;
-    flex-direction: column;
-  }
-  #screen-results .page.is-cols .transcript-scroll {
-    flex: 1 1 auto;
-    min-height: 0;
-    overflow-y: auto;
-  }
-}
+/* Results — two-column shell: a wide MAIN column (outcome + analysis grid) and
+   a right RAIL (audio player + transcript). Built once by layoutResults(). */
+#screen-results .page.results-grid { display: flex; flex-direction: column; gap: 20px; align-items: stretch; }
+.results-main { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+.results-side { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+.results-main > .card, .results-side > .card { margin: 0; }
+.results-cards { display: flex; flex-direction: column; gap: 16px; }
+.results-cards > .card { margin: 0; }
 
-/* Tablet only (2 columns): column 1 holds the audio-quality, sentiment and
-   talk-duration cards. Let all three share the leftover space so no single
-   card ends up with a large gap, and both columns finish at equal height
-   (the transcript already grows in column 2). At >=1200 the layout is 3 cols
-   and these cards regroup, where different rules apply. */
-@media (min-width: 768px) and (max-width: 1199px) {
-  #screen-results .page.is-cols .card--audio,
-  #screen-results .page.is-cols .card--sentiment,
-  #screen-results .page.is-cols .card--talk {
-    flex: 1 1 auto;
-    display: flex;
-    flex-direction: column;
+/* Outcome + inline evaluation, side by side inside one card */
+.results-outcome-card { display: flex; flex-direction: column; gap: 16px; }
+.results-outcome-card .outcome { text-align: center; }
+.results-outcome-card .outcome-review--edit { margin-top: 0; padding-top: 16px; border-top: 1px dashed var(--tcp-border); }
+
+@media (min-width: 900px) {
+  #screen-results .page.results-grid { flex-direction: row; align-items: flex-start; }
+  .results-main { flex: 1 1 auto; }
+  .results-side { flex: 0 0 clamp(300px, 33%, 400px); position: sticky; top: var(--tcp-space-4); }
+  /* Transcript fills the rail and scrolls inside it. */
+  .results-side .card--transcript { display: flex; flex-direction: column; max-height: calc(100dvh - 300px); }
+  .results-side .transcript-scroll { flex: 1 1 auto; min-height: 0; overflow-y: auto; }
+  /* Outcome (left) and the eval editor (right). */
+  .results-outcome-card { flex-direction: row; align-items: stretch; gap: 0; }
+  .results-outcome-card .outcome {
+    flex: 0 0 40%; display: flex; flex-direction: column; justify-content: center;
+    padding-right: var(--tcp-space-6); border-right: 1px solid var(--tcp-border-subtle);
   }
-  /* Center each card's body (everything after the section label) within the
-     extra height it receives, so the slack is shared, not dumped on one card. */
-  #screen-results .page.is-cols .card--audio .quality-head,
-  #screen-results .page.is-cols .card--sentiment .senti-head,
-  #screen-results .page.is-cols .card--talk .talk { margin-top: auto; }
-  #screen-results .page.is-cols .card--audio .bar-row:last-child,
-  #screen-results .page.is-cols .card--sentiment .bar-row:last-child,
-  #screen-results .page.is-cols .card--talk .talk { margin-bottom: auto; }
+  .results-outcome-card .outcome-review--edit {
+    flex: 1 1 auto; margin-top: 0; padding: 0 0 0 var(--tcp-space-6); border-top: 0;
+  }
+  /* Analysis cards: 2-column masonry. */
+  .results-cards { display: block; column-count: 2; column-gap: 16px; }
+  .results-cards > .card { break-inside: avoid; width: 100%; margin: 0 0 16px; }
 }
 
 /* ===========================================================================
