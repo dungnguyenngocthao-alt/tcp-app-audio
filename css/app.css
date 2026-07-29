@@ -2364,20 +2364,31 @@ body {
    ============================================================================= */
 .results-head__top { display: flex; align-items: center; gap: var(--tcp-space-3); }
 .results-head__top .results-head__title { flex: 1 1 auto; min-width: 0; }
-.results-save { flex: 0 0 auto; white-space: nowrap; }
-#reanalyzeBtn { flex: 0 0 auto; white-space: nowrap; }
+.results-save, #reanalyzeBtn { white-space: nowrap; }
 .results-toolbar {
-  display: flex; align-items: center; gap: var(--tcp-space-3);
-  flex-wrap: wrap; margin-top: var(--tcp-space-3);
+  display: flex; align-items: center; gap: var(--tcp-space-2);
+  flex-wrap: nowrap; margin-top: var(--tcp-space-3);
 }
+/* Model select on the left (shrinks if needed); action buttons pinned right, same row. */
 .results-model {
-  display: inline-flex; align-items: center; gap: 8px;
-  flex: 1 1 220px; min-width: 0;
-  padding: 4px 12px; border-radius: var(--tcp-radius-lg);
-  background: var(--tcp-bg-muted);
+  display: inline-flex; align-items: center; gap: 6px;
+  flex: 0 1 auto; min-width: 0; margin-right: auto;
+  padding: 0; background: none;
+}
+.results-model .select {
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
 }
 .results-model svg { width: 18px; height: 18px; flex: 0 0 auto; color: var(--tcp-accent); }
-.results-model .select { border: 0; background: none; box-shadow: none; padding: 6px 24px 6px 0; }
+.results-model .select {
+  border: 0 !important; box-shadow: none;
+  padding: 4px 22px 4px 0; width: auto;
+  background-color: transparent !important;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%235A5D82' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E") !important;
+  background-repeat: no-repeat !important;
+  background-position: right 0 center !important;
+  color: var(--tcp-fg-primary) !important; font-weight: 500;
+}
+.results-toolbar__actions { display: flex; align-items: center; gap: var(--tcp-space-2); flex: 0 0 auto; }
 .select--sm { font-size: 14px; }
 
 /* Inline evaluation editor inside the outcome card */

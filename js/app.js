@@ -82,6 +82,17 @@
     })
   );
 
+  /* Any "Upload" entry point (dashboard or Đánh giá cuộc gọi) opens the single
+     upload panel on the dashboard — one shared flow, always in sync. */
+  $$("[data-upload-jump]").forEach(btn => btn.addEventListener("click", () => {
+    closeMenu();
+    show("dashboard");
+    requestAnimationFrame(() => {
+      const panel = $("#screen-dashboard .dash-analyze");
+      if (panel) panel.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+  }));
+
   /* -------------------------------------------------------------------------
      Screen 0 · Login — Google sign-in only (mock gate → enters the app)
      ------------------------------------------------------------------------- */
