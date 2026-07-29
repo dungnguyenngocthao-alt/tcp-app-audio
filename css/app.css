@@ -2308,14 +2308,19 @@ body {
 .dash-analyze .card--upload [data-uppane="file"] { display: flex; flex-direction: column; flex: 1 1 auto; min-height: 0; }
 /* Compact file previews so loading files barely grows the card (keeps the
    config card from stretching too much). Long lists scroll. */
-.dash-analyze .filelist { max-height: 132px; overflow-y: auto; margin-top: var(--tcp-space-3); gap: 6px; }
-.dash-analyze .filelist__row { padding: 6px 10px; gap: var(--tcp-space-2); }
-.dash-analyze .filelist__icon { width: 24px; height: 24px; }
-.dash-analyze .filelist__icon svg { width: 14px; height: 14px; }
-.dash-analyze .filelist__name { font-size: 12px; }
-.dash-analyze .filelist__size { font-size: 11px; margin-top: 0; }
-.dash-analyze .filelist__remove { width: 22px; height: 22px; }
-.dash-analyze .filelist__remove svg { width: 14px; height: 14px; }
+/* File previews: 2 compact cards per row */
+.dash-analyze .filelist {
+  display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px 8px; max-height: 128px; overflow-y: auto; margin-top: var(--tcp-space-3);
+}
+.dash-analyze .filelist__head { grid-column: 1 / -1; }
+.dash-analyze .filelist__row { padding: 5px 8px; gap: 6px; }
+.dash-analyze .filelist__icon { width: 20px; height: 20px; border-radius: var(--tcp-radius-xs); }
+.dash-analyze .filelist__icon svg { width: 12px; height: 12px; }
+.dash-analyze .filelist__name { font-size: 11px; }
+.dash-analyze .filelist__size { display: none; }
+.dash-analyze .filelist__remove { width: 20px; height: 20px; }
+.dash-analyze .filelist__remove svg { width: 13px; height: 13px; }
 /* When files are queued, shrink the dropzone so the card stays compact. */
 .dash-analyze .card--upload.has-files .dropzone { padding: var(--tcp-space-4); }
 .dash-analyze .card--upload.has-files .dropzone__icon { width: 40px; height: 40px; margin-bottom: 4px; }
