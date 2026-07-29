@@ -2567,6 +2567,57 @@ body {
 }
 .up-sheet-head .page__lead { margin: 0; }
 
+/* =============================================================================
+   Figma feedback · results toolbar, inline evaluation, transcript search
+   ============================================================================= */
+.results-head__top { display: flex; align-items: center; gap: var(--tcp-space-3); }
+.results-head__top .results-head__title { flex: 1 1 auto; min-width: 0; }
+.results-save { flex: 0 0 auto; white-space: nowrap; }
+#reanalyzeBtn { flex: 0 0 auto; white-space: nowrap; }
+.results-toolbar {
+  display: flex; align-items: center; gap: var(--tcp-space-3);
+  flex-wrap: wrap; margin-top: var(--tcp-space-3);
+}
+.results-model {
+  display: inline-flex; align-items: center; gap: 8px;
+  flex: 1 1 220px; min-width: 0;
+  padding: 4px 12px; border-radius: var(--tcp-radius-lg);
+  background: var(--tcp-bg-muted);
+}
+.results-model svg { width: 18px; height: 18px; flex: 0 0 auto; color: var(--tcp-accent); }
+.results-model .select { border: 0; background: none; box-shadow: none; padding: 6px 24px 6px 0; }
+.select--sm { font-size: 14px; }
+
+/* Inline evaluation editor inside the outcome card */
+.outcome-review--edit {
+  display: block; text-align: left;
+  margin-top: var(--tcp-space-4); padding-top: var(--tcp-space-4);
+  border-top: 1px dashed var(--tcp-border);
+}
+.outcome-review__head { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
+.outcome-review__title { font-weight: 500; color: var(--tcp-fg-primary); }
+.outcome-review__ai { font-size: 13px; color: var(--tcp-fg-secondary); }
+.outcome-review__hint { margin: 4px 0 12px; font-size: 13px; line-height: 19px; color: var(--tcp-fg-secondary); }
+.outcome-review__slide { display: flex; align-items: center; gap: 12px; }
+.outcome-review__slide .slider { flex: 1 1 auto; }
+.outcome-review__val { font-weight: 500; color: var(--tcp-accent); font-variant-numeric: tabular-nums; min-width: 44px; text-align: right; }
+.outcome-review__note { margin: 12px 0; width: 100%; resize: vertical; }
+
+/* Transcript search */
+.transcript-search {
+  display: flex; align-items: center; gap: 8px;
+  margin: var(--tcp-space-2) 0 var(--tcp-space-3);
+  padding: 0 10px; border: 1px solid var(--tcp-border); border-radius: var(--tcp-radius-lg);
+  background: var(--tcp-bg);
+}
+.transcript-search svg { width: 18px; height: 18px; flex: 0 0 auto; color: var(--tcp-fg-tertiary); }
+.transcript-search__input { border: 0; box-shadow: none; padding: 10px 0; background: none; flex: 1 1 auto; }
+.transcript-search__input:focus { outline: 0; box-shadow: none; }
+.transcript-search__count { font-size: 12px; color: var(--tcp-fg-tertiary); white-space: nowrap; }
+.msg { cursor: pointer; border-radius: var(--tcp-radius-md); }
+.msg--hit .msg__bubble { box-shadow: 0 0 0 2px var(--tcp-accent-subtle); }
+.msg--playing .msg__bubble { box-shadow: 0 0 0 2px var(--tcp-accent); }
+
 
 /* Artifact preview: adapt the surrounding backdrop to the viewer theme.
    The phone screen itself stays light — it's the product being previewed. */
@@ -2692,6 +2743,25 @@ body {
               <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M224,128a8,8,0,0,1-8,8H59.31l58.35,58.34a8,8,0,0,1-11.32,11.32l-72-72a8,8,0,0,1,0-11.32l72-72a8,8,0,0,1,11.32,11.32L59.31,120H216A8,8,0,0,1,224,128Z"/></svg>
             </button>
             <h1 class="results-head__title">Kết quả phân tích</h1>
+            <button class="btn btn--accent btn--sm results-save" id="saveResultBtn" type="button">
+              <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M219.31,72,184,36.69A15.86,15.86,0,0,0,172.69,32H48A16,16,0,0,0,32,48V208a16,16,0,0,0,16,16H208a16,16,0,0,0,16-16V83.31A15.86,15.86,0,0,0,219.31,72ZM168,208H88V152h80Zm40,0H184V152a16,16,0,0,0-16-16H88a16,16,0,0,0-16,16v56H48V48H172.69L208,83.31ZM160,72a8,8,0,0,1-8,8H96a8,8,0,0,1,0-16h56A8,8,0,0,1,160,72Z"/></svg>
+              Lưu kết quả
+            </button>
+          </div>
+          <div class="results-toolbar">
+            <div class="results-model">
+              <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M197.58,129.06,146,110l-19-51.62a15.92,15.92,0,0,0-29.88,0L78,110l-51.62,19a15.92,15.92,0,0,0,0,29.88L78,178l19,51.62a15.92,15.92,0,0,0,29.88,0L146,178l51.62-19a15.92,15.92,0,0,0,0-29.88ZM137,164.22a8,8,0,0,0-4.74,4.74L112,223.85,91.78,169A8,8,0,0,0,87,164.22L32.15,144,87,123.78A8,8,0,0,0,91.78,119L112,64.15,132.22,119a8,8,0,0,0,4.74,4.74L191.85,144ZM144,40a8,8,0,0,1,8-8h16V16a8,8,0,0,1,16,0V32h16a8,8,0,0,1,0,16H184V64a8,8,0,0,1-16,0V48H152A8,8,0,0,1,144,40ZM248,88a8,8,0,0,1-8,8h-8v8a8,8,0,0,1-16,0V96h-8a8,8,0,0,1,0-16h8V72a8,8,0,0,1,16,0v8h8A8,8,0,0,1,248,88Z"/></svg>
+              <select class="select select--sm" id="resultModel" aria-label="Mô hình AI">
+                <option>TCPVoiceAI Insight 2.0 · Balanced</option>
+                <option>TCPVoiceAI Insight 2.0 Pro · Deep</option>
+                <option>TCPVoiceAI Flash · Fast</option>
+                <option>TCPVoiceAI Multilingual · VI · EN</option>
+              </select>
+            </div>
+            <button class="btn btn--outline btn--sm" id="reanalyzeBtn" type="button">
+              <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M197.67,186.37a8,8,0,0,1,0,11.29C196.58,198.73,170.82,224,128,224c-37.39,0-64.53-22.4-80-39.85V208a8,8,0,0,1-16,0V160a8,8,0,0,1,8-8H88a8,8,0,0,1,0,16H55.44C67.76,188.6,93,208,128,208c36,0,58.14-21.46,58.36-21.68A8,8,0,0,1,197.67,186.37ZM216,40a8,8,0,0,0-8,8V71.85C192.53,54.4,165.39,32,128,32,85.18,32,59.42,57.27,58.34,58.34a8,8,0,0,0,11.3,11.34C69.86,69.46,92,48,128,48c35,0,60.24,19.4,72.56,40H168a8,8,0,0,0,0,16h48a8,8,0,0,0,8-8V48A8,8,0,0,0,216,40Z"/></svg>
+              Phân tích lại
+            </button>
           </div>
         </div>
 
@@ -2925,6 +2995,12 @@ body {
               <button class="iconbtn subtabs__export" id="exportBtn" type="button" aria-label="Export Script" title="Export Script">
                 <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M224,144v64a8,8,0,0,1-8,8H40a8,8,0,0,1-8-8V144a8,8,0,0,1,16,0v56H208V144a8,8,0,0,1,16,0Zm-101.66,5.66a8,8,0,0,0,11.32,0l40-40a8,8,0,0,0-11.32-11.32L136,124.69V32a8,8,0,0,0-16,0v92.69L93.66,98.34a8,8,0,0,0-11.32,11.32Z"/></svg>
               </button>
+            </div>
+
+            <div class="transcript-search">
+              <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M229.66,218.34l-50.07-50.06a88.11,88.11,0,1,0-11.31,11.31l50.06,50.07a8,8,0,0,0,11.32-11.32ZM40,112a72,72,0,1,1,72,72A72.08,72.08,0,0,1,40,112Z"/></svg>
+              <input class="input transcript-search__input" id="transcriptSearch" type="search" placeholder="Tìm trong hội thoại…" autocomplete="off">
+              <span class="transcript-search__count" id="transcriptSearchCount" hidden></span>
             </div>
 
             <div class="transcript-scroll">
@@ -5459,26 +5535,65 @@ body {
       if (active) active.scrollIntoView({ block: "nearest", inline: "nearest" });
     }
     if (typeof resetAudioPreview === "function") resetAudioPreview(m.dur);
+    // Sync the results toolbar model to the model used for analysis.
+    const rm = $("#resultModel");
+    if (rm && typeof currentModelName === "function") {
+      const target = currentModelName();
+      const opt = Array.prototype.find.call(rm.options, o => o.value === target);
+      if (opt) rm.value = target;
+    }
+    outcomeEditing = false;
+    const ts = $("#transcriptSearch");
+    if (ts && ts.value) { ts.value = ""; if (typeof runTranscriptSearch === "function") runTranscriptSearch(); }
     renderOutcomeReview();
   }
 
-  // In-result evaluation panel — confirm the AI result or override it.
+  // In-result evaluation — an INLINE editor (no popup). The user confirms or
+  // overrides the AI's rate right here.
+  let outcomeEditing = false;
   function renderOutcomeReview() {
     const box = $("#outcomeReview");
     if (!box) return;
     const rec = (typeof UPLOAD_LOG !== "undefined") ? UPLOAD_LOG.find(u => u.id === resultUploadId) : null;
     if (!rec) { box.hidden = true; box.innerHTML = ""; renderOutcomeDetail(null); return; }
     box.hidden = false;
-    if (rec.reviewed) {
+    if (rec.reviewed && !outcomeEditing) {
+      box.classList.remove("outcome-review--edit");
       box.innerHTML =
         `<span class="outcome-review__tag outcome-review__tag--user">✓ Đã chốt bởi bạn · ${rec.userRate}%</span>` +
-        `<button class="btn btn--outline btn--sm" type="button" data-outcome-review disabled>Đánh giá lại</button>`;
+        `<button class="btn btn--outline btn--sm" type="button" data-outcome-edit>Điều chỉnh</button>`;
     } else {
+      const cur = effRate(rec);
+      box.classList.add("outcome-review--edit");
       box.innerHTML =
-        `<span class="outcome-review__tag outcome-review__tag--ai">Kết quả AI · chưa đánh giá tay</span>` +
-        `<button class="btn btn--accent btn--sm" type="button" data-outcome-review>Đánh giá &amp; chốt kết quả</button>`;
+        `<div class="outcome-review__head">
+           <span class="outcome-review__title">Đánh giá lại cuộc gọi</span>
+           <span class="outcome-review__ai">AI: ${rec.rate}%</span>
+         </div>
+         <p class="outcome-review__hint">Xác nhận hoặc điều chỉnh tỷ lệ thành công. Kết quả bạn chốt sẽ thay cho đánh giá của AI.</p>
+         <div class="outcome-review__slide">
+           <input class="slider" id="inlineRate" type="range" min="0" max="100" value="${cur}" aria-label="Tỷ lệ bạn chốt">
+           <span class="outcome-review__val" id="inlineRateVal">${cur}%</span>
+         </div>
+         <textarea class="input outcome-review__note" id="inlineNote" rows="2" placeholder="Lý do điều chỉnh (tuỳ chọn)…">${escAttr(rec.note || "")}</textarea>
+         <button class="btn btn--accent btn--sm" type="button" data-outcome-confirm>Chốt kết quả</button>`;
     }
     renderOutcomeDetail(rec);
+  }
+  function confirmOutcomeInline() {
+    const rec = (typeof UPLOAD_LOG !== "undefined") ? UPLOAD_LOG.find(u => u.id === resultUploadId) : null;
+    if (!rec) return;
+    const slider = $("#inlineRate");
+    const note = $("#inlineNote");
+    rec.userRate = slider ? parseInt(slider.value, 10) : rec.rate;
+    rec.note = note ? note.value.trim() : "";
+    rec.reviewed = true;
+    outcomeEditing = false;
+    // Reflect the confirmed rate on the outcome card.
+    const pct = $("#screen-results .outcome__pct");
+    if (pct) pct.textContent = rec.userRate + "%";
+    if (typeof renderUploads === "function") renderUploads();
+    renderOutcomeReview();
   }
 
   // Evaluation detail card — appears below "Tỷ lệ tư vấn" once reviewed.
@@ -5517,10 +5632,92 @@ body {
   }
   {
     const box = $("#outcomeReview");
-    if (box) box.addEventListener("click", e => {
-      if (e.target.closest("[data-outcome-review]") && resultUploadId) openReview(resultUploadId);
-    });
+    if (box) {
+      box.addEventListener("click", e => {
+        if (e.target.closest("[data-outcome-edit]")) { outcomeEditing = true; renderOutcomeReview(); }
+        else if (e.target.closest("[data-outcome-confirm]")) confirmOutcomeInline();
+      });
+      box.addEventListener("input", e => {
+        if (e.target.id === "inlineRate") {
+          const v = $("#inlineRateVal");
+          if (v) v.textContent = e.target.value + "%";
+        }
+      });
+    }
   }
+
+  /* Results toolbar — re-analyze with another model, save the final decision. */
+  const resultModel  = $("#resultModel");
+  const reanalyzeBtn = $("#reanalyzeBtn");
+  const saveResultBtn = $("#saveResultBtn");
+  if (reanalyzeBtn) reanalyzeBtn.addEventListener("click", () => {
+    // Cycle to the next model so "re-analyze" uses a different AI model.
+    if (resultModel && resultModel.options.length > 1) {
+      resultModel.selectedIndex = (resultModel.selectedIndex + 1) % resultModel.options.length;
+    }
+    if (procModelName) procModelName.textContent = resultModel ? resultModel.value : currentModelName();
+    if (typeof renderProcQueue === "function") renderProcQueue();
+    openProcModal();
+    runProcessing();
+  });
+  if (saveResultBtn) saveResultBtn.addEventListener("click", () => {
+    // Final decision — persist the current rate as the confirmed result.
+    const rec = (typeof UPLOAD_LOG !== "undefined") ? UPLOAD_LOG.find(u => u.id === resultUploadId) : null;
+    if (rec) {
+      if (!rec.reviewed) { rec.userRate = rec.rate; rec.reviewed = true; }
+      if (typeof renderUploads === "function") renderUploads();
+    }
+    if (typeof showToast === "function") showToast("Đã lưu kết quả vào Đánh giá cuộc gọi.");
+    show("uploads");
+  });
+
+  /* Transcript search — highlight & filter conversation lines by keyword. */
+  const transcriptSearch = $("#transcriptSearch");
+  const transcriptSearchCount = $("#transcriptSearchCount");
+  function runTranscriptSearch() {
+    if (!transcriptSearch) return;
+    const q = transcriptSearch.value.trim().toLowerCase();
+    const panes = $$("#screen-results [data-scriptpane]");
+    let matches = 0;
+    panes.forEach(pane => {
+      $$(".msg", pane).forEach(msg => {
+        const bubble = msg.querySelector(".msg__bubble");
+        if (!bubble) return;
+        const text = bubble.textContent.toLowerCase();
+        const hit = q && text.includes(q);
+        if (q) {
+          const on = text.includes(q);
+          msg.style.display = on ? "" : "none";
+          msg.classList.toggle("msg--hit", on);
+          if (on && !pane.hidden) matches++;
+        } else {
+          msg.style.display = "";
+          msg.classList.remove("msg--hit");
+        }
+        void hit;
+      });
+    });
+    if (transcriptSearchCount) {
+      if (q) { transcriptSearchCount.hidden = false; transcriptSearchCount.textContent = matches + " kết quả"; }
+      else { transcriptSearchCount.hidden = true; }
+    }
+  }
+  if (transcriptSearch) transcriptSearch.addEventListener("input", runTranscriptSearch);
+
+  /* Transcript ⇄ audio — clicking a line seeks the audio to that timestamp. */
+  function parseStamp(s) { const [m, sec] = String(s).split(":").map(Number); return (m || 0) * 60 + (sec || 0); }
+  $$("#screen-results .transcript-scroll").forEach(scroll => {
+    scroll.addEventListener("click", e => {
+      const msg = e.target.closest(".msg");
+      if (!msg) return;
+      const t = msg.querySelector(".msg__time");
+      if (!t || !audioTotalSec) return;
+      audioProg = Math.min(1, parseStamp(t.textContent) / audioTotalSec);
+      if (typeof paintAudioProgress === "function") paintAudioProgress();
+      $$(".msg", scroll).forEach(m => m.classList.remove("msg--playing"));
+      msg.classList.add("msg--playing");
+    });
+  });
 
   /* Results · mock audio preview player (play/pause sweeps the waveform) */
   const audioPlay  = $("#audioPlay");

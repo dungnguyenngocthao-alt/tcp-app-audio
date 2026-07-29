@@ -2358,3 +2358,54 @@ body {
   gap: var(--tcp-space-3); margin-bottom: var(--tcp-space-3);
 }
 .up-sheet-head .page__lead { margin: 0; }
+
+/* =============================================================================
+   Figma feedback · results toolbar, inline evaluation, transcript search
+   ============================================================================= */
+.results-head__top { display: flex; align-items: center; gap: var(--tcp-space-3); }
+.results-head__top .results-head__title { flex: 1 1 auto; min-width: 0; }
+.results-save { flex: 0 0 auto; white-space: nowrap; }
+#reanalyzeBtn { flex: 0 0 auto; white-space: nowrap; }
+.results-toolbar {
+  display: flex; align-items: center; gap: var(--tcp-space-3);
+  flex-wrap: wrap; margin-top: var(--tcp-space-3);
+}
+.results-model {
+  display: inline-flex; align-items: center; gap: 8px;
+  flex: 1 1 220px; min-width: 0;
+  padding: 4px 12px; border-radius: var(--tcp-radius-lg);
+  background: var(--tcp-bg-muted);
+}
+.results-model svg { width: 18px; height: 18px; flex: 0 0 auto; color: var(--tcp-accent); }
+.results-model .select { border: 0; background: none; box-shadow: none; padding: 6px 24px 6px 0; }
+.select--sm { font-size: 14px; }
+
+/* Inline evaluation editor inside the outcome card */
+.outcome-review--edit {
+  display: block; text-align: left;
+  margin-top: var(--tcp-space-4); padding-top: var(--tcp-space-4);
+  border-top: 1px dashed var(--tcp-border);
+}
+.outcome-review__head { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
+.outcome-review__title { font-weight: 500; color: var(--tcp-fg-primary); }
+.outcome-review__ai { font-size: 13px; color: var(--tcp-fg-secondary); }
+.outcome-review__hint { margin: 4px 0 12px; font-size: 13px; line-height: 19px; color: var(--tcp-fg-secondary); }
+.outcome-review__slide { display: flex; align-items: center; gap: 12px; }
+.outcome-review__slide .slider { flex: 1 1 auto; }
+.outcome-review__val { font-weight: 500; color: var(--tcp-accent); font-variant-numeric: tabular-nums; min-width: 44px; text-align: right; }
+.outcome-review__note { margin: 12px 0; width: 100%; resize: vertical; }
+
+/* Transcript search */
+.transcript-search {
+  display: flex; align-items: center; gap: 8px;
+  margin: var(--tcp-space-2) 0 var(--tcp-space-3);
+  padding: 0 10px; border: 1px solid var(--tcp-border); border-radius: var(--tcp-radius-lg);
+  background: var(--tcp-bg);
+}
+.transcript-search svg { width: 18px; height: 18px; flex: 0 0 auto; color: var(--tcp-fg-tertiary); }
+.transcript-search__input { border: 0; box-shadow: none; padding: 10px 0; background: none; flex: 1 1 auto; }
+.transcript-search__input:focus { outline: 0; box-shadow: none; }
+.transcript-search__count { font-size: 12px; color: var(--tcp-fg-tertiary); white-space: nowrap; }
+.msg { cursor: pointer; border-radius: var(--tcp-radius-md); }
+.msg--hit .msg__bubble { box-shadow: 0 0 0 2px var(--tcp-accent-subtle); }
+.msg--playing .msg__bubble { box-shadow: 0 0 0 2px var(--tcp-accent); }

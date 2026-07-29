@@ -1729,26 +1729,65 @@
       if (active) active.scrollIntoView({ block: "nearest", inline: "nearest" });
     }
     if (typeof resetAudioPreview === "function") resetAudioPreview(m.dur);
+    // Sync the results toolbar model to the model used for analysis.
+    const rm = $("#resultModel");
+    if (rm && typeof currentModelName === "function") {
+      const target = currentModelName();
+      const opt = Array.prototype.find.call(rm.options, o => o.value === target);
+      if (opt) rm.value = target;
+    }
+    outcomeEditing = false;
+    const ts = $("#transcriptSearch");
+    if (ts && ts.value) { ts.value = ""; if (typeof runTranscriptSearch === "function") runTranscriptSearch(); }
     renderOutcomeReview();
   }
 
-  // In-result evaluation panel — confirm the AI result or override it.
+  // In-result evaluation — an INLINE editor (no popup). The user confirms or
+  // overrides the AI's rate right here.
+  let outcomeEditing = false;
   function renderOutcomeReview() {
     const box = $("#outcomeReview");
     if (!box) return;
     const rec = (typeof UPLOAD_LOG !== "undefined") ? UPLOAD_LOG.find(u => u.id === resultUploadId) : null;
     if (!rec) { box.hidden = true; box.innerHTML = ""; renderOutcomeDetail(null); return; }
     box.hidden = false;
-    if (rec.reviewed) {
+    if (rec.reviewed && !outcomeEditing) {
+      box.classList.remove("outcome-review--edit");
       box.innerHTML =
         `<span class="outcome-review__tag outcome-review__tag--user">✓ Đã chốt bởi bạn · ${rec.userRate}%</span>` +
-        `<button class="btn btn--outline btn--sm" type="button" data-outcome-review disabled>Đánh giá lại</button>`;
+        `<button class="btn btn--outline btn--sm" type="button" data-outcome-edit>Điều chỉnh</button>`;
     } else {
+      const cur = effRate(rec);
+      box.classList.add("outcome-review--edit");
       box.innerHTML =
-        `<span class="outcome-review__tag outcome-review__tag--ai">Kết quả AI · chưa đánh giá tay</span>` +
-        `<button class="btn btn--accent btn--sm" type="button" data-outcome-review>Đánh giá &amp; chốt kết quả</button>`;
+        `<div class="outcome-review__head">
+           <span class="outcome-review__title">Đánh giá lại cuộc gọi</span>
+           <span class="outcome-review__ai">AI: ${rec.rate}%</span>
+         </div>
+         <p class="outcome-review__hint">Xác nhận hoặc điều chỉnh tỷ lệ thành công. Kết quả bạn chốt sẽ thay cho đánh giá của AI.</p>
+         <div class="outcome-review__slide">
+           <input class="slider" id="inlineRate" type="range" min="0" max="100" value="${cur}" aria-label="Tỷ lệ bạn chốt">
+           <span class="outcome-review__val" id="inlineRateVal">${cur}%</span>
+         </div>
+         <textarea class="input outcome-review__note" id="inlineNote" rows="2" placeholder="Lý do điều chỉnh (tuỳ chọn)…">${escAttr(rec.note || "")}</textarea>
+         <button class="btn btn--accent btn--sm" type="button" data-outcome-confirm>Chốt kết quả</button>`;
     }
     renderOutcomeDetail(rec);
+  }
+  function confirmOutcomeInline() {
+    const rec = (typeof UPLOAD_LOG !== "undefined") ? UPLOAD_LOG.find(u => u.id === resultUploadId) : null;
+    if (!rec) return;
+    const slider = $("#inlineRate");
+    const note = $("#inlineNote");
+    rec.userRate = slider ? parseInt(slider.value, 10) : rec.rate;
+    rec.note = note ? note.value.trim() : "";
+    rec.reviewed = true;
+    outcomeEditing = false;
+    // Reflect the confirmed rate on the outcome card.
+    const pct = $("#screen-results .outcome__pct");
+    if (pct) pct.textContent = rec.userRate + "%";
+    if (typeof renderUploads === "function") renderUploads();
+    renderOutcomeReview();
   }
 
   // Evaluation detail card — appears below "Tỷ lệ tư vấn" once reviewed.
@@ -1787,10 +1826,92 @@
   }
   {
     const box = $("#outcomeReview");
-    if (box) box.addEventListener("click", e => {
-      if (e.target.closest("[data-outcome-review]") && resultUploadId) openReview(resultUploadId);
-    });
+    if (box) {
+      box.addEventListener("click", e => {
+        if (e.target.closest("[data-outcome-edit]")) { outcomeEditing = true; renderOutcomeReview(); }
+        else if (e.target.closest("[data-outcome-confirm]")) confirmOutcomeInline();
+      });
+      box.addEventListener("input", e => {
+        if (e.target.id === "inlineRate") {
+          const v = $("#inlineRateVal");
+          if (v) v.textContent = e.target.value + "%";
+        }
+      });
+    }
   }
+
+  /* Results toolbar — re-analyze with another model, save the final decision. */
+  const resultModel  = $("#resultModel");
+  const reanalyzeBtn = $("#reanalyzeBtn");
+  const saveResultBtn = $("#saveResultBtn");
+  if (reanalyzeBtn) reanalyzeBtn.addEventListener("click", () => {
+    // Cycle to the next model so "re-analyze" uses a different AI model.
+    if (resultModel && resultModel.options.length > 1) {
+      resultModel.selectedIndex = (resultModel.selectedIndex + 1) % resultModel.options.length;
+    }
+    if (procModelName) procModelName.textContent = resultModel ? resultModel.value : currentModelName();
+    if (typeof renderProcQueue === "function") renderProcQueue();
+    openProcModal();
+    runProcessing();
+  });
+  if (saveResultBtn) saveResultBtn.addEventListener("click", () => {
+    // Final decision — persist the current rate as the confirmed result.
+    const rec = (typeof UPLOAD_LOG !== "undefined") ? UPLOAD_LOG.find(u => u.id === resultUploadId) : null;
+    if (rec) {
+      if (!rec.reviewed) { rec.userRate = rec.rate; rec.reviewed = true; }
+      if (typeof renderUploads === "function") renderUploads();
+    }
+    if (typeof showToast === "function") showToast("Đã lưu kết quả vào Đánh giá cuộc gọi.");
+    show("uploads");
+  });
+
+  /* Transcript search — highlight & filter conversation lines by keyword. */
+  const transcriptSearch = $("#transcriptSearch");
+  const transcriptSearchCount = $("#transcriptSearchCount");
+  function runTranscriptSearch() {
+    if (!transcriptSearch) return;
+    const q = transcriptSearch.value.trim().toLowerCase();
+    const panes = $$("#screen-results [data-scriptpane]");
+    let matches = 0;
+    panes.forEach(pane => {
+      $$(".msg", pane).forEach(msg => {
+        const bubble = msg.querySelector(".msg__bubble");
+        if (!bubble) return;
+        const text = bubble.textContent.toLowerCase();
+        const hit = q && text.includes(q);
+        if (q) {
+          const on = text.includes(q);
+          msg.style.display = on ? "" : "none";
+          msg.classList.toggle("msg--hit", on);
+          if (on && !pane.hidden) matches++;
+        } else {
+          msg.style.display = "";
+          msg.classList.remove("msg--hit");
+        }
+        void hit;
+      });
+    });
+    if (transcriptSearchCount) {
+      if (q) { transcriptSearchCount.hidden = false; transcriptSearchCount.textContent = matches + " kết quả"; }
+      else { transcriptSearchCount.hidden = true; }
+    }
+  }
+  if (transcriptSearch) transcriptSearch.addEventListener("input", runTranscriptSearch);
+
+  /* Transcript ⇄ audio — clicking a line seeks the audio to that timestamp. */
+  function parseStamp(s) { const [m, sec] = String(s).split(":").map(Number); return (m || 0) * 60 + (sec || 0); }
+  $$("#screen-results .transcript-scroll").forEach(scroll => {
+    scroll.addEventListener("click", e => {
+      const msg = e.target.closest(".msg");
+      if (!msg) return;
+      const t = msg.querySelector(".msg__time");
+      if (!t || !audioTotalSec) return;
+      audioProg = Math.min(1, parseStamp(t.textContent) / audioTotalSec);
+      if (typeof paintAudioProgress === "function") paintAudioProgress();
+      $$(".msg", scroll).forEach(m => m.classList.remove("msg--playing"));
+      msg.classList.add("msg--playing");
+    });
+  });
 
   /* Results · mock audio preview player (play/pause sweeps the waveform) */
   const audioPlay  = $("#audioPlay");
