@@ -165,7 +165,12 @@
       fileListEl.innerHTML = "";
     } else {
       fileListEl.hidden = false;
-      fileListEl.innerHTML = selectedFiles.map((f, i) => `
+      fileListEl.innerHTML =
+        `<div class="filelist__head">
+           <span class="filelist__count">${selectedFiles.length} tệp đã nạp</span>
+           <button class="filelist__clear" type="button" data-clear-all>Xoá tất cả</button>
+         </div>` +
+        selectedFiles.map((f, i) => `
         <div class="filelist__row">
           <span class="filelist__icon">${FILE_ICON}</span>
           <div class="filelist__info">
@@ -254,6 +259,8 @@
 
   const bulkFile   = $("#bulkFile");
   const bulkSheet  = $("#bulkSheet");
+  const bulkDbType = $("#bulkDbType");
+  const bulkDbConn = $("#bulkDbConn");
   const bulkResult = $("#bulkResult");
   const bulkImportBtn = $("#bulkImportBtn");
   function showBulkResult(msg, ok) {
@@ -269,9 +276,16 @@
   if (bulkImportBtn) bulkImportBtn.addEventListener("click", () => {
     const f = bulkFile && bulkFile.files[0];
     const link = bulkSheet ? bulkSheet.value.trim() : "";
-    if (!f && !link) { showBulkResult("Chọn file Excel hoặc dán link Google Sheet để nhập.", false); return; }
-    const src = f ? f.name : "Google Sheet";
-    const rows = genLogBatch(f ? f.name : link, 5 + (nameHash(f ? f.name : link) % 4));
+    const conn = bulkDbConn ? bulkDbConn.value.trim() : "";
+    if (!f && !link && !conn) {
+      showBulkResult("Chọn file Excel, dán link Google Sheet, hoặc nhập connection string để nhập.", false);
+      return;
+    }
+    const seed = f ? f.name : (link || conn);
+    const src = f ? f.name
+              : link ? "Google Sheet"
+              : `database (${bulkDbType ? bulkDbType.value : "DB"})`;
+    const rows = genLogBatch(seed, 5 + (nameHash(seed) % 4));
     if (typeof UPLOAD_LOG !== "undefined") UPLOAD_LOG.unshift(...rows);
     if (typeof renderUploads === "function") renderUploads();
     showBulkResult(`Đã nhập ${rows.length} cuộc gọi từ ${src} vào Đánh giá cuộc gọi.`, true);
@@ -298,6 +312,7 @@
   const sampleBtn = $("#sampleBtn");
   if (sampleBtn) sampleBtn.addEventListener("click", () => addFiles(SAMPLE_FILES));
   fileListEl.addEventListener("click", e => {
+    if (e.target.closest("[data-clear-all]")) { selectedFiles = []; renderFileList(); return; }
     const rm = e.target.closest("[data-remove]");
     if (rm) { selectedFiles.splice(parseInt(rm.dataset.remove, 10), 1); renderFileList(); }
   });
@@ -429,6 +444,7 @@
     if (fileTab) fileTab.click();
     if (bulkFile) bulkFile.value = "";
     if (bulkSheet) bulkSheet.value = "";
+    if (bulkDbConn) bulkDbConn.value = "";
     if (bulkResult) bulkResult.hidden = true;
     setProgress(0, STAGES[0].label);
   }

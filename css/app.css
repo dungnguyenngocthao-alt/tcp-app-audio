@@ -633,6 +633,17 @@ button { font-family: inherit; }
   gap: var(--tcp-space-2);
   margin-top: var(--tcp-space-4);
 }
+.filelist__head {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: var(--tcp-space-2);
+}
+.filelist__count { font-size: 12px; color: var(--tcp-fg-tertiary); }
+.filelist__clear {
+  appearance: none; border: 0; background: none; cursor: pointer;
+  font-size: 13px; font-weight: 500; color: var(--tcp-error-solid);
+  padding: 2px 6px; border-radius: var(--tcp-radius-sm);
+}
+.filelist__clear:hover { background: var(--tcp-error-bg); }
 .filelist__row {
   display: flex;
   align-items: center;
