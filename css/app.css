@@ -2466,3 +2466,24 @@ body {
 .msg { cursor: pointer; border-radius: var(--tcp-radius-md); }
 .msg--hit .msg__bubble { box-shadow: 0 0 0 2px var(--tcp-accent-subtle); }
 .msg--playing .msg__bubble { box-shadow: 0 0 0 2px var(--tcp-accent); }
+
+/* Bulk upload · database connection status */
+.db-status {
+  display: flex; align-items: center; gap: var(--tcp-space-3);
+  padding: var(--tcp-space-3) var(--tcp-space-4);
+  border: 1px solid var(--tcp-success-500);
+  background: var(--tcp-success-bg);
+  border-radius: var(--tcp-radius-lg);
+  margin-bottom: var(--tcp-space-3);
+}
+.db-status__dot {
+  width: 10px; height: 10px; border-radius: 999px; flex: 0 0 auto;
+  background: var(--tcp-success-solid);
+  box-shadow: 0 0 0 4px rgba(22, 163, 74, 0.15);
+}
+.db-status__body { flex: 1 1 auto; min-width: 0; }
+.db-status__title { font-size: 14px; font-weight: 500; color: var(--tcp-success-fg); }
+.db-status__meta {
+  font-size: 12px; color: var(--tcp-fg-secondary); margin-top: 1px;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}

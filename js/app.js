@@ -257,38 +257,52 @@
     return rows;
   }
 
-  const bulkFile   = $("#bulkFile");
-  const bulkSheet  = $("#bulkSheet");
   const bulkDbType = $("#bulkDbType");
   const bulkDbConn = $("#bulkDbConn");
   const bulkResult = $("#bulkResult");
   const bulkImportBtn = $("#bulkImportBtn");
+  const dbConnectForm = $("#dbConnectForm");
+  const dbConnectedEl = $("#dbConnected");
+  const dbConnectBtn  = $("#dbConnectBtn");
+  const dbDisconnectBtn = $("#dbDisconnectBtn");
+  const dbConnLabel   = $("#dbConnLabel");
+  // Connection persists once established (kept across resets / navigation).
+  const dbConnection = { connected: false, type: "", conn: "" };
   function showBulkResult(msg, ok) {
     if (!bulkResult) return;
     bulkResult.hidden = false;
     bulkResult.className = "up-import-result " + (ok ? "is-ok" : "is-warn");
     bulkResult.textContent = msg;
   }
-  if (bulkFile) bulkFile.addEventListener("change", () => {
-    const f = bulkFile.files[0];
-    if (f) showBulkResult("Đã chọn: " + f.name, true);
+  function renderDbState() {
+    const on = dbConnection.connected;
+    if (dbConnectForm) dbConnectForm.hidden = on;
+    if (dbConnectedEl) dbConnectedEl.hidden = !on;
+    if (dbConnLabel && on) dbConnLabel.textContent = `${dbConnection.type} · ${dbConnection.conn}`;
+    if (bulkImportBtn) bulkImportBtn.disabled = !on;
+  }
+  renderDbState();
+  if (dbConnectBtn) dbConnectBtn.addEventListener("click", () => {
+    const conn = bulkDbConn ? bulkDbConn.value.trim() : "";
+    if (!conn) { showBulkResult("Nhập connection string để kết nối.", false); if (bulkDbConn) bulkDbConn.focus(); return; }
+    dbConnection.connected = true;
+    dbConnection.type = bulkDbType ? bulkDbType.value : "Database";
+    dbConnection.conn = conn;
+    renderDbState();
+    showBulkResult(`Đã kết nối ${dbConnection.type}. Kết nối được giữ nguyên cho các lần nhập sau.`, true);
+  });
+  if (dbDisconnectBtn) dbDisconnectBtn.addEventListener("click", () => {
+    dbConnection.connected = false;
+    renderDbState();
+    if (bulkResult) bulkResult.hidden = true;
   });
   if (bulkImportBtn) bulkImportBtn.addEventListener("click", () => {
-    const f = bulkFile && bulkFile.files[0];
-    const link = bulkSheet ? bulkSheet.value.trim() : "";
-    const conn = bulkDbConn ? bulkDbConn.value.trim() : "";
-    if (!f && !link && !conn) {
-      showBulkResult("Chọn file Excel, dán link Google Sheet, hoặc nhập connection string để nhập.", false);
-      return;
-    }
-    const seed = f ? f.name : (link || conn);
-    const src = f ? f.name
-              : link ? "Google Sheet"
-              : `database (${bulkDbType ? bulkDbType.value : "DB"})`;
+    if (!dbConnection.connected) { showBulkResult("Hãy kết nối database trước khi nhập.", false); return; }
+    const seed = dbConnection.conn + "|" + Date.now();
     const rows = genLogBatch(seed, 5 + (nameHash(seed) % 4));
     if (typeof UPLOAD_LOG !== "undefined") UPLOAD_LOG.unshift(...rows);
     if (typeof renderUploads === "function") renderUploads();
-    showBulkResult(`Đã nhập ${rows.length} cuộc gọi từ ${src} vào Đánh giá cuộc gọi.`, true);
+    showBulkResult(`Đã nhập ${rows.length} cuộc gọi từ database (${dbConnection.type}) vào Đánh giá cuộc gọi.`, true);
     setTimeout(() => show("uploads"), 600);
   });
 
@@ -439,13 +453,11 @@
     if (fileInput) fileInput.value = "";
     selectedFiles = [];
     renderFileList();
-    // Return the upload card to the "Tải cuộc gọi" tab and clear bulk inputs.
+    // Return the upload card to the "Tải cuộc gọi" tab. The database connection
+    // is intentionally kept (once connected, stays connected).
     const fileTab = $('[data-uptab="file"]');
     if (fileTab) fileTab.click();
-    if (bulkFile) bulkFile.value = "";
-    if (bulkSheet) bulkSheet.value = "";
-    if (bulkDbConn) bulkDbConn.value = "";
-    if (bulkResult) bulkResult.hidden = true;
+    if (bulkResult && !dbConnection.connected) bulkResult.hidden = true;
     setProgress(0, STAGES[0].label);
   }
 
