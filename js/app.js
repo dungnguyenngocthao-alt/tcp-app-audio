@@ -191,7 +191,9 @@
       if (procMeta) procMeta.textContent = DEFAULT_PROC_META;
       return;
     }
-    procName.textContent = n === 1 ? selectedFiles[0].name : `${selectedFiles[0].name} +${n - 1} tệp`;
+    procName.innerHTML =
+      `<span class="filecard__fname" title="${escAttr(selectedFiles[0].name)}">${escAttr(selectedFiles[0].name)}</span>` +
+      (n > 1 ? `<span class="filecard__more">+${n - 1} tệp</span>` : "");
     if (procMeta) {
       const total = selectedFiles.reduce((a, f) => a + (f.size || 0), 0);
       procMeta.textContent = n + " tệp âm thanh" + (total ? " • " + humanSize(total) : "");

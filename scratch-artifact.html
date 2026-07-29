@@ -1105,7 +1105,17 @@ button { font-family: inherit; }
   color: var(--tcp-brand);
   display: flex; align-items: center; justify-content: center;
 }
-.filecard__name { font-weight: var(--tcp-fw-semibold); color: var(--tcp-ink); font-size: 15px; }
+.filecard > div { min-width: 0; flex: 1 1 auto; }
+.filecard__name {
+  font-weight: var(--tcp-fw-semibold); color: var(--tcp-ink); font-size: 15px;
+  display: flex; align-items: baseline; gap: 6px; min-width: 0;
+}
+.filecard__fname { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
+.filecard__more {
+  flex: 0 0 auto; font-size: 12px; font-weight: 500;
+  color: var(--tcp-accent); background: var(--tcp-accent-subtle);
+  padding: 1px 8px; border-radius: var(--tcp-radius-pill);
+}
 .filecard__meta { font-size: 13px; color: var(--tcp-fg-secondary); margin-top: 2px; }
 
 .progress { width: 100%; margin-bottom: var(--tcp-space-6); }
@@ -4124,7 +4134,9 @@ body {
       if (procMeta) procMeta.textContent = DEFAULT_PROC_META;
       return;
     }
-    procName.textContent = n === 1 ? selectedFiles[0].name : `${selectedFiles[0].name} +${n - 1} tệp`;
+    procName.innerHTML =
+      `<span class="filecard__fname" title="${escAttr(selectedFiles[0].name)}">${escAttr(selectedFiles[0].name)}</span>` +
+      (n > 1 ? `<span class="filecard__more">+${n - 1} tệp</span>` : "");
     if (procMeta) {
       const total = selectedFiles.reduce((a, f) => a + (f.size || 0), 0);
       procMeta.textContent = n + " tệp âm thanh" + (total ? " • " + humanSize(total) : "");
