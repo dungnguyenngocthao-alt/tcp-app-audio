@@ -468,22 +468,32 @@ button { font-family: inherit; }
 .acc-pw { font-family: var(--tcp-font-mono); letter-spacing: 2px; color: var(--tcp-fg-tertiary); }
 
 /* Settings hub — menu of sub-sections + detail-view back header */
-.settings-menu { display: flex; flex-direction: column; gap: var(--tcp-space-4); }
+/* Settings master-detail: menu list (left) + selected section (right) */
+.settings-layout { display: grid; grid-template-columns: 1fr; gap: var(--tcp-space-5); align-items: start; }
+@media (min-width: 900px) {
+  .settings-layout { grid-template-columns: 320px minmax(0, 1fr); }
+}
+.settings-menu { display: flex; flex-direction: column; gap: 4px; padding: var(--tcp-space-2); }
 .set-item {
-  display: flex; align-items: center; gap: var(--tcp-space-4);
-  width: 100%; text-align: left; cursor: pointer;
+  appearance: none; border: 0; background: none; cursor: pointer;
+  display: flex; align-items: center; gap: var(--tcp-space-3);
+  width: 100%; text-align: left;
+  padding: var(--tcp-space-3); border-radius: var(--tcp-radius-lg);
+  transition: background var(--tcp-dur-fast) var(--tcp-ease);
 }
+.set-item:hover { background: var(--tcp-bg-muted); }
+.set-item.is-active { background: var(--tcp-accent-subtle); }
 .set-item__icon {
-  flex: 0 0 auto; width: 44px; height: 44px; border-radius: var(--tcp-radius-lg);
+  flex: 0 0 auto; width: 40px; height: 40px; border-radius: var(--tcp-radius-lg);
   display: grid; place-items: center;
-  background: var(--tcp-accent-subtle); color: var(--tcp-accent);
+  background: var(--tcp-bg-muted); color: var(--tcp-fg-secondary);
 }
-.set-item__icon svg { width: 22px; height: 22px; }
+.set-item.is-active .set-item__icon { background: #fff; color: var(--tcp-accent); }
+.set-item__icon svg { width: 20px; height: 20px; }
 .set-item__body { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
-.set-item__title { font-size: 16px; font-weight: 500; color: var(--tcp-fg-primary); }
-.set-item__desc { font-size: 13px; color: var(--tcp-fg-secondary); }
-.set-item__chev { flex: 0 0 auto; width: 18px; height: 18px; color: var(--tcp-fg-tertiary); }
-.set-item:hover .set-item__chev { color: var(--tcp-accent); }
+.set-item__title { font-size: 15px; font-weight: 500; color: var(--tcp-fg-primary); }
+.set-item__desc { font-size: 12px; color: var(--tcp-fg-secondary); line-height: 16px; }
+.settings-detail > [data-setpane] { display: flex; flex-direction: column; gap: var(--tcp-space-4); }
 
 .set-detail-head {
   display: flex; align-items: center; gap: var(--tcp-space-2);
@@ -3637,14 +3647,33 @@ body {
 
         <div class="page">
           <h1 class="page__title">Cài đặt</h1>
-          <p class="page__lead">Hồ sơ tài khoản và bộ từ khoá cảm xúc.</p>
 
-          <!-- My profile -->
-          <div class="settings-section">
-            <h2 class="section-title settings-section__title">
-              <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M230.92,212c-15.23-26.33-38.7-45.21-66.09-54.16a72,72,0,1,0-73.66,0C63.78,166.78,40.31,185.66,25.08,212a8,8,0,1,0,13.85,8c18.84-32.56,52.14-52,89.07-52s70.23,19.44,89.07,52a8,8,0,1,0,13.85-8ZM72,96a56,56,0,1,1,56,56A56.06,56.06,0,0,1,72,96Z"/></svg>
-              Hồ sơ của tôi
-            </h2>
+          <div class="settings-layout">
+            <!-- Master menu -->
+            <div class="card settings-menu">
+              <button class="set-item is-active" type="button" data-setnav="profile" aria-pressed="true">
+                <span class="set-item__icon">
+                  <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M230.92,212c-15.23-26.33-38.7-45.21-66.09-54.16a72,72,0,1,0-73.66,0C63.78,166.78,40.31,185.66,25.08,212a8,8,0,1,0,13.85,8c18.84-32.56,52.14-52,89.07-52s70.23,19.44,89.07,52a8,8,0,1,0,13.85-8ZM72,96a56,56,0,1,1,56,56A56.06,56.06,0,0,1,72,96Z"/></svg>
+                </span>
+                <span class="set-item__body">
+                  <span class="set-item__title">Hồ sơ của tôi</span>
+                  <span class="set-item__desc">Thông tin tài khoản đang đăng nhập.</span>
+                </span>
+              </button>
+              <button class="set-item" type="button" data-setnav="keywords" aria-pressed="false">
+                <span class="set-item__icon">
+                  <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M243.31,136,144,36.69A15.86,15.86,0,0,0,132.69,32H40a8,8,0,0,0-8,8v92.69A15.86,15.86,0,0,0,36.69,144L136,243.31a16,16,0,0,0,22.63,0l84.68-84.68a16,16,0,0,0,0-22.63Zm-96,96L48,132.69V48h84.69L232,147.31ZM88,68a20,20,0,1,1-20,20A20,20,0,0,1,88,68Z"/></svg>
+                </span>
+                <span class="set-item__body">
+                  <span class="set-item__title">Bộ từ khoá cảm xúc</span>
+                  <span class="set-item__desc">Từ khoá tích cực / tiêu cực ảnh hưởng đánh giá.</span>
+                </span>
+              </button>
+            </div>
+
+            <!-- Detail pane -->
+            <div class="settings-detail">
+            <div data-setpane="profile">
             <div class="card profile-card">
               <div class="profile-hero">
                 <span class="profile-avatar" id="profAvatar">NH</span>
@@ -3687,12 +3716,8 @@ body {
             </div>
           </div>
 
-          <!-- Sentiment keyword sets -->
-          <div class="settings-section">
-            <h2 class="section-title settings-section__title">
-              <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M243.31,136,144,36.69A15.86,15.86,0,0,0,132.69,32H40a8,8,0,0,0-8,8v92.69A15.86,15.86,0,0,0,36.69,144L136,243.31a16,16,0,0,0,22.63,0l84.68-84.68a16,16,0,0,0,0-22.63Zm-96,96L48,132.69V48h84.69L232,147.31ZM88,68a20,20,0,1,1-20,20A20,20,0,0,1,88,68Z"/></svg>
-              Bộ từ khoá cảm xúc
-            </h2>
+            <!-- Sentiment keyword sets -->
+            <div data-setpane="keywords" hidden>
             <div class="card">
               <div class="result-card__label result-card__label--success">
                 <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M240,56v64a8,8,0,0,1-16,0V75.31l-82.34,82.35a8,8,0,0,1-11.32,0L96,123.31,29.66,189.66a8,8,0,0,1-11.32-11.32l72-72a8,8,0,0,1,11.32,0L136,140.69,212.69,64H168a8,8,0,0,1,0-16h64A8,8,0,0,1,240,56Z"/></svg>
@@ -3724,7 +3749,9 @@ body {
                 </button>
               </div>
             </div>
-          </div>
+            </div><!-- /setpane keywords -->
+            </div><!-- /settings-detail -->
+          </div><!-- /settings-layout -->
         </div>
       </div>
     </section>
@@ -5984,6 +6011,21 @@ body {
   setupKwEditor("failureKwList", "failureKwInput", "failureKwAdd", negativeKeywords, "neg");
   highlightTranscript();
   colorKeywordChips();
+
+  /* -------------------------------------------------------------------------
+     Settings · master-detail — pick a section on the left, view it on the right.
+     ------------------------------------------------------------------------- */
+  $$("#screen-settings [data-setnav]").forEach(item => item.addEventListener("click", () => {
+    const target = item.dataset.setnav;
+    $$("#screen-settings [data-setnav]").forEach(b => {
+      const on = b === item;
+      b.classList.toggle("is-active", on);
+      b.setAttribute("aria-pressed", on ? "true" : "false");
+    });
+    $$("#screen-settings [data-setpane]").forEach(p => { p.hidden = p.dataset.setpane !== target; });
+    const sc = $("#screen-settings .screen__scroll");
+    if (sc) sc.scrollTop = 0;
+  }));
 
   /* -------------------------------------------------------------------------
      Settings · my profile — the signed-in Google user's own details.

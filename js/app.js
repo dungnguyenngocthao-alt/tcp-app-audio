@@ -2139,6 +2139,21 @@
   colorKeywordChips();
 
   /* -------------------------------------------------------------------------
+     Settings · master-detail — pick a section on the left, view it on the right.
+     ------------------------------------------------------------------------- */
+  $$("#screen-settings [data-setnav]").forEach(item => item.addEventListener("click", () => {
+    const target = item.dataset.setnav;
+    $$("#screen-settings [data-setnav]").forEach(b => {
+      const on = b === item;
+      b.classList.toggle("is-active", on);
+      b.setAttribute("aria-pressed", on ? "true" : "false");
+    });
+    $$("#screen-settings [data-setpane]").forEach(p => { p.hidden = p.dataset.setpane !== target; });
+    const sc = $("#screen-settings .screen__scroll");
+    if (sc) sc.scrollTop = 0;
+  }));
+
+  /* -------------------------------------------------------------------------
      Settings · my profile — the signed-in Google user's own details.
      ------------------------------------------------------------------------- */
   const profForm  = $("#profForm");

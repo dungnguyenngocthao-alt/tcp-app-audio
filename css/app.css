@@ -260,22 +260,32 @@ button { font-family: inherit; }
 .acc-pw { font-family: var(--tcp-font-mono); letter-spacing: 2px; color: var(--tcp-fg-tertiary); }
 
 /* Settings hub — menu of sub-sections + detail-view back header */
-.settings-menu { display: flex; flex-direction: column; gap: var(--tcp-space-4); }
+/* Settings master-detail: menu list (left) + selected section (right) */
+.settings-layout { display: grid; grid-template-columns: 1fr; gap: var(--tcp-space-5); align-items: start; }
+@media (min-width: 900px) {
+  .settings-layout { grid-template-columns: 320px minmax(0, 1fr); }
+}
+.settings-menu { display: flex; flex-direction: column; gap: 4px; padding: var(--tcp-space-2); }
 .set-item {
-  display: flex; align-items: center; gap: var(--tcp-space-4);
-  width: 100%; text-align: left; cursor: pointer;
+  appearance: none; border: 0; background: none; cursor: pointer;
+  display: flex; align-items: center; gap: var(--tcp-space-3);
+  width: 100%; text-align: left;
+  padding: var(--tcp-space-3); border-radius: var(--tcp-radius-lg);
+  transition: background var(--tcp-dur-fast) var(--tcp-ease);
 }
+.set-item:hover { background: var(--tcp-bg-muted); }
+.set-item.is-active { background: var(--tcp-accent-subtle); }
 .set-item__icon {
-  flex: 0 0 auto; width: 44px; height: 44px; border-radius: var(--tcp-radius-lg);
+  flex: 0 0 auto; width: 40px; height: 40px; border-radius: var(--tcp-radius-lg);
   display: grid; place-items: center;
-  background: var(--tcp-accent-subtle); color: var(--tcp-accent);
+  background: var(--tcp-bg-muted); color: var(--tcp-fg-secondary);
 }
-.set-item__icon svg { width: 22px; height: 22px; }
+.set-item.is-active .set-item__icon { background: #fff; color: var(--tcp-accent); }
+.set-item__icon svg { width: 20px; height: 20px; }
 .set-item__body { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
-.set-item__title { font-size: 16px; font-weight: 500; color: var(--tcp-fg-primary); }
-.set-item__desc { font-size: 13px; color: var(--tcp-fg-secondary); }
-.set-item__chev { flex: 0 0 auto; width: 18px; height: 18px; color: var(--tcp-fg-tertiary); }
-.set-item:hover .set-item__chev { color: var(--tcp-accent); }
+.set-item__title { font-size: 15px; font-weight: 500; color: var(--tcp-fg-primary); }
+.set-item__desc { font-size: 12px; color: var(--tcp-fg-secondary); line-height: 16px; }
+.settings-detail > [data-setpane] { display: flex; flex-direction: column; gap: var(--tcp-space-4); }
 
 .set-detail-head {
   display: flex; align-items: center; gap: var(--tcp-space-2);
