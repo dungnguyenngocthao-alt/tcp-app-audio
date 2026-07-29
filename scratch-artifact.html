@@ -2513,7 +2513,23 @@ body {
    instead of growing the card (so both cards stay the same height). */
 .dash-analyze .card--upload { min-height: 460px; }
 .dash-analyze .card--upload [data-uppane="file"] { display: flex; flex-direction: column; flex: 1 1 auto; min-height: 0; }
-.dash-analyze .filelist { max-height: 168px; overflow-y: auto; }
+/* Compact file previews so loading files barely grows the card (keeps the
+   config card from stretching too much). Long lists scroll. */
+.dash-analyze .filelist { max-height: 132px; overflow-y: auto; margin-top: var(--tcp-space-3); gap: 6px; }
+.dash-analyze .filelist__row { padding: 6px 10px; gap: var(--tcp-space-2); }
+.dash-analyze .filelist__icon { width: 24px; height: 24px; }
+.dash-analyze .filelist__icon svg { width: 14px; height: 14px; }
+.dash-analyze .filelist__name { font-size: 12px; }
+.dash-analyze .filelist__size { font-size: 11px; margin-top: 0; }
+.dash-analyze .filelist__remove { width: 22px; height: 22px; }
+.dash-analyze .filelist__remove svg { width: 14px; height: 14px; }
+/* When files are queued, shrink the dropzone so the card stays compact. */
+.dash-analyze .card--upload.has-files .dropzone { padding: var(--tcp-space-4); }
+.dash-analyze .card--upload.has-files .dropzone__icon { width: 40px; height: 40px; margin-bottom: 4px; }
+.dash-analyze .card--upload.has-files .dropzone__icon svg { width: 22px; height: 22px; }
+.dash-analyze .card--upload.has-files .dropzone__hint { display: none; }
+.dash-analyze .card--upload.has-files .dropzone__sample { display: none; }
+.dash-analyze .card--upload.has-files .dropzone__title { font-size: 14px; margin-bottom: 8px; }
 @media (min-width: 768px) {
   /* Config card stretches to match the upload card's height. */
   .dash-analyze__grid { grid-template-columns: 1fr 1fr; align-items: stretch; }
@@ -3988,6 +4004,9 @@ body {
   }
 
   function renderFileList() {
+    // Once files are queued, compact the dropzone so the card doesn't grow much.
+    const upCard = fileListEl.closest(".card--upload");
+    if (upCard) upCard.classList.toggle("has-files", selectedFiles.length > 0);
     if (!selectedFiles.length) {
       fileListEl.hidden = true;
       fileListEl.innerHTML = "";

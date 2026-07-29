@@ -157,6 +157,9 @@
   }
 
   function renderFileList() {
+    // Once files are queued, compact the dropzone so the card doesn't grow much.
+    const upCard = fileListEl.closest(".card--upload");
+    if (upCard) upCard.classList.toggle("has-files", selectedFiles.length > 0);
     if (!selectedFiles.length) {
       fileListEl.hidden = true;
       fileListEl.innerHTML = "";
