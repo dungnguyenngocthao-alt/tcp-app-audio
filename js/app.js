@@ -17,7 +17,6 @@
     dashboard:  $("#screen-dashboard"),
     employees:  $("#screen-employees"),
     uploads:    $("#screen-uploads"),
-    callhistory:$("#screen-callhistory"),
     settings:   $("#screen-settings"),
   };
 
@@ -31,7 +30,6 @@
     if (scroller) scroller.scrollTop = 0;
     setActiveMenu(name);
     // The config card can only be measured once the analysis screen is visible.
-    if (name === "callhistory" && typeof renderCallHistory === "function") renderCallHistory();
   }
 
   /* -------------------------------------------------------------------------
@@ -1542,6 +1540,18 @@
     }).join("");
   }
   renderCallHistory();
+
+  /* Đánh giá cuộc gọi · view switch — evaluation table vs. raw call sheet. */
+  $$("[data-upview]").forEach(btn => btn.addEventListener("click", () => {
+    const view = btn.dataset.upview;
+    $$("[data-upview]").forEach(b => {
+      const on = b === btn;
+      b.classList.toggle("is-active", on);
+      b.setAttribute("aria-selected", on ? "true" : "false");
+    });
+    $$("[data-uppane2]").forEach(p => { p.hidden = p.dataset.uppane2 !== view; });
+    if (view === "sheet") renderCallHistory();
+  }));
 
   /* Manual re-evaluation — the user confirms/overrides the AI result. */
   const reviewModal   = $("#reviewModal");

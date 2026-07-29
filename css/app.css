@@ -2350,3 +2350,11 @@ body {
   margin: 0 0 var(--tcp-space-3);
 }
 .settings-section__title svg { width: 20px; height: 20px; flex: 0 0 auto; color: var(--tcp-accent); }
+
+/* Đánh giá cuộc gọi · view tabs (eval / sheet) */
+.up-view { margin: 0 0 var(--tcp-space-4); max-width: 320px; }
+.up-sheet-head {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: var(--tcp-space-3); margin-bottom: var(--tcp-space-3);
+}
+.up-sheet-head .page__lead { margin: 0; }

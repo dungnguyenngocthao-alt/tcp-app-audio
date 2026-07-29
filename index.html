@@ -824,8 +824,18 @@
               <h1 class="page__title">Đánh giá cuộc gọi</h1>
               <p class="page__lead">Toàn bộ cuộc gọi đã tải lên và phân tích.</p>
             </div>
+            <button class="btn btn--accent btn--sm" type="button" data-nav="dashboard" data-reset>
+              <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M240,136v64a16,16,0,0,1-16,16H32a16,16,0,0,1-16-16V136a8,8,0,0,1,16,0v64H224V136a8,8,0,0,1,16,0ZM88.49,79.51,120,48V136a8,8,0,0,0,16,0V48l31.51,31.51a8,8,0,0,0,11.32-11.32l-45.17-45.16a8,8,0,0,0-11.32,0L77.17,68.19A8,8,0,0,0,88.49,79.51Z"/></svg>
+              Upload cuộc gọi
+            </button>
           </div>
 
+          <div class="seg up-view" id="upView" role="tablist" aria-label="Chế độ xem">
+            <button class="seg__btn is-active" type="button" role="tab" aria-selected="true" data-upview="eval">Đánh giá</button>
+            <button class="seg__btn" type="button" role="tab" aria-selected="false" data-upview="sheet">Sheet cuộc gọi</button>
+          </div>
+
+          <div data-uppane2="eval">
           <div class="dash-stats up-stats">
             <div class="card stat-card">
               <div class="result-card__label">
@@ -892,52 +902,33 @@
             </table>
           </div>
           <nav class="pagination" id="upPager" aria-label="Phân trang đánh giá cuộc gọi"></nav>
-        </div>
-      </div>
-    </section>
+          </div><!-- /uppane2 eval -->
 
-    <!-- ================================================================= -->
-    <!-- SCREEN 5d · Call history (raw sheet)                                -->
-    <!-- ================================================================= -->
-    <section class="screen screen--hasnav" id="screen-callhistory" data-screen="callhistory">
-      <div class="screen__scroll">
-        <header class="appbar">
-          <button class="brand" type="button" data-nav="dashboard" aria-label="Về trang tải lên">
-            <span class="brand__logo" aria-hidden="true"></span>
-            <span class="brand__name">Talent Connect +</span>
-          </button>
-          <button class="burger" type="button" aria-label="Open menu" aria-haspopup="true" aria-expanded="false" data-burger>
-            <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M224,128a8,8,0,0,1-8,8H40a8,8,0,0,1,0-16H216A8,8,0,0,1,224,128ZM40,72H216a8,8,0,0,0,0-16H40a8,8,0,0,0,0,16ZM216,184H40a8,8,0,0,0,0,16H216a8,8,0,0,0,0-16Z"/></svg>
-          </button>
-        </header>
-
-        <div class="page">
-          <div class="emp-topbar">
-            <div>
-              <h1 class="page__title">Lịch sử cuộc gọi</h1>
+          <!-- Merged: raw call sheet (was Lịch sử cuộc gọi) -->
+          <div data-uppane2="sheet" hidden>
+            <div class="up-sheet-head">
               <p class="page__lead">Bảng dữ liệu cuộc gọi đã nhập từ file / Google Sheet.</p>
+              <span class="ch-count" id="chCount">—</span>
             </div>
-            <span class="ch-count" id="chCount">—</span>
-          </div>
-
-          <div class="emp-table-wrap ch-sheet-wrap">
-            <table class="emp-table up-table ch-sheet">
-              <thead>
-                <tr>
-                  <th>ID</th>
-                  <th>Time</th>
-                  <th>Call From</th>
-                  <th>Call To</th>
-                  <th>Caller</th>
-                  <th>Type</th>
-                  <th>Duration</th>
-                  <th>Size</th>
-                  <th>URL</th>
-                  <th>Transcript</th>
-                </tr>
-              </thead>
-              <tbody id="chTbody"></tbody>
-            </table>
+            <div class="emp-table-wrap ch-sheet-wrap">
+              <table class="emp-table up-table ch-sheet">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Time</th>
+                    <th>Call From</th>
+                    <th>Call To</th>
+                    <th>Caller</th>
+                    <th>Type</th>
+                    <th>Duration</th>
+                    <th>Size</th>
+                    <th>URL</th>
+                    <th>Transcript</th>
+                  </tr>
+                </thead>
+                <tbody id="chTbody"></tbody>
+              </table>
+            </div>
           </div>
         </div>
       </div>
