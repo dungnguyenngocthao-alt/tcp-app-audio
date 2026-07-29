@@ -1832,7 +1832,9 @@ mark.mark--neg { background: var(--tcp-error-bg); color: var(--tcp-error-900); }
   letter-spacing: 1.2px; text-transform: uppercase;
   color: var(--tcp-fg-tertiary);
 }
-.drawer__nav { display: flex; flex-direction: column; gap: 4px; }
+.drawer__nav { display: flex; flex-direction: column; gap: 4px; flex: 1 1 auto; min-height: 0; }
+/* Logout always sits at the very bottom of the drawer. */
+.drawer__item--logout { margin-top: auto; }
 .drawer__item {
   appearance: none; border: 0; background: none; cursor: pointer;
   display: flex; align-items: center; gap: var(--tcp-space-3);
@@ -2498,6 +2500,65 @@ body {
   margin: 0; font-size: 14px; line-height: 21px; color: var(--tcp-fg-secondary);
 }
 
+/* =============================================================================
+   Figma feedback · dashboard-embedded upload, processing popup, queue
+   ============================================================================= */
+
+/* Upload + config panel embedded at the top of the dashboard */
+.dash-analyze { margin-bottom: var(--tcp-space-5); }
+.dash-analyze__title { margin: 0 0 var(--tcp-space-3); }
+.dash-analyze__grid { display: grid; grid-template-columns: 1fr; gap: var(--tcp-space-4); }
+.dash-analyze .card { margin: 0; }
+@media (min-width: 768px) {
+  .dash-analyze__grid { grid-template-columns: 1fr 1fr; align-items: start; }
+}
+
+/* Processing popup (was a full screen — now a modal over the dashboard) */
+.proc-modal__box {
+  width: min(520px, 92vw);
+  max-height: 90vh; overflow: auto;
+  padding: 0;
+}
+.analyzing--modal {
+  flex: none;
+  padding: var(--tcp-space-8) var(--tcp-space-6) var(--tcp-space-6);
+}
+.analyzing--modal .analyzing__title { font-size: 18px; }
+
+/* Analysis queue inside the popup */
+.proc-queue {
+  width: 100%; margin-top: var(--tcp-space-5);
+  border-top: 1px solid var(--tcp-border-subtle); padding-top: var(--tcp-space-4);
+  text-align: left;
+}
+.proc-queue__head {
+  font-size: 12px; letter-spacing: .04em; text-transform: uppercase;
+  color: var(--tcp-fg-tertiary); margin-bottom: var(--tcp-space-2);
+}
+.proc-queue__item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 8px 10px; border-radius: var(--tcp-radius-md);
+}
+.proc-queue__item.is-active { background: var(--tcp-accent-subtle); }
+.proc-queue__dot {
+  width: 8px; height: 8px; border-radius: 999px; flex: 0 0 auto;
+  background: var(--tcp-border-strong);
+}
+.proc-queue__item.is-active .proc-queue__dot { background: var(--tcp-accent); }
+.proc-queue__name {
+  flex: 1 1 auto; min-width: 0; font-size: 14px; color: var(--tcp-fg-primary);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.proc-queue__state { font-size: 12px; color: var(--tcp-fg-secondary); white-space: nowrap; }
+
+/* Settings · single-screen layout (hub removed) */
+.settings-section { margin-bottom: var(--tcp-space-6); }
+.settings-section__title {
+  display: flex; align-items: center; gap: 8px;
+  margin: 0 0 var(--tcp-space-3);
+}
+.settings-section__title svg { width: 20px; height: 20px; flex: 0 0 auto; color: var(--tcp-accent); }
+
 
 /* Artifact preview: adapt the surrounding backdrop to the viewer theme.
    The phone screen itself stays light — it's the product being previewed. */
@@ -2551,112 +2612,13 @@ body {
     </section>
 
     <!-- ================================================================= -->
-    <!-- SCREEN 1 · New Analysis                                            -->
-    <!-- ================================================================= -->
-    <section class="screen screen--hasnav" id="screen-analysis" data-screen="analysis">
-      <div class="screen__scroll">
-        <header class="appbar">
-          <button class="brand" type="button" data-nav="analysis" aria-label="Về trang tải lên">
-            <span class="brand__logo" aria-hidden="true"></span>
-            <span class="brand__name">Talent Connect +</span>
-          </button>
-          <button class="burger" type="button" aria-label="Open menu" aria-haspopup="true" aria-expanded="false" data-burger>
-            <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M224,128a8,8,0,0,1-8,8H40a8,8,0,0,1,0-16H216A8,8,0,0,1,224,128ZM40,72H216a8,8,0,0,0,0-16H40a8,8,0,0,0,0,16ZM216,184H40a8,8,0,0,0,0,16H216a8,8,0,0,0,0-16Z"/></svg>
-          </button>
-        </header>
-
-        <div class="page">
-          <h1 class="page__title">Upload file</h1>
-
-          <!-- Upload card -->
-          <div class="card card--upload">
-            <div class="tabs" role="tablist">
-              <button class="tab is-active" role="tab" aria-selected="true" data-uptab="file">Tải cuộc gọi</button>
-              <button class="tab" role="tab" aria-selected="false" data-uptab="bulk">Excel / Google Sheet</button>
-            </div>
-
-            <div data-uppane="file">
-              <div class="dropzone" id="dropzone">
-              <div class="dropzone__icon">
-                <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M178.34,165.66,160,147.31V208a8,8,0,0,1-16,0V147.31l-18.34,18.35a8,8,0,0,1-11.32-11.32l32-32a8,8,0,0,1,11.32,0l32,32a8,8,0,0,1-11.32,11.32ZM160,40A88.08,88.08,0,0,0,81.29,88.68,64,64,0,1,0,72,216h40a8,8,0,0,0,0-16H72a48,48,0,0,1,0-96c1.1,0,2.2,0,3.29.12A88,88,0,0,0,72,128a8,8,0,0,0,16,0,72,72,0,1,1,100.8,66,8,8,0,0,0,3.2,15.34,7.9,7.9,0,0,0,3.2-.68A88,88,0,0,0,160,40Z"/></svg>
-              </div>
-              <h2 class="dropzone__title">Kéo và thả tệp</h2>
-              <p class="dropzone__hint">Chọn hoặc kéo thả tệp · WAV, MP3, FLAC (Max 500MB)</p>
-              <button class="btn btn--ink" id="browseBtn" type="button">Chọn file</button>
-              <input type="file" id="fileInput" accept=".wav,.mp3,.flac,audio/*" multiple hidden>
-              <button class="dropzone__sample" id="sampleBtn" type="button">Chưa có tệp? Nạp 4 tệp mẫu để xem thử &rarr;</button>
-              </div>
-              <div class="filelist" id="fileList" hidden></div>
-              <div class="field upload-emp">
-                <label class="field__label" for="uploadEmp">Nhân viên phụ trách cuộc gọi</label>
-                <select class="select" id="uploadEmp"></select>
-              </div>
-            </div>
-
-            <div data-uppane="bulk" hidden>
-              <label class="emp-upload" for="bulkFile">
-                <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M240,136v64a16,16,0,0,1-16,16H32a16,16,0,0,1-16-16V136a8,8,0,0,1,16,0v64H224V136a8,8,0,0,1,16,0ZM88.49,79.51,120,48V136a8,8,0,0,0,16,0V48l31.51,31.51a8,8,0,0,0,11.32-11.32l-45.17-45.16a8,8,0,0,0-11.32,0L77.17,68.19A8,8,0,0,0,88.49,79.51Z"/></svg>
-                <span class="emp-upload__title">Tải lên file Excel</span>
-                <span class="emp-upload__hint">.xlsx hoặc .csv — đủ cột theo bảng Đánh giá cuộc gọi</span>
-                <input type="file" id="bulkFile" accept=".xlsx,.xls,.csv" hidden>
-              </label>
-              <div class="up-or"><span>hoặc</span></div>
-              <div class="field">
-                <label class="field__label" for="bulkSheet">Link Google Sheet</label>
-                <input class="input" id="bulkSheet" type="url" placeholder="https://docs.google.com/spreadsheets/d/…" inputmode="url">
-              </div>
-              <div class="up-import-result" id="bulkResult" hidden></div>
-              <button class="btn btn--accent btn--block bulk-import-btn" id="bulkImportBtn" type="button">Nhập vào Đánh giá cuộc gọi</button>
-            </div>
-          </div>
-
-          <!-- Analysis profile (incl. AI model) -->
-          <div class="card card--profile">
-            <h2 class="section-title">Điều chỉnh cấu hình</h2>
-
-            <div class="field">
-              <label class="field__label field__label--ai" for="modelSelect">
-                <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M197.58,129.06,146,110l-19-51.62a15.92,15.92,0,0,0-29.88,0L78,110l-51.62,19a15.92,15.92,0,0,0,0,29.88L78,178l19,51.62a15.92,15.92,0,0,0,29.88,0L146,178l51.62-19a15.92,15.92,0,0,0,0-29.88ZM137,164.22a8,8,0,0,0-4.74,4.74L112,223.85,91.78,169A8,8,0,0,0,87,164.22L32.15,144,87,123.78A8,8,0,0,0,91.78,119L112,64.15,132.22,119a8,8,0,0,0,4.74,4.74L191.85,144ZM144,40a8,8,0,0,1,8-8h16V16a8,8,0,0,1,16,0V32h16a8,8,0,0,1,0,16H184V64a8,8,0,0,1-16,0V48H152A8,8,0,0,1,144,40ZM248,88a8,8,0,0,1-8,8h-8v8a8,8,0,0,1-16,0V96h-8a8,8,0,0,1,0-16h8V72a8,8,0,0,1,16,0v8h8A8,8,0,0,1,248,88Z"/></svg>
-                Mô hình AI phân tích
-              </label>
-              <select class="select" id="modelSelect">
-                <option>TCPVoiceAI Insight 2.0 · Balanced</option>
-                <option>TCPVoiceAI Insight 2.0 Pro · Deep</option>
-                <option>TCPVoiceAI Flash · Fast</option>
-                <option>TCPVoiceAI Multilingual · VI · EN</option>
-              </select>
-            </div>
-
-            <div class="field">
-              <label class="field__label" for="sensitivity">Độ nhạy</label>
-              <div class="slider-row">
-                <input class="slider" id="sensitivity" type="range" min="0" max="100" value="75" aria-label="Sensitivity">
-                <span class="slider-value" id="sensitivityValue">75%</span>
-              </div>
-            </div>
-
-            <hr class="field-divider">
-
-            <div class="row-between">
-              <span class="setting-label">Tự động phát hiện bất thường</span>
-              <label class="toggle">
-                <input type="checkbox" id="anomalyToggle" checked>
-                <span class="toggle__track"></span>
-              </label>
-            </div>
-
-            <button class="btn btn--accent btn--lg btn--block profile-submit" id="processBtn" type="button">Bắt đầu phân tích</button>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ================================================================= -->
     <!-- SCREEN 2 · Analyzing                                               -->
     <!-- ================================================================= -->
-    <section class="screen" id="screen-processing" data-screen="processing">
-      <div class="analyzing">
-        <h1 class="analyzing__title">Phân tích audio...</h1>
+    <div class="modal proc-modal" id="procModal" hidden>
+      <div class="modal__backdrop"></div>
+      <div class="modal__box proc-modal__box" role="dialog" aria-modal="true" aria-labelledby="procTitle">
+      <div class="analyzing analyzing--modal">
+        <h2 class="analyzing__title" id="procTitle">Phân tích audio...</h2>
         <span class="model-badge" id="procModel">
           <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M197.58,129.06,146,110l-19-51.62a15.92,15.92,0,0,0-29.88,0L78,110l-51.62,19a15.92,15.92,0,0,0,0,29.88L78,178l19,51.62a15.92,15.92,0,0,0,29.88,0L146,178l51.62-19a15.92,15.92,0,0,0,0-29.88ZM137,164.22a8,8,0,0,0-4.74,4.74L112,223.85,91.78,169A8,8,0,0,0,87,164.22L32.15,144,87,123.78A8,8,0,0,0,91.78,119L112,64.15,132.22,119a8,8,0,0,0,4.74,4.74L191.85,144ZM144,40a8,8,0,0,1,8-8h16V16a8,8,0,0,1,16,0V32h16a8,8,0,0,1,0,16H184V64a8,8,0,0,1-16,0V48H152A8,8,0,0,1,144,40ZM248,88a8,8,0,0,1-8,8h-8v8a8,8,0,0,1-16,0V96h-8a8,8,0,0,1,0-16h8V72a8,8,0,0,1,16,0v8h8A8,8,0,0,1,248,88Z"/></svg>
           <span id="procModelName">TCPVoiceAI Insight 2.0 · Balanced</span>
@@ -2694,11 +2656,12 @@ body {
           <p class="progress__stage" id="procStage">Uploading audio stream...</p>
         </div>
 
-        <div class="analyzing__spacer"></div>
+        <div class="proc-queue" id="procQueue" hidden></div>
 
-        <button class="btn btn--outline btn--lg btn--block" id="cancelBtn" type="button">Huỷ phân tích</button>
+        <button class="btn btn--outline btn--block" id="cancelBtn" type="button">Huỷ phân tích</button>
       </div>
-    </section>
+      </div>
+    </div>
 
     <!-- ================================================================= -->
     <!-- SCREEN 3 · Results                                                 -->
@@ -2706,7 +2669,7 @@ body {
     <section class="screen screen--hasnav" id="screen-results" data-screen="results">
       <div class="screen__scroll">
         <header class="appbar">
-          <button class="brand" type="button" data-nav="analysis" aria-label="Về trang tải lên">
+          <button class="brand" type="button" data-nav="dashboard" aria-label="Về trang tải lên">
             <span class="brand__logo" aria-hidden="true"></span>
             <span class="brand__name">Talent Connect +</span>
           </button>
@@ -3009,7 +2972,7 @@ body {
     <section class="screen screen--hasnav" id="screen-history" data-screen="history">
       <div class="screen__scroll">
         <header class="appbar">
-          <button class="brand" type="button" data-nav="analysis" aria-label="Về trang tải lên">
+          <button class="brand" type="button" data-nav="dashboard" aria-label="Về trang tải lên">
             <span class="brand__logo" aria-hidden="true"></span>
             <span class="brand__name">Talent Connect +</span>
           </button>
@@ -3073,7 +3036,7 @@ body {
     <section class="screen screen--hasnav" id="screen-dashboard" data-screen="dashboard">
       <div class="screen__scroll">
         <header class="appbar">
-          <button class="brand" type="button" data-nav="analysis" aria-label="Về trang tải lên">
+          <button class="brand" type="button" data-nav="dashboard" aria-label="Về trang tải lên">
             <span class="brand__logo" aria-hidden="true"></span>
             <span class="brand__name">Talent Connect +</span>
           </button>
@@ -3092,12 +3055,98 @@ body {
                 <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M156,208a8,8,0,0,1-8,8H120a8,8,0,0,1-8-8V152a8,8,0,0,1,16,0v48h20A8,8,0,0,1,156,208ZM92.65,145.49a8,8,0,0,0-11.16,1.86L68,166.24,54.51,147.35a8,8,0,1,0-13,9.3L58.17,180,41.49,203.35a8,8,0,0,0,13,9.3L68,193.76l13.49,18.89a8,8,0,0,0,13-9.3L77.83,180l16.68-23.35A8,8,0,0,0,92.65,145.49Zm98.94,25.82c-4-1.16-8.14-2.35-10.45-3.84-1.25-.82-1.23-1-1.12-1.9a4.54,4.54,0,0,1,2-3.67c4.6-3.12,15.34-1.72,19.82-.56a8,8,0,0,0,4.07-15.48c-2.11-.55-21-5.22-32.83,2.76a20.58,20.58,0,0,0-8.95,14.95c-2,15.88,13.65,20.41,23,23.11,12.06,3.49,13.12,4.92,12.78,7.59-.31,2.41-1.26,3.33-2.15,3.93-4.6,3.06-15.16,1.55-19.54.35A8,8,0,0,0,173.93,214a60.63,60.63,0,0,0,15.19,2c5.82,0,12.3-1,17.49-4.46a20.81,20.81,0,0,0,9.18-15.23C218,179,201.48,174.17,191.59,171.31ZM40,112V40A16,16,0,0,1,56,24h96a8,8,0,0,1,5.66,2.34l56,56A8,8,0,0,1,216,88v24a8,8,0,1,1-16,0V96H152a8,8,0,0,1-8-8V40H56v72a8,8,0,0,1-16,0ZM160,80h28.68L160,51.31Z"/></svg>
                 Xuất báo cáo
               </button>
-              <button class="btn btn--accent btn--sm" id="dashUploadBtn" type="button" data-nav="analysis" data-reset>
+              <button class="btn btn--accent btn--sm" id="dashUploadBtn" type="button" data-nav="dashboard" data-reset>
                 <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M240,136v64a16,16,0,0,1-16,16H32a16,16,0,0,1-16-16V136a8,8,0,0,1,16,0v64H224V136a8,8,0,0,1,16,0ZM88.49,79.51,120,48V136a8,8,0,0,0,16,0V48l31.51,31.51a8,8,0,0,0,11.32-11.32l-45.17-45.16a8,8,0,0,0-11.32,0L77.17,68.19A8,8,0,0,0,88.49,79.51Z"/></svg>
                 Upload file
               </button>
             </div>
           </div>
+
+          <!-- Phân tích cuộc gọi — upload + config, embedded in the dashboard -->
+          <section class="dash-analyze" aria-label="Phân tích cuộc gọi">
+            <h2 class="section-title dash-analyze__title">Phân tích cuộc gọi</h2>
+            <div class="dash-analyze__grid">
+              <!-- Upload card -->
+              <div class="card card--upload">
+                <div class="tabs" role="tablist">
+                  <button class="tab is-active" role="tab" aria-selected="true" data-uptab="file">Tải cuộc gọi</button>
+                  <button class="tab" role="tab" aria-selected="false" data-uptab="bulk">Excel / Google Sheet</button>
+                </div>
+
+                <div data-uppane="file">
+                  <div class="dropzone" id="dropzone">
+                  <div class="dropzone__icon">
+                    <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M178.34,165.66,160,147.31V208a8,8,0,0,1-16,0V147.31l-18.34,18.35a8,8,0,0,1-11.32-11.32l32-32a8,8,0,0,1,11.32,0l32,32a8,8,0,0,1-11.32,11.32ZM160,40A88.08,88.08,0,0,0,81.29,88.68,64,64,0,1,0,72,216h40a8,8,0,0,0,0-16H72a48,48,0,0,1,0-96c1.1,0,2.2,0,3.29.12A88,88,0,0,0,72,128a8,8,0,0,0,16,0,72,72,0,1,1,100.8,66,8,8,0,0,0,3.2,15.34,7.9,7.9,0,0,0,3.2-.68A88,88,0,0,0,160,40Z"/></svg>
+                  </div>
+                  <h2 class="dropzone__title">Kéo và thả tệp</h2>
+                  <p class="dropzone__hint">Chọn hoặc kéo thả tệp · WAV, MP3, FLAC (Max 500MB)</p>
+                  <button class="btn btn--ink" id="browseBtn" type="button">Chọn file</button>
+                  <input type="file" id="fileInput" accept=".wav,.mp3,.flac,audio/*" multiple hidden>
+                  <button class="dropzone__sample" id="sampleBtn" type="button">Chưa có tệp? Nạp 4 tệp mẫu để xem thử &rarr;</button>
+                  </div>
+                  <div class="filelist" id="fileList" hidden></div>
+                  <div class="field upload-emp">
+                    <label class="field__label" for="uploadEmp">Nhân viên phụ trách cuộc gọi</label>
+                    <select class="select" id="uploadEmp"></select>
+                  </div>
+                </div>
+
+                <div data-uppane="bulk" hidden>
+                  <label class="emp-upload" for="bulkFile">
+                    <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M240,136v64a16,16,0,0,1-16,16H32a16,16,0,0,1-16-16V136a8,8,0,0,1,16,0v64H224V136a8,8,0,0,1,16,0ZM88.49,79.51,120,48V136a8,8,0,0,0,16,0V48l31.51,31.51a8,8,0,0,0,11.32-11.32l-45.17-45.16a8,8,0,0,0-11.32,0L77.17,68.19A8,8,0,0,0,88.49,79.51Z"/></svg>
+                    <span class="emp-upload__title">Tải lên file Excel</span>
+                    <span class="emp-upload__hint">.xlsx hoặc .csv — đủ cột theo bảng Đánh giá cuộc gọi</span>
+                    <input type="file" id="bulkFile" accept=".xlsx,.xls,.csv" hidden>
+                  </label>
+                  <div class="up-or"><span>hoặc</span></div>
+                  <div class="field">
+                    <label class="field__label" for="bulkSheet">Link Google Sheet</label>
+                    <input class="input" id="bulkSheet" type="url" placeholder="https://docs.google.com/spreadsheets/d/…" inputmode="url">
+                  </div>
+                  <div class="up-import-result" id="bulkResult" hidden></div>
+                  <button class="btn btn--accent btn--block bulk-import-btn" id="bulkImportBtn" type="button">Nhập vào Đánh giá cuộc gọi</button>
+                </div>
+              </div>
+
+              <!-- Analysis config (incl. AI model) -->
+              <div class="card card--profile">
+                <h2 class="section-title">Điều chỉnh cấu hình</h2>
+
+                <div class="field">
+                  <label class="field__label field__label--ai" for="modelSelect">
+                    <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M197.58,129.06,146,110l-19-51.62a15.92,15.92,0,0,0-29.88,0L78,110l-51.62,19a15.92,15.92,0,0,0,0,29.88L78,178l19,51.62a15.92,15.92,0,0,0,29.88,0L146,178l51.62-19a15.92,15.92,0,0,0,0-29.88ZM137,164.22a8,8,0,0,0-4.74,4.74L112,223.85,91.78,169A8,8,0,0,0,87,164.22L32.15,144,87,123.78A8,8,0,0,0,91.78,119L112,64.15,132.22,119a8,8,0,0,0,4.74,4.74L191.85,144ZM144,40a8,8,0,0,1,8-8h16V16a8,8,0,0,1,16,0V32h16a8,8,0,0,1,0,16H184V64a8,8,0,0,1-16,0V48H152A8,8,0,0,1,144,40ZM248,88a8,8,0,0,1-8,8h-8v8a8,8,0,0,1-16,0V96h-8a8,8,0,0,1,0-16h8V72a8,8,0,0,1,16,0v8h8A8,8,0,0,1,248,88Z"/></svg>
+                    Mô hình AI phân tích
+                  </label>
+                  <select class="select" id="modelSelect">
+                    <option>TCPVoiceAI Insight 2.0 · Balanced</option>
+                    <option>TCPVoiceAI Insight 2.0 Pro · Deep</option>
+                    <option>TCPVoiceAI Flash · Fast</option>
+                    <option>TCPVoiceAI Multilingual · VI · EN</option>
+                  </select>
+                </div>
+
+                <div class="field">
+                  <label class="field__label" for="sensitivity">Độ nhạy</label>
+                  <div class="slider-row">
+                    <input class="slider" id="sensitivity" type="range" min="0" max="100" value="75" aria-label="Sensitivity">
+                    <span class="slider-value" id="sensitivityValue">75%</span>
+                  </div>
+                </div>
+
+                <hr class="field-divider">
+
+                <div class="row-between">
+                  <span class="setting-label">Tự động phát hiện bất thường</span>
+                  <label class="toggle">
+                    <input type="checkbox" id="anomalyToggle" checked>
+                    <span class="toggle__track"></span>
+                  </label>
+                </div>
+
+                <button class="btn btn--accent btn--lg btn--block profile-submit" id="processBtn" type="button">Bắt đầu phân tích</button>
+              </div>
+            </div>
+          </section>
 
           <!-- Date range filter for dashboard analysis -->
           <div class="dash-filter" id="dashFilter">
@@ -3275,7 +3324,7 @@ body {
     <section class="screen screen--hasnav" id="screen-employees" data-screen="employees">
       <div class="screen__scroll">
         <header class="appbar">
-          <button class="brand" type="button" data-nav="analysis" aria-label="Về trang tải lên">
+          <button class="brand" type="button" data-nav="dashboard" aria-label="Về trang tải lên">
             <span class="brand__logo" aria-hidden="true"></span>
             <span class="brand__name">Talent Connect +</span>
           </button>
@@ -3321,7 +3370,7 @@ body {
     <section class="screen screen--hasnav" id="screen-uploads" data-screen="uploads">
       <div class="screen__scroll">
         <header class="appbar">
-          <button class="brand" type="button" data-nav="analysis" aria-label="Về trang tải lên">
+          <button class="brand" type="button" data-nav="dashboard" aria-label="Về trang tải lên">
             <span class="brand__logo" aria-hidden="true"></span>
             <span class="brand__name">Talent Connect +</span>
           </button>
@@ -3414,7 +3463,7 @@ body {
     <section class="screen screen--hasnav" id="screen-callhistory" data-screen="callhistory">
       <div class="screen__scroll">
         <header class="appbar">
-          <button class="brand" type="button" data-nav="analysis" aria-label="Về trang tải lên">
+          <button class="brand" type="button" data-nav="dashboard" aria-label="Về trang tải lên">
             <span class="brand__logo" aria-hidden="true"></span>
             <span class="brand__name">Talent Connect +</span>
           </button>
@@ -3461,7 +3510,7 @@ body {
     <section class="screen screen--hasnav" id="screen-settings" data-screen="settings">
       <div class="screen__scroll">
         <header class="appbar">
-          <button class="brand" type="button" data-nav="analysis" aria-label="Về trang tải lên">
+          <button class="brand" type="button" data-nav="dashboard" aria-label="Về trang tải lên">
             <span class="brand__logo" aria-hidden="true"></span>
             <span class="brand__name">Talent Connect +</span>
           </button>
@@ -3471,42 +3520,15 @@ body {
         </header>
 
         <div class="page">
-          <!-- Settings hub -->
-          <div data-setpane="menu">
-            <h1 class="page__title">Cài đặt</h1>
-            <p class="page__lead">Chọn mục bạn muốn quản lý.</p>
-            <div class="settings-menu">
-              <button class="card set-item" type="button" data-setnav="profile">
-                <span class="set-item__icon">
-                  <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M230.92,212c-15.23-26.33-38.7-45.21-66.09-54.16a72,72,0,1,0-73.66,0C63.78,166.78,40.31,185.66,25.08,212a8,8,0,1,0,13.85,8c18.84-32.56,52.14-52,89.07-52s70.23,19.44,89.07,52a8,8,0,1,0,13.85-8ZM72,96a56,56,0,1,1,56,56A56.06,56.06,0,0,1,72,96Z"/></svg>
-                </span>
-                <span class="set-item__body">
-                  <span class="set-item__title">Hồ sơ của tôi</span>
-                  <span class="set-item__desc">Thông tin tài khoản đang đăng nhập.</span>
-                </span>
-                <svg class="set-item__chev" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M181.66,133.66l-80,80a8,8,0,0,1-11.32-11.32L164.69,128,90.34,53.66a8,8,0,0,1,11.32-11.32l80,80A8,8,0,0,1,181.66,133.66Z"/></svg>
-              </button>
-              <button class="card set-item" type="button" data-setnav="keywords">
-                <span class="set-item__icon">
-                  <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M243.31,136,144,36.69A15.86,15.86,0,0,0,132.69,32H40a8,8,0,0,0-8,8v92.69A15.86,15.86,0,0,0,36.69,144L136,243.31a16,16,0,0,0,22.63,0l84.68-84.68a16,16,0,0,0,0-22.63Zm-96,96L48,132.69V48h84.69L232,147.31ZM88,68a20,20,0,1,1-20,20A20,20,0,0,1,88,68Z"/></svg>
-                </span>
-                <span class="set-item__body">
-                  <span class="set-item__title">Bộ từ khoá cảm xúc</span>
-                  <span class="set-item__desc">Từ khoá tích cực / tiêu cực ảnh hưởng đánh giá.</span>
-                </span>
-                <svg class="set-item__chev" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M181.66,133.66l-80,80a8,8,0,0,1-11.32-11.32L164.69,128,90.34,53.66a8,8,0,0,1,11.32-11.32l80,80A8,8,0,0,1,181.66,133.66Z"/></svg>
-              </button>
-            </div>
-          </div>
+          <h1 class="page__title">Cài đặt</h1>
+          <p class="page__lead">Hồ sơ tài khoản và bộ từ khoá cảm xúc.</p>
 
           <!-- My profile -->
-          <div data-setpane="profile" hidden>
-            <div class="set-detail-head">
-              <button class="iconbtn" type="button" data-setback aria-label="Quay lại">
-                <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M224,128a8,8,0,0,1-8,8H59.31l58.35,58.34a8,8,0,0,1-11.32,11.32l-72-72a8,8,0,0,1,0-11.32l72-72a8,8,0,0,1,11.32,11.32L59.31,120H216A8,8,0,0,1,224,128Z"/></svg>
-              </button>
-              <h1 class="results-head__title">Hồ sơ của tôi</h1>
-            </div>
+          <div class="settings-section">
+            <h2 class="section-title settings-section__title">
+              <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M230.92,212c-15.23-26.33-38.7-45.21-66.09-54.16a72,72,0,1,0-73.66,0C63.78,166.78,40.31,185.66,25.08,212a8,8,0,1,0,13.85,8c18.84-32.56,52.14-52,89.07-52s70.23,19.44,89.07,52a8,8,0,1,0,13.85-8ZM72,96a56,56,0,1,1,56,56A56.06,56.06,0,0,1,72,96Z"/></svg>
+              Hồ sơ của tôi
+            </h2>
             <div class="card profile-card">
               <div class="profile-hero">
                 <span class="profile-avatar" id="profAvatar">NH</span>
@@ -3550,13 +3572,11 @@ body {
           </div>
 
           <!-- Sentiment keyword sets -->
-          <div data-setpane="keywords" hidden>
-            <div class="set-detail-head">
-              <button class="iconbtn" type="button" data-setback aria-label="Quay lại">
-                <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M224,128a8,8,0,0,1-8,8H59.31l58.35,58.34a8,8,0,0,1-11.32,11.32l-72-72a8,8,0,0,1,0-11.32l72-72a8,8,0,0,1,11.32,11.32L59.31,120H216A8,8,0,0,1,224,128Z"/></svg>
-              </button>
-              <h1 class="results-head__title">Bộ từ khoá cảm xúc</h1>
-            </div>
+          <div class="settings-section">
+            <h2 class="section-title settings-section__title">
+              <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M243.31,136,144,36.69A15.86,15.86,0,0,0,132.69,32H40a8,8,0,0,0-8,8v92.69A15.86,15.86,0,0,0,36.69,144L136,243.31a16,16,0,0,0,22.63,0l84.68-84.68a16,16,0,0,0,0-22.63Zm-96,96L48,132.69V48h84.69L232,147.31ZM88,68a20,20,0,1,1-20,20A20,20,0,0,1,88,68Z"/></svg>
+              Bộ từ khoá cảm xúc
+            </h2>
             <div class="card">
               <div class="result-card__label result-card__label--success">
                 <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M240,56v64a8,8,0,0,1-16,0V75.31l-82.34,82.35a8,8,0,0,1-11.32,0L96,123.31,29.66,189.66a8,8,0,0,1-11.32-11.32l72-72a8,8,0,0,1,11.32,0L136,140.69,212.69,64H168a8,8,0,0,1,0-16h64A8,8,0,0,1,240,56Z"/></svg>
@@ -3683,21 +3703,13 @@ body {
           </button>
         </div>
         <nav class="drawer__nav">
-          <button class="drawer__item drawer__item--primary" role="menuitem" type="button" data-nav="analysis" data-reset>
-            <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm0,192a88,88,0,1,1,88-88A88.1,88.1,0,0,1,128,216Zm48-88a8,8,0,0,1-8,8H136v32a8,8,0,0,1-16,0V136H88a8,8,0,0,1,0-16h32V88a8,8,0,0,1,16,0v32h32A8,8,0,0,1,176,128Z"/></svg>
-            <span>Upload file</span>
-          </button>
-          <button class="drawer__item" role="menuitem" type="button" data-nav="dashboard">
+          <button class="drawer__item drawer__item--primary" role="menuitem" type="button" data-nav="dashboard" data-reset>
             <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M104,40H56A16,16,0,0,0,40,56v48a16,16,0,0,0,16,16h48a16,16,0,0,0,16-16V56A16,16,0,0,0,104,40Zm0,64H56V56h48v48Zm96-64H152a16,16,0,0,0-16,16v48a16,16,0,0,0,16,16h48a16,16,0,0,0,16-16V56A16,16,0,0,0,200,40Zm0,64H152V56h48v48Zm-96,32H56a16,16,0,0,0-16,16v48a16,16,0,0,0,16,16h48a16,16,0,0,0,16-16V152A16,16,0,0,0,104,136Zm0,64H56V152h48v48Zm96-64H152a16,16,0,0,0-16,16v48a16,16,0,0,0,16,16h48a16,16,0,0,0,16-16V152A16,16,0,0,0,200,136Zm0,64H152V152h48v48Z"/></svg>
             <span>Dashboard</span>
           </button>
           <button class="drawer__item" role="menuitem" type="button" data-nav="uploads">
             <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M234.5,114.38l-45.1,39.36,13.51,58.6a16,16,0,0,1-23.84,17.34l-51.11-31-51,31a16,16,0,0,1-23.84-17.34L80.6,153.74,35.5,114.38a16,16,0,0,1,9.11-28.06l59.46-5.15,23.21-55.36a15.95,15.95,0,0,1,29.44,0l23.21,55.36,59.44,5.15a16,16,0,0,1,9.13,28.06Z"/></svg>
             <span>Đánh giá cuộc gọi</span>
-          </button>
-          <button class="drawer__item" role="menuitem" type="button" data-nav="callhistory">
-            <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M231.88,175.08A56.26,56.26,0,0,1,176,224C96.6,224,32,159.4,32,80A56.26,56.26,0,0,1,80.92,24.12a16,16,0,0,1,16.62,9.52l21.12,47.15,0,.12A16,16,0,0,1,117.39,96c-.18.27-.37.52-.57.77L96,121.45c7.49,15.22,23.41,31,38.83,38.51l24.34-20.71a8.12,8.12,0,0,1,.75-.56,16,16,0,0,1,15.17-1.4l.13.06,47.11,21.11A16,16,0,0,1,231.88,175.08Z"/></svg>
-            <span>Lịch sử cuộc gọi</span>
           </button>
           <button class="drawer__item" role="menuitem" type="button" data-nav="employees">
             <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M117.25,157.92a60,60,0,1,0-66.5,0A95.83,95.83,0,0,0,3.53,195.63a8,8,0,1,0,13.4,8.74,80,80,0,0,1,134.14,0,8,8,0,0,0,13.4-8.74A95.83,95.83,0,0,0,117.25,157.92ZM40,108a44,44,0,1,1,44,44A44.05,44.05,0,0,1,40,108Zm210.14,98.7a8,8,0,0,1-11.07-2.33A79.83,79.83,0,0,0,172,168a8,8,0,0,1,0-16,44,44,0,1,0-16.34-84.87,8,8,0,1,1-5.94-14.85,60,60,0,0,1,55.53,105.64,95.83,95.83,0,0,1,47.22,37.71A8,8,0,0,1,250.14,206.7Z"/></svg>
@@ -3731,8 +3743,6 @@ body {
      ------------------------------------------------------------------------- */
   const screens = {
     login:      $("#screen-login"),
-    analysis:   $("#screen-analysis"),
-    processing: $("#screen-processing"),
     results:    $("#screen-results"),
     history:    $("#screen-history"),
     dashboard:  $("#screen-dashboard"),
@@ -3744,7 +3754,7 @@ body {
 
   function show(name) {
     Object.entries(screens).forEach(([key, el]) =>
-      el.classList.toggle("is-active", key === name)
+      { if (el) el.classList.toggle("is-active", key === name); }
     );
     // reset scroll of the newly shown screen
     const active = screens[name];
@@ -3752,9 +3762,7 @@ body {
     if (scroller) scroller.scrollTop = 0;
     setActiveMenu(name);
     // The config card can only be measured once the analysis screen is visible.
-    if (name === "analysis" && typeof syncProfileHeight === "function") syncProfileHeight();
     if (name === "callhistory" && typeof renderCallHistory === "function") renderCallHistory();
-    if (name === "settings" && typeof showSettingsPane === "function") showSettingsPane("menu");
   }
 
   /* -------------------------------------------------------------------------
@@ -3773,7 +3781,7 @@ body {
   }
   function currentScreen() {
     const el = document.querySelector(".screen.is-active");
-    return el ? el.dataset.screen : "analysis";
+    return el ? el.dataset.screen : "dashboard";
   }
   function setActiveMenu(screenName) {
     // Results has its own "Kết quả phân tích" menu entry; the primary
@@ -3829,7 +3837,7 @@ body {
         p.hidden = p.dataset.uppane !== which
       );
       // Keep the AI config card available on both tabs.
-      const pc = $("#screen-analysis .card--profile");
+      const pc = $("#screen-dashboard .card--profile");
       if (pc) pc.hidden = false;
       if (typeof syncProfileHeight === "function") syncProfileHeight();
     })
@@ -3987,7 +3995,7 @@ body {
 
   /* The config card hugs its own content (no height matching with the upload
      column). Kept as a no-op so existing callers stay valid. */
-  const profileCard = $("#screen-analysis .card--profile");
+  const profileCard = $("#screen-dashboard .card--profile");
   function syncProfileHeight() {
     if (profileCard) profileCard.style.height = "";
   }
@@ -4054,6 +4062,27 @@ body {
   const procFill   = $("#procFill");
   const procPct    = $("#procPct");
   const procStage  = $("#procStage");
+  const procModal  = $("#procModal");
+  const procQueue  = $("#procQueue");
+  function openProcModal() { if (procModal) procModal.hidden = false; }
+  function closeProcModal() { if (procModal) procModal.hidden = true; }
+  // Queue view — list the files being analysed, current one marked "processing".
+  function renderProcQueue() {
+    if (!procQueue) return;
+    const files = (typeof selectedFiles !== "undefined" && selectedFiles.length)
+      ? selectedFiles.map(f => f.name)
+      : [$("#procFileName") ? $("#procFileName").textContent : "Cuộc gọi"];
+    if (files.length < 2) { procQueue.hidden = true; procQueue.innerHTML = ""; return; }
+    procQueue.hidden = false;
+    procQueue.innerHTML =
+      `<div class="proc-queue__head">Hàng đợi · ${files.length} tệp</div>` +
+      files.map((n, i) => `
+        <div class="proc-queue__item ${i === 0 ? "is-active" : ""}">
+          <span class="proc-queue__dot"></span>
+          <span class="proc-queue__name" title="${escAttr(n)}">${escAttr(n)}</span>
+          <span class="proc-queue__state">${i === 0 ? "Đang xử lý" : "Chờ"}</span>
+        </div>`).join("");
+  }
 
   const STAGES = [
     { to: 18,  label: "Uploading audio stream..." },
@@ -4085,7 +4114,8 @@ body {
         timer = null;
         setTimeout(() => {
           if (cancelled) return;
-          resultsBackTarget = "analysis";
+          closeProcModal();
+          resultsBackTarget = "dashboard";
           renderFileStrip();
           selectResultFile(0);
           show("results");
@@ -4121,14 +4151,15 @@ body {
   processBtn.addEventListener("click", () => {
     if (procModelName) procModelName.textContent = currentModelName();
     if (typeof logAnalyzedCall === "function") logAnalyzedCall();
-    show("processing");
+    renderProcQueue();
+    openProcModal();
     runProcessing();
   });
 
   cancelBtn.addEventListener("click", () => {
     cancelled = true;
     if (timer) { clearInterval(timer); timer = null; }
-    show("analysis");
+    closeProcModal();
   });
 
   /* -------------------------------------------------------------------------
@@ -5331,11 +5362,11 @@ body {
 
   let resultFiles = [];   // names shown in the current strip
   let resultDate  = "";
-  let resultsBackTarget = "analysis";   // where the results back-button returns to
+  let resultsBackTarget = "dashboard";   // where the results back-button returns to
 
   const resultsBackBtn = $("[data-results-back]");
   if (resultsBackBtn) resultsBackBtn.addEventListener("click", () => {
-    if (resultsBackTarget === "analysis") { resetAnalysis(); show("analysis"); }
+    if (resultsBackTarget === "dashboard") { resetAnalysis(); show("dashboard"); }
     else show(resultsBackTarget);
   });
 
@@ -5688,19 +5719,6 @@ body {
   setupKwEditor("failureKwList", "failureKwInput", "failureKwAdd", negativeKeywords, "neg");
   highlightTranscript();
   colorKeywordChips();
-
-  /* -------------------------------------------------------------------------
-     Settings hub — a menu that opens one of two detail panes.
-     ------------------------------------------------------------------------- */
-  function showSettingsPane(name) {
-    $$("[data-setpane]").forEach(p => { p.hidden = p.dataset.setpane !== name; });
-    const sc = $("#screen-settings .screen__scroll");
-    if (sc) sc.scrollTop = 0;
-  }
-  $$("[data-setnav]").forEach(el =>
-    el.addEventListener("click", () => showSettingsPane(el.dataset.setnav)));
-  $$("[data-setback]").forEach(el =>
-    el.addEventListener("click", () => showSettingsPane("menu")));
 
   /* -------------------------------------------------------------------------
      Settings · my profile — the signed-in Google user's own details.

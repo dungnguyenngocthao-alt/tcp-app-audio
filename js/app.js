@@ -12,8 +12,6 @@
      ------------------------------------------------------------------------- */
   const screens = {
     login:      $("#screen-login"),
-    analysis:   $("#screen-analysis"),
-    processing: $("#screen-processing"),
     results:    $("#screen-results"),
     history:    $("#screen-history"),
     dashboard:  $("#screen-dashboard"),
@@ -25,7 +23,7 @@
 
   function show(name) {
     Object.entries(screens).forEach(([key, el]) =>
-      el.classList.toggle("is-active", key === name)
+      { if (el) el.classList.toggle("is-active", key === name); }
     );
     // reset scroll of the newly shown screen
     const active = screens[name];
@@ -33,9 +31,7 @@
     if (scroller) scroller.scrollTop = 0;
     setActiveMenu(name);
     // The config card can only be measured once the analysis screen is visible.
-    if (name === "analysis" && typeof syncProfileHeight === "function") syncProfileHeight();
     if (name === "callhistory" && typeof renderCallHistory === "function") renderCallHistory();
-    if (name === "settings" && typeof showSettingsPane === "function") showSettingsPane("menu");
   }
 
   /* -------------------------------------------------------------------------
@@ -54,7 +50,7 @@
   }
   function currentScreen() {
     const el = document.querySelector(".screen.is-active");
-    return el ? el.dataset.screen : "analysis";
+    return el ? el.dataset.screen : "dashboard";
   }
   function setActiveMenu(screenName) {
     // Results has its own "Kết quả phân tích" menu entry; the primary
@@ -110,7 +106,7 @@
         p.hidden = p.dataset.uppane !== which
       );
       // Keep the AI config card available on both tabs.
-      const pc = $("#screen-analysis .card--profile");
+      const pc = $("#screen-dashboard .card--profile");
       if (pc) pc.hidden = false;
       if (typeof syncProfileHeight === "function") syncProfileHeight();
     })
@@ -268,7 +264,7 @@
 
   /* The config card hugs its own content (no height matching with the upload
      column). Kept as a no-op so existing callers stay valid. */
-  const profileCard = $("#screen-analysis .card--profile");
+  const profileCard = $("#screen-dashboard .card--profile");
   function syncProfileHeight() {
     if (profileCard) profileCard.style.height = "";
   }
@@ -335,6 +331,27 @@
   const procFill   = $("#procFill");
   const procPct    = $("#procPct");
   const procStage  = $("#procStage");
+  const procModal  = $("#procModal");
+  const procQueue  = $("#procQueue");
+  function openProcModal() { if (procModal) procModal.hidden = false; }
+  function closeProcModal() { if (procModal) procModal.hidden = true; }
+  // Queue view — list the files being analysed, current one marked "processing".
+  function renderProcQueue() {
+    if (!procQueue) return;
+    const files = (typeof selectedFiles !== "undefined" && selectedFiles.length)
+      ? selectedFiles.map(f => f.name)
+      : [$("#procFileName") ? $("#procFileName").textContent : "Cuộc gọi"];
+    if (files.length < 2) { procQueue.hidden = true; procQueue.innerHTML = ""; return; }
+    procQueue.hidden = false;
+    procQueue.innerHTML =
+      `<div class="proc-queue__head">Hàng đợi · ${files.length} tệp</div>` +
+      files.map((n, i) => `
+        <div class="proc-queue__item ${i === 0 ? "is-active" : ""}">
+          <span class="proc-queue__dot"></span>
+          <span class="proc-queue__name" title="${escAttr(n)}">${escAttr(n)}</span>
+          <span class="proc-queue__state">${i === 0 ? "Đang xử lý" : "Chờ"}</span>
+        </div>`).join("");
+  }
 
   const STAGES = [
     { to: 18,  label: "Uploading audio stream..." },
@@ -366,7 +383,8 @@
         timer = null;
         setTimeout(() => {
           if (cancelled) return;
-          resultsBackTarget = "analysis";
+          closeProcModal();
+          resultsBackTarget = "dashboard";
           renderFileStrip();
           selectResultFile(0);
           show("results");
@@ -402,14 +420,15 @@
   processBtn.addEventListener("click", () => {
     if (procModelName) procModelName.textContent = currentModelName();
     if (typeof logAnalyzedCall === "function") logAnalyzedCall();
-    show("processing");
+    renderProcQueue();
+    openProcModal();
     runProcessing();
   });
 
   cancelBtn.addEventListener("click", () => {
     cancelled = true;
     if (timer) { clearInterval(timer); timer = null; }
-    show("analysis");
+    closeProcModal();
   });
 
   /* -------------------------------------------------------------------------
@@ -1612,11 +1631,11 @@
 
   let resultFiles = [];   // names shown in the current strip
   let resultDate  = "";
-  let resultsBackTarget = "analysis";   // where the results back-button returns to
+  let resultsBackTarget = "dashboard";   // where the results back-button returns to
 
   const resultsBackBtn = $("[data-results-back]");
   if (resultsBackBtn) resultsBackBtn.addEventListener("click", () => {
-    if (resultsBackTarget === "analysis") { resetAnalysis(); show("analysis"); }
+    if (resultsBackTarget === "dashboard") { resetAnalysis(); show("dashboard"); }
     else show(resultsBackTarget);
   });
 
@@ -1969,19 +1988,6 @@
   setupKwEditor("failureKwList", "failureKwInput", "failureKwAdd", negativeKeywords, "neg");
   highlightTranscript();
   colorKeywordChips();
-
-  /* -------------------------------------------------------------------------
-     Settings hub — a menu that opens one of two detail panes.
-     ------------------------------------------------------------------------- */
-  function showSettingsPane(name) {
-    $$("[data-setpane]").forEach(p => { p.hidden = p.dataset.setpane !== name; });
-    const sc = $("#screen-settings .screen__scroll");
-    if (sc) sc.scrollTop = 0;
-  }
-  $$("[data-setnav]").forEach(el =>
-    el.addEventListener("click", () => showSettingsPane(el.dataset.setnav)));
-  $$("[data-setback]").forEach(el =>
-    el.addEventListener("click", () => showSettingsPane("menu")));
 
   /* -------------------------------------------------------------------------
      Settings · my profile — the signed-in Google user's own details.

@@ -1624,7 +1624,9 @@ mark.mark--neg { background: var(--tcp-error-bg); color: var(--tcp-error-900); }
   letter-spacing: 1.2px; text-transform: uppercase;
   color: var(--tcp-fg-tertiary);
 }
-.drawer__nav { display: flex; flex-direction: column; gap: 4px; }
+.drawer__nav { display: flex; flex-direction: column; gap: 4px; flex: 1 1 auto; min-height: 0; }
+/* Logout always sits at the very bottom of the drawer. */
+.drawer__item--logout { margin-top: auto; }
 .drawer__item {
   appearance: none; border: 0; background: none; cursor: pointer;
   display: flex; align-items: center; gap: var(--tcp-space-3);
@@ -2289,3 +2291,62 @@ body {
 .review-detail__notetext {
   margin: 0; font-size: 14px; line-height: 21px; color: var(--tcp-fg-secondary);
 }
+
+/* =============================================================================
+   Figma feedback · dashboard-embedded upload, processing popup, queue
+   ============================================================================= */
+
+/* Upload + config panel embedded at the top of the dashboard */
+.dash-analyze { margin-bottom: var(--tcp-space-5); }
+.dash-analyze__title { margin: 0 0 var(--tcp-space-3); }
+.dash-analyze__grid { display: grid; grid-template-columns: 1fr; gap: var(--tcp-space-4); }
+.dash-analyze .card { margin: 0; }
+@media (min-width: 768px) {
+  .dash-analyze__grid { grid-template-columns: 1fr 1fr; align-items: start; }
+}
+
+/* Processing popup (was a full screen — now a modal over the dashboard) */
+.proc-modal__box {
+  width: min(520px, 92vw);
+  max-height: 90vh; overflow: auto;
+  padding: 0;
+}
+.analyzing--modal {
+  flex: none;
+  padding: var(--tcp-space-8) var(--tcp-space-6) var(--tcp-space-6);
+}
+.analyzing--modal .analyzing__title { font-size: 18px; }
+
+/* Analysis queue inside the popup */
+.proc-queue {
+  width: 100%; margin-top: var(--tcp-space-5);
+  border-top: 1px solid var(--tcp-border-subtle); padding-top: var(--tcp-space-4);
+  text-align: left;
+}
+.proc-queue__head {
+  font-size: 12px; letter-spacing: .04em; text-transform: uppercase;
+  color: var(--tcp-fg-tertiary); margin-bottom: var(--tcp-space-2);
+}
+.proc-queue__item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 8px 10px; border-radius: var(--tcp-radius-md);
+}
+.proc-queue__item.is-active { background: var(--tcp-accent-subtle); }
+.proc-queue__dot {
+  width: 8px; height: 8px; border-radius: 999px; flex: 0 0 auto;
+  background: var(--tcp-border-strong);
+}
+.proc-queue__item.is-active .proc-queue__dot { background: var(--tcp-accent); }
+.proc-queue__name {
+  flex: 1 1 auto; min-width: 0; font-size: 14px; color: var(--tcp-fg-primary);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.proc-queue__state { font-size: 12px; color: var(--tcp-fg-secondary); white-space: nowrap; }
+
+/* Settings · single-screen layout (hub removed) */
+.settings-section { margin-bottom: var(--tcp-space-6); }
+.settings-section__title {
+  display: flex; align-items: center; gap: 8px;
+  margin: 0 0 var(--tcp-space-3);
+}
+.settings-section__title svg { width: 20px; height: 20px; flex: 0 0 auto; color: var(--tcp-accent); }
