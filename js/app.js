@@ -2130,10 +2130,8 @@
     const all = [...pos, ...neg].sort((a, b) => b.length - a.length);
     const re = all.length ? new RegExp("(" + all.map(escapeRegExp).join("|") + ")", "gi") : null;
     bubbles.forEach(bub => {
-      const time = bub.querySelector(".msg__time");
       if (!("orig" in bub.dataset)) {
         const clone = bub.cloneNode(true);
-        const t = clone.querySelector(".msg__time"); if (t) t.remove();
         clone.querySelectorAll("mark").forEach(m => m.replaceWith(document.createTextNode(m.textContent)));
         bub.dataset.orig = clone.textContent;
       }
@@ -2143,7 +2141,7 @@
         const cls = posSet.has(m.toLowerCase()) ? "mark--pos" : negSet.has(m.toLowerCase()) ? "mark--neg" : "";
         return cls ? `<mark class="${cls}">${m}</mark>` : m;
       });
-      bub.innerHTML = html + (time ? time.outerHTML : "");
+      bub.innerHTML = html;
     });
   }
 

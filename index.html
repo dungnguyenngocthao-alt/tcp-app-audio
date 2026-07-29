@@ -371,52 +371,71 @@
 
           <!-- Transcript -->
           <div class="card card--transcript">
-            <div class="subtabs">
-              <button class="subtab is-active" data-scripttab="full">Transcript</button>
-              <button class="subtab" data-scripttab="highlights">Nổi bật</button>
-              <button class="iconbtn subtabs__export" id="exportBtn" type="button" aria-label="Export Script" title="Export Script">
+            <div class="tr-head">
+              <span class="tr-head__title">Transcript</span>
+              <div class="transcript-search">
+                <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M229.66,218.34l-50.07-50.06a88.11,88.11,0,1,0-11.31,11.31l50.06,50.07a8,8,0,0,0,11.32-11.32ZM40,112a72,72,0,1,1,72,72A72.08,72.08,0,0,1,40,112Z"/></svg>
+                <input class="input transcript-search__input" id="transcriptSearch" type="search" placeholder="Tìm trong hội thoại…" autocomplete="off">
+                <span class="transcript-search__count" id="transcriptSearchCount" hidden></span>
+              </div>
+              <button class="iconbtn subtabs__export" id="exportBtn" type="button" aria-label="Export Script" title="Tải transcript">
                 <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M224,144v64a8,8,0,0,1-8,8H40a8,8,0,0,1-8-8V144a8,8,0,0,1,16,0v56H208V144a8,8,0,0,1,16,0Zm-101.66,5.66a8,8,0,0,0,11.32,0l40-40a8,8,0,0,0-11.32-11.32L136,124.69V32a8,8,0,0,0-16,0v92.69L93.66,98.34a8,8,0,0,0-11.32,11.32Z"/></svg>
               </button>
             </div>
 
-            <div class="transcript-search">
-              <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M229.66,218.34l-50.07-50.06a88.11,88.11,0,1,0-11.31,11.31l50.06,50.07a8,8,0,0,0,11.32-11.32ZM40,112a72,72,0,1,1,72,72A72.08,72.08,0,0,1,40,112Z"/></svg>
-              <input class="input transcript-search__input" id="transcriptSearch" type="search" placeholder="Tìm trong hội thoại…" autocomplete="off">
-              <span class="transcript-search__count" id="transcriptSearchCount" hidden></span>
+            <div class="tr-tabs">
+              <button class="tr-tab is-active" type="button" data-scripttab="full">Toàn bộ</button>
+              <button class="tr-tab" type="button" data-scripttab="highlights">Nổi bật</button>
             </div>
 
             <div class="transcript-scroll">
             <div data-scriptpane="full">
               <div class="msg msg--in">
-                <span class="msg__avatar">AG</span>
-                <div class="msg__bubble">Chào anh Tâm, cảm ơn anh đã dành thời gian. Hôm nay em muốn giới thiệu về hệ thống TCPVoiceAI bên em.<span class="msg__time">00:15</span></div>
+                <div class="msg__meta"><span class="msg__who">Tư vấn</span><span class="msg__time">00:05</span></div>
+                <div class="msg__bubble">Chào anh Tâm, cảm ơn anh đã dành thời gian. Hôm nay em muốn giới thiệu về hệ thống TCPVoiceAI bên em.</div>
               </div>
               <div class="msg msg--out">
-                <span class="msg__avatar">KH</span>
-                <div class="msg__bubble">Chào bạn. Mình đang quan tâm đến tính năng phân tích dữ liệu <mark>real-time</mark>. Bên bạn có hỗ trợ tốt phần này không?<span class="msg__time">00:42</span></div>
+                <div class="msg__meta"><span class="msg__who">Khách hàng</span><span class="msg__time">00:42</span></div>
+                <div class="msg__bubble">Chào bạn. Mình đang quan tâm đến tính năng phân tích dữ liệu <mark>real-time</mark>. Bên bạn có hỗ trợ tốt phần này không?</div>
               </div>
               <div class="msg msg--in">
-                <span class="msg__avatar">AG</span>
-                <div class="msg__bubble">Dạ hoàn toàn được ạ. Gói <mark>Premium</mark> bên em thiết kế đặc biệt cho xử lý luồng dữ liệu lớn theo thời gian thực, độ trễ chưa tới 50ms.<span class="msg__time">01:05</span></div>
+                <div class="msg__meta"><span class="msg__who">Tư vấn</span><span class="msg__time">01:05</span></div>
+                <div class="msg__bubble">Dạ hoàn toàn được ạ. Gói <mark>Premium</mark> bên em thiết kế đặc biệt cho xử lý luồng dữ liệu lớn theo thời gian thực, độ trễ chưa tới 50ms.</div>
               </div>
               <div class="msg msg--out">
-                <span class="msg__avatar">KH</span>
-                <div class="msg__bubble">Nghe có vẻ ổn. Nhưng về <mark>giá cả</mark> thì sao? Có vẻ hơi cao so với ngân sách dự kiến của bên mình.<span class="msg__time">01:38</span></div>
+                <div class="msg__meta"><span class="msg__who">Khách hàng</span><span class="msg__time">01:38</span></div>
+                <div class="msg__bubble">Nghe có vẻ ổn. Nhưng về <mark>giá cả</mark> thì sao? Có vẻ hơi cao so với ngân sách dự kiến của bên mình.</div>
+              </div>
+              <div class="msg msg--in">
+                <div class="msg__meta"><span class="msg__who">Tư vấn</span><span class="msg__time">02:10</span></div>
+                <div class="msg__bubble">Em hiểu ạ. Nếu tính theo <mark>ROI</mark>, gói Premium giúp anh tiết kiệm khoảng 30% chi phí vận hành mỗi quý.</div>
+              </div>
+              <div class="msg msg--out">
+                <div class="msg__meta"><span class="msg__who">Khách hàng</span><span class="msg__time">02:48</span></div>
+                <div class="msg__bubble">Vậy bên em có <mark>hỗ trợ</mark> triển khai và đào tạo đội ngũ của mình không?</div>
+              </div>
+              <div class="msg msg--in">
+                <div class="msg__meta"><span class="msg__who">Tư vấn</span><span class="msg__time">03:15</span></div>
+                <div class="msg__bubble">Dạ có ạ. Bên em có đội ngũ CSKH riêng, hỗ trợ triển khai trong 2 tuần đầu và đào tạo miễn phí.</div>
+              </div>
+              <div class="msg msg--out">
+                <div class="msg__meta"><span class="msg__who">Khách hàng</span><span class="msg__time">03:52</span></div>
+                <div class="msg__bubble">Tốt. Em gửi anh báo giá chi tiết và tài liệu demo qua email nhé.</div>
               </div>
             </div>
 
             <div data-scriptpane="highlights" hidden>
               <div class="msg msg--out">
-                <span class="msg__avatar">KH</span>
-                <div class="msg__bubble">Mình đang quan tâm đến tính năng phân tích dữ liệu <mark>real-time</mark>.<span class="msg__time">00:42</span></div>
+                <div class="msg__meta"><span class="msg__who">Khách hàng</span><span class="msg__time">00:42</span></div>
+                <div class="msg__bubble">Mình đang quan tâm đến tính năng phân tích dữ liệu <mark>real-time</mark>.</div>
               </div>
               <div class="msg msg--in">
-                <span class="msg__avatar">AG</span>
-                <div class="msg__bubble">Gói <mark>Premium</mark> ... độ trễ chưa tới 50ms.<span class="msg__time">01:05</span></div>
+                <div class="msg__meta"><span class="msg__who">Tư vấn</span><span class="msg__time">01:05</span></div>
+                <div class="msg__bubble">Gói <mark>Premium</mark> ... độ trễ chưa tới 50ms.</div>
               </div>
               <div class="msg msg--out">
-                <span class="msg__avatar">KH</span>
-                <div class="msg__bubble">Về <mark>giá cả</mark> thì sao? Có vẻ hơi cao so với ngân sách.<span class="msg__time">01:38</span></div>
+                <div class="msg__meta"><span class="msg__who">Khách hàng</span><span class="msg__time">01:38</span></div>
+                <div class="msg__bubble">Về <mark>giá cả</mark> thì sao? Có vẻ hơi cao so với ngân sách.</div>
               </div>
             </div>
             </div>
