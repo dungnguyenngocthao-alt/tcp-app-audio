@@ -2392,6 +2392,12 @@ body {
 }
 .settings-section__title svg { width: 20px; height: 20px; flex: 0 0 auto; color: var(--tcp-accent); }
 
+/* Home (Dashboard) · overview / call-list tabs */
+.dash-tabs { display: inline-flex; margin: 0 0 var(--tcp-space-5); }
+.dash-calls-filter { margin-bottom: var(--tcp-space-4); }
+.dash-calls-table th.tbl-act-col { width: 1%; }
+.dash-calls-table .dc-detail { white-space: nowrap; }
+
 /* Đánh giá cuộc gọi · view tabs (eval / sheet) */
 .up-view { margin: 0 0 var(--tcp-space-4); max-width: 320px; }
 .up-sheet-head {

@@ -1522,6 +1522,124 @@
   });
 
   /* -------------------------------------------------------------------------
+     Home (Dashboard) tab 2 · list of uploaded calls. A compact table over the
+     same UPLOAD_LOG; each row opens the full analysis via "Xem chi tiết".
+     ------------------------------------------------------------------------- */
+  const dashCallsTbody = $("#dashCallsTbody");
+  const dashCallsPager = $("#dashCallsPager");
+  const dashCallAgent  = $("#dashCallAgent");
+  const dashCallReset  = $("#dashCallReset");
+  const DASH_CALLS_PER_PAGE = 8;
+  let dashCallsPage = 1;
+
+  function populateDashCallAgent() {
+    if (!dashCallAgent) return;
+    const names = [...new Set(UPLOAD_LOG.map(u => u.agent))];
+    const cur = dashCallAgent.value;
+    dashCallAgent.innerHTML = '<option value="all">Tất cả</option>' +
+      names.map(n => `<option value="${escAttr(n)}">${n}</option>`).join("");
+    if (cur && (cur === "all" || names.includes(cur))) dashCallAgent.value = cur;
+  }
+  function filteredDashCalls() {
+    const ag = dashCallAgent ? dashCallAgent.value : "all";
+    return UPLOAD_LOG.filter(u => ag === "all" || u.agent === ag);
+  }
+  function renderDashCallsPager(pages) {
+    if (!dashCallsPager) return;
+    if (pages <= 1) { dashCallsPager.innerHTML = ""; return; }
+    let html = `<button class="page-btn" type="button" data-dcpage="prev" ${dashCallsPage === 1 ? "disabled" : ""} aria-label="Trang trước">&lsaquo;</button>`;
+    for (let i = 1; i <= pages; i++)
+      html += `<button class="page-btn ${i === dashCallsPage ? "is-active" : ""}" type="button" data-dcpage="${i}" ${i === dashCallsPage ? 'aria-current="page"' : ""}>${i}</button>`;
+    html += `<button class="page-btn" type="button" data-dcpage="next" ${dashCallsPage === pages ? "disabled" : ""} aria-label="Trang sau">&rsaquo;</button>`;
+    dashCallsPager.innerHTML = html;
+  }
+  function renderDashCalls() {
+    if (!dashCallsTbody) return;
+    populateDashCallAgent();
+    const list = filteredDashCalls();
+    const pages = Math.max(1, Math.ceil(list.length / DASH_CALLS_PER_PAGE));
+    if (dashCallsPage > pages) dashCallsPage = pages;
+    const slice = list.slice((dashCallsPage - 1) * DASH_CALLS_PER_PAGE, dashCallsPage * DASH_CALLS_PER_PAGE);
+    if (!slice.length) {
+      dashCallsTbody.innerHTML = '<tr><td class="emp-empty" colspan="7">Chưa có cuộc gọi nào được tải lên.</td></tr>';
+      renderDashCallsPager(pages);
+      return;
+    }
+    dashCallsTbody.innerHTML = slice.map(u => {
+      const color = AVATAR_COLORS[nameHash(u.agent) % AVATAR_COLORS.length];
+      const eff = effRate(u);
+      const rateClass = eff >= 70 ? "emp-rate--good" : eff >= 55 ? "emp-rate--mid" : "emp-rate--low";
+      return `
+        <tr>
+          <td class="up-id">${u.id}</td>
+          <td class="emp-last">${u.time}</td>
+          <td class="emp-col-name">
+            <div class="emp-person">
+              <span class="emp-avatar" style="background:${color}">${initials(u.agent)}</span>
+              <div class="emp-person__meta">
+                <div class="emp-person__name" title="${escAttr(u.agent)}">${u.agent}</div>
+                <div class="emp-person__id">Caller ID · ${escAttr(u.caller)}</div>
+              </div>
+            </div>
+          </td>
+          <td class="up-to">${u.to}</td>
+          <td class="up-dur">${u.dur}</td>
+          <td><span class="emp-rate ${rateClass}">${eff}%</span></td>
+          <td>
+            <button class="btn btn--outline btn--sm dc-detail" type="button"
+                    data-file="${escAttr(u.file)}" data-date="${escAttr(u.date)}">Xem chi tiết</button>
+          </td>
+        </tr>`;
+    }).join("");
+    renderDashCallsPager(pages);
+  }
+  renderDashCalls();
+  if (dashCallsTbody) {
+    dashCallsTbody.addEventListener("click", e => {
+      const btn = e.target.closest(".dc-detail");
+      if (btn) showSingleResult(btn.dataset.file, btn.dataset.date, "dashboard");
+    });
+  }
+  if (dashCallAgent) dashCallAgent.addEventListener("change", () => { dashCallsPage = 1; renderDashCalls(); });
+  if (dashCallReset) dashCallReset.addEventListener("click", () => {
+    if (dashCallAgent) dashCallAgent.value = "all";
+    dashCallsPage = 1; renderDashCalls();
+  });
+  if (dashCallsPager) dashCallsPager.addEventListener("click", e => {
+    const btn = e.target.closest(".page-btn");
+    if (!btn) return;
+    const list = filteredDashCalls();
+    const pages = Math.max(1, Math.ceil(list.length / DASH_CALLS_PER_PAGE));
+    const v = btn.dataset.dcpage;
+    if (v === "prev") dashCallsPage = Math.max(1, dashCallsPage - 1);
+    else if (v === "next") dashCallsPage = Math.min(pages, dashCallsPage + 1);
+    else dashCallsPage = parseInt(v, 10);
+    renderDashCalls();
+  });
+
+  /* Home tabs — switch between the overview dashboard and the call list. */
+  (function initDashTabs() {
+    const tabs = $("#dashTabs");
+    if (!tabs) return;
+    const panes = {
+      overview: document.querySelector('[data-dashpane="overview"]'),
+      calls: document.querySelector('[data-dashpane="calls"]'),
+    };
+    tabs.addEventListener("click", e => {
+      const btn = e.target.closest("[data-dashtab]");
+      if (!btn) return;
+      const key = btn.dataset.dashtab;
+      tabs.querySelectorAll(".seg__btn").forEach(b => {
+        const on = b === btn;
+        b.classList.toggle("is-active", on);
+        b.setAttribute("aria-selected", on ? "true" : "false");
+      });
+      Object.entries(panes).forEach(([k, el]) => { if (el) el.hidden = k !== key; });
+      if (key === "calls") renderDashCalls();
+    });
+  })();
+
+  /* -------------------------------------------------------------------------
      Screen 5d · Call history — the imported call sheet, rendered as a plain
      read-only table (same columns as Đánh giá cuộc gọi, no filter/pagination).
      ------------------------------------------------------------------------- */

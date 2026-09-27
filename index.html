@@ -543,8 +543,229 @@
             </div>
           </div>
 
-          <!-- Mount point — the shared upload+config panel is relocated here on
-               the dashboard, and into the Đánh giá cuộc gọi module when active. -->
+          <!-- Home split into two tabs: overview dashboard + uploaded-call list -->
+          <div class="seg dash-tabs" id="dashTabs" role="tablist" aria-label="Chế độ xem trang chủ">
+            <button class="seg__btn is-active" type="button" role="tab" aria-selected="true" data-dashtab="overview">Tổng quan</button>
+            <button class="seg__btn" type="button" role="tab" aria-selected="false" data-dashtab="calls">Danh sách cuộc gọi</button>
+          </div>
+
+          <div data-dashpane="overview">
+          <!-- Date range filter for dashboard analysis -->
+          <div class="dash-filter" id="dashFilter">
+            <span class="dash-filter__label">
+              <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M208,32H184V24a8,8,0,0,0-16,0v8H88V24a8,8,0,0,0-16,0v8H48A16,16,0,0,0,32,48V208a16,16,0,0,0,16,16H208a16,16,0,0,0,16-16V48A16,16,0,0,0,208,32ZM72,48v8a8,8,0,0,0,16,0V48h80v8a8,8,0,0,0,16,0V48h24V80H48V48ZM208,208H48V96H208V208Z"/></svg>
+              Khoảng ngày
+            </span>
+            <div class="dash-filter__field">
+              <label for="dateFrom">Từ</label>
+              <input type="date" id="dateFrom" class="dash-filter__input">
+            </div>
+            <span class="dash-filter__sep">–</span>
+            <div class="dash-filter__field">
+              <label for="dateTo">Đến</label>
+              <input type="date" id="dateTo" class="dash-filter__input">
+            </div>
+            <button class="btn btn--outline btn--sm" id="dateReset" type="button">Đặt lại</button>
+          </div>
+
+          <!-- Uploads over time + call direction -->
+          <div class="dash-toprow">
+            <div class="card dash-chart">
+              <div class="dash-chart__head">
+                <div>
+                  <div class="dash-chart__total" id="chartTotal">—</div>
+                  <div class="dash-chart__cap">Cuộc gọi đã upload</div>
+                </div>
+                <div class="seg" id="chartRange" role="tablist" aria-label="Khoảng thời gian">
+                  <button class="seg__btn is-active" type="button" data-range="week">Tuần</button>
+                  <button class="seg__btn" type="button" data-range="month">Tháng</button>
+                  <button class="seg__btn" type="button" data-range="year">Năm</button>
+                </div>
+              </div>
+              <div class="dash-chart__legend">
+                <span class="cl-item"><span class="cl-dot cl-dot--in"></span>Gọi đến</span>
+                <span class="cl-item"><span class="cl-dot cl-dot--out"></span>Gọi đi</span>
+              </div>
+              <div class="dash-chart__plot" id="chartPlot"></div>
+              <div class="chart-tip" id="chartTip" hidden></div>
+            </div>
+
+            <div class="card dash-pie">
+              <div class="result-card__label">
+                <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M213.66,181.66l-32,32a8,8,0,0,1-11.32-11.32L188.69,184H48a8,8,0,0,1,0-16H188.69l-18.35-18.34a8,8,0,0,1,11.32-11.32l32,32A8,8,0,0,1,213.66,181.66Zm-139.32-64a8,8,0,0,0,11.32-11.32L67.31,88H208a8,8,0,0,0,0-16H67.31L85.66,53.66A8,8,0,0,0,74.34,42.34l-32,32a8,8,0,0,0,0,11.32Z"/></svg>
+                Gọi đến / Gọi đi
+              </div>
+              <div class="pie-wrap">
+                <div class="pie" id="callPie"></div>
+                <div class="pie__center"><b id="pieTotal">—</b><span>cuộc gọi</span></div>
+              </div>
+              <div class="pie-legend">
+                <div class="pie-legend__item"><span class="cl-dot cl-dot--in"></span>Gọi đến<b id="pieIn">—</b></div>
+                <div class="pie-legend__item"><span class="cl-dot cl-dot--out"></span>Gọi đi<b id="pieOut">—</b></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Key stats -->
+          <div class="dash-stats">
+            <div class="card stat-card">
+              <div class="result-card__label">
+                <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M240,56v64a8,8,0,0,1-16,0V75.31l-82.34,82.35a8,8,0,0,1-11.32,0L96,123.31,29.66,189.66a8,8,0,0,1-11.32-11.32l72-72a8,8,0,0,1,11.32,0L136,140.69,212.69,64H168a8,8,0,0,1,0-16h64A8,8,0,0,1,240,56Z"/></svg>
+                TB tỷ lệ tư vấn
+              </div>
+              <div class="stat-card__value stat-card__value--accent" id="dashAvgRate">—</div>
+              <div class="stat-card__sub" id="dashRateSub">trên tổng số cuộc gọi</div>
+            </div>
+            <div class="card stat-card">
+              <div class="result-card__label">
+                <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm0,192a88,88,0,1,1,88-88A88.1,88.1,0,0,1,128,216Zm64-88a8,8,0,0,1-8,8H128a8,8,0,0,1-8-8V72a8,8,0,0,1,16,0v48h48A8,8,0,0,1,192,128Z"/></svg>
+                Thời lượng TB
+              </div>
+              <div class="stat-card__value" id="dashAvgDur">—</div>
+              <div class="stat-card__sub">phút mỗi cuộc gọi</div>
+            </div>
+            <div class="card stat-card">
+              <div class="result-card__label">
+                <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M56,96v64a8,8,0,0,1-16,0V96a8,8,0,0,1,16,0ZM88,24a8,8,0,0,0-8,8V224a8,8,0,0,0,16,0V32A8,8,0,0,0,88,24Zm40,32a8,8,0,0,0-8,8V192a8,8,0,0,0,16,0V64A8,8,0,0,0,128,56Zm40,32a8,8,0,0,0-8,8v64a8,8,0,0,0,16,0V96A8,8,0,0,0,168,88Zm40-16a8,8,0,0,0-8,8v96a8,8,0,0,0,16,0V80A8,8,0,0,0,208,72Z"/></svg>
+                TB chất lượng âm thanh
+              </div>
+              <div class="stat-card__value" id="dashAvgQuality">8.4</div>
+              <div class="stat-card__sub">trên thang điểm 10</div>
+            </div>
+          </div>
+
+          <div class="dash-grid">
+            <!-- Top 3 calls -->
+            <div class="card">
+              <div class="result-card__label">
+                <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M232,64H208V48a8,8,0,0,0-8-8H56a8,8,0,0,0-8,8V64H24A16,16,0,0,0,8,80V96a40,40,0,0,0,40,40h3.65A80.13,80.13,0,0,0,120,191.61V216H96a8,8,0,0,0,0,16h64a8,8,0,0,0,0-16H136V191.58c31.94-3.23,58.44-25.64,68.08-55.58H208a40,40,0,0,0,40-40V80A16,16,0,0,0,232,64ZM48,120A24,24,0,0,1,24,96V80H48v32q0,4,.39,8Zm144-8.9c0,35.52-29,64.64-64,64.9a64,64,0,0,1-64-64V56H192ZM232,96a24,24,0,0,1-24,24h-.5a81.81,81.81,0,0,0,.5-8.9V80h24Z"/></svg>
+                Top 3 tỷ lệ tư vấn cao nhất
+              </div>
+              <div class="top3" id="dashTop3"></div>
+            </div>
+
+            <!-- Word cloud -->
+            <!-- Recommendation -->
+            <div class="card dash-rec">
+              <div class="result-card__label">
+                <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M176,232a8,8,0,0,1-8,8H88a8,8,0,0,1,0-16h80A8,8,0,0,1,176,232Zm40-128a87.55,87.55,0,0,1-33.64,69.21A16.24,16.24,0,0,0,176,186v6a16,16,0,0,1-16,16H96a16,16,0,0,1-16-16v-6a16,16,0,0,0-6.23-12.66A87.59,87.59,0,0,1,40,104.49C39.74,56.83,78.26,17.14,125.88,16A88,88,0,0,1,216,104Zm-16,0a72,72,0,0,0-73.74-72c-39,.92-70.47,33.39-70.26,72.39a71.65,71.65,0,0,0,27.64,56.3A32,32,0,0,1,96,186v6h64v-6a32.15,32.15,0,0,1,12.47-25.35A71.65,71.65,0,0,0,200,104Z"/></svg>
+                Recommendation
+              </div>
+              <ul class="bullet-list bullet-list--cols">
+                <li>Nhấn mạnh <b>ROI &amp; tiết kiệm chi phí</b> ngay từ đầu cuộc gọi.</li>
+                <li>Chuẩn bị sẵn phản hồi cho thắc mắc về <b>giá cả</b>.</li>
+                <li>Rút ngắn phần mở đầu, giữ thời lượng ở mức trung bình.</li>
+                <li>Ưu tiên demo <b>real-time</b> cho khách quan tâm kỹ thuật.</li>
+              </ul>
+            </div>
+          </div>
+          </div><!-- /dashpane overview -->
+
+          <!-- Tab 2 · list of uploaded calls (open each for its full analysis) -->
+          <div data-dashpane="calls" hidden>
+            <div class="dash-filter dash-calls-filter" id="dashCallsFilter">
+              <span class="dash-filter__label">
+                <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M230.6,49.53A15.81,15.81,0,0,0,216,40H40A16,16,0,0,0,28.19,66.76l.08.09L96,139.17V216a16,16,0,0,0,24.87,13.32l32-21.34A16,16,0,0,0,160,194.66V139.17l67.74-72.32.08-.09A15.8,15.8,0,0,0,230.6,49.53ZM40,56h0Zm106.18,74.58A8,8,0,0,0,144,136v58.66L112,216V136a8,8,0,0,0-2.16-5.47L40,56H216Z"/></svg>
+                Lọc
+              </span>
+              <div class="dash-filter__field">
+                <label for="dashCallAgent">Nhân viên</label>
+                <select class="select select--sm" id="dashCallAgent"><option value="all">Tất cả</option></select>
+              </div>
+              <button class="btn btn--outline btn--sm" id="dashCallReset" type="button">Đặt lại</button>
+            </div>
+            <div class="emp-table-wrap">
+              <table class="emp-table up-table dash-calls-table">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Thời gian</th>
+                    <th class="emp-col-name">Nhân viên</th>
+                    <th>Call to</th>
+                    <th>Thời lượng</th>
+                    <th>Tỷ lệ tư vấn</th>
+                    <th class="tbl-act-col" aria-label="Thao tác"></th>
+                  </tr>
+                </thead>
+                <tbody id="dashCallsTbody"></tbody>
+              </table>
+            </div>
+            <nav class="pagination" id="dashCallsPager" aria-label="Phân trang danh sách cuộc gọi"></nav>
+          </div><!-- /dashpane calls -->
+        </div>
+      </div>
+    </section>
+
+    <!-- ================================================================= -->
+    <!-- SCREEN 5b · Employees                                              -->
+    <!-- ================================================================= -->
+    <section class="screen screen--hasnav" id="screen-employees" data-screen="employees">
+      <div class="screen__scroll">
+        <header class="appbar">
+          <button class="brand" type="button" data-nav="dashboard" aria-label="Về trang tải lên">
+            <span class="brand__logo" aria-hidden="true"></span>
+            <span class="brand__name">Talent Connect +</span>
+          </button>
+          <button class="burger" type="button" aria-label="Open menu" aria-haspopup="true" aria-expanded="false" data-burger>
+            <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M224,128a8,8,0,0,1-8,8H40a8,8,0,0,1,0-16H216A8,8,0,0,1,224,128ZM40,72H216a8,8,0,0,0,0-16H40a8,8,0,0,0,0,16ZM216,184H40a8,8,0,0,0,0,16H216a8,8,0,0,0,0-16Z"/></svg>
+          </button>
+        </header>
+
+        <div class="page">
+          <div class="emp-topbar">
+            <div>
+              <h1 class="page__title">Nhân viên</h1>
+              <p class="page__lead">Theo dõi hiệu suất gọi của từng nhân viên.</p>
+            </div>
+            <button class="btn btn--accent btn--sm emp-add" id="empAddBtn" type="button">
+              <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M256,136a8,8,0,0,1-8,8H232v16a8,8,0,0,1-16,0V144H200a8,8,0,0,1,0-16h16V112a8,8,0,0,1,16,0v16h16A8,8,0,0,1,256,136Zm-57.87,58.85a8,8,0,0,1-6.4,12.79H14.34a8,8,0,0,1-6.4-12.79C22.91,174.28,45,159.82,69.6,153a72,72,0,1,1,76.8,0C171,159.82,193.09,174.28,208,194.85ZM74,131.61a8,8,0,0,0,8-8V120a55.94,55.94,0,0,1,110.9-9.42A56,56,0,1,0,74,131.61Z"/></svg>
+              Thêm nhân viên
+            </button>
+          </div>
+
+          <div class="emp-table-wrap">
+            <table class="emp-table">
+              <thead>
+                <tr>
+                  <th class="emp-col-name">Tên &amp; Caller ID</th>
+                  <th class="emp-th" data-sort="calls" aria-sort="none"><span class="emp-th__in">Tổng cuộc gọi<span class="emp-sort" aria-hidden="true"></span></span></th>
+                  <th class="emp-th" data-sort="rate" aria-sort="none"><span class="emp-th__in">Tỷ lệ thành công<span class="emp-sort" aria-hidden="true"></span></span></th>
+                  <th>Xu hướng</th>
+                  <th>Cuộc gọi gần nhất</th>
+                  <th class="tbl-act-col" aria-label="Thao tác"></th>
+                </tr>
+              </thead>
+              <tbody id="empTbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================================================================= -->
+    <!-- SCREEN 5c · Upload history (call log)                               -->
+    <!-- ================================================================= -->
+    <section class="screen screen--hasnav" id="screen-uploads" data-screen="uploads">
+      <div class="screen__scroll">
+        <header class="appbar">
+          <button class="brand" type="button" data-nav="dashboard" aria-label="Về trang tải lên">
+            <span class="brand__logo" aria-hidden="true"></span>
+            <span class="brand__name">Talent Connect +</span>
+          </button>
+          <button class="burger" type="button" aria-label="Open menu" aria-haspopup="true" aria-expanded="false" data-burger>
+            <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M224,128a8,8,0,0,1-8,8H40a8,8,0,0,1,0-16H216A8,8,0,0,1,224,128ZM40,72H216a8,8,0,0,0,0-16H40a8,8,0,0,0,0,16ZM216,184H40a8,8,0,0,0,0,16H216a8,8,0,0,0,0-16Z"/></svg>
+          </button>
+        </header>
+
+        <div class="page">
+          <div class="emp-topbar">
+            <div>
+              <h1 class="page__title">Đánh giá cuộc gọi</h1>
+              <p class="page__lead">Tải cuộc gọi và quản lý kết quả phân tích.</p>
+            </div>
+          </div>
+
+          <!-- Upload + config panel lives here (Đánh giá cuộc gọi module). -->
           <div data-upload-mount>
           <!-- Phân tích cuộc gọi — upload + config, embedded in the dashboard -->
           <section class="dash-analyze" id="analyzePanel" aria-label="Phân tích cuộc gọi">
@@ -654,249 +875,7 @@
               </div>
             </div>
           </section>
-          </div><!-- /upload-mount -->
-
-          <!-- Date range filter for dashboard analysis -->
-          <div class="dash-filter" id="dashFilter">
-            <span class="dash-filter__label">
-              <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M208,32H184V24a8,8,0,0,0-16,0v8H88V24a8,8,0,0,0-16,0v8H48A16,16,0,0,0,32,48V208a16,16,0,0,0,16,16H208a16,16,0,0,0,16-16V48A16,16,0,0,0,208,32ZM72,48v8a8,8,0,0,0,16,0V48h80v8a8,8,0,0,0,16,0V48h24V80H48V48ZM208,208H48V96H208V208Z"/></svg>
-              Khoảng ngày
-            </span>
-            <div class="dash-filter__field">
-              <label for="dateFrom">Từ</label>
-              <input type="date" id="dateFrom" class="dash-filter__input">
-            </div>
-            <span class="dash-filter__sep">–</span>
-            <div class="dash-filter__field">
-              <label for="dateTo">Đến</label>
-              <input type="date" id="dateTo" class="dash-filter__input">
-            </div>
-            <button class="btn btn--outline btn--sm" id="dateReset" type="button">Đặt lại</button>
           </div>
-
-          <!-- Uploads over time + call direction -->
-          <div class="dash-toprow">
-            <div class="card dash-chart">
-              <div class="dash-chart__head">
-                <div>
-                  <div class="dash-chart__total" id="chartTotal">—</div>
-                  <div class="dash-chart__cap">Cuộc gọi đã upload</div>
-                </div>
-                <div class="seg" id="chartRange" role="tablist" aria-label="Khoảng thời gian">
-                  <button class="seg__btn is-active" type="button" data-range="week">Tuần</button>
-                  <button class="seg__btn" type="button" data-range="month">Tháng</button>
-                  <button class="seg__btn" type="button" data-range="year">Năm</button>
-                </div>
-              </div>
-              <div class="dash-chart__legend">
-                <span class="cl-item"><span class="cl-dot cl-dot--in"></span>Gọi đến</span>
-                <span class="cl-item"><span class="cl-dot cl-dot--out"></span>Gọi đi</span>
-              </div>
-              <div class="dash-chart__plot" id="chartPlot"></div>
-              <div class="chart-tip" id="chartTip" hidden></div>
-            </div>
-
-            <div class="card dash-pie">
-              <div class="result-card__label">
-                <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M213.66,181.66l-32,32a8,8,0,0,1-11.32-11.32L188.69,184H48a8,8,0,0,1,0-16H188.69l-18.35-18.34a8,8,0,0,1,11.32-11.32l32,32A8,8,0,0,1,213.66,181.66Zm-139.32-64a8,8,0,0,0,11.32-11.32L67.31,88H208a8,8,0,0,0,0-16H67.31L85.66,53.66A8,8,0,0,0,74.34,42.34l-32,32a8,8,0,0,0,0,11.32Z"/></svg>
-                Gọi đến / Gọi đi
-              </div>
-              <div class="pie-wrap">
-                <div class="pie" id="callPie"></div>
-                <div class="pie__center"><b id="pieTotal">—</b><span>cuộc gọi</span></div>
-              </div>
-              <div class="pie-legend">
-                <div class="pie-legend__item"><span class="cl-dot cl-dot--in"></span>Gọi đến<b id="pieIn">—</b></div>
-                <div class="pie-legend__item"><span class="cl-dot cl-dot--out"></span>Gọi đi<b id="pieOut">—</b></div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Key stats -->
-          <div class="dash-stats">
-            <div class="card stat-card">
-              <div class="result-card__label">
-                <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M240,56v64a8,8,0,0,1-16,0V75.31l-82.34,82.35a8,8,0,0,1-11.32,0L96,123.31,29.66,189.66a8,8,0,0,1-11.32-11.32l72-72a8,8,0,0,1,11.32,0L136,140.69,212.69,64H168a8,8,0,0,1,0-16h64A8,8,0,0,1,240,56Z"/></svg>
-                TB tỷ lệ tư vấn
-              </div>
-              <div class="stat-card__value stat-card__value--accent" id="dashAvgRate">—</div>
-              <div class="stat-card__sub" id="dashRateSub">trên tổng số cuộc gọi</div>
-            </div>
-            <div class="card stat-card">
-              <div class="result-card__label">
-                <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm0,192a88,88,0,1,1,88-88A88.1,88.1,0,0,1,128,216Zm64-88a8,8,0,0,1-8,8H128a8,8,0,0,1-8-8V72a8,8,0,0,1,16,0v48h48A8,8,0,0,1,192,128Z"/></svg>
-                Thời lượng TB
-              </div>
-              <div class="stat-card__value" id="dashAvgDur">—</div>
-              <div class="stat-card__sub">phút mỗi cuộc gọi</div>
-            </div>
-            <div class="card stat-card">
-              <div class="result-card__label">
-                <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M56,96v64a8,8,0,0,1-16,0V96a8,8,0,0,1,16,0ZM88,24a8,8,0,0,0-8,8V224a8,8,0,0,0,16,0V32A8,8,0,0,0,88,24Zm40,32a8,8,0,0,0-8,8V192a8,8,0,0,0,16,0V64A8,8,0,0,0,128,56Zm40,32a8,8,0,0,0-8,8v64a8,8,0,0,0,16,0V96A8,8,0,0,0,168,88Zm40-16a8,8,0,0,0-8,8v96a8,8,0,0,0,16,0V80A8,8,0,0,0,208,72Z"/></svg>
-                TB chất lượng âm thanh
-              </div>
-              <div class="stat-card__value" id="dashAvgQuality">8.4</div>
-              <div class="stat-card__sub">trên thang điểm 10</div>
-            </div>
-          </div>
-
-          <div class="dash-grid">
-            <!-- Sentiment overall (half pie) -->
-            <div class="card">
-              <div class="result-card__label">
-                <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M207.06,72.67A111.24,111.24,0,0,0,128,40h-.4C66.07,40.21,16,91,16,153.13V176a16,16,0,0,0,16,16H224a16,16,0,0,0,16-16V152A111.25,111.25,0,0,0,207.06,72.67ZM224,176H119.71l54.76-75.3a8,8,0,0,0-12.94-9.42L99.92,176H32V153.13c0-3.08.15-6.12.43-9.13H56a8,8,0,0,0,0-16H35.27c10.32-38.86,44-68.24,84.73-71.66V80a8,8,0,0,0,16,0V56.33A96.14,96.14,0,0,1,221,128H200a8,8,0,0,0,0,16h23.67c.21,2.65.33,5.31.33,8Z"/></svg>
-                Sentiment tổng quan
-              </div>
-              <div class="gauge-wrap">
-                <svg class="gauge" viewBox="0 0 200 118" role="img" aria-label="Positive 62%, Neutral 26%, Negative 12%">
-                  <path class="gauge__track" d="M18 106 A82 82 0 0 1 182 106" fill="none" stroke-width="18" stroke-linecap="round"/>
-                  <path d="M18 106 A82 82 0 0 1 182 106" fill="none" stroke="#22C55E" stroke-width="18" pathLength="100" stroke-dasharray="62 100" stroke-dashoffset="0" stroke-linecap="round"/>
-                  <path d="M18 106 A82 82 0 0 1 182 106" fill="none" stroke="#BDBDBD" stroke-width="18" pathLength="100" stroke-dasharray="26 100" stroke-dashoffset="-62"/>
-                  <path d="M18 106 A82 82 0 0 1 182 106" fill="none" stroke="#EF4444" stroke-width="18" pathLength="100" stroke-dasharray="12 100" stroke-dashoffset="-88" stroke-linecap="round"/>
-                  <text x="100" y="90" text-anchor="middle" class="gauge__num">62%</text>
-                  <text x="100" y="110" text-anchor="middle" class="gauge__lbl">Tích cực</text>
-                </svg>
-              </div>
-              <div class="gauge-legend">
-                <div class="gauge-legend__item"><span class="legend-dot" style="background:#22C55E"></span>Positive<b>62%</b></div>
-                <div class="gauge-legend__item"><span class="legend-dot" style="background:#BDBDBD"></span>Neutral<b>26%</b></div>
-                <div class="gauge-legend__item"><span class="legend-dot" style="background:#EF4444"></span>Negative<b>12%</b></div>
-              </div>
-            </div>
-
-            <!-- Top 3 calls -->
-            <div class="card">
-              <div class="result-card__label">
-                <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M232,64H208V48a8,8,0,0,0-8-8H56a8,8,0,0,0-8,8V64H24A16,16,0,0,0,8,80V96a40,40,0,0,0,40,40h3.65A80.13,80.13,0,0,0,120,191.61V216H96a8,8,0,0,0,0,16h64a8,8,0,0,0,0-16H136V191.58c31.94-3.23,58.44-25.64,68.08-55.58H208a40,40,0,0,0,40-40V80A16,16,0,0,0,232,64ZM48,120A24,24,0,0,1,24,96V80H48v32q0,4,.39,8Zm144-8.9c0,35.52-29,64.64-64,64.9a64,64,0,0,1-64-64V56H192ZM232,96a24,24,0,0,1-24,24h-.5a81.81,81.81,0,0,0,.5-8.9V80h24Z"/></svg>
-                Top 3 tỷ lệ tư vấn cao nhất
-              </div>
-              <div class="top3" id="dashTop3"></div>
-            </div>
-
-            <!-- Word cloud -->
-            <div class="card dash-wordcloud">
-              <div class="result-card__label">
-                <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M32,64a8,8,0,0,1,8-8H216a8,8,0,0,1,0,16H40A8,8,0,0,1,32,64Zm8,48H168a8,8,0,0,0,0-16H40a8,8,0,0,0,0,16Zm176,24H40a8,8,0,0,0,0,16H216a8,8,0,0,0,0-16Zm-48,40H40a8,8,0,0,0,0,16H168a8,8,0,0,0,0-16Z"/></svg>
-                Word cloud
-              </div>
-              <div class="wordcloud">
-                <span style="font-size:30px;color:var(--tcp-brand)">Premium</span>
-                <span style="font-size:22px;color:var(--tcp-accent)">Real-time</span>
-                <span style="font-size:19px;color:var(--tcp-ink)">Giá cả</span>
-                <span style="font-size:16px;color:var(--tcp-brand-400)">ROI</span>
-                <span style="font-size:24px;color:var(--tcp-ink)">Bảo mật</span>
-                <span style="font-size:15px;color:var(--tcp-fg-secondary)">Latency</span>
-                <span style="font-size:20px;color:var(--tcp-brand)">Hiệu suất</span>
-                <span style="font-size:17px;color:var(--tcp-accent)">Chi phí</span>
-                <span style="font-size:14px;color:var(--tcp-fg-secondary)">Demo</span>
-                <span style="font-size:18px;color:var(--tcp-ink)">Tích hợp</span>
-                <span style="font-size:22px;color:var(--tcp-brand-400)">Hỗ trợ</span>
-                <span style="font-size:15px;color:var(--tcp-fg-secondary)">Ngân sách</span>
-                <span style="font-size:19px;color:var(--tcp-brand)">Triển khai</span>
-                <span style="font-size:16px;color:var(--tcp-ink)">Tiết kiệm</span>
-                <span style="font-size:14px;color:var(--tcp-fg-secondary)">Đối tác</span>
-                <span style="font-size:21px;color:var(--tcp-brand)">Cảm ơn</span>
-                <span style="font-size:15px;color:var(--tcp-accent)">Ưu đãi</span>
-                <span style="font-size:18px;color:var(--tcp-ink)">Chất lượng</span>
-                <span style="font-size:14px;color:var(--tcp-fg-secondary)">Cam kết</span>
-                <span style="font-size:23px;color:var(--tcp-brand-400)">Tin cậy</span>
-                <span style="font-size:16px;color:var(--tcp-accent)">Bảo hành</span>
-                <span style="font-size:19px;color:var(--tcp-ink)">Đào tạo</span>
-                <span style="font-size:15px;color:var(--tcp-fg-secondary)">Vận hành</span>
-                <span style="font-size:17px;color:var(--tcp-brand)">Nâng cấp</span>
-                <span style="font-size:14px;color:var(--tcp-fg-secondary)">Bảo trì</span>
-              </div>
-            </div>
-
-            <!-- Recommendation -->
-            <div class="card dash-rec">
-              <div class="result-card__label">
-                <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M176,232a8,8,0,0,1-8,8H88a8,8,0,0,1,0-16h80A8,8,0,0,1,176,232Zm40-128a87.55,87.55,0,0,1-33.64,69.21A16.24,16.24,0,0,0,176,186v6a16,16,0,0,1-16,16H96a16,16,0,0,1-16-16v-6a16,16,0,0,0-6.23-12.66A87.59,87.59,0,0,1,40,104.49C39.74,56.83,78.26,17.14,125.88,16A88,88,0,0,1,216,104Zm-16,0a72,72,0,0,0-73.74-72c-39,.92-70.47,33.39-70.26,72.39a71.65,71.65,0,0,0,27.64,56.3A32,32,0,0,1,96,186v6h64v-6a32.15,32.15,0,0,1,12.47-25.35A71.65,71.65,0,0,0,200,104Z"/></svg>
-                Recommendation
-              </div>
-              <ul class="bullet-list bullet-list--cols">
-                <li>Nhấn mạnh <b>ROI &amp; tiết kiệm chi phí</b> ngay từ đầu cuộc gọi.</li>
-                <li>Chuẩn bị sẵn phản hồi cho thắc mắc về <b>giá cả</b>.</li>
-                <li>Rút ngắn phần mở đầu, giữ thời lượng ở mức trung bình.</li>
-                <li>Ưu tiên demo <b>real-time</b> cho khách quan tâm kỹ thuật.</li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ================================================================= -->
-    <!-- SCREEN 5b · Employees                                              -->
-    <!-- ================================================================= -->
-    <section class="screen screen--hasnav" id="screen-employees" data-screen="employees">
-      <div class="screen__scroll">
-        <header class="appbar">
-          <button class="brand" type="button" data-nav="dashboard" aria-label="Về trang tải lên">
-            <span class="brand__logo" aria-hidden="true"></span>
-            <span class="brand__name">Talent Connect +</span>
-          </button>
-          <button class="burger" type="button" aria-label="Open menu" aria-haspopup="true" aria-expanded="false" data-burger>
-            <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M224,128a8,8,0,0,1-8,8H40a8,8,0,0,1,0-16H216A8,8,0,0,1,224,128ZM40,72H216a8,8,0,0,0,0-16H40a8,8,0,0,0,0,16ZM216,184H40a8,8,0,0,0,0,16H216a8,8,0,0,0,0-16Z"/></svg>
-          </button>
-        </header>
-
-        <div class="page">
-          <div class="emp-topbar">
-            <div>
-              <h1 class="page__title">Nhân viên</h1>
-              <p class="page__lead">Theo dõi hiệu suất gọi của từng nhân viên.</p>
-            </div>
-            <button class="btn btn--accent btn--sm emp-add" id="empAddBtn" type="button">
-              <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M256,136a8,8,0,0,1-8,8H232v16a8,8,0,0,1-16,0V144H200a8,8,0,0,1,0-16h16V112a8,8,0,0,1,16,0v16h16A8,8,0,0,1,256,136Zm-57.87,58.85a8,8,0,0,1-6.4,12.79H14.34a8,8,0,0,1-6.4-12.79C22.91,174.28,45,159.82,69.6,153a72,72,0,1,1,76.8,0C171,159.82,193.09,174.28,208,194.85ZM74,131.61a8,8,0,0,0,8-8V120a55.94,55.94,0,0,1,110.9-9.42A56,56,0,1,0,74,131.61Z"/></svg>
-              Thêm nhân viên
-            </button>
-          </div>
-
-          <div class="emp-table-wrap">
-            <table class="emp-table">
-              <thead>
-                <tr>
-                  <th class="emp-col-name">Tên &amp; Caller ID</th>
-                  <th class="emp-th" data-sort="calls" aria-sort="none"><span class="emp-th__in">Tổng cuộc gọi<span class="emp-sort" aria-hidden="true"></span></span></th>
-                  <th class="emp-th" data-sort="rate" aria-sort="none"><span class="emp-th__in">Tỷ lệ thành công<span class="emp-sort" aria-hidden="true"></span></span></th>
-                  <th>Xu hướng</th>
-                  <th>Cuộc gọi gần nhất</th>
-                  <th class="tbl-act-col" aria-label="Thao tác"></th>
-                </tr>
-              </thead>
-              <tbody id="empTbody"></tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ================================================================= -->
-    <!-- SCREEN 5c · Upload history (call log)                               -->
-    <!-- ================================================================= -->
-    <section class="screen screen--hasnav" id="screen-uploads" data-screen="uploads">
-      <div class="screen__scroll">
-        <header class="appbar">
-          <button class="brand" type="button" data-nav="dashboard" aria-label="Về trang tải lên">
-            <span class="brand__logo" aria-hidden="true"></span>
-            <span class="brand__name">Talent Connect +</span>
-          </button>
-          <button class="burger" type="button" aria-label="Open menu" aria-haspopup="true" aria-expanded="false" data-burger>
-            <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M224,128a8,8,0,0,1-8,8H40a8,8,0,0,1,0-16H216A8,8,0,0,1,224,128ZM40,72H216a8,8,0,0,0,0-16H40a8,8,0,0,0,0,16ZM216,184H40a8,8,0,0,0,0,16H216a8,8,0,0,0,0-16Z"/></svg>
-          </button>
-        </header>
-
-        <div class="page">
-          <div class="emp-topbar">
-            <div>
-              <h1 class="page__title">Đánh giá cuộc gọi</h1>
-              <p class="page__lead">Tải cuộc gọi và quản lý kết quả phân tích.</p>
-            </div>
-          </div>
-
-          <!-- Shared upload+config panel is relocated here when this module is active. -->
-          <div data-upload-mount></div>
 
           <div class="seg up-view" id="upView" role="tablist" aria-label="Chế độ xem">
             <button class="seg__btn is-active" type="button" role="tab" aria-selected="true" data-upview="eval">Đánh giá</button>

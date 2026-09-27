@@ -62,7 +62,7 @@ The app is a client-side SPA. Screens (`<section class="screen" data-screen="…
 | Screen (`data-screen`) | VN label | Purpose | Notes |
 | --- | --- | --- | --- |
 | `login` | Đăng nhập | Mock Google-only sign-in gate | Animated backdrop; button → `dashboard` |
-| `dashboard` | Dashboard | **Embedded upload + AI-config panel** at top, then date filter + KPI/donut/bar/word-cloud analytics; `.xlsx` export | The single upload panel is **relocated** here (see below) |
+| `dashboard` | Dashboard (Home) | **Two tabs** (`[data-dashtab]` → `[data-dashpane]`): **Tổng quan** (date filter + KPI cards + uploads-over-time bar + call-direction donut + Top 3 + Recommendation) and **Danh sách cuộc gọi** (table over `UPLOAD_LOG`, "Xem chi tiết" per row → full analysis). `.xlsx` export. No upload panel here anymore | Upload panel now lives only in `uploads` |
 | `results` | Kết quả phân tích | Two-column: MAIN (outcome + inline eval, then 2-col analysis cards) + RAIL (audio player + searchable transcript) | Built once by `layoutResults()` |
 | `uploads` | **Đánh giá cuộc gọi** | Call log with stats/filters/pagination + review overrides + **Chú thích** column; a **"Lịch sử upload"** tab shows the raw call sheet | The upload panel also relocates here |
 | `employees` | Nhân viên | Agent roster; add (manual/CSV), delete, sortable columns | (Manager-role feature) |
@@ -73,7 +73,7 @@ The app is a client-side SPA. Screens (`<section class="screen" data-screen="…
 
 **Drawer nav (all screens):** Dashboard · Đánh giá cuộc gọi · Nhân viên · Cài đặt · **Đăng xuất** (pinned to the bottom). The hamburger sits in the **left** corner with the logo beside it; the drawer slides in from the left.
 
-**Shared upload panel:** there is exactly **one** upload+config panel (`#analyzePanel`). `show(name)` moves it into the active screen's `[data-upload-mount]` (dashboard or Đánh giá cuộc gọi), so it appears inline in either without duplicate IDs.
+**Shared upload panel:** there is exactly **one** upload+config panel (`#analyzePanel`), mounted in **Đánh giá cuộc gọi** (`uploads`). `show(name)` moves it into the active screen's `[data-upload-mount]` if one exists, so a mount can be reintroduced elsewhere without duplicate IDs. (The dashboard no longer carries a mount — upload was removed from Home.)
 
 ---
 
@@ -129,8 +129,8 @@ Mobile-first inside `.phone`. Reflows widen at each breakpoint:
 
 | Width | Behavior |
 | --- | --- |
-| **< 768 (mobile)** | Single column; dashboard upload stacks; Results stacks (outcome above eval, cards single-column, rail below). |
-| **768–899** | Dashboard upload = 2 columns (upload | config, height-synced). |
+| **< 768 (mobile)** | Single column; the upload panel (in Đánh giá cuộc gọi) stacks; Results stacks (outcome above eval, cards single-column, rail below). |
+| **768–899** | Upload panel = 2 columns (upload | config, height-synced). |
 | **≥ 900** | Settings = menu + detail; Results outcome+eval sit side by side; Results = MAIN + sticky RAIL; analysis cards = 2-col masonry. |
 | **≥ 1200 (desktop)** | Full-width analytics grids. |
 | **Menu (all sizes)** | Hamburger + logo at the left; drawer from the left; logout pinned bottom. |
