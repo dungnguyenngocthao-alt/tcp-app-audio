@@ -894,6 +894,20 @@
     const [m, d, y] = s.split(",")[0].trim().split("/").map(Number);
     return new Date(y, m - 1, d);
   }
+  // Parse the same string into a full Date incl. hour (24h) — for weekday/time analysis.
+  function parseHistDateTime(s) {
+    const [datePart, timePart] = s.split(",").map(x => x.trim());
+    const [m, d, y] = datePart.split("/").map(Number);
+    let hh = 0, mm = 0;
+    const tm = /(\d{1,2}):(\d{2})\s*(AM|PM)?/i.exec(timePart || "");
+    if (tm) {
+      hh = +tm[1]; mm = +tm[2];
+      const ap = (tm[3] || "").toUpperCase();
+      if (ap === "PM" && hh < 12) hh += 12;
+      if (ap === "AM" && hh === 12) hh = 0;
+    }
+    return new Date(y, m - 1, d, hh, mm);
+  }
   // ISO yyyy-mm-dd (for <input type="date"> value/min/max)
   function isoDate(dt) {
     return dt.getFullYear() + "-" +
@@ -919,6 +933,9 @@
       if (qualEl) qualEl.textContent = "—";
       if (subEl) subEl.textContent = "Không có cuộc gọi trong khoảng này";
       renderCallPie(0);
+      renderOutcomeDist([]);
+      renderSuccessTrend([]);
+      renderHeatmap([]);
       return;
     }
 
@@ -940,6 +957,112 @@
 
     // Volume counts scale with how much of the full range is selected.
     renderCallPie(fraction);
+    renderOutcomeDist(rows);
+    renderSuccessTrend(rows);
+    renderHeatmap(rows);
+  }
+
+  /* Outcome distribution donut — success / warning / neutral share, over the
+     currently selected calls. Pure counts, no AI. */
+  const OUTCOME_META = {
+    success: { label: "Thành công", color: "var(--tcp-accent)" },
+    warning: { label: "Cần theo dõi", color: "#F59E0B" },
+    neutral: { label: "Chưa chốt", color: "#E11D48" },
+  };
+  function renderOutcomeDist(rows) {
+    const pie = $("#outcomePie"), total = $("#outcomeTotal"), legend = $("#outcomeLegend");
+    if (!pie) return;
+    const order = ["success", "warning", "neutral"];
+    const counts = { success: 0, warning: 0, neutral: 0 };
+    rows.forEach(r => { if (counts[r.type] != null) counts[r.type]++; });
+    const n = rows.length;
+    if (total) total.textContent = n.toLocaleString("vi-VN");
+    if (!n) {
+      pie.style.background = "var(--tcp-bg-muted)";
+      if (legend) legend.innerHTML = "";
+      return;
+    }
+    // Build the conic-gradient segments.
+    let acc = 0;
+    const stops = order.map(k => {
+      const pct = counts[k] / n * 100;
+      const seg = `${OUTCOME_META[k].color} ${acc.toFixed(2)}% ${(acc + pct).toFixed(2)}%`;
+      acc += pct;
+      return seg;
+    });
+    pie.style.background = `conic-gradient(${stops.join(", ")})`;
+    if (legend) legend.innerHTML = order.map(k => {
+      const pct = Math.round(counts[k] / n * 100);
+      return `<div class="pie-legend__item">
+        <span class="cl-dot" style="background:${OUTCOME_META[k].color}"></span>${OUTCOME_META[k].label}
+        <b>${counts[k]} · ${pct}%</b></div>`;
+    }).join("");
+  }
+
+  /* Success rate over time — group calls by day, plot daily consultation-success
+     rate (success ÷ total). Deterministic from HISTORY. */
+  function renderSuccessTrend(rows) {
+    const plot = $("#trendPlot"), avgEl = $("#trendAvg");
+    if (!plot) return;
+    if (!rows.length) { plot.innerHTML = ""; if (avgEl) avgEl.textContent = "—"; return; }
+    const byDay = new Map();
+    rows.forEach(r => {
+      const d = parseHistDate(r.date);
+      const key = d.getTime();
+      if (!byDay.has(key)) byDay.set(key, { total: 0, success: 0, date: d });
+      const b = byDay.get(key);
+      b.total++;
+      if (r.type === "success") b.success++;
+    });
+    const days = [...byDay.values()].sort((a, b) => a.date - b.date);
+    const rateOf = b => Math.round(b.success / b.total * 100);
+    const avg = Math.round(days.reduce((a, b) => a + rateOf(b), 0) / days.length);
+    if (avgEl) avgEl.textContent = avg + "%";
+    plot.innerHTML = days.map(b => {
+      const rate = rateOf(b);
+      const cls = rate >= 60 ? "trend-col--good" : rate >= 40 ? "trend-col--mid" : "trend-col--low";
+      const lbl = (b.date.getMonth() + 1) + "/" + b.date.getDate();
+      return `<div class="trend-col ${cls}" data-x="${lbl}" data-rate="${rate}" data-total="${b.total}">
+        <div class="trend-col__track"><div class="trend-col__bar" style="height:${Math.max(4, rate)}%"></div></div>
+        <div class="trend-col__x">${lbl}</div>
+      </div>`;
+    }).join("");
+  }
+
+  /* Heatmap — call volume by weekday (rows) × time-of-day bucket (cols). */
+  const HEAT_DAYS = ["T2", "T3", "T4", "T5", "T6", "T7", "CN"];  // Mon..Sun
+  const HEAT_SLOTS = [
+    { label: "6–9h", lo: 6, hi: 9 },
+    { label: "9–12h", lo: 9, hi: 12 },
+    { label: "12–14h", lo: 12, hi: 14 },
+    { label: "14–17h", lo: 14, hi: 17 },
+    { label: "17–20h", lo: 17, hi: 20 },
+  ];
+  function renderHeatmap(rows) {
+    const wrap = $("#heatmap");
+    if (!wrap) return;
+    // grid[day][slot] = count
+    const grid = HEAT_DAYS.map(() => HEAT_SLOTS.map(() => 0));
+    rows.forEach(r => {
+      const dt = parseHistDateTime(r.date);
+      const dow = (dt.getDay() + 6) % 7;               // 0=Mon … 6=Sun
+      const h = dt.getHours();
+      const slot = HEAT_SLOTS.findIndex(s => h >= s.lo && h < s.hi);
+      if (slot >= 0) grid[dow][slot]++;
+    });
+    const max = Math.max(1, ...grid.flat());
+    // Header row (time slots) + one row per weekday.
+    let html = '<div class="heatmap__cell heatmap__corner"></div>';
+    HEAT_SLOTS.forEach(s => { html += `<div class="heatmap__head">${s.label}</div>`; });
+    HEAT_DAYS.forEach((day, di) => {
+      html += `<div class="heatmap__day">${day}</div>`;
+      HEAT_SLOTS.forEach((s, si) => {
+        const c = grid[di][si];
+        const level = c === 0 ? 0 : Math.min(4, Math.ceil(c / max * 4));
+        html += `<div class="heatmap__cell heatmap__cell--l${level}" title="${day} ${s.label}: ${c} cuộc gọi">${c || ""}</div>`;
+      });
+    });
+    wrap.innerHTML = html;
   }
 
   // Top 3 employees by success rate (fed by the Nhân viên module, so it's
@@ -1019,15 +1142,15 @@
      Each period shows two adjacent bars: [label, incoming, outgoing]. */
   const UPLOADS = {
     week: {
-      total: 128,
+      total: 128, prev: 114, prevLabel: "tuần trước",
       bars: [["T2", 9, 5], ["T3", 14, 8], ["T4", 11, 7], ["T5", 16, 10], ["T6", 19, 12], ["T7", 7, 4], ["CN", 4, 3]],
     },
     month: {
-      total: 512,
+      total: 512, prev: 474, prevLabel: "tháng trước",
       bars: Array.from({ length: 30 }, (_, i) => [String(i + 1), 4 + ((i * 5 + 2) % 15), 2 + ((i * 3 + 1) % 9)]),
     },
     year: {
-      total: 4870,
+      total: 4870, prev: 3960, prevLabel: "năm trước",
       bars: [["T1", 200, 120], ["T2", 180, 110], ["T3", 220, 140], ["T4", 250, 160], ["T5", 230, 150],
              ["T6", 190, 110], ["T7", 210, 130], ["T8", 270, 180], ["T9", 290, 180], ["T10", 320, 200],
              ["T11", 340, 220], ["T12", 290, 180]],
@@ -1036,10 +1159,25 @@
   const chartTotal = $("#chartTotal");
   const chartPlot  = $("#chartPlot");
   const chartRange = $("#chartRange");
+  const chartDelta = $("#chartDelta");
   function renderChart(range) {
     const d = UPLOADS[range];
     if (!d || !chartPlot) return;
     if (chartTotal) chartTotal.textContent = d.total.toLocaleString("vi-VN");
+    // Period-over-period comparison (so với kỳ trước).
+    if (chartDelta) {
+      if (d.prev) {
+        const pct = Math.round((d.total - d.prev) / d.prev * 100);
+        const up = pct >= 0;
+        chartDelta.hidden = false;
+        chartDelta.classList.toggle("dash-delta--up", up);
+        chartDelta.classList.toggle("dash-delta--down", !up);
+        chartDelta.querySelector(".dash-delta__val").textContent = (up ? "▲ +" : "▼ ") + pct + "%";
+        chartDelta.querySelector(".dash-delta__cap").textContent = "so với " + (d.prevLabel || "kỳ trước");
+      } else {
+        chartDelta.hidden = true;
+      }
+    }
     const max = Math.max(...d.bars.map(b => Math.max(b[1], b[2])));
     const many = d.bars.length > 12;
     chartPlot.innerHTML = d.bars.map(([x, inc, out], i) => {
@@ -1087,6 +1225,32 @@
       if (col) positionTip(col);
     });
     chartPlot.addEventListener("mouseleave", () => { chartTip.hidden = true; });
+  }
+
+  /* Hover tooltip for the success-rate trend chart */
+  const trendPlot = $("#trendPlot"), trendTip = $("#trendTip");
+  function positionTrendTip(col) {
+    if (!trendTip) return;
+    trendTip.innerHTML =
+      `<div class="chart-tip__x">Ngày ${col.dataset.x}</div>` +
+      `<div class="chart-tip__row">Tỷ lệ thành công: <b>${col.dataset.rate}%</b></div>` +
+      `<div class="chart-tip__row">${col.dataset.total} cuộc gọi</div>`;
+    trendTip.hidden = false;
+    const p = trendTip.parentElement.getBoundingClientRect();
+    const c = col.getBoundingClientRect();
+    trendTip.style.left = (c.left - p.left + c.width / 2) + "px";
+    trendTip.style.top = (c.top - p.top - 8) + "px";
+  }
+  if (trendPlot && trendTip) {
+    trendPlot.addEventListener("mouseover", e => {
+      const col = e.target.closest(".trend-col");
+      if (col) positionTrendTip(col);
+    });
+    trendPlot.addEventListener("mousemove", e => {
+      const col = e.target.closest(".trend-col");
+      if (col) positionTrendTip(col);
+    });
+    trendPlot.addEventListener("mouseleave", () => { trendTip.hidden = true; });
   }
 
   /* Call-direction donut — total incoming vs outgoing. `fraction` (0–1) scales

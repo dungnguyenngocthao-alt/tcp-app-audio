@@ -62,7 +62,7 @@ The app is a client-side SPA. Screens (`<section class="screen" data-screen="…
 | Screen (`data-screen`) | VN label | Purpose | Notes |
 | --- | --- | --- | --- |
 | `login` | Đăng nhập | Mock Google-only sign-in gate | Animated backdrop; button → `dashboard` |
-| `dashboard` | Dashboard (Home) | **Two tabs** (`[data-dashtab]` → `[data-dashpane]`): **Tổng quan** (date filter + KPI cards + uploads-over-time bar + call-direction donut + Top 3 + Recommendation) and **Danh sách cuộc gọi** (table over `UPLOAD_LOG`, "Xem chi tiết" per row → full analysis). `.xlsx` export. No upload panel here anymore | Upload panel now lives only in `uploads` |
+| `dashboard` | Dashboard (Home) | **Two tabs** (`[data-dashtab]` → `[data-dashpane]`): **Tổng quan** (date filter + volume bar with period-over-period delta + call-direction donut + **outcome-distribution donut** + KPI cards + **success-rate-over-time** trend + **weekday×time heatmap** + Top 3 + Recommendation — all pure-stat, no AI) and **Danh sách cuộc gọi** (table over `UPLOAD_LOG` with date-range + text search + agent filter, "Xem chi tiết" per row → full analysis). `.xlsx` export. No upload panel here anymore | Upload panel now lives only in `uploads` |
 | `results` | Kết quả phân tích | Two-column: MAIN (outcome + inline eval, then 2-col analysis cards) + RAIL (audio player + searchable transcript) | Built once by `layoutResults()` |
 | `uploads` | **Đánh giá cuộc gọi** | Call log with stats/filters/pagination + review overrides + **Chú thích** column; a **"Lịch sử upload"** tab shows the raw call sheet | The upload panel also relocates here |
 | `employees` | Nhân viên | Agent roster; add (manual/CSV), delete, sortable columns | (Manager-role feature) |
