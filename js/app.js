@@ -1874,6 +1874,12 @@
     resultUploadId = rec ? rec.id : null;
     const shownRate = rec ? effRate(rec) : m.conf;
 
+    // Results heading names the call by its ID (mã cuộc gọi).
+    const headTitle = $("#screen-results .results-head__title");
+    if (headTitle) headTitle.textContent = rec
+      ? `Kết quả phân tích của cuộc gọi ${rec.id}`
+      : "Kết quả phân tích";
+
     const title = $("#screen-results .outcome__title");
     const pct   = $("#screen-results .outcome__pct");
     if (title) title.textContent = m.outcome;
