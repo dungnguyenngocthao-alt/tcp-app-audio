@@ -2394,6 +2394,15 @@ body {
 
 /* Home (Dashboard) · overview / call-list tabs */
 .dash-tabs { display: inline-flex; margin: 0 0 var(--tcp-space-5); }
+.dash-calls-search {
+  display: flex; align-items: center; gap: 8px;
+  margin: 0 0 var(--tcp-space-3); padding: 0 12px;
+  border: 1px solid var(--tcp-border); border-radius: var(--tcp-radius-lg);
+  background: var(--tcp-bg); max-width: 420px;
+}
+.dash-calls-search svg { width: 18px; height: 18px; flex: 0 0 auto; color: var(--tcp-fg-tertiary); }
+.dash-calls-search__input { border: 0; box-shadow: none; padding: 10px 0; background: none; flex: 1 1 auto; }
+.dash-calls-search__input:focus { outline: 0; box-shadow: none; }
 .dash-calls-filter { margin-bottom: var(--tcp-space-4); }
 .dash-calls-table th.tbl-act-col { width: 1%; }
 .dash-calls-table .dc-detail { white-space: nowrap; }

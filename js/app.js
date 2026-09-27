@@ -1529,6 +1529,9 @@
   const dashCallsPager = $("#dashCallsPager");
   const dashCallAgent  = $("#dashCallAgent");
   const dashCallReset  = $("#dashCallReset");
+  const dashCallFrom   = $("#dashCallFrom");
+  const dashCallTo     = $("#dashCallTo");
+  const dashCallSearch = $("#dashCallSearch");
   const DASH_CALLS_PER_PAGE = 8;
   let dashCallsPage = 1;
 
@@ -1542,7 +1545,19 @@
   }
   function filteredDashCalls() {
     const ag = dashCallAgent ? dashCallAgent.value : "all";
-    return UPLOAD_LOG.filter(u => ag === "all" || u.agent === ag);
+    const lo = dashCallFrom && dashCallFrom.value ? new Date(dashCallFrom.value).getTime() : -Infinity;
+    const hi = dashCallTo && dashCallTo.value ? new Date(dashCallTo.value).getTime() : Infinity;
+    const q  = dashCallSearch ? dashCallSearch.value.trim().toLowerCase() : "";
+    return UPLOAD_LOG.filter(u => {
+      if (ag !== "all" && u.agent !== ag) return false;
+      const t = parseUpTime(u.time);
+      if (t < lo || t > hi) return false;
+      if (q) {
+        const hay = `${u.id} ${u.agent} ${u.caller} ${u.to}`.toLowerCase();
+        if (!hay.includes(q)) return false;
+      }
+      return true;
+    });
   }
   function renderDashCallsPager(pages) {
     if (!dashCallsPager) return;
@@ -1561,7 +1576,10 @@
     if (dashCallsPage > pages) dashCallsPage = pages;
     const slice = list.slice((dashCallsPage - 1) * DASH_CALLS_PER_PAGE, dashCallsPage * DASH_CALLS_PER_PAGE);
     if (!slice.length) {
-      dashCallsTbody.innerHTML = '<tr><td class="emp-empty" colspan="7">Chưa có cuộc gọi nào được tải lên.</td></tr>';
+      const msg = UPLOAD_LOG.length
+        ? "Không có cuộc gọi phù hợp với bộ lọc."
+        : "Chưa có cuộc gọi nào được tải lên.";
+      dashCallsTbody.innerHTML = `<tr><td class="emp-empty" colspan="7">${msg}</td></tr>`;
       renderDashCallsPager(pages);
       return;
     }
@@ -1600,9 +1618,14 @@
       if (btn) showSingleResult(btn.dataset.file, btn.dataset.date, "dashboard");
     });
   }
-  if (dashCallAgent) dashCallAgent.addEventListener("change", () => { dashCallsPage = 1; renderDashCalls(); });
+  [dashCallAgent, dashCallFrom, dashCallTo].forEach(el =>
+    el && el.addEventListener("change", () => { dashCallsPage = 1; renderDashCalls(); }));
+  if (dashCallSearch) dashCallSearch.addEventListener("input", () => { dashCallsPage = 1; renderDashCalls(); });
   if (dashCallReset) dashCallReset.addEventListener("click", () => {
     if (dashCallAgent) dashCallAgent.value = "all";
+    if (dashCallFrom) dashCallFrom.value = "";
+    if (dashCallTo) dashCallTo.value = "";
+    if (dashCallSearch) dashCallSearch.value = "";
     dashCallsPage = 1; renderDashCalls();
   });
   if (dashCallsPager) dashCallsPager.addEventListener("click", e => {

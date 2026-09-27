@@ -648,11 +648,25 @@
 
           <!-- Tab 2 · list of uploaded calls (open each for its full analysis) -->
           <div data-dashpane="calls" hidden>
+            <div class="dash-calls-search">
+              <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M229.66,218.34l-50.07-50.06a88.11,88.11,0,1,0-11.31,11.31l50.06,50.07a8,8,0,0,0,11.32-11.32ZM40,112a72,72,0,1,1,72,72A72.08,72.08,0,0,1,40,112Z"/></svg>
+              <input class="input dash-calls-search__input" id="dashCallSearch" type="search" placeholder="Tìm theo mã cuộc gọi, nhân viên, số điện thoại…" autocomplete="off">
+            </div>
+
             <div class="dash-filter dash-calls-filter" id="dashCallsFilter">
               <span class="dash-filter__label">
                 <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M230.6,49.53A15.81,15.81,0,0,0,216,40H40A16,16,0,0,0,28.19,66.76l.08.09L96,139.17V216a16,16,0,0,0,24.87,13.32l32-21.34A16,16,0,0,0,160,194.66V139.17l67.74-72.32.08-.09A15.8,15.8,0,0,0,230.6,49.53ZM40,56h0Zm106.18,74.58A8,8,0,0,0,144,136v58.66L112,216V136a8,8,0,0,0-2.16-5.47L40,56H216Z"/></svg>
                 Lọc
               </span>
+              <div class="dash-filter__field">
+                <label for="dashCallFrom">Từ</label>
+                <input type="date" id="dashCallFrom" class="dash-filter__input">
+              </div>
+              <span class="dash-filter__sep">–</span>
+              <div class="dash-filter__field">
+                <label for="dashCallTo">Đến</label>
+                <input type="date" id="dashCallTo" class="dash-filter__input">
+              </div>
               <div class="dash-filter__field">
                 <label for="dashCallAgent">Nhân viên</label>
                 <select class="select select--sm" id="dashCallAgent"><option value="all">Tất cả</option></select>
