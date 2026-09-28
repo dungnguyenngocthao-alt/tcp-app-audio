@@ -2703,3 +2703,22 @@ body {
   .dash-filter > .btn { width: 100%; }
   .dash-calls-search { width: 100%; flex-basis: auto; }
 }
+
+/* ===========================================================================
+   Call-list filter polish — matching radii, equal date fields, equal heights
+   =========================================================================== */
+/* Table corners match the filter box (not larger) */
+.emp-table-wrap { border-radius: var(--tcp-radius-md); }
+
+/* Roomier gap between a field's label and its control */
+.dash-filter__field { gap: 10px; }
+
+/* Date inputs and the search box share one control height */
+.dash-filter__input { height: 38px; padding: 0 10px; }
+.dash-calls-search { height: 38px; }
+.dash-calls-search__input { padding: 0; }
+
+/* Desktop: the two date fields (Từ / Đến) get equal width */
+@media (min-width: 641px) {
+  .dash-filter__input { width: 160px; }
+}
