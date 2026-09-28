@@ -2781,3 +2781,16 @@ body {
   }
   .phone.is-shell #screen-results .results-side .card--transcript { max-height: none; }
 }
+
+/* Export report dialog */
+.export-range { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.export-range .dash-filter__input { width: auto; flex: 1 1 130px; min-width: 0; }
+.check-row {
+  display: flex; align-items: center; gap: 10px; cursor: pointer;
+  font-size: 14px; color: var(--tcp-fg-primary); margin: var(--tcp-space-2) 0 var(--tcp-space-5);
+}
+.check-row input[type="checkbox"] {
+  width: 18px; height: 18px; flex: 0 0 auto; accent-color: var(--tcp-accent); cursor: pointer;
+}
+#exportForm .field__label { display: block; margin-bottom: var(--tcp-space-2); text-align: left; }
+#exportForm .modal__msg { text-align: left; }

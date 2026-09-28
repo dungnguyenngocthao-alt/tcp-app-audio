@@ -2358,19 +2358,58 @@
     downloadBlob(enc.encode(buildTranscriptText(fileName)), base + "-transcript.txt", "text/plain;charset=utf-8");
   }
 
+  /* Export report — a dialog to pick a date range + whether to include the
+     transcript, then build the XLSX from the calls in that range. */
   const dashExportBtn = $("#dashExportBtn");
-  if (dashExportBtn) dashExportBtn.addEventListener("click", () => {
-    const src = archive.length ? archive : HISTORY;
-    const callRows = [["Tên cuộc gọi", "Success rate (%)"]].concat(src.map(r => [r.file, r.conf]));
+  const exportModal   = $("#exportModal");
+  const exportForm    = $("#exportForm");
+  const exportFrom    = $("#exportFrom");
+  const exportTo      = $("#exportTo");
+  const exportTranscriptChk = $("#exportTranscript");
+
+  function openExportModal() {
+    if (!exportModal) return;
+    if (exportFrom) exportFrom.value = "";
+    if (exportTo) exportTo.value = isoDate(new Date());
+    if (exportTranscriptChk) exportTranscriptChk.checked = false;
+    exportModal.hidden = false;
+  }
+  function closeExportModal() { if (exportModal) exportModal.hidden = true; }
+
+  if (dashExportBtn) dashExportBtn.addEventListener("click", openExportModal);
+  if (exportModal) exportModal.addEventListener("click", e => {
+    if (e.target.closest("[data-export-cancel]")) closeExportModal();
+  });
+
+  if (exportForm) exportForm.addEventListener("submit", e => {
+    e.preventDefault();
+    const lo = exportFrom && exportFrom.value ? new Date(exportFrom.value).getTime() : -Infinity;
+    const hi = exportTo && exportTo.value ? new Date(exportTo.value).getTime() : Infinity;
+    const src = (archive.length ? archive : HISTORY).filter(r => {
+      const t = parseHistDate(r.date).getTime();
+      return t >= lo && t <= hi;
+    });
+    const rangeLabel = (exportFrom && exportFrom.value ? exportFrom.value : "…") +
+                       " → " + (exportTo && exportTo.value ? exportTo.value : "…");
+    const callRows = [["Tên cuộc gọi", "Ngày", "Success rate (%)"]]
+      .concat(src.map(r => [r.file, r.date, r.conf]));
     const kwRows = [["Từ khóa", "Số lần lặp lại"]].concat(KEYWORD_FREQ.map(k => [k[0], k[1]]));
     const sentiRows = [["Sentiment", "Tổng số", "Tỉ lệ"]].concat(SENTIMENT_TOTALS.map(s => [s[0], s[1], s[2]]));
-    const bytes = buildXlsx([
+    const sheets = [
+      { name: "Tổng quan", rows: [["Khoảng thời gian", rangeLabel], ["Số cuộc gọi", src.length]] },
       { name: "Success rate", rows: callRows },
       { name: "Từ khóa lặp lại", rows: kwRows },
       { name: "Sentiment", rows: sentiRows },
-    ]);
+    ];
+    if (exportTranscriptChk && exportTranscriptChk.checked) {
+      const trRows = [["Thời gian", "Người nói", "Nội dung"]]
+        .concat(TRANSCRIPT.map(m => [m.time, m.who, m.text]));
+      sheets.push({ name: "Transcript", rows: trRows });
+    }
+    const bytes = buildXlsx(sheets);
     downloadBlob(bytes, "TCPVoiceAI-Dashboard-Report.xlsx",
       "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-    flashExport(dashExportBtn, "Đã xuất");
+    closeExportModal();
+    if (typeof showToast === "function") showToast("Đã xuất báo cáo.");
   });
 })();
