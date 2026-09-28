@@ -2606,3 +2606,58 @@ body {
   font-size: 12px; color: var(--tcp-fg-secondary); margin-top: 1px;
   overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
 }
+
+/* ===========================================================================
+   shadcn-admin style shell — persistent left sidebar + flat surfaces
+   Keeps the existing indigo/violet accent; layout & chrome follow shadcn-admin.
+   =========================================================================== */
+:root { --sidebar-w: 250px; }
+
+/* Flatter, bordered surfaces (less shadow, tighter radius) */
+.card { border: 1px solid var(--tcp-border-subtle); border-radius: var(--tcp-radius-lg); box-shadow: none; }
+.dash-filter { box-shadow: none; }
+
+/* Top bar becomes a light shadcn header (used on mobile; hidden on desktop) */
+.appbar {
+  background: var(--tcp-bg);
+  border-bottom: 1px solid var(--tcp-border-subtle);
+  padding: 10px var(--tcp-space-4);
+}
+.appbar .brand__name { color: var(--tcp-logo-indigo); }
+.appbar .burger { color: var(--tcp-fg-primary); }
+.appbar .burger:hover { background: var(--tcp-bg-muted); }
+.appbar .burger:focus-visible { box-shadow: var(--tcp-ring); }
+
+/* Sidebar header (brand) inside the drawer/sidebar */
+.drawer__head { border-bottom: 1px solid var(--tcp-border-subtle); }
+.sidebar__brand { gap: 9px; }
+.sidebar__brand .brand__name { color: var(--tcp-logo-indigo); font-size: 15px; }
+.drawer__section {
+  font-size: 11px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase;
+  color: var(--tcp-fg-tertiary); padding: 0 var(--tcp-space-3); margin: var(--tcp-space-2) 0;
+}
+
+/* Desktop: the drawer becomes a persistent sidebar column */
+@media (min-width: 1024px) {
+  .phone.is-shell .drawer,
+  .phone.is-shell .drawer[hidden] {
+    display: block !important; position: absolute; top: 0; left: 0; bottom: 0; right: auto;
+    width: var(--sidebar-w); z-index: 30;
+  }
+  .phone.is-shell .drawer__backdrop { display: none; }
+  .phone.is-shell .drawer__panel {
+    position: static; width: 100%; max-width: none; height: 100%;
+    transform: none; animation: none;
+    background: var(--tcp-bg); box-shadow: none;
+    border-right: 1px solid var(--tcp-border-subtle);
+    padding: var(--tcp-space-4) var(--tcp-space-3);
+  }
+  .phone.is-shell .drawer__close { display: none; }
+  .phone.is-shell .drawer__item { font-size: 14px; padding: 9px var(--tcp-space-3); }
+  .phone.is-shell .drawer__item svg { width: 18px; height: 18px; }
+
+  /* Every non-login screen sits beside the sidebar; its own top bar is dropped. */
+  .phone.is-shell .screen { left: var(--sidebar-w); }
+  .phone.is-shell .appbar { display: none; }
+  .phone.is-shell .screen__scroll > .page { padding-top: var(--tcp-space-8); }
+}

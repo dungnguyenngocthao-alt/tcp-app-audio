@@ -24,6 +24,9 @@
     Object.entries(screens).forEach(([key, el]) =>
       { if (el) el.classList.toggle("is-active", key === name); }
     );
+    // App shell (persistent sidebar) shows on every screen except login.
+    const phone = document.querySelector(".phone");
+    if (phone) phone.classList.toggle("is-shell", name !== "login");
     // reset scroll of the newly shown screen
     const active = screens[name];
     const scroller = $(".screen__scroll", active);

@@ -71,7 +71,7 @@ The app is a client-side SPA. Screens (`<section class="screen" data-screen="…
 
 **Modals / overlays:** processing popup (`#procModal`, with a file card + progress + analysis **queue**), confirm dialog (`#confirmModal`), review dialog (`#reviewModal`, legacy — evaluation is now inline on Results), add-employee dialog (`#empModal`), slide-in drawer (`#menu`).
 
-**Drawer nav (all screens):** Dashboard · Đánh giá cuộc gọi · Nhân viên · Cài đặt · **Đăng xuất** (pinned to the bottom). The hamburger sits in the **left** corner with the logo beside it; the drawer slides in from the left.
+**Navigation — shadcn-admin shell:** the nav (`#menu .drawer`) is a **persistent left sidebar** on desktop (≥1024px) — brand at top, a "Tổng quan" section, **Dashboard**, and **Đăng xuất** pinned at the bottom. On mobile it collapses to an off-canvas drawer opened by the appbar hamburger. `show()` toggles `.phone.is-shell` (present on every screen except login) which reveals the sidebar and shifts the active screen right by `--sidebar-w` (250px); the per-screen appbar is hidden on desktop. Visuals follow shadcn-admin (flat white bordered cards, minimal shadow, light neutral canvas) while keeping the existing indigo/violet accent. Login has no sidebar.
 
 **Shared upload panel:** there is exactly **one** upload+config panel (`#analyzePanel`), mounted in **Đánh giá cuộc gọi** (`uploads`). `show(name)` moves it into the active screen's `[data-upload-mount]` if one exists, so a mount can be reintroduced elsewhere without duplicate IDs. (The dashboard no longer carries a mount — upload was removed from Home.)
 
