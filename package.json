@@ -1,0 +1,12 @@
+{
+  "name": "tcpvoiceai-web",
+  "version": "1.0.0",
+  "private": true,
+  "description": "TCPVoiceAI — acoustic-intelligence web app prototype (static, no build step).",
+  "license": "UNLICENSED",
+  "scripts": {
+    "dev": "npx --yes serve .",
+    "start": "npx --yes serve .",
+    "bundle": "node scripts/build-standalone.js"
+  }
+}

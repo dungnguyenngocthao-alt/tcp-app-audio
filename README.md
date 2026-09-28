@@ -1,52 +1,83 @@
-# SonicAI — Acoustic Intelligence (mobile web app)
+# TCPVoiceAI — Acoustic Intelligence (web app)
 
-A phone-first web app prototype for **SonicAI**, an acoustic-intelligence tool
-that analyses sales-call audio and produces a sentiment/keyword report.
+An interactive UI prototype for **TCPVoiceAI**, an acoustic-intelligence tool
+that analyses sales-call audio and produces sentiment / keyword / evaluation
+reports. Vietnamese UI (`<html lang="vi">`).
 
-The UI is built directly on the **Talent Connect Plus Design System**
-(imported from the Claude Design project via the design MCP): the same colour
-primitives, typography (Inter + JetBrains Mono), spacing, radii, shadow and
-motion tokens drive every screen.
+The interface is built directly on the **Talent Connect Plus Design System**:
+the same colour primitives, typography (Inter + JetBrains Mono), spacing, radii,
+shadow and motion tokens drive every screen. Responsive from mobile (375) →
+tablet (1024) → desktop (1440), with a persistent sidebar shell ≥ 1024px.
 
-## Screens
+> **Prototype:** no backend. Login, upload, DB-connect and analysis are
+> simulated client-side with in-memory mock data and reset on reload.
 
-1. **New Analysis** — upload an audio file (drag & drop or browse) or paste an
-   external link, choose a processing model, set sensitivity, toggle
-   auto-detect anomalies, and start processing.
-2. **Analyzing Audio** — animated processing state with a live progress bar and
-   staged status messages.
-3. **Kết quả phân tích (Results)** — outcome + confidence, highlighted
-   keywords, customer sentiment bars, talk-duration split, summary, suggested
-   actions, and a full call transcript with keyword highlighting.
+## Stack
 
-## Design tokens
-
-| Role            | Token / value                    |
-| --------------- | -------------------------------- |
-| Brand (indigo)  | `--tcp-brand-500` `#1F1F6D`      |
-| Accent / CTA    | `--tcp-accent` `#4F46E5`         |
-| Ink (headings)  | `--tcp-ink` `#0F1B2D`            |
-| Type — sans     | Inter                            |
-| Type — mono     | JetBrains Mono                   |
-
-All raw tokens live in [`css/tokens.css`](css/tokens.css); component and layout
-styling is in [`css/app.css`](css/app.css).
-
-## Run
-
-No build step. Serve the folder statically:
-
-```bash
-python3 -m http.server 8000
-# then open http://localhost:8000
-```
+- **Vanilla HTML / CSS / JS** — no framework, **no build step**, no bundler.
+- One external network call: Google Fonts (`@import` in `css/tokens.css`).
+- All interactivity in a single IIFE (`js/app.js`).
 
 ## Structure
 
 ```
-index.html        # all three screens
-css/tokens.css    # imported TCP design-system foundations
-css/app.css       # app + component styling
-js/app.js         # navigation, upload, processing sim, transcript tabs
-assets/           # SonicAI waveform mark
+index.html            # Entire app — all screens + modals in one document
+css/tokens.css        # Design-system tokens (CSS custom properties) + Google Fonts @import
+css/app.css           # Components, layout, theme, responsive
+js/app.js             # Navigation, upload, processing sim, tables, transcript
+assets/               # Brand mark(s)
+vercel.json           # Static hosting config (headers, clean URLs)
+scripts/build-standalone.js  # Optional: inline everything into one HTML file
+HANDOFF.md            # Full engineering handoff doc
 ```
+
+## Run locally
+
+No build step — serve the folder statically with anything:
+
+```bash
+npm run dev            # -> npx serve .   (http://localhost:3000)
+# or
+python3 -m http.server 8000   # -> http://localhost:8000
+```
+
+## Deploy to Vercel
+
+This is a static site, so deployment is zero-config.
+
+**Option A — Git (recommended):**
+1. Push this repo to GitHub/GitLab/Bitbucket.
+2. In Vercel → **Add New… → Project** → import the repo.
+3. Framework Preset: **Other**. Build Command: *(empty)*. Output Directory: *(empty / root)*.
+4. **Deploy.** `vercel.json` supplies caching + security headers; `.vercelignore`
+   keeps docs and scratch files out of the deployment.
+
+**Option B — CLI:**
+```bash
+npm i -g vercel
+vercel          # preview deploy
+vercel --prod   # production deploy
+```
+
+No environment variables are required (the prototype has no backend).
+
+## Single-file bundle (optional handoff)
+
+To produce one self-contained HTML file (CSS + JS inlined) for email/preview:
+
+```bash
+npm run bundle   # -> dist/TCPVoiceAI.standalone.html
+```
+
+## Design tokens
+
+| Role            | Token / value            |
+| --------------- | ------------------------ |
+| Accent / CTA    | `--tcp-accent` `#5B4FE9` |
+| Ink (headings)  | `--tcp-ink` `#12142F`    |
+| Type — sans     | Inter                    |
+| Type — mono     | JetBrains Mono           |
+
+Raw tokens live in [`css/tokens.css`](css/tokens.css); component and layout
+styling is in [`css/app.css`](css/app.css). Full details for the integrating
+engineer are in [`HANDOFF.md`](HANDOFF.md).

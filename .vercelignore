@@ -1,0 +1,7 @@
+# Files that should not be published to the deployed site.
+scratch-artifact.html
+HANDOFF.md
+README.md
+scripts/
+node_modules/
+.git/

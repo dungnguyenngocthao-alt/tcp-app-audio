@@ -32,11 +32,24 @@ tcp-app-audio/
 │   └── app.js            # All interactivity — single IIFE, "use strict" (~2.3k lines)
 ├── assets/
 │   └── sonic-mark.svg    # Legacy mark — NOT referenced by current build (safe to delete)
-├── README.md             # Prototype notes
+├── scripts/
+│   └── build-standalone.js  # Optional: inline CSS+JS into one HTML file (npm run bundle)
+├── vercel.json           # Static hosting config — headers + clean URLs
+├── package.json          # Metadata + local dev / bundle scripts (no build step)
+├── .vercelignore         # Keeps docs + scratch files out of the deployment
+├── .gitignore
+├── README.md             # Prototype notes + deploy instructions
 └── HANDOFF.md            # This document
 ```
 
-> `scratch-artifact.html` in the working tree is a **generated single-file bundle** (inlined CSS+JS) for previews — not a source file.
+> `scratch-artifact.html` in the working tree is a **generated single-file bundle** (inlined CSS+JS) for previews — not a source file, and excluded from deploys via `.vercelignore`.
+
+### Deploying
+
+Pure static site — **no build step**. On Vercel: import the repo, Framework
+Preset **Other**, leave Build Command and Output Directory empty, deploy.
+`vercel.json` handles headers/caching. See README **§ Deploy to Vercel** for the
+CLI path and details. No environment variables are needed (no backend).
 
 ---
 
