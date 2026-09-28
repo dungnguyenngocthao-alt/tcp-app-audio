@@ -2085,7 +2085,6 @@
     // (audio player + transcript, which sticks and scrolls internally).
     const pick = sel => resultsPage.querySelector(sel);
     const summary    = pick(".card--summary");
-    const keywords   = pick(".card--keywords");
     const talk       = pick(".card--talk");
     const quality    = pick(".card--audio");
     const audio      = pick(".card--audio-preview");
@@ -2099,7 +2098,7 @@
     const side = document.createElement("div"); side.className = "results-side";
 
     // Talk-duration first, audio player last (audio stretched awkwardly on top).
-    [talk, quality, keywords, audio].forEach(c => { if (c) cardsWrap.appendChild(c); });
+    [talk, quality, audio].forEach(c => { if (c) cardsWrap.appendChild(c); });
     main.appendChild(cardsWrap);
     if (summary) main.appendChild(summary);   // full-width summary + customer info
     side.appendChild(transcript);             // transcript (large block)
