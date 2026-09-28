@@ -2722,3 +2722,8 @@ body {
 @media (min-width: 641px) {
   .dash-filter__input { width: 160px; }
 }
+
+/* Overview / call-list tab list: shadcn TabsList rounding (rounded rectangle) */
+.dash-tabs { border-radius: var(--tcp-radius-md); }
+.dash-tabs .seg__btn,
+.dash-tabs .seg__btn.is-active { border-radius: var(--tcp-radius-sm); }
