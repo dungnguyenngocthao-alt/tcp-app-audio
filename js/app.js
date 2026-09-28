@@ -2027,6 +2027,75 @@
     if (typeof resetAudioPreview === "function") resetAudioPreview(m.dur);
     const ts = $("#transcriptSearch");
     if (ts && ts.value) { ts.value = ""; if (typeof runTranscriptSearch === "function") runTranscriptSearch(); }
+    syncRateEditor(rec, shownRate);
+  }
+
+  /* Consultation-rate editor (manual override + reason note; no AI re-eval). */
+  function syncRateEditor(rec, shownRate) {
+    const editor = $("#rateEditor"), btn = $("#rateEditBtn"),
+          noteEl = $("#outcomeNote"), slider = $("#rateSlider"),
+          val = $("#rateVal"), note = $("#rateNote");
+    if (editor) editor.hidden = true;
+    if (btn) { btn.hidden = !rec; btn.classList.remove("is-editing"); }
+    const cur = rec ? effRate(rec) : shownRate;
+    if (slider) slider.value = cur;
+    if (val) val.textContent = cur + "%";
+    if (note) note.value = rec && rec.note ? rec.note : "";
+    // Show the saved reason under the rate, if any.
+    if (noteEl) {
+      if (rec && rec.reviewed && rec.note) {
+        noteEl.hidden = false;
+        noteEl.textContent = "Lý do: " + rec.note;
+      } else { noteEl.hidden = true; noteEl.textContent = ""; }
+    }
+  }
+  function applyOutcomeTint(rate) {
+    const card = $("#screen-results .card--outcome");
+    if (!card) return;
+    card.classList.remove("outcome-card--good", "outcome-card--mid", "outcome-card--low");
+    card.classList.add(rate > 60 ? "outcome-card--good" : rate >= 40 ? "outcome-card--mid" : "outcome-card--low");
+  }
+  {
+    const editBtn = $("#rateEditBtn"), editor = $("#rateEditor"),
+          slider = $("#rateSlider"), val = $("#rateVal"),
+          note = $("#rateNote"), save = $("#rateSave"), cancel = $("#rateCancel");
+    if (editBtn && editor) {
+      editBtn.addEventListener("click", () => {
+        const opening = editor.hidden;
+        editor.hidden = !opening;
+        editBtn.classList.toggle("is-editing", opening);
+        if (opening && slider) slider.focus();
+      });
+    }
+    if (slider && val) slider.addEventListener("input", () => { val.textContent = slider.value + "%"; });
+    if (cancel) cancel.addEventListener("click", () => {
+      if (editor) editor.hidden = true;
+      if (editBtn) editBtn.classList.remove("is-editing");
+    });
+    if (save) save.addEventListener("click", () => {
+      const rec = (typeof UPLOAD_LOG !== "undefined") ? UPLOAD_LOG.find(u => u.id === resultUploadId) : null;
+      const newRate = slider ? parseInt(slider.value, 10) : null;
+      if (rec && newRate != null) {
+        rec.userRate = newRate;
+        rec.note = note ? note.value.trim() : "";
+        rec.reviewed = true;
+        if (typeof renderDashCalls === "function") renderDashCalls();
+        if (typeof renderUploads === "function") renderUploads();
+      }
+      // Reflect on the outcome card.
+      const pct = $("#screen-results .outcome__pct");
+      if (pct && newRate != null) pct.textContent = newRate + "%";
+      if (newRate != null) applyOutcomeTint(newRate);
+      const noteEl = $("#outcomeNote");
+      if (noteEl) {
+        const txt = note ? note.value.trim() : "";
+        if (txt) { noteEl.hidden = false; noteEl.textContent = "Lý do: " + txt; }
+        else { noteEl.hidden = true; noteEl.textContent = ""; }
+      }
+      if (editor) editor.hidden = true;
+      if (editBtn) editBtn.classList.remove("is-editing");
+      if (typeof showToast === "function") showToast("Đã cập nhật tỷ lệ tư vấn.");
+    });
   }
 
   /* Inline editing — Transcript & Tóm tắt each have an edit toggle that makes
@@ -2202,15 +2271,18 @@
     if (!outcome || !transcript) return;
     outcome.classList.add("results-outcome-card");
 
+    // LEFT column (analysis): outcome full-width, then a 2-col grid of the
+    // small analysis cards, then the summary full-width. RIGHT column (rail):
+    // the transcript alone, in a large sticky block.
     const main = document.createElement("div"); main.className = "results-main";
     const cardsWrap = document.createElement("div"); cardsWrap.className = "results-cards";
     const side = document.createElement("div"); side.className = "results-side";
 
     main.appendChild(outcome);
-    [summary, keywords, talk, quality].forEach(c => { if (c) cardsWrap.appendChild(c); });
+    [audio, quality, talk, keywords].forEach(c => { if (c) cardsWrap.appendChild(c); });
     main.appendChild(cardsWrap);
-    if (audio) side.appendChild(audio);       // audio player
-    side.appendChild(transcript);             // transcript
+    if (summary) main.appendChild(summary);   // full-width summary + customer info
+    side.appendChild(transcript);             // transcript (large block)
 
     while (resultsPage.firstChild) resultsPage.removeChild(resultsPage.firstChild);
     resultsPage.appendChild(main);

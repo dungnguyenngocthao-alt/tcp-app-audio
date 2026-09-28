@@ -1902,30 +1902,37 @@ mark.mark--neg { background: var(--tcp-error-bg); color: var(--tcp-error-900); }
 .results-cards { display: flex; flex-direction: column; gap: 16px; }
 .results-cards > .card { margin: 0; }
 
-/* Outcome + inline evaluation, side by side inside one card */
-.results-outcome-card { display: flex; flex-direction: column; gap: 16px; }
+/* Outcome result card + inline rate editor (stacked). */
+.results-outcome-card { display: flex; flex-direction: column; gap: 0; }
 .results-outcome-card .outcome { text-align: center; }
-.results-outcome-card .outcome-review--edit { margin-top: 0; padding-top: 16px; border-top: 1px dashed var(--tcp-border); }
+.outcome__edit { margin: var(--tcp-space-4) auto 0; white-space: nowrap; display: inline-flex; align-items: center; gap: 6px; }
+.outcome__edit svg { width: 15px; height: 15px; }
+.outcome__note {
+  margin-top: var(--tcp-space-2); font-size: 13px; color: var(--tcp-fg-secondary);
+  max-width: 44ch; margin-inline: auto;
+}
+.rate-editor {
+  margin-top: var(--tcp-space-4); padding-top: var(--tcp-space-4);
+  border-top: 1px dashed var(--tcp-border);
+  display: flex; flex-direction: column; gap: var(--tcp-space-2);
+}
+.rate-editor__row { display: flex; align-items: center; justify-content: space-between; }
+.rate-editor__label { font-size: 13px; font-weight: 500; color: var(--tcp-fg-secondary); }
+.rate-editor__val { font-size: 16px; font-weight: 600; color: var(--tcp-accent); }
+.rate-editor__note { resize: vertical; }
+.rate-editor__actions { display: flex; justify-content: flex-end; gap: var(--tcp-space-2); margin-top: var(--tcp-space-1); }
 
 @media (min-width: 900px) {
   #screen-results .page.results-grid { flex-direction: row; align-items: flex-start; }
+  /* LEFT analysis column + RIGHT transcript rail (larger). */
   .results-main { flex: 1 1 auto; }
-  .results-side { flex: 0 0 clamp(300px, 33%, 400px); position: sticky; top: var(--tcp-space-4); }
+  .results-side { flex: 0 0 clamp(360px, 42%, 560px); position: sticky; top: var(--tcp-space-4); }
   /* Transcript fills the rail and scrolls inside it. */
-  .results-side .card--transcript { display: flex; flex-direction: column; max-height: calc(100dvh - 300px); }
+  .results-side .card--transcript { display: flex; flex-direction: column; max-height: calc(100dvh - 140px); }
   .results-side .transcript-scroll { flex: 1 1 auto; min-height: 0; overflow-y: auto; }
-  /* Outcome (left) and the eval editor (right). */
-  .results-outcome-card { flex-direction: row; align-items: stretch; gap: 0; }
-  .results-outcome-card .outcome {
-    flex: 0 0 40%; display: flex; flex-direction: column; justify-content: center;
-    padding-right: var(--tcp-space-6); border-right: 1px solid var(--tcp-border-subtle);
-  }
-  .results-outcome-card .outcome-review--edit {
-    flex: 1 1 auto; margin-top: 0; padding: 0 0 0 var(--tcp-space-6); border-top: 0;
-  }
-  /* Analysis cards: 2-column masonry. */
-  .results-cards { display: block; column-count: 2; column-gap: 16px; }
-  .results-cards > .card { break-inside: avoid; width: 100%; margin: 0 0 16px; }
+  /* Analysis cards: even 2-column grid (equal-height rows). */
+  .results-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; align-items: stretch; }
+  .results-cards > .card { width: 100%; margin: 0; }
 }
 
 /* ===========================================================================
@@ -2450,12 +2457,12 @@ body {
 /* Search box nested inside the call-list filter (shares its white card) */
 .dash-calls-search {
   display: flex; align-items: center; gap: 8px;
-  padding: 0 12px; min-width: 200px; flex: 1 1 240px;
-  border: 1px solid var(--tcp-border); border-radius: var(--tcp-radius-pill);
-  background: var(--tcp-bg-muted);
+  padding: 0 10px; min-width: 200px; flex: 1 1 240px;
+  border: 1px solid var(--tcp-border); border-radius: var(--tcp-radius-sm);
+  background: var(--tcp-white);
 }
 .dash-calls-search svg { width: 18px; height: 18px; flex: 0 0 auto; color: var(--tcp-fg-tertiary); }
-.dash-calls-search__input { border: 0; box-shadow: none; padding: 9px 0; background: none; flex: 1 1 auto; }
+.dash-calls-search__input { border: 0; box-shadow: none; padding: 7px 0; background: none; flex: 1 1 auto; }
 .dash-calls-search__input:focus { outline: 0; box-shadow: none; }
 .dash-calls-filter { margin-bottom: var(--tcp-space-4); }
 .dash-calls-filter .dash-filter__field { flex: 0 0 auto; }

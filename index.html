@@ -136,6 +136,24 @@
               <div class="outcome__title">Tư vấn hiệu quả</div>
               <div class="outcome__pct">78%</div>
               <div class="outcome__caption">Tỷ lệ tư vấn</div>
+              <div class="outcome__note" id="outcomeNote" hidden></div>
+              <button class="btn btn--outline btn--sm outcome__edit" id="rateEditBtn" type="button">
+                <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M227.31,73.37,182.63,28.68a16,16,0,0,0-22.63,0L36.69,152A15.86,15.86,0,0,0,32,163.31V208a16,16,0,0,0,16,16H92.69A15.86,15.86,0,0,0,104,219.31L227.31,96a16,16,0,0,0,0-22.63ZM51.31,160,144,67.31,164.69,88,72,180.69ZM48,208V179.31l28.69,28.69Zm120-42.35L147.31,145l24-24L192,141.66Z"/></svg>
+                <span>Chỉnh sửa tỷ lệ</span>
+              </button>
+            </div>
+            <div class="rate-editor" id="rateEditor" hidden>
+              <div class="rate-editor__row">
+                <label class="rate-editor__label" for="rateSlider">Tỷ lệ tư vấn</label>
+                <span class="rate-editor__val" id="rateVal">78%</span>
+              </div>
+              <input class="slider" id="rateSlider" type="range" min="0" max="100" value="78" aria-label="Tỷ lệ tư vấn">
+              <label class="rate-editor__label" for="rateNote">Lý do chỉnh sửa</label>
+              <textarea class="input rate-editor__note" id="rateNote" rows="2" placeholder="Nhập lý do điều chỉnh tỷ lệ (tuỳ chọn)…"></textarea>
+              <div class="rate-editor__actions">
+                <button class="btn btn--outline btn--sm" id="rateCancel" type="button">Hủy</button>
+                <button class="btn btn--accent btn--sm" id="rateSave" type="button">Lưu thay đổi</button>
+              </div>
             </div>
           </div>
 
@@ -248,10 +266,10 @@
                 <span class="cust-info__src">Khai thác từ Sales</span>
               </div>
               <dl class="cust-info__list">
-                <div class="cust-info__row"><dt>Họ tên</dt><dd>Nguyễn Văn Tâm</dd></div>
-                <div class="cust-info__row"><dt>Ngày sinh</dt><dd>12/08/1987</dd></div>
-                <div class="cust-info__row"><dt>Số điện thoại</dt><dd>0912 345 678</dd></div>
-                <div class="cust-info__row"><dt>Nơi ở</dt><dd>Quận 3, TP. Hồ Chí Minh</dd></div>
+                <div class="cust-info__row"><dt>Họ tên</dt><dd data-editable>Nguyễn Văn Tâm</dd></div>
+                <div class="cust-info__row"><dt>Ngày sinh</dt><dd data-editable>12/08/1987</dd></div>
+                <div class="cust-info__row"><dt>Số điện thoại</dt><dd data-editable>0912 345 678</dd></div>
+                <div class="cust-info__row"><dt>Nơi ở</dt><dd data-editable>Quận 3, TP. Hồ Chí Minh</dd></div>
               </dl>
             </div>
           </div>
