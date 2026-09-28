@@ -904,28 +904,32 @@
      the user picks a specific range here. It does NOT touch the chart block
      (that follows the Tuần/Tháng/Năm toggle) or the heatmap (current week). */
   (function initDateFilter() {
-    const from = $("#dateFrom"), to = $("#dateTo"), reset = $("#dateReset");
+    const from = $("#dateFrom"), to = $("#dateTo"), reset = $("#dateReset"), bu = $("#dashBu");
     if (!from || !to) return;
     // Any date can be picked freely — no min/max bounds.
     // Default: "Từ" empty (open start), "Đến" = today.
     const todayISO = isoDate(new Date());
-    const setDefaults = () => { from.value = ""; to.value = todayISO; };
+    const setDefaults = () => { from.value = ""; to.value = todayISO; if (bu) bu.value = "all"; };
     setDefaults();
 
     function apply() {
-      // No dates set → all records (oldest to now).
-      if (!from.value && !to.value) { renderOverview(); return; }
-      let a = from.value || "1970-01-01", b = to.value || todayISO;
-      if (a > b) { const t = a; a = b; b = t; }
-      const lo = new Date(a).getTime(), hi = new Date(b + "T23:59:59").getTime();
-      const subset = UPLOAD_LOG.filter(u => {
-        const t = parseHistDate(u.date).getTime();
-        return t >= lo && t <= hi;
-      });
+      const buVal = bu ? bu.value : "all";
+      let subset = UPLOAD_LOG;
+      if (from.value || to.value) {
+        let a = from.value || "1970-01-01", b = to.value || todayISO;
+        if (a > b) { const t = a; a = b; b = t; }
+        const lo = new Date(a).getTime(), hi = new Date(b + "T23:59:59").getTime();
+        subset = subset.filter(u => {
+          const t = parseHistDate(u.date).getTime();
+          return t >= lo && t <= hi;
+        });
+      }
+      if (buVal !== "all") subset = subset.filter(u => buOf(u) === buVal);
       renderOverview(subset);
     }
     from.addEventListener("change", apply);
     to.addEventListener("change", apply);
+    if (bu) bu.addEventListener("change", apply);
     if (reset) reset.addEventListener("click", () => { setDefaults(); renderOverview(); });
   })();
 
@@ -1096,33 +1100,40 @@
     for (let k = 0; k < rem; k++) out[frac[k % frac.length].i]++;
     return out;
   }
-  // BU per weekday (Mon..Sun) — colours the heatmap cells by business unit.
-  const HEAT_DAY_BU = ["pso", "tcp", "tcp", "pso", "pso", "unknown", "unknown"];
+  // Inbound / Outbound peak differently across the day, so cells vary by
+  // dominant direction. Weights sum ~1 each.
+  const HEAT_SLOT_W_IN  = [0.10, 0.30, 0.14, 0.28, 0.18];   // inbound peaks mid-morning / early-afternoon
+  const HEAT_SLOT_W_OUT = [0.24, 0.17, 0.13, 0.19, 0.27];   // outbound peaks early & late
   const HEAT_LEVEL_PCT = [0, 28, 46, 70, 100];   // tint strength by intensity level
-  // Heatmap always shows the CURRENT WEEK (independent of the range toggle),
-  // with each cell tinted by its day's BU and darkened by call volume.
+  const DIR_COLOR = { in: "#F97316", out: "var(--call-out)" };
+  const DIR_LABEL = { in: "Inbound", out: "Outbound" };
+  // Heatmap always shows the CURRENT WEEK (independent of the range toggle).
+  // Each cell is coloured by its dominant direction (Inbound cam / Outbound
+  // xanh lá) and darkened by call volume.
   function renderHeatmap() {
     const wrap = $("#heatmap");
     if (!wrap) return;
     const week = UPLOADS.week;
-    const colTotals = week.bars.map(b => b[1] + b[2]);   // per-weekday totals
-    const grid = colTotals.map(ct => splitTotal(ct, HEAT_SLOT_W));  // grid[day][slot]
-    const max = Math.max(1, ...grid.flat());
+    const inGrid  = week.bars.map(b => splitTotal(b[1], HEAT_SLOT_W_IN));   // [day][slot]
+    const outGrid = week.bars.map(b => splitTotal(b[2], HEAT_SLOT_W_OUT));
+    let max = 1;
+    for (let d = 0; d < 7; d++) for (let s = 0; s < HEAT_SLOTS.length; s++)
+      max = Math.max(max, inGrid[d][s] + outGrid[d][s]);
     const dayLabels = weekDates(new Date()).map(fmtDMY);   // dd/mm/yyyy, Mon..Sun
     let html = '<div class="heatmap__cell heatmap__corner"></div>';
     HEAT_SLOTS.forEach(s => { html += `<div class="heatmap__head">${s}</div>`; });
     HEAT_DAYS.forEach((_day, di) => {
       const day = dayLabels[di];
-      const bu = HEAT_DAY_BU[di] || "unknown";
       html += `<div class="heatmap__day">${day}</div>`;
       HEAT_SLOTS.forEach((s, si) => {
-        const c = grid[di][si];
+        const ci = inGrid[di][si], co = outGrid[di][si], c = ci + co;
+        const dir = ci >= co ? "in" : "out";
         const level = c === 0 ? 0 : Math.min(4, Math.ceil(c / max * 4));
         const bg = level === 0
           ? "var(--tcp-bg-muted)"
-          : `color-mix(in srgb, ${BU_META[bu].color} ${HEAT_LEVEL_PCT[level]}%, transparent)`;
+          : `color-mix(in srgb, ${DIR_COLOR[dir]} ${HEAT_LEVEL_PCT[level]}%, transparent)`;
         const fg = level >= 3 ? "#fff" : (level === 0 ? "transparent" : "var(--tcp-ink)");
-        html += `<div class="heatmap__cell" style="background:${bg};color:${fg}" title="${day} · ${BU_META[bu].label} · ${s}: ${c} cuộc gọi">${c || ""}</div>`;
+        html += `<div class="heatmap__cell" style="background:${bg};color:${fg}" title="${day} · ${s}: ${DIR_LABEL[dir]} nhiều hơn (Inbound ${ci} / Outbound ${co})">${c || ""}</div>`;
       });
     });
     wrap.innerHTML = html;
@@ -2478,12 +2489,14 @@
   const exportFrom    = $("#exportFrom");
   const exportTo      = $("#exportTo");
   const exportTranscriptChk = $("#exportTranscript");
+  const exportBu      = $("#exportBu");
 
   function openExportModal() {
     if (!exportModal) return;
     if (exportFrom) exportFrom.value = "";
     if (exportTo) exportTo.value = isoDate(new Date());
     if (exportTranscriptChk) exportTranscriptChk.checked = false;
+    if (exportBu) exportBu.value = "all";
     exportModal.hidden = false;
   }
   function closeExportModal() { if (exportModal) exportModal.hidden = true; }
@@ -2503,12 +2516,14 @@
     });
     const rangeLabel = (exportFrom && exportFrom.value ? exportFrom.value : "…") +
                        " → " + (exportTo && exportTo.value ? exportTo.value : "…");
+    const buVal = exportBu ? exportBu.value : "all";
+    const buLabel = buVal === "all" ? "Tất cả BU" : (BU_META[buVal] ? BU_META[buVal].label : buVal);
     const callRows = [["Tên cuộc gọi", "Ngày", "Success rate (%)"]]
       .concat(src.map(r => [r.file, r.date, r.conf]));
     const kwRows = [["Từ khóa", "Số lần lặp lại"]].concat(KEYWORD_FREQ.map(k => [k[0], k[1]]));
     const sentiRows = [["Sentiment", "Tổng số", "Tỉ lệ"]].concat(SENTIMENT_TOTALS.map(s => [s[0], s[1], s[2]]));
     const sheets = [
-      { name: "Tổng quan", rows: [["Khoảng thời gian", rangeLabel], ["Số cuộc gọi", src.length]] },
+      { name: "Tổng quan", rows: [["Khoảng thời gian", rangeLabel], ["Business Unit", buLabel], ["Số cuộc gọi", src.length]] },
       { name: "Success rate", rows: callRows },
       { name: "Từ khóa lặp lại", rows: kwRows },
       { name: "Sentiment", rows: sentiRows },

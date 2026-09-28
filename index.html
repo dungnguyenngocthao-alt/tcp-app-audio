@@ -362,6 +362,15 @@
               <label for="dateTo">Đến</label>
               <input type="date" id="dateTo" class="dash-filter__input">
             </div>
+            <div class="dash-filter__field">
+              <label for="dashBu">BU</label>
+              <select id="dashBu" class="select dash-filter__input dash-bu-select">
+                <option value="all">Tất cả</option>
+                <option value="pso">PSO</option>
+                <option value="tcp">TCP</option>
+                <option value="unknown">Chưa rõ</option>
+              </select>
+            </div>
             <button class="btn btn--outline btn--sm" id="dateReset" type="button">Đặt lại</button>
           </div>
 
@@ -456,9 +465,8 @@
             </div>
             <div class="heatmap" id="heatmap"></div>
             <div class="heatmap-legend heatmap-legend--bu">
-              <span class="cl-item"><span class="cl-dot cl-dot--pso"></span>PSO</span>
-              <span class="cl-item"><span class="cl-dot cl-dot--tcp"></span>TCP</span>
-              <span class="cl-item"><span class="cl-dot cl-dot--unknown"></span>Chưa rõ</span>
+              <span class="cl-item"><span class="cl-dot cl-dot--in"></span>Inbound</span>
+              <span class="cl-item"><span class="cl-dot cl-dot--out"></span>Outbound</span>
               <span class="heatmap-legend__note">Đậm hơn = nhiều cuộc gọi</span>
             </div>
           </div>
@@ -1024,6 +1032,15 @@
               <input type="date" id="exportTo" class="dash-filter__input">
             </div>
           </div>
+        </div>
+        <div class="field">
+          <label class="field__label" for="exportBu">Business Unit</label>
+          <select id="exportBu" class="select">
+            <option value="all">Tất cả BU</option>
+            <option value="pso">PSO</option>
+            <option value="tcp">TCP</option>
+            <option value="unknown">Chưa rõ</option>
+          </select>
         </div>
         <label class="check-row" for="exportTranscript">
           <input type="checkbox" id="exportTranscript">
