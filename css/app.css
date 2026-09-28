@@ -2619,15 +2619,17 @@ body {
 .card { border: 1px solid var(--tcp-border-subtle); border-radius: var(--tcp-radius-lg); box-shadow: none; }
 .dash-filter { box-shadow: none; }
 
-/* Top bar becomes a light shadcn header (used on mobile; hidden on desktop) */
+/* Top bar becomes a light shadcn header (used on mobile; hidden on desktop).
+   Overrides the earlier !important navy-gradient theme rule. */
 .appbar {
-  background: var(--tcp-bg);
-  border-bottom: 1px solid var(--tcp-border-subtle);
+  background: var(--tcp-bg) !important;
+  border-bottom: 1px solid var(--tcp-border-subtle) !important;
+  box-shadow: none !important;
   padding: 10px var(--tcp-space-4);
 }
 .appbar .brand__name { color: var(--tcp-logo-indigo); }
 .appbar .burger { color: var(--tcp-fg-primary); }
-.appbar .burger:hover { background: var(--tcp-bg-muted); }
+.appbar .burger:hover { background: var(--tcp-bg-muted) !important; }
 .appbar .burger:focus-visible { box-shadow: var(--tcp-ring); }
 
 /* Sidebar header (brand) inside the drawer/sidebar */

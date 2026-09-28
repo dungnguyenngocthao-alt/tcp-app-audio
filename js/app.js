@@ -1043,8 +1043,8 @@
     if (!chartTip) return;
     chartTip.innerHTML =
       `<div class="chart-tip__x">${col.dataset.x}</div>` +
-      `<div class="chart-tip__row"><span class="cl-dot cl-dot--in"></span>Gọi đến: ${col.dataset.in}</div>` +
-      `<div class="chart-tip__row"><span class="cl-dot cl-dot--out"></span>Gọi đi: ${col.dataset.out}</div>`;
+      `<div class="chart-tip__row"><span class="cl-dot cl-dot--in"></span>Inbound: ${col.dataset.in}</div>` +
+      `<div class="chart-tip__row"><span class="cl-dot cl-dot--out"></span>Outbound: ${col.dataset.out}</div>`;
     chartTip.hidden = false;
     const p = chartTip.parentElement.getBoundingClientRect();
     const c = col.getBoundingClientRect();
@@ -1805,7 +1805,7 @@
   const NAV_THRESHOLD   = 2;   // need >2 files before arrows can appear
   const OUTCOME_LABEL = { success: "Tư vấn xuất sắc", warning: "Tư vấn hiệu quả", neutral: "Cần cải thiện" };
   // AI infers call direction from the agent's opening lines
-  const DIRECTION_LABEL = { in: "Gọi đến", out: "Gọi đi" };
+  const DIRECTION_LABEL = { in: "Inbound", out: "Outbound" };
 
   /* Show the scroll arrows whenever the strip actually overflows (and there
      are more than 2 files) — so on a narrow phone even 3 files get arrows,
