@@ -148,54 +148,6 @@
             </div>
           </div>
 
-          <!-- Audio quality -->
-          <div class="card card--audio">
-            <div class="result-card__label">
-              <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 10v3"/><path d="M6 6v11"/><path d="M10 3v18"/><path d="M14 8v7"/><path d="M18 5v13"/><path d="M22 10v3"/></svg>
-              Chất lượng âm thanh
-            </div>
-            <div class="quality-head">
-              <span class="quality-score">8.6<small>/10</small></span>
-              <span class="quality-tag">Tốt</span>
-            </div>
-            <div class="bar-row">
-              <span class="bar-row__label">Độ rõ giọng</span>
-              <span class="bar-row__track"><span class="bar-row__fill" style="width:92%;background:var(--tcp-success-solid)"></span></span>
-              <span class="bar-row__val">92%</span>
-            </div>
-            <div class="bar-row">
-              <span class="bar-row__label">Nhiễu nền</span>
-              <span class="bar-row__track"><span class="bar-row__fill" style="width:14%;background:var(--tcp-ink)"></span></span>
-              <span class="bar-row__val">14%</span>
-            </div>
-            <div class="bar-row">
-              <span class="bar-row__label">Cân bằng âm</span>
-              <span class="bar-row__track"><span class="bar-row__fill" style="width:88%;background:var(--tcp-ink)"></span></span>
-              <span class="bar-row__val">88%</span>
-            </div>
-          </div>
-
-          <!-- Talk duration -->
-          <div class="card card--talk">
-            <div class="result-card__label">
-              <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-              Thời lượng đàm thoại
-            </div>
-            <div class="talk">
-              <div class="donut" style="--agent:45"></div>
-              <div class="talk-legend">
-                <div class="legend-row">
-                  <span class="legend-dot" style="background:var(--tcp-ink)"></span>
-                  <span>Tư vấn viên</span><span>45%</span>
-                </div>
-                <div class="legend-row">
-                  <span class="legend-dot" style="background:var(--tcp-accent)"></span>
-                  <span>Khách hàng</span><span>55%</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
           <!-- Summary -->
           <div class="card card--summary">
             <div class="card-head">
@@ -417,12 +369,18 @@
           <div class="dash-toprow">
             <div class="card dash-chart">
               <div class="dash-chart__head">
-                <div>
-                  <div class="dash-chart__total" id="chartTotal">—</div>
-                  <div class="dash-chart__cap">Cuộc gọi đã upload</div>
-                  <div class="dash-delta" id="chartDelta" hidden>
-                    <span class="dash-delta__val"></span>
-                    <span class="dash-delta__cap">so với kỳ trước</span>
+                <div class="dash-chart__metrics">
+                  <div>
+                    <div class="dash-chart__total" id="chartTotal">—</div>
+                    <div class="dash-chart__cap">Cuộc gọi đã upload</div>
+                    <div class="dash-delta" id="chartDelta" hidden>
+                      <span class="dash-delta__val"></span>
+                      <span class="dash-delta__cap">so với kỳ trước</span>
+                    </div>
+                  </div>
+                  <div class="dash-chart__metric">
+                    <div class="dash-chart__total" id="dashAvgDur">—</div>
+                    <div class="dash-chart__cap">TB thời lượng gọi</div>
                   </div>
                 </div>
                 <div class="seg" id="chartRange" role="tablist" aria-label="Khoảng thời gian">
@@ -454,26 +412,6 @@
               </div>
             </div>
 
-          </div>
-
-          <!-- Key stats -->
-          <div class="dash-stats">
-            <div class="card stat-card">
-              <div class="result-card__label">
-                <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                TB thời lượng gọi
-              </div>
-              <div class="stat-card__value" id="dashAvgDur">—</div>
-              <div class="stat-card__sub">phút mỗi cuộc gọi</div>
-            </div>
-            <div class="card stat-card">
-              <div class="result-card__label">
-                <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 10v3"/><path d="M6 6v11"/><path d="M10 3v18"/><path d="M14 8v7"/><path d="M18 5v13"/><path d="M22 10v3"/></svg>
-                TB chất lượng âm thanh
-              </div>
-              <div class="stat-card__value" id="dashAvgQuality">8.4</div>
-              <div class="stat-card__sub">trên thang điểm 10</div>
-            </div>
           </div>
 
           <!-- Top 5 callers + Top 5 callees, side by side -->

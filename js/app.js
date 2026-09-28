@@ -902,27 +902,21 @@
   function renderDashboard(subset) {
     const rows = subset || HISTORY;
 
-    const durEl = $("#dashAvgDur"), qualEl = $("#dashAvgQuality");
+    const durEl = $("#dashAvgDur");
 
     if (!rows.length) {
       if (durEl) durEl.textContent = "—";
-      if (qualEl) qualEl.textContent = "—";
       return;
     }
 
-    const rates = rows.map(r => r.conf);
-    const avgRate = Math.round(rates.reduce((a, b) => a + b, 0) / rates.length);
     const secs = rows.map(r => {
       const [m, s] = r.dur.split(":").map(Number);
       return m * 60 + s;
     });
     const avgSec = Math.round(secs.reduce((a, b) => a + b, 0) / secs.length);
     const mm = Math.floor(avgSec / 60), ss = avgSec % 60;
-    // Audio quality tracks avg confidence, deterministic + clamped to a sane band.
-    const quality = Math.min(9.6, Math.max(7.2, 7.4 + (avgRate - 60) / 100 * 3));
 
     if (durEl) durEl.textContent = mm + ":" + String(ss).padStart(2, "0");
-    if (qualEl) qualEl.textContent = quality.toFixed(1);
   }
 
   renderDashboard();
