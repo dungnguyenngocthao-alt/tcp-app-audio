@@ -2763,3 +2763,21 @@ body {
   border: 1px solid var(--tcp-border); border-radius: var(--tcp-radius-md);
   color: var(--tcp-fg-primary);
 }
+
+/* ===========================================================================
+   App background: keep the gradient, drop the grid overlay
+   =========================================================================== */
+.phone::before { display: none !important; }
+
+/* ===========================================================================
+   Tablet with sidebar (1024–1279px): the 250px sidebar leaves the content too
+   narrow for the Results two-column split, so stack it (transcript full-width
+   below) to stop the transcript overlapping the analysis cards.
+   =========================================================================== */
+@media (min-width: 1024px) and (max-width: 1279px) {
+  .phone.is-shell #screen-results .page.results-grid { flex-direction: column; }
+  .phone.is-shell #screen-results .results-side {
+    flex: 1 1 auto; position: static; top: auto;
+  }
+  .phone.is-shell #screen-results .results-side .card--transcript { max-height: none; }
+}
