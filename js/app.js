@@ -1079,7 +1079,8 @@
     const inPct = total ? Math.round(inCount / total * 100) : 0;
     pie.style.background =
       `radial-gradient(circle at 32% 28%, rgba(255,255,255,.28), rgba(255,255,255,0) 62%), ` +
-      `conic-gradient(var(--call-in) 0 ${inPct}%, var(--call-out) ${inPct}% 100%)`;
+      `conic-gradient(var(--call-in-lt) 0%, var(--call-in) ${inPct}%, ` +
+      `var(--call-out-lt) ${inPct}%, var(--call-out) 100%)`;
     const set = (id, v) => { const el = $("#" + id); if (el) el.textContent = v; };
     set("pieTotal", total.toLocaleString("vi-VN"));
     set("pieIn", inPct + "%");
@@ -1723,9 +1724,12 @@
     const total = c.pso + c.tcp + c.unknown;
     const pct = n => total ? (n / total * 100) : 0;
     const pPso = pct(c.pso), pTcp = pct(c.tcp);
+    const pT = pPso + pTcp;
     pie.style.background =
       `radial-gradient(circle at 32% 28%, rgba(255,255,255,.28), rgba(255,255,255,0) 62%), ` +
-      `conic-gradient(var(--bu-pso) 0 ${pPso}%, var(--bu-tcp) ${pPso}% ${pPso + pTcp}%, var(--bu-unknown) ${pPso + pTcp}% 100%)`;
+      `conic-gradient(var(--bu-pso-lt) 0%, var(--bu-pso) ${pPso}%, ` +
+      `var(--bu-tcp-lt) ${pPso}%, var(--bu-tcp) ${pT}%, ` +
+      `var(--bu-unknown-lt) ${pT}%, var(--bu-unknown) 100%)`;
     const set = (id, v) => { const el = $("#" + id); if (el) el.textContent = v; };
     set("buTotal", total.toLocaleString("vi-VN"));
     set("buPso", Math.round(pPso) + "%");
