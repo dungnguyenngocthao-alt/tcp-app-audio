@@ -495,20 +495,6 @@
             </div>
           </div>
 
-          <!-- Call-volume heatmap (weekday × time of day) — matches the range above -->
-          <div class="card dash-heatmap">
-            <div class="result-card__label">
-              <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M3 9h18"/><path d="M3 15h18"/><path d="M9 3v18"/><path d="M15 3v18"/></svg>
-              Mật độ cuộc gọi theo khung giờ
-            </div>
-            <div class="heatmap" id="heatmap"></div>
-            <div class="heatmap-legend">
-              <span>Ít</span>
-              <span class="heatmap-legend__scale"><i></i><i></i><i></i><i></i><i></i></span>
-              <span>Nhiều</span>
-            </div>
-          </div>
-
           <!-- Top 5 callers + Top 5 callees, side by side -->
           <div class="dash-topgrid">
             <div class="card dash-topcallers">
@@ -525,6 +511,20 @@
                 Top 5 Callee
               </div>
               <div class="topcallers" id="dashTopCallees"></div>
+            </div>
+          </div>
+
+          <!-- Call-volume heatmap (weekday × time of day) — matches the range above -->
+          <div class="card dash-heatmap">
+            <div class="result-card__label">
+              <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M3 9h18"/><path d="M3 15h18"/><path d="M9 3v18"/><path d="M15 3v18"/></svg>
+              Mật độ cuộc gọi theo khung giờ
+            </div>
+            <div class="heatmap" id="heatmap"></div>
+            <div class="heatmap-legend">
+              <span>Ít</span>
+              <span class="heatmap-legend__scale"><i></i><i></i><i></i><i></i><i></i></span>
+              <span>Nhiều</span>
             </div>
           </div>
 
