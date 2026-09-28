@@ -1075,15 +1075,15 @@
     chartTip.style.top = (c.top - p.top - 8) + "px";
   }
   if (chartPlot && chartTip) {
-    chartPlot.addEventListener("mouseover", e => {
+    // Pointer events unify mouse / pen / touch so the tooltip follows the
+    // pointer on hover (no click needed).
+    const showFor = e => {
       const col = e.target.closest(".chart-col");
       if (col) positionTip(col);
-    });
-    chartPlot.addEventListener("mousemove", e => {
-      const col = e.target.closest(".chart-col");
-      if (col) positionTip(col);
-    });
-    chartPlot.addEventListener("mouseleave", () => { chartTip.hidden = true; });
+    };
+    chartPlot.addEventListener("pointerover", showFor);
+    chartPlot.addEventListener("pointermove", showFor);
+    chartPlot.addEventListener("pointerleave", () => { chartTip.hidden = true; });
   }
 
 
