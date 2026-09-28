@@ -2689,3 +2689,17 @@ body {
 
 /* Sidebar / nav items: shadcn text-sm medium */
 .drawer__item { font-weight: 500; }
+
+/* ===========================================================================
+   Mobile: keep the date/search filters tidy (no ragged wrapping)
+   =========================================================================== */
+@media (max-width: 640px) {
+  .dash-filter { flex-direction: column; align-items: stretch; gap: var(--tcp-space-3); }
+  .dash-filter__label { margin: 0 0 2px; }
+  .dash-filter__field { width: 100%; }
+  .dash-filter__field .dash-filter__input,
+  .dash-filter__field .select { flex: 1 1 auto; min-width: 0; }
+  .dash-filter__sep { display: none; }
+  .dash-filter > .btn { width: 100%; }
+  .dash-calls-search { width: 100%; flex-basis: auto; }
+}
