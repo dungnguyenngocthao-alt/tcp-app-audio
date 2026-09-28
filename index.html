@@ -127,32 +127,6 @@
         </div>
 
         <div class="page" style="padding-top:var(--tcp-space-4);">
-          <!-- Consultation rate (editable) -->
-          <div class="card card--outcome">
-            <div class="outcome">
-              <div class="outcome__pct">78%</div>
-              <div class="outcome__caption">Tỷ lệ tư vấn</div>
-              <div class="outcome__note" id="outcomeNote" hidden></div>
-              <button class="btn btn--outline btn--sm outcome__edit" id="rateEditBtn" type="button">
-                <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M227.31,73.37,182.63,28.68a16,16,0,0,0-22.63,0L36.69,152A15.86,15.86,0,0,0,32,163.31V208a16,16,0,0,0,16,16H92.69A15.86,15.86,0,0,0,104,219.31L227.31,96a16,16,0,0,0,0-22.63ZM51.31,160,144,67.31,164.69,88,72,180.69ZM48,208V179.31l28.69,28.69Zm120-42.35L147.31,145l24-24L192,141.66Z"/></svg>
-                <span>Chỉnh sửa tỷ lệ</span>
-              </button>
-            </div>
-            <div class="rate-editor" id="rateEditor" hidden>
-              <div class="rate-editor__row">
-                <label class="rate-editor__label" for="rateSlider">Tỷ lệ tư vấn</label>
-                <span class="rate-editor__val" id="rateVal">78%</span>
-              </div>
-              <input class="slider" id="rateSlider" type="range" min="0" max="100" value="78" aria-label="Tỷ lệ tư vấn">
-              <label class="rate-editor__label" for="rateNote">Lý do chỉnh sửa</label>
-              <textarea class="input rate-editor__note" id="rateNote" rows="2" placeholder="Nhập lý do điều chỉnh tỷ lệ (tuỳ chọn)…"></textarea>
-              <div class="rate-editor__actions">
-                <button class="btn btn--outline btn--sm" id="rateCancel" type="button">Hủy</button>
-                <button class="btn btn--accent btn--sm" id="rateSave" type="button">Lưu thay đổi</button>
-              </div>
-            </div>
-          </div>
-
           <!-- Audio preview -->
           <div class="card card--audio-preview">
             <div class="result-card__label">
@@ -533,6 +507,20 @@
               </div>
               <div class="stat-card__value" id="dashAvgQuality">8.4</div>
               <div class="stat-card__sub">trên thang điểm 10</div>
+            </div>
+          </div>
+
+          <!-- Call-volume heatmap (weekday × time of day) — matches the range above -->
+          <div class="card dash-heatmap">
+            <div class="result-card__label">
+              <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M208,32H48A16,16,0,0,0,32,48V208a16,16,0,0,0,16,16H208a16,16,0,0,0,16-16V48A16,16,0,0,0,208,32ZM96,208H48V160H96Zm0-64H48V96H96Zm64,64H112V160h48Zm0-64H112V96h48ZM48,80V48H208V80Zm160,128H176V160h32Zm0-64H176V96h32Z"/></svg>
+              Mật độ cuộc gọi theo khung giờ
+            </div>
+            <div class="heatmap" id="heatmap"></div>
+            <div class="heatmap-legend">
+              <span>Ít</span>
+              <span class="heatmap-legend__scale"><i></i><i></i><i></i><i></i><i></i></span>
+              <span>Nhiều</span>
             </div>
           </div>
 

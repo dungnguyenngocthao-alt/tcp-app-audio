@@ -903,19 +903,15 @@
   const HIST_DATES = HISTORY.map(r => parseHistDate(r.date).getTime());
   const HIST_MIN = new Date(Math.min(...HIST_DATES));
   const HIST_MAX = new Date(Math.max(...HIST_DATES));
-  // Volume shown in the call-direction donut for the full range (mock total).
-  const PIE_TOTAL_FULL = 128, PIE_IN_RATIO = 79 / 128;
 
   function renderDashboard(subset) {
     const rows = subset || HISTORY;
-    const fraction = HISTORY.length ? rows.length / HISTORY.length : 0;
 
     const durEl = $("#dashAvgDur"), qualEl = $("#dashAvgQuality");
 
     if (!rows.length) {
       if (durEl) durEl.textContent = "—";
       if (qualEl) qualEl.textContent = "—";
-      renderCallPie(0);
       return;
     }
 
@@ -932,9 +928,6 @@
 
     if (durEl) durEl.textContent = mm + ":" + String(ss).padStart(2, "0");
     if (qualEl) qualEl.textContent = quality.toFixed(1);
-
-    // Volume counts scale with how much of the full range is selected.
-    renderCallPie(fraction);
   }
 
   renderDashboard();
@@ -988,14 +981,22 @@
   const chartPlot  = $("#chartPlot");
   const chartRange = $("#chartRange");
   const chartDelta = $("#chartDelta");
+  // Totals are DERIVED from the bars, so the volume chart, the call-direction
+  // donut and the heatmap all report the same numbers for the active range.
+  function rangeTotals(d) {
+    const inTotal = d.bars.reduce((a, b) => a + b[1], 0);
+    const outTotal = d.bars.reduce((a, b) => a + b[2], 0);
+    return { inTotal, outTotal, total: inTotal + outTotal };
+  }
   function renderChart(range) {
     const d = UPLOADS[range];
     if (!d || !chartPlot) return;
-    if (chartTotal) chartTotal.textContent = d.total.toLocaleString("vi-VN");
+    const { inTotal, outTotal, total } = rangeTotals(d);
+    if (chartTotal) chartTotal.textContent = total.toLocaleString("vi-VN");
     // Period-over-period comparison (so với kỳ trước).
     if (chartDelta) {
       if (d.prev) {
-        const pct = Math.round((d.total - d.prev) / d.prev * 100);
+        const pct = Math.round((total - d.prev) / d.prev * 100);
         const up = pct >= 0;
         chartDelta.hidden = false;
         chartDelta.classList.toggle("dash-delta--up", up);
@@ -1018,6 +1019,9 @@
         <div class="chart-col__x">${showX ? x : ""}</div>
       </div>`;
     }).join("");
+    // Keep the donut and heatmap in lockstep with this range's numbers.
+    renderCallPie(inTotal, outTotal);
+    renderHeatmap(range, d);
   }
   if (chartRange) {
     chartRange.addEventListener("click", e => {
@@ -1027,7 +1031,8 @@
       renderChart(btn.dataset.range);
     });
   }
-  renderChart("week");
+  // Initial render happens after renderCallPie/renderHeatmap are defined below
+  // (they use `const`s declared later — calling here would hit the TDZ).
 
   /* Hover tooltip showing the incoming / outgoing counts for a period */
   const chartTip = $("#chartTip");
@@ -1056,14 +1061,12 @@
   }
 
 
-  /* Call-direction donut — total incoming vs outgoing. `fraction` (0–1) scales
-     the volume to the selected date range; the in/out split stays constant. */
-  function renderCallPie(fraction) {
+  /* Call-direction donut — driven by the active range's in/out totals, so it
+     always matches the volume chart. */
+  function renderCallPie(inCount, outCount) {
     const pie = $("#callPie");
     if (!pie) return;
-    const f = fraction == null ? 1 : fraction;
-    const total = Math.round(PIE_TOTAL_FULL * f);
-    const inCount = Math.round(total * PIE_IN_RATIO);
+    const total = (inCount || 0) + (outCount || 0);
     const inPct = total ? Math.round(inCount / total * 100) : 0;
     pie.style.background = `conic-gradient(#F97316 0 ${inPct}%, var(--tcp-accent) ${inPct}% 100%)`;
     const set = (id, v) => { const el = $("#" + id); if (el) el.textContent = v; };
@@ -1071,6 +1074,52 @@
     set("pieIn", inPct + "%");
     set("pieOut", (total ? 100 - inPct : 0) + "%");
   }
+
+  /* Heatmap — call volume by weekday × time-of-day, for the active range. Its
+     grand total equals the range total (bars + donut), so all three agree.
+     For the week range each weekday column equals that day's bar total. */
+  const HEAT_DAYS = ["T2", "T3", "T4", "T5", "T6", "T7", "CN"];   // Mon..Sun
+  const HEAT_SLOTS = ["6–9h", "9–12h", "12–14h", "14–17h", "17–20h"];
+  const HEAT_SLOT_W = [0.12, 0.27, 0.16, 0.29, 0.16];            // sums ~1
+  const HEAT_DOW_W  = [0.17, 0.18, 0.17, 0.17, 0.15, 0.09, 0.07]; // Mon..Sun
+  // Split `total` across `weights` into integers that sum to exactly `total`.
+  function splitTotal(total, weights) {
+    const raw = weights.map(w => total * w);
+    const out = raw.map(Math.floor);
+    let rem = total - out.reduce((a, b) => a + b, 0);
+    const frac = raw.map((v, i) => ({ i, f: v - Math.floor(v) })).sort((a, b) => b.f - a.f);
+    for (let k = 0; k < rem; k++) out[frac[k % frac.length].i]++;
+    return out;
+  }
+  function renderHeatmap(range, d) {
+    const wrap = $("#heatmap");
+    if (!wrap) return;
+    const { total } = rangeTotals(d);
+    // Per-weekday column totals: week uses the actual bar totals; other ranges
+    // distribute the range total across weekdays by a fixed weekday weighting.
+    let colTotals;
+    if (range === "week" && d.bars.length === 7) {
+      colTotals = d.bars.map(b => b[1] + b[2]);
+    } else {
+      colTotals = splitTotal(total, HEAT_DOW_W);
+    }
+    const grid = colTotals.map(ct => splitTotal(ct, HEAT_SLOT_W));  // grid[day][slot]
+    const max = Math.max(1, ...grid.flat());
+    let html = '<div class="heatmap__cell heatmap__corner"></div>';
+    HEAT_SLOTS.forEach(s => { html += `<div class="heatmap__head">${s}</div>`; });
+    HEAT_DAYS.forEach((day, di) => {
+      html += `<div class="heatmap__day">${day}</div>`;
+      HEAT_SLOTS.forEach((s, si) => {
+        const c = grid[di][si];
+        const level = c === 0 ? 0 : Math.min(4, Math.ceil(c / max * 4));
+        html += `<div class="heatmap__cell heatmap__cell--l${level}" title="${day} ${s}: ${c} cuộc gọi">${c || ""}</div>`;
+      });
+    });
+    wrap.innerHTML = html;
+  }
+
+  // Now that the chart, donut and heatmap renderers all exist, do the first draw.
+  renderChart("week");
 
   /* -------------------------------------------------------------------------
      Screen 5b · Employees — per-agent calling performance, with add support
@@ -1857,19 +1906,6 @@
       ? `Chi tiết cuộc gọi ${rec.id}`
       : "Chi tiết cuộc gọi";
 
-    const title = $("#screen-results .outcome__title");
-    const pct   = $("#screen-results .outcome__pct");
-    if (title) title.textContent = m.outcome;
-    if (pct)   pct.textContent = shownRate + "%";
-
-    // Tint the outcome card by consultation rate: >60 green, 40–60 amber, <40 pink
-    const outcome = $("#screen-results .outcome");
-    const card = outcome && outcome.closest(".card");
-    if (card) {
-      card.classList.remove("outcome-card--good", "outcome-card--mid", "outcome-card--low");
-      card.classList.add(shownRate > 60 ? "outcome-card--good" : shownRate >= 40 ? "outcome-card--mid" : "outcome-card--low");
-    }
-
     if (fileStripScroll) {
       $$(".fchip", fileStripScroll).forEach(c =>
         c.classList.toggle("is-active", parseInt(c.dataset.chip, 10) === index)
@@ -1880,75 +1916,6 @@
     if (typeof resetAudioPreview === "function") resetAudioPreview(m.dur);
     const ts = $("#transcriptSearch");
     if (ts && ts.value) { ts.value = ""; if (typeof runTranscriptSearch === "function") runTranscriptSearch(); }
-    syncRateEditor(rec, shownRate);
-  }
-
-  /* Consultation-rate editor (manual override + reason note; no AI re-eval). */
-  function syncRateEditor(rec, shownRate) {
-    const editor = $("#rateEditor"), btn = $("#rateEditBtn"),
-          noteEl = $("#outcomeNote"), slider = $("#rateSlider"),
-          val = $("#rateVal"), note = $("#rateNote");
-    if (editor) editor.hidden = true;
-    if (btn) { btn.hidden = !rec; btn.classList.remove("is-editing"); }
-    const cur = rec ? effRate(rec) : shownRate;
-    if (slider) slider.value = cur;
-    if (val) val.textContent = cur + "%";
-    if (note) note.value = rec && rec.note ? rec.note : "";
-    // Show the saved reason under the rate, if any.
-    if (noteEl) {
-      if (rec && rec.reviewed && rec.note) {
-        noteEl.hidden = false;
-        noteEl.textContent = "Lý do: " + rec.note;
-      } else { noteEl.hidden = true; noteEl.textContent = ""; }
-    }
-  }
-  function applyOutcomeTint(rate) {
-    const card = $("#screen-results .card--outcome");
-    if (!card) return;
-    card.classList.remove("outcome-card--good", "outcome-card--mid", "outcome-card--low");
-    card.classList.add(rate > 60 ? "outcome-card--good" : rate >= 40 ? "outcome-card--mid" : "outcome-card--low");
-  }
-  {
-    const editBtn = $("#rateEditBtn"), editor = $("#rateEditor"),
-          slider = $("#rateSlider"), val = $("#rateVal"),
-          note = $("#rateNote"), save = $("#rateSave"), cancel = $("#rateCancel");
-    if (editBtn && editor) {
-      editBtn.addEventListener("click", () => {
-        const opening = editor.hidden;
-        editor.hidden = !opening;
-        editBtn.classList.toggle("is-editing", opening);
-        if (opening && slider) slider.focus();
-      });
-    }
-    if (slider && val) slider.addEventListener("input", () => { val.textContent = slider.value + "%"; });
-    if (cancel) cancel.addEventListener("click", () => {
-      if (editor) editor.hidden = true;
-      if (editBtn) editBtn.classList.remove("is-editing");
-    });
-    if (save) save.addEventListener("click", () => {
-      const rec = (typeof UPLOAD_LOG !== "undefined") ? UPLOAD_LOG.find(u => u.id === resultUploadId) : null;
-      const newRate = slider ? parseInt(slider.value, 10) : null;
-      if (rec && newRate != null) {
-        rec.userRate = newRate;
-        rec.note = note ? note.value.trim() : "";
-        rec.reviewed = true;
-        if (typeof renderDashCalls === "function") renderDashCalls();
-        if (typeof renderUploads === "function") renderUploads();
-      }
-      // Reflect on the outcome card.
-      const pct = $("#screen-results .outcome__pct");
-      if (pct && newRate != null) pct.textContent = newRate + "%";
-      if (newRate != null) applyOutcomeTint(newRate);
-      const noteEl = $("#outcomeNote");
-      if (noteEl) {
-        const txt = note ? note.value.trim() : "";
-        if (txt) { noteEl.hidden = false; noteEl.textContent = "Lý do: " + txt; }
-        else { noteEl.hidden = true; noteEl.textContent = ""; }
-      }
-      if (editor) editor.hidden = true;
-      if (editBtn) editBtn.classList.remove("is-editing");
-      if (typeof showToast === "function") showToast("Đã cập nhật tỷ lệ tư vấn.");
-    });
   }
 
   /* Inline editing — Transcript & Tóm tắt each have an edit toggle that makes
@@ -2114,24 +2081,20 @@
     // column (outcome result + a grid of analysis cards) and a right RAIL
     // (audio player + transcript, which sticks and scrolls internally).
     const pick = sel => resultsPage.querySelector(sel);
-    const outcome    = pick(".card--outcome");
     const summary    = pick(".card--summary");
     const keywords   = pick(".card--keywords");
     const talk       = pick(".card--talk");
     const quality    = pick(".card--audio");
     const audio      = pick(".card--audio-preview");
     const transcript = pick(".card--transcript");
-    if (!outcome || !transcript) return;
-    outcome.classList.add("results-outcome-card");
+    if (!transcript) return;
 
-    // LEFT column (analysis): outcome full-width, then a 2-col grid of the
-    // small analysis cards, then the summary full-width. RIGHT column (rail):
-    // the transcript alone, in a large sticky block.
+    // LEFT column (analysis): a 2-col grid of the small analysis cards, then the
+    // summary full-width. RIGHT column (rail): the transcript, large & sticky.
     const main = document.createElement("div"); main.className = "results-main";
     const cardsWrap = document.createElement("div"); cardsWrap.className = "results-cards";
     const side = document.createElement("div"); side.className = "results-side";
 
-    main.appendChild(outcome);
     // Talk-duration first, audio player last (audio stretched awkwardly on top).
     [talk, quality, keywords, audio].forEach(c => { if (c) cardsWrap.appendChild(c); });
     main.appendChild(cardsWrap);
