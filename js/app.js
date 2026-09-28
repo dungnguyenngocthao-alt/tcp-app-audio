@@ -1634,7 +1634,7 @@
         <div class="topcaller">
           <span class="topcaller__rank">${i + 1}</span>
           <div class="topcaller__info">
-            <div class="topcaller__name">Caller ID · ${escAttr(t.caller)}</div>
+            <div class="topcaller__name">caller <b>ID</b>: ${escAttr(t.caller)}</div>
           </div>
           <div class="topcaller__bar"><span style="width:${Math.round(t.count / max * 100)}%"></span></div>
           <span class="topcaller__count">${t.count} <small>cuộc gọi</small></span>
