@@ -2663,3 +2663,27 @@ body {
   .phone.is-shell .appbar { display: none; }
   .phone.is-shell .screen__scroll > .page { padding-top: var(--tcp-space-8); }
 }
+
+/* ===========================================================================
+   shadcn-admin typography — sentence-case labels, bold tight headings/numbers
+   =========================================================================== */
+.page__title { font-weight: 700; letter-spacing: -0.02em; }
+.section-title { font-weight: 600; letter-spacing: -0.01em; }
+.page__lead { font-size: 14px; }
+
+/* Card eyebrow labels: shadcn CardTitle style — sentence case, medium, muted */
+.result-card__label {
+  text-transform: none; letter-spacing: normal;
+  font-size: 14px; font-weight: 500; color: var(--tcp-fg-secondary);
+}
+.result-card__label svg { color: var(--tcp-fg-tertiary); }
+
+/* Large numeric readouts: bold + tight tracking like shadcn stat values */
+.stat-card__value, .dash-chart__total, .quality-score, .pie__center b,
+.outcome__pct, .senti-verdict, .dash-trend__avg {
+  font-weight: 700; letter-spacing: -0.02em;
+}
+.stat-card__sub, .dash-chart__cap { text-transform: none; letter-spacing: normal; }
+
+/* Sidebar / nav items: shadcn text-sm medium */
+.drawer__item { font-weight: 500; }
