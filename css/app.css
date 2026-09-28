@@ -2437,8 +2437,23 @@ body {
 .dash-calls-search__input { border: 0; box-shadow: none; padding: 10px 0; background: none; flex: 1 1 auto; }
 .dash-calls-search__input:focus { outline: 0; box-shadow: none; }
 .dash-calls-filter { margin-bottom: var(--tcp-space-4); }
-.dash-calls-table th.tbl-act-col { width: 1%; }
+.dash-calls-table th.tbl-act-col { width: 1%; white-space: nowrap; }
 .dash-calls-table .dc-detail { white-space: nowrap; }
+/* Inbound / Outbound classification badge */
+.call-dir {
+  display: inline-block; padding: 3px 10px; border-radius: var(--tcp-radius-pill);
+  font-size: 12px; font-weight: 600; white-space: nowrap;
+}
+.call-dir--out { background: var(--tcp-accent-subtle); color: var(--tcp-accent-hover); }
+.call-dir--in  { background: #FDECDF; color: #C2410C; }
+/* Recording link */
+.dc-audio {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: none; border: 0; padding: 0; cursor: pointer;
+  color: var(--tcp-accent); font: inherit; font-size: 13px; font-weight: 500; white-space: nowrap;
+}
+.dc-audio:hover { color: var(--tcp-accent-hover); text-decoration: underline; }
+.dc-audio svg { width: 16px; height: 16px; flex: 0 0 auto; }
 
 /* Đánh giá cuộc gọi · view tabs (eval / sheet) */
 .up-view { margin: 0 0 var(--tcp-space-4); max-width: 320px; }

@@ -1482,14 +1482,14 @@
      ------------------------------------------------------------------------- */
   const UP_OUTCOME = { success: "Tư vấn xuất sắc", warning: "Tư vấn hiệu quả", neutral: "Cần cải thiện" };
   const UPLOAD_LOG = [
-    { id: "UP-1042", time: "26/10/2023, 14:30", agent: "Nguyễn Thị Hà", caller: "1001", to: "0901 234 567", dur: "12:45", rate: 82, outcome: "success", file: "Q3_Sales_Call_JohnDoe.wav",  date: "10/26/2023, 2:30 PM" },
-    { id: "UP-1041", time: "26/10/2023, 11:05", agent: "Trần Văn Dũng",  caller: "1002", to: "0912 888 021", dur: "08:33", rate: 47, outcome: "neutral", file: "Cold_Call_Nguyen_Minh.wav",  date: "10/25/2023, 11:20 AM" },
-    { id: "UP-1040", time: "25/10/2023, 16:48", agent: "Lê Hoàng Nam",   caller: "1003", to: "0987 112 233", dur: "15:20", rate: 73, outcome: "warning", file: "Demo_AcmeCorp_Round2.mp3",   date: "10/25/2023, 4:05 PM" },
-    { id: "UP-1039", time: "25/10/2023, 09:20", agent: "Phạm Minh Châu",  caller: "1004", to: "0903 456 789", dur: "22:14", rate: 86, outcome: "success", file: "Renewal_BetaLogistics.flac", date: "10/24/2023, 3:15 PM" },
-    { id: "UP-1038", time: "24/10/2023, 15:12", agent: "Vũ Thanh Tùng",  caller: "1005", to: "0938 220 145", dur: "06:57", rate: 53, outcome: "neutral", file: "Discovery_TechViet.mp3",     date: "10/24/2023, 9:48 AM" },
-    { id: "UP-1037", time: "24/10/2023, 10:02", agent: "Nguyễn Thị Hà",  caller: "1001", to: "0977 654 321", dur: "18:41", rate: 79, outcome: "warning", file: "Upsell_GreenFoods.wav",      date: "10/23/2023, 5:30 PM" },
-    { id: "UP-1036", time: "23/10/2023, 13:47", agent: "Phạm Minh Châu",  caller: "1004", to: "0905 778 990", dur: "27:39", rate: 91, outcome: "success", file: "Pitch_SaigonRetail.wav",     date: "10/22/2023, 10:11 AM" },
-    { id: "UP-1035", time: "23/10/2023, 08:15", agent: "Lê Hoàng Nam",   caller: "1003", to: "0918 003 476", dur: "10:08", rate: 64, outcome: "warning", file: "Q3_Review_HaiPhong.flac",    date: "10/21/2023, 4:44 PM" },
+    { id: "UP-1042", time: "26/10/2023, 14:30", agent: "Nguyễn Thị Hà", caller: "1001", to: "0901 234 567", dir: "out", dur: "12:45", rate: 82, outcome: "success", file: "Q3_Sales_Call_JohnDoe.wav",  date: "10/26/2023, 2:30 PM" },
+    { id: "UP-1041", time: "26/10/2023, 11:05", agent: "Trần Văn Dũng",  caller: "1002", to: "0912 888 021", dir: "out", dur: "08:33", rate: 47, outcome: "neutral", file: "Cold_Call_Nguyen_Minh.wav",  date: "10/25/2023, 11:20 AM" },
+    { id: "UP-1040", time: "25/10/2023, 16:48", agent: "Lê Hoàng Nam",   caller: "1003", to: "0987 112 233", dir: "in",  dur: "15:20", rate: 73, outcome: "warning", file: "Demo_AcmeCorp_Round2.mp3",   date: "10/25/2023, 4:05 PM" },
+    { id: "UP-1039", time: "25/10/2023, 09:20", agent: "Phạm Minh Châu",  caller: "1004", to: "0903 456 789", dir: "out", dur: "22:14", rate: 86, outcome: "success", file: "Renewal_BetaLogistics.flac", date: "10/24/2023, 3:15 PM" },
+    { id: "UP-1038", time: "24/10/2023, 15:12", agent: "Vũ Thanh Tùng",  caller: "1005", to: "0938 220 145", dir: "in",  dur: "06:57", rate: 53, outcome: "neutral", file: "Discovery_TechViet.mp3",     date: "10/24/2023, 9:48 AM" },
+    { id: "UP-1037", time: "24/10/2023, 10:02", agent: "Nguyễn Thị Hà",  caller: "1001", to: "0977 654 321", dir: "out", dur: "18:41", rate: 79, outcome: "warning", file: "Upsell_GreenFoods.wav",      date: "10/23/2023, 5:30 PM" },
+    { id: "UP-1036", time: "23/10/2023, 13:47", agent: "Phạm Minh Châu",  caller: "1004", to: "0905 778 990", dir: "out", dur: "27:39", rate: 91, outcome: "success", file: "Pitch_SaigonRetail.wav",     date: "10/22/2023, 10:11 AM" },
+    { id: "UP-1035", time: "23/10/2023, 08:15", agent: "Lê Hoàng Nam",   caller: "1003", to: "0918 003 476", dir: "in",  dur: "10:08", rate: 64, outcome: "warning", file: "Q3_Review_HaiPhong.flac",    date: "10/21/2023, 4:44 PM" },
   ];
 
   const upTbody   = $("#upTbody");
@@ -1692,30 +1692,29 @@
       const msg = UPLOAD_LOG.length
         ? "Không có cuộc gọi phù hợp với bộ lọc."
         : "Chưa có cuộc gọi nào được tải lên.";
-      dashCallsTbody.innerHTML = `<tr><td class="emp-empty" colspan="7">${msg}</td></tr>`;
+      dashCallsTbody.innerHTML = `<tr><td class="emp-empty" colspan="8">${msg}</td></tr>`;
       renderDashCallsPager(pages);
       return;
     }
     dashCallsTbody.innerHTML = slice.map(u => {
-      const color = AVATAR_COLORS[nameHash(u.agent) % AVATAR_COLORS.length];
-      const eff = effRate(u);
-      const rateClass = eff >= 70 ? "emp-rate--good" : eff >= 55 ? "emp-rate--mid" : "emp-rate--low";
+      const isOut = u.dir === "out";
+      const dirLabel = isOut ? "Outbound" : "Inbound";
       return `
         <tr>
           <td class="up-id">${u.id}</td>
           <td class="emp-last">${u.time}</td>
-          <td class="emp-col-name">
-            <div class="emp-person">
-              <span class="emp-avatar" style="background:${color}">${initials(u.agent)}</span>
-              <div class="emp-person__meta">
-                <div class="emp-person__name" title="${escAttr(u.agent)}">${u.agent}</div>
-                <div class="emp-person__id">Caller ID · ${escAttr(u.caller)}</div>
-              </div>
-            </div>
-          </td>
-          <td class="up-to">${u.to}</td>
+          <td class="up-to">${escAttr(u.caller)}</td>
+          <td class="up-to">${escAttr(u.to)}</td>
+          <td><span class="call-dir call-dir--${isOut ? "out" : "in"}">${dirLabel}</span></td>
           <td class="up-dur">${u.dur}</td>
-          <td><span class="emp-rate ${rateClass}">${eff}%</span></td>
+          <td>
+            <button class="dc-audio" type="button"
+                    data-file="${escAttr(u.file)}" data-date="${escAttr(u.date)}"
+                    title="Nghe ghi âm ${escAttr(u.file)}">
+              <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M155.51,24.81a8,8,0,0,0-8.42.88L77.25,80H32A16,16,0,0,0,16,96v64a16,16,0,0,0,16,16H77.25l69.84,54.31A8,8,0,0,0,160,224V32A8,8,0,0,0,155.51,24.81ZM32,96H72v64H32ZM144,207.64,88,164.09V91.91l56-43.55Zm54-106.08a40,40,0,0,1,0,52.88,8,8,0,0,1-12-10.58,24,24,0,0,0,0-31.72,8,8,0,0,1,12-10.58ZM248,128a79.9,79.9,0,0,1-20.37,53.34,8,8,0,0,1-11.92-10.67,64,64,0,0,0,0-85.34,8,8,0,1,1,11.92-10.67A79.83,79.83,0,0,1,248,128Z"/></svg>
+              Nghe ghi âm
+            </button>
+          </td>
           <td>
             <button class="btn btn--outline btn--sm dc-detail" type="button"
                     data-file="${escAttr(u.file)}" data-date="${escAttr(u.date)}">Xem chi tiết</button>
@@ -1727,7 +1726,9 @@
   renderDashCalls();
   if (dashCallsTbody) {
     dashCallsTbody.addEventListener("click", e => {
-      const btn = e.target.closest(".dc-detail");
+      // Both the recording link and the detail button open the full analysis
+      // (the audio player lives on the results screen).
+      const btn = e.target.closest(".dc-detail, .dc-audio");
       if (btn) showSingleResult(btn.dataset.file, btn.dataset.date, "dashboard");
     });
   }
