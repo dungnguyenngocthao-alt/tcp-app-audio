@@ -1745,7 +1745,7 @@ mark.mark--neg { background: var(--tcp-error-bg); color: var(--tcp-error-900); }
 .cl-dot--in { background: #F97316; }
 .cl-dot--out { background: var(--tcp-accent); }
 /* Business-unit colours (PSO tím, TCP xanh, Chưa rõ xám) */
-:root { --bu-pso: #9333EA; --bu-tcp: #2563EB; --bu-unknown: #94A3B8; }
+:root { --bu-pso: #9333EA; --bu-tcp: #312E81; --bu-unknown: #94A3B8; }
 .cl-dot--pso { background: var(--bu-pso); }
 .cl-dot--tcp { background: var(--bu-tcp); }
 .cl-dot--unknown { background: var(--bu-unknown); }
@@ -1753,7 +1753,7 @@ mark.mark--neg { background: var(--tcp-error-bg); color: var(--tcp-error-900); }
 .bu-chip { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; padding: 3px 10px; border-radius: var(--tcp-radius-pill); white-space: nowrap; }
 .bu-chip::before { content: ""; width: 7px; height: 7px; border-radius: 999px; background: currentColor; }
 .bu-chip--pso { background: #F3E8FF; color: #7C2FBE; }
-.bu-chip--tcp { background: #DBEAFE; color: #1D4ED8; }
+.bu-chip--tcp { background: #E5E5F5; color: #312E81; }
 .bu-chip--unknown { background: #F1F5F9; color: #64748B; }
 .dash-bu-select { width: 130px; }
 @media (max-width: 640px) { .dash-bu-select { width: auto; } }
@@ -1810,8 +1810,10 @@ mark.mark--neg { background: var(--tcp-error-bg); color: var(--tcp-error-900); }
 .pie__center { position: absolute; text-align: center; }
 .pie__center b { display: block; font-size: 24px; font-weight: 600; color: var(--tcp-ink); line-height: 1.1; }
 .pie__center span { font-size: 11px; color: var(--tcp-fg-tertiary); }
-.pie-legend { display: flex; justify-content: center; gap: var(--tcp-space-6); margin-top: var(--tcp-space-3); }
-.pie-legend__item { display: inline-flex; align-items: center; font-size: 13px; color: var(--tcp-fg-secondary); }
+.pie-legend { display: flex; justify-content: center; flex-wrap: wrap; gap: var(--tcp-space-6); margin-top: var(--tcp-space-3); }
+.pie-legend__item { display: inline-flex; align-items: center; font-size: 13px; color: var(--tcp-fg-secondary); white-space: nowrap; }
+/* BU legend has 3 items — tighter gap so they stay on one line, and never break a word */
+.dash-pie--bu .pie-legend { gap: var(--tcp-space-3); }
 .pie-legend__item b { color: var(--tcp-ink); font-weight: 600; margin-left: 6px; }
 .pie-legend--stack { flex-direction: column; align-items: stretch; gap: var(--tcp-space-2); }
 .pie-legend--stack .pie-legend__item { justify-content: flex-start; }
@@ -2016,8 +2018,8 @@ mark.mark--neg { background: var(--tcp-error-bg); color: var(--tcp-error-900); }
   .dash-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .dash-wordcloud { grid-column: 1 / -1; }
 
-  /* Top row: bar chart (wide) + call-direction donut + BU donut */
-  .dash-toprow { grid-template-columns: 2fr 1fr 1fr; }
+  /* Top row: bar chart (wide) + call-direction donut */
+  .dash-toprow { grid-template-columns: 2fr 1fr; }
 }
 
 @media (min-width: 1200px) {
@@ -2041,8 +2043,8 @@ mark.mark--neg { background: var(--tcp-error-bg); color: var(--tcp-error-900); }
   /* Dashboard — three-column card grid (sentiment · top 3 · word cloud) */
   .dash-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .dash-wordcloud { grid-column: auto; }
-  /* Top row: bar chart (wide) + call-direction donut + BU donut */
-  .dash-toprow { grid-template-columns: 2fr 1fr 1fr; }
+  /* Top row: bar chart (wide) + call-direction donut */
+  .dash-toprow { grid-template-columns: 2fr 1fr; }
 }
 
 body {
@@ -2868,6 +2870,13 @@ body {
 .dash-topgrid { display: grid; grid-template-columns: 1fr; gap: 20px; margin-bottom: var(--tcp-space-5); align-items: stretch; }
 .dash-topgrid > .card { margin: 0; }
 @media (min-width: 768px) { .dash-topgrid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (min-width: 1024px) { .dash-topgrid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 /* the two Top-5 lists sit closer together, so the bar shrinks a touch */
 .dash-topgrid .topcaller__bar { flex-basis: 90px; }
+/* 3-across row is narrower — shrink the bar so long callee IDs still show */
+@media (min-width: 1024px) {
+  .dash-topgrid .topcaller__bar { flex-basis: 44px; }
+  .dash-topgrid .topcaller { gap: var(--tcp-space-2); }
+  .dash-topgrid .topcaller__count small { display: none; }
+}
 @media (max-width: 900px) and (min-width: 768px) { .dash-topgrid .topcaller__bar { display: none; } }

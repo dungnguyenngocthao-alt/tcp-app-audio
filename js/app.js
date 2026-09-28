@@ -1663,7 +1663,7 @@
         <div class="topcaller">
           <span class="topcaller__rank">${i + 1}</span>
           <div class="topcaller__info">
-            <div class="topcaller__name">Caller id: <b>${escAttr(t.caller)}</b></div>
+            <div class="topcaller__name" title="Caller id: ${escAttr(t.caller)}">Caller id: <b>${escAttr(t.caller)}</b></div>
           </div>
           <div class="topcaller__bar"><span style="width:${Math.round(t.count / max * 100)}%;background:${BU_META[t.bu].color}"></span></div>
           <span class="topcaller__count">${t.count} <small>cuộc gọi</small></span>
@@ -1689,7 +1689,7 @@
         <div class="topcaller">
           <span class="topcaller__rank">${i + 1}</span>
           <div class="topcaller__info">
-            <div class="topcaller__name">Callee id: <b>${escAttr(t.callee)}</b></div>
+            <div class="topcaller__name" title="Callee id: ${escAttr(t.callee)}">Callee id: <b>${escAttr(t.callee)}</b></div>
           </div>
           <div class="topcaller__bar"><span style="width:${Math.round(t.count / max * 100)}%;background:${BU_META[domBu(t)].color}"></span></div>
           <span class="topcaller__count">${t.count} <small>cuộc gọi</small></span>
