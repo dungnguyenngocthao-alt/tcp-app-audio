@@ -1073,7 +1073,7 @@
     if (!pie) return;
     const total = (inCount || 0) + (outCount || 0);
     const inPct = total ? Math.round(inCount / total * 100) : 0;
-    pie.style.background = `conic-gradient(#F97316 0 ${inPct}%, var(--tcp-accent) ${inPct}% 100%)`;
+    pie.style.background = `conic-gradient(#F97316 0 ${inPct}%, var(--call-out) ${inPct}% 100%)`;
     const set = (id, v) => { const el = $("#" + id); if (el) el.textContent = v; };
     set("pieTotal", total.toLocaleString("vi-VN"));
     set("pieIn", inPct + "%");
