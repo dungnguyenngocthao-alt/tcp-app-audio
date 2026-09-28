@@ -1103,26 +1103,15 @@
     for (let k = 0; k < rem; k++) out[frac[k % frac.length].i]++;
     return out;
   }
-  // Inbound / Outbound peak differently across the day, so cells vary by
-  // dominant direction. Weights sum ~1 each.
-  const HEAT_SLOT_W_IN  = [0.10, 0.30, 0.14, 0.28, 0.18];   // inbound peaks mid-morning / early-afternoon
-  const HEAT_SLOT_W_OUT = [0.24, 0.17, 0.13, 0.19, 0.27];   // outbound peaks early & late
   const HEAT_LEVEL_PCT = [0, 28, 46, 70, 100];   // tint strength by intensity level
-  const DIR_COLOR = { in: "var(--call-in)", out: "var(--call-out)" };
-  const DIR_COLOR_LT = { in: "var(--call-in-lt)", out: "var(--call-out-lt)" };
-  const DIR_LABEL = { in: "Inbound", out: "Outbound" };
-  // Heatmap always shows the CURRENT WEEK (independent of the range toggle).
-  // Each cell is coloured by its dominant direction (Inbound cam / Outbound
-  // xanh lá) and darkened by call volume.
+  // Heatmap always shows the CURRENT WEEK (independent of the range toggle):
+  // total call volume per weekday × slot, one accent colour darkened by count.
   function renderHeatmap() {
     const wrap = $("#heatmap");
     if (!wrap) return;
     const week = UPLOADS.week;
-    const inGrid  = week.bars.map(b => splitTotal(b[1], HEAT_SLOT_W_IN));   // [day][slot]
-    const outGrid = week.bars.map(b => splitTotal(b[2], HEAT_SLOT_W_OUT));
-    let max = 1;
-    for (let d = 0; d < 7; d++) for (let s = 0; s < HEAT_SLOTS.length; s++)
-      max = Math.max(max, inGrid[d][s] + outGrid[d][s]);
+    const grid = week.bars.map(b => splitTotal(b[1] + b[2], HEAT_SLOT_W));   // [day][slot] = total calls
+    const max = Math.max(1, ...grid.flat());
     const dayLabels = weekDates(new Date()).map(fmtDMY);   // dd/mm/yyyy, Mon..Sun
     let html = '<div class="heatmap__cell heatmap__corner"></div>';
     HEAT_SLOTS.forEach(s => { html += `<div class="heatmap__head">${s}</div>`; });
@@ -1130,15 +1119,14 @@
       const day = dayLabels[di];
       html += `<div class="heatmap__day">${day}</div>`;
       HEAT_SLOTS.forEach((s, si) => {
-        const ci = inGrid[di][si], co = outGrid[di][si], c = ci + co;
-        const dir = ci >= co ? "in" : "out";
+        const c = grid[di][si];
         const level = c === 0 ? 0 : Math.min(4, Math.ceil(c / max * 4));
         const pct = HEAT_LEVEL_PCT[level];
         const bg = level === 0
           ? "var(--tcp-bg-muted)"
-          : `linear-gradient(150deg, color-mix(in srgb, ${DIR_COLOR_LT[dir]} ${pct}%, transparent), color-mix(in srgb, ${DIR_COLOR[dir]} ${pct}%, transparent))`;
+          : `linear-gradient(150deg, color-mix(in srgb, var(--tcp-accent) ${Math.round(pct * 0.72)}%, transparent), color-mix(in srgb, var(--tcp-accent) ${pct}%, transparent))`;
         const fg = level >= 3 ? "#fff" : (level === 0 ? "transparent" : "var(--tcp-ink)");
-        html += `<div class="heatmap__cell" style="background:${bg};color:${fg}" title="${day} · ${s}: ${DIR_LABEL[dir]} nhiều hơn (Inbound ${ci} / Outbound ${co})">${c || ""}</div>`;
+        html += `<div class="heatmap__cell" style="background:${bg};color:${fg}" title="${day} · ${s}: ${c} cuộc gọi">${c || ""}</div>`;
       });
     });
     wrap.innerHTML = html;
