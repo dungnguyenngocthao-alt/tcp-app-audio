@@ -59,7 +59,7 @@
   --tcp-error-900: #7F1D1D;
 
   /* Brand-mark colours — sampled from the official TCP logo artwork. */
-  --tcp-logo-indigo:        #212A75;  /* wordmark fill */
+  --tcp-logo-indigo:        #312E81;  /* wordmark / brand text */
   --tcp-logo-indigo-deep:   #201192;  /* gradient end-stop */
   --tcp-logo-indigo-mid:    #4E4DC1;
   --tcp-logo-indigo-light:  #8391F7;
