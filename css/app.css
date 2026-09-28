@@ -2783,8 +2783,10 @@ body {
 }
 
 /* Export report dialog */
-.export-range { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
-.export-range .dash-filter__input { width: auto; flex: 1 1 130px; min-width: 0; }
+.export-range { display: flex; flex-direction: column; gap: 10px; }
+.export-range .dash-filter__field { width: 100%; gap: 10px; }
+.export-range .dash-filter__field label { flex: 0 0 34px; }
+.export-range .dash-filter__input { flex: 1 1 auto; width: auto; min-width: 0; }
 .check-row {
   display: flex; align-items: center; gap: 10px; cursor: pointer;
   font-size: 14px; color: var(--tcp-fg-primary); margin: var(--tcp-space-2) 0 var(--tcp-space-5);
