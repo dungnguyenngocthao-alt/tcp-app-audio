@@ -910,17 +910,12 @@
     const rows = subset || HISTORY;
     const fraction = HISTORY.length ? rows.length / HISTORY.length : 0;
 
-    const rateEl = $("#dashAvgRate"), durEl = $("#dashAvgDur"),
-          qualEl = $("#dashAvgQuality"), subEl = $("#dashRateSub");
+    const durEl = $("#dashAvgDur"), qualEl = $("#dashAvgQuality");
 
     if (!rows.length) {
-      if (rateEl) rateEl.textContent = "—";
       if (durEl) durEl.textContent = "—";
       if (qualEl) qualEl.textContent = "—";
-      if (subEl) subEl.textContent = "Không có cuộc gọi trong khoảng này";
       renderCallPie(0);
-      renderOutcomeDist([]);
-      renderSuccessTrend([]);
       return;
     }
 
@@ -935,127 +930,11 @@
     // Audio quality tracks avg confidence, deterministic + clamped to a sane band.
     const quality = Math.min(9.6, Math.max(7.2, 7.4 + (avgRate - 60) / 100 * 3));
 
-    if (rateEl) rateEl.textContent = avgRate + "%";
     if (durEl) durEl.textContent = mm + ":" + String(ss).padStart(2, "0");
     if (qualEl) qualEl.textContent = quality.toFixed(1);
-    if (subEl) subEl.textContent = "trên " + rows.length + " cuộc gọi";
 
     // Volume counts scale with how much of the full range is selected.
     renderCallPie(fraction);
-    renderOutcomeDist(rows);
-    renderSuccessTrend(rows);
-  }
-
-  /* Outcome distribution donut — success / warning / neutral share, over the
-     currently selected calls. Pure counts, no AI. */
-  const OUTCOME_META = {
-    success: { label: "Thành công", color: "var(--tcp-accent)" },
-    warning: { label: "Cần theo dõi", color: "#F59E0B" },
-    neutral: { label: "Chưa chốt", color: "#E11D48" },
-  };
-  function renderOutcomeDist(rows) {
-    const pie = $("#outcomePie"), total = $("#outcomeTotal"), legend = $("#outcomeLegend");
-    if (!pie) return;
-    const order = ["success", "warning", "neutral"];
-    const counts = { success: 0, warning: 0, neutral: 0 };
-    rows.forEach(r => { if (counts[r.type] != null) counts[r.type]++; });
-    const n = rows.length;
-    if (total) total.textContent = n.toLocaleString("vi-VN");
-    if (!n) {
-      pie.style.background = "var(--tcp-bg-muted)";
-      if (legend) legend.innerHTML = "";
-      return;
-    }
-    // Build the conic-gradient segments.
-    let acc = 0;
-    const stops = order.map(k => {
-      const pct = counts[k] / n * 100;
-      const seg = `${OUTCOME_META[k].color} ${acc.toFixed(2)}% ${(acc + pct).toFixed(2)}%`;
-      acc += pct;
-      return seg;
-    });
-    pie.style.background = `conic-gradient(${stops.join(", ")})`;
-    if (legend) legend.innerHTML = order.map(k => {
-      const pct = Math.round(counts[k] / n * 100);
-      return `<div class="pie-legend__item">
-        <span class="cl-dot" style="background:${OUTCOME_META[k].color}"></span>${OUTCOME_META[k].label}
-        <b>${counts[k]} · ${pct}%</b></div>`;
-    }).join("");
-  }
-
-  /* Success rate over time — group calls by day, plot daily consultation-success
-     rate (success ÷ total). Deterministic from HISTORY. */
-  function renderSuccessTrend(rows) {
-    const plot = $("#trendPlot"), avgEl = $("#trendAvg");
-    if (!plot) return;
-    if (!rows.length) { plot.innerHTML = ""; if (avgEl) avgEl.textContent = "—"; return; }
-    const byDay = new Map();
-    rows.forEach(r => {
-      const d = parseHistDate(r.date);
-      const key = d.getTime();
-      if (!byDay.has(key)) byDay.set(key, { total: 0, success: 0, date: d });
-      const b = byDay.get(key);
-      b.total++;
-      if (r.type === "success") b.success++;
-    });
-    const days = [...byDay.values()].sort((a, b) => a.date - b.date);
-    const rateOf = b => Math.round(b.success / b.total * 100);
-    const avg = Math.round(days.reduce((a, b) => a + rateOf(b), 0) / days.length);
-    if (avgEl) avgEl.textContent = avg + "%";
-    plot.innerHTML = days.map(b => {
-      const rate = rateOf(b);
-      const cls = rate >= 60 ? "trend-col--good" : rate >= 40 ? "trend-col--mid" : "trend-col--low";
-      const lbl = (b.date.getMonth() + 1) + "/" + b.date.getDate();
-      return `<div class="trend-col ${cls}" data-x="${lbl}" data-rate="${rate}" data-total="${b.total}">
-        <div class="trend-col__track"><div class="trend-col__bar" style="height:${Math.max(4, rate)}%"></div></div>
-        <div class="trend-col__x">${lbl}</div>
-      </div>`;
-    }).join("");
-  }
-
-
-  // Top 3 employees by success rate (fed by the Nhân viên module, so it's
-  // rendered separately once `employees` exists).
-  function renderDashTop3() {
-    const list = $("#dashTop3");
-    if (!list || typeof employees === "undefined" || !employees.length) return;
-    const top = [...employees]
-      .map(e => ({ e, rate: e.trend[e.trend.length - 1] }))
-      .sort((a, b) => b.rate - a.rate).slice(0, 3);
-    list.innerHTML = top.map((t, i) => {
-      const e = t.e;
-      const color = AVATAR_COLORS[nameHash(e.name) % AVATAR_COLORS.length];
-      const rateClass = t.rate >= 70 ? "emp-rate--good" : t.rate >= 55 ? "emp-rate--mid" : "emp-rate--low";
-      return `
-        <div class="top3__row">
-          <span class="top3__rank">${i + 1}</span>
-          <span class="emp-avatar top3__avatar" style="background:${color}">${initials(e.name)}</span>
-          <div class="top3__info">
-            <div class="top3__name" title="${escAttr(e.name)}">${e.name}</div>
-            <div class="top3__meta">Caller ID · ${escAttr(e.caller)}</div>
-          </div>
-          <span class="emp-rate ${rateClass}">${t.rate}%</span>
-        </div>`;
-    }).join("");
-  }
-
-  // Re-view (evaluation) / export transcript within a Top-3 row
-  const dashTop3 = $("#dashTop3");
-  if (dashTop3) {
-    dashTop3.addEventListener("click", e => {
-      const view = e.target.closest("[data-view]");
-      if (view) {
-        showSingleResult(view.dataset.file, view.dataset.date, "dashboard");
-        return;
-      }
-      const exp = e.target.closest("[data-dash-export]");
-      if (exp) {
-        const row = exp.closest(".top3__row");
-        const v = row && row.querySelector("[data-view]");
-        exportTranscript(v ? v.dataset.file : "");
-        flashCheckIcon(exp);
-      }
-    });
   }
 
   renderDashboard();
@@ -1176,31 +1055,6 @@
     chartPlot.addEventListener("mouseleave", () => { chartTip.hidden = true; });
   }
 
-  /* Hover tooltip for the success-rate trend chart */
-  const trendPlot = $("#trendPlot"), trendTip = $("#trendTip");
-  function positionTrendTip(col) {
-    if (!trendTip) return;
-    trendTip.innerHTML =
-      `<div class="chart-tip__x">Ngày ${col.dataset.x}</div>` +
-      `<div class="chart-tip__row">Tỷ lệ thành công: <b>${col.dataset.rate}%</b></div>` +
-      `<div class="chart-tip__row">${col.dataset.total} cuộc gọi</div>`;
-    trendTip.hidden = false;
-    const p = trendTip.parentElement.getBoundingClientRect();
-    const c = col.getBoundingClientRect();
-    trendTip.style.left = (c.left - p.left + c.width / 2) + "px";
-    trendTip.style.top = (c.top - p.top - 8) + "px";
-  }
-  if (trendPlot && trendTip) {
-    trendPlot.addEventListener("mouseover", e => {
-      const col = e.target.closest(".trend-col");
-      if (col) positionTrendTip(col);
-    });
-    trendPlot.addEventListener("mousemove", e => {
-      const col = e.target.closest(".trend-col");
-      if (col) positionTrendTip(col);
-    });
-    trendPlot.addEventListener("mouseleave", () => { trendTip.hidden = true; });
-  }
 
   /* Call-direction donut — total incoming vs outgoing. `fraction` (0–1) scales
      the volume to the selected date range; the in/out split stays constant. */
@@ -1334,7 +1188,6 @@
         </tr>`;
     }).join("");
     populateUploadEmp();
-    if (typeof renderDashTop3 === "function") renderDashTop3();
   }
   // Delete an employee (with confirm).
   if (empTbody) empTbody.addEventListener("click", e => {
@@ -2279,7 +2132,8 @@
     const side = document.createElement("div"); side.className = "results-side";
 
     main.appendChild(outcome);
-    [audio, quality, talk, keywords].forEach(c => { if (c) cardsWrap.appendChild(c); });
+    // Talk-duration first, audio player last (audio stretched awkwardly on top).
+    [talk, quality, keywords, audio].forEach(c => { if (c) cardsWrap.appendChild(c); });
     main.appendChild(cardsWrap);
     if (summary) main.appendChild(summary);   // full-width summary + customer info
     side.appendChild(transcript);             // transcript (large block)

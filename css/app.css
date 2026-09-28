@@ -1933,6 +1933,11 @@ mark.mark--neg { background: var(--tcp-error-bg); color: var(--tcp-error-900); }
   /* Analysis cards: even 2-column grid (equal-height rows). */
   .results-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; align-items: stretch; }
   .results-cards > .card { width: 100%; margin: 0; }
+  /* Talk-duration fills its (taller) row with a larger donut, vertically centered. */
+  .results-cards .card--talk .talk { flex: 1; justify-content: center; gap: var(--tcp-space-8); }
+  .results-cards .card--talk .donut { width: 128px; height: 128px; }
+  .results-cards .card--talk .donut::after { inset: 20px; }
+  .results-cards .card--talk .talk-legend { flex: 0 1 auto; }
 }
 
 /* ===========================================================================
@@ -1974,9 +1979,8 @@ mark.mark--neg { background: var(--tcp-error-bg); color: var(--tcp-error-900); }
   .dash-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .dash-wordcloud { grid-column: 1 / -1; }
 
-  /* Top row: bar chart spans full width, pie + outcome share the row below */
-  .dash-toprow { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .dash-toprow .dash-chart { grid-column: 1 / -1; }
+  /* Top row: bar chart (wide) + call-direction donut */
+  .dash-toprow { grid-template-columns: 2fr 1fr; }
 }
 
 @media (min-width: 1200px) {
@@ -2000,9 +2004,8 @@ mark.mark--neg { background: var(--tcp-error-bg); color: var(--tcp-error-900); }
   /* Dashboard — three-column card grid (sentiment · top 3 · word cloud) */
   .dash-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .dash-wordcloud { grid-column: auto; }
-  /* Top row: bar chart (wide) + direction pie + outcome distribution */
-  .dash-toprow { grid-template-columns: 1.6fr 1fr 1fr; }
-  .dash-toprow .dash-chart { grid-column: auto; }
+  /* Top row: bar chart (wide) + call-direction donut */
+  .dash-toprow { grid-template-columns: 2fr 1fr; }
 }
 
 body {
