@@ -63,7 +63,7 @@ The app is a client-side SPA. Screens (`<section class="screen" data-screen="…
 | --- | --- | --- | --- |
 | `login` | Đăng nhập | Mock Google-only sign-in gate | Animated backdrop; button → `dashboard` |
 | `dashboard` | Dashboard (Home) | **Two tabs** (`[data-dashtab]` → `[data-dashpane]`): **Tổng quan** (date filter + volume bar with period-over-period delta + call-direction donut + **outcome-distribution donut** + KPI cards + **success-rate-over-time** trend + Top 3 + Recommendation — all pure-stat, no AI) and **Danh sách cuộc gọi** (table over `UPLOAD_LOG` with date-range + text search + agent filter, "Xem chi tiết" per row → full analysis). `.xlsx` export. No upload panel here anymore | Upload panel now lives only in `uploads` |
-| `results` | Kết quả phân tích | Two-column: MAIN (outcome + inline eval, then 2-col analysis cards) + RAIL (audio player + searchable transcript) | Built once by `layoutResults()` |
+| `results` | **Chi tiết cuộc gọi [mã]** | Two-column: MAIN (outcome result + 2-col analysis cards: Tóm tắt·Từ khóa·Thời lượng·Chất lượng âm thanh) + RAIL (audio player + searchable transcript). Tóm tắt & Transcript have inline **edit** toggles. No AI-model picker, no evaluation, no sentiment/gợi ý cards | Built once by `layoutResults()` |
 | `uploads` | **Đánh giá cuộc gọi** | Call log with stats/filters/pagination + review overrides + **Chú thích** column; a **"Lịch sử upload"** tab shows the raw call sheet | The upload panel also relocates here |
 | `employees` | Nhân viên | Agent roster; add (manual/CSV), delete, sortable columns | (Manager-role feature) |
 | `settings` | Cài đặt | **Master-detail**: menu (Hồ sơ của tôi / Bộ từ khoá cảm xúc) + selected-section pane | |
@@ -105,8 +105,8 @@ Single file `js/app.js`, one **IIFE** with `"use strict"`, script at end of `<bo
 | Upload flow | Drag/drop + browse (`selectedFiles`), 4 sample files, **2-per-row compact previews** with "Xoá tất cả", employee select. |
 | Bulk / database | "Bulk upload" tab = **database connection only** (`dbConnection` state). Connect → persists across tabs/resets; import pulls mock rows. |
 | Processing | `runProcessing()` drives a progress `setInterval`; shown in the **`#procModal` popup** with a **queue** (`renderProcQueue`); on finish → Results. |
-| Results | `selectResultFile` (also sets the heading to `Kết quả phân tích của cuộc gọi <id>`), `mockCall`, **inline evaluation** (`renderOutcomeReview`/`confirmOutcomeInline`), toolbar (`#reanalyzeBtn` cycles model + re-runs, `#saveResultBtn` = final decision → Đánh giá), audio player, transcript search (`runTranscriptSearch`), click-a-line-to-seek, keyword highlighting (`highlightTranscript`). |
-| `layoutResults()` | Builds the **MAIN + RAIL** structure once from the flat `.card` list by index (0 outcome … 9 transcript). ⚠️ Adding/removing a `.card` in the Results `.page` requires updating this index map. |
+| Results | `selectResultFile` (sets the heading to `Chi tiết cuộc gọi <id>`), `mockCall`, `setupInlineEdit` (Tóm tắt & Transcript edit toggles → `contentEditable`), audio player, transcript search (`runTranscriptSearch`), click-a-line-to-seek, keyword highlighting (`highlightTranscript`). |
+| `layoutResults()` | Builds the **MAIN + RAIL** structure once by selecting cards by role class (`.card--outcome/--summary/--keywords/--talk/--audio/--audio-preview/--transcript`), so cards can be added/removed without an index map. |
 | Uploads / Đánh giá | `UPLOAD_LOG` model, `renderUploads`, filters + pagination, review overrides (`effRate`), delete-with-confirm; **eval/sheet view switch** (`[data-upview]` → `renderCallHistory`). |
 | Employees | Sortable table, CSV/TSV `FileReader` import, add/delete. |
 | Settings | Master-detail menu (`[data-setnav]` → `[data-setpane]`), profile save, sentiment keyword editors (recolor transcript). |

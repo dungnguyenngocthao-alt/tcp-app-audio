@@ -1640,7 +1640,6 @@
      ------------------------------------------------------------------------- */
   const dashCallsTbody = $("#dashCallsTbody");
   const dashCallsPager = $("#dashCallsPager");
-  const dashCallAgent  = $("#dashCallAgent");
   const dashCallReset  = $("#dashCallReset");
   const dashCallFrom   = $("#dashCallFrom");
   const dashCallTo     = $("#dashCallTo");
@@ -1648,21 +1647,11 @@
   const DASH_CALLS_PER_PAGE = 8;
   let dashCallsPage = 1;
 
-  function populateDashCallAgent() {
-    if (!dashCallAgent) return;
-    const names = [...new Set(UPLOAD_LOG.map(u => u.agent))];
-    const cur = dashCallAgent.value;
-    dashCallAgent.innerHTML = '<option value="all">Tất cả</option>' +
-      names.map(n => `<option value="${escAttr(n)}">${n}</option>`).join("");
-    if (cur && (cur === "all" || names.includes(cur))) dashCallAgent.value = cur;
-  }
   function filteredDashCalls() {
-    const ag = dashCallAgent ? dashCallAgent.value : "all";
     const lo = dashCallFrom && dashCallFrom.value ? new Date(dashCallFrom.value).getTime() : -Infinity;
     const hi = dashCallTo && dashCallTo.value ? new Date(dashCallTo.value).getTime() : Infinity;
     const q  = dashCallSearch ? dashCallSearch.value.trim().toLowerCase() : "";
     return UPLOAD_LOG.filter(u => {
-      if (ag !== "all" && u.agent !== ag) return false;
       const t = parseUpTime(u.time);
       if (t < lo || t > hi) return false;
       if (q) {
@@ -1683,7 +1672,6 @@
   }
   function renderDashCalls() {
     if (!dashCallsTbody) return;
-    populateDashCallAgent();
     const list = filteredDashCalls();
     const pages = Math.max(1, Math.ceil(list.length / DASH_CALLS_PER_PAGE));
     if (dashCallsPage > pages) dashCallsPage = pages;
@@ -1732,11 +1720,10 @@
       if (btn) showSingleResult(btn.dataset.file, btn.dataset.date, "dashboard");
     });
   }
-  [dashCallAgent, dashCallFrom, dashCallTo].forEach(el =>
+  [dashCallFrom, dashCallTo].forEach(el =>
     el && el.addEventListener("change", () => { dashCallsPage = 1; renderDashCalls(); }));
   if (dashCallSearch) dashCallSearch.addEventListener("input", () => { dashCallsPage = 1; renderDashCalls(); });
   if (dashCallReset) dashCallReset.addEventListener("click", () => {
-    if (dashCallAgent) dashCallAgent.value = "all";
     if (dashCallFrom) dashCallFrom.value = "";
     if (dashCallTo) dashCallTo.value = "";
     if (dashCallSearch) dashCallSearch.value = "";
@@ -2014,8 +2001,8 @@
     // Results heading names the call by its ID (mã cuộc gọi).
     const headTitle = $("#screen-results .results-head__title");
     if (headTitle) headTitle.textContent = rec
-      ? `Kết quả phân tích của cuộc gọi ${rec.id}`
-      : "Kết quả phân tích";
+      ? `Chi tiết cuộc gọi ${rec.id}`
+      : "Chi tiết cuộc gọi";
 
     const title = $("#screen-results .outcome__title");
     const pct   = $("#screen-results .outcome__pct");
@@ -2038,137 +2025,31 @@
       if (active) active.scrollIntoView({ block: "nearest", inline: "nearest" });
     }
     if (typeof resetAudioPreview === "function") resetAudioPreview(m.dur);
-    // Sync the results toolbar model to the model used for analysis.
-    const rm = $("#resultModel");
-    if (rm && typeof currentModelName === "function") {
-      const target = currentModelName();
-      const opt = Array.prototype.find.call(rm.options, o => o.value === target);
-      if (opt) rm.value = target;
-    }
-    outcomeEditing = false;
     const ts = $("#transcriptSearch");
     if (ts && ts.value) { ts.value = ""; if (typeof runTranscriptSearch === "function") runTranscriptSearch(); }
-    renderOutcomeReview();
   }
 
-  // In-result evaluation — an INLINE editor (no popup). The user confirms or
-  // overrides the AI's rate right here.
-  let outcomeEditing = false;
-  function renderOutcomeReview() {
-    const box = $("#outcomeReview");
-    if (!box) return;
-    const rec = (typeof UPLOAD_LOG !== "undefined") ? UPLOAD_LOG.find(u => u.id === resultUploadId) : null;
-    if (!rec) { box.hidden = true; box.innerHTML = ""; renderOutcomeDetail(null); return; }
-    // The evaluation editor is always shown, beside the outcome.
-    const cur = effRate(rec);
-    box.hidden = false;
-    box.classList.add("outcome-review--edit");
-    box.innerHTML =
-      `<div class="outcome-review__head">
-         <span class="outcome-review__title">Đánh giá lại cuộc gọi</span>
-         ${rec.reviewed
-           ? `<span class="outcome-review__done">✓ Đã chốt · ${rec.userRate}%</span>`
-           : `<span class="outcome-review__ai">AI: ${rec.rate}%</span>`}
-       </div>
-       <p class="outcome-review__hint">Xác nhận hoặc điều chỉnh tỷ lệ thành công. Kết quả bạn chốt sẽ thay cho đánh giá của AI.</p>
-       <div class="outcome-review__slide">
-         <input class="slider" id="inlineRate" type="range" min="0" max="100" value="${cur}" aria-label="Tỷ lệ bạn chốt">
-         <span class="outcome-review__val" id="inlineRateVal">${cur}%</span>
-       </div>
-       <textarea class="input outcome-review__note" id="inlineNote" rows="3" placeholder="Lý do điều chỉnh (tuỳ chọn)…">${escAttr(rec.note || "")}</textarea>
-       <button class="btn btn--accent btn--sm" type="button" data-outcome-confirm>Chốt kết quả</button>`;
-    renderOutcomeDetail(null);
-  }
-  function confirmOutcomeInline() {
-    const rec = (typeof UPLOAD_LOG !== "undefined") ? UPLOAD_LOG.find(u => u.id === resultUploadId) : null;
-    if (!rec) return;
-    const slider = $("#inlineRate");
-    const note = $("#inlineNote");
-    rec.userRate = slider ? parseInt(slider.value, 10) : rec.rate;
-    rec.note = note ? note.value.trim() : "";
-    rec.reviewed = true;
-    outcomeEditing = false;
-    // Reflect the confirmed rate on the outcome card.
-    const pct = $("#screen-results .outcome__pct");
-    if (pct) pct.textContent = rec.userRate + "%";
-    if (typeof renderUploads === "function") renderUploads();
-    renderOutcomeReview();
-  }
-
-  // Evaluation detail card — appears below "Tỷ lệ tư vấn" once reviewed.
-  function renderOutcomeDetail(rec) {
-    const box = $("#outcomeDetail");
-    if (!box) return;
-    if (!rec || !rec.reviewed) { box.hidden = true; box.innerHTML = ""; return; }
-    const diff = rec.userRate - rec.rate;
-    const diffTxt = (diff > 0 ? "+" : "") + diff + "%";
-    const diffClass = diff > 0 ? "review-detail__delta--up" : diff < 0 ? "review-detail__delta--down" : "review-detail__delta--flat";
-    const note = (rec.note || "").trim();
-    box.hidden = false;
-    box.innerHTML =
-      `<div class="result-card__label">
-        <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M243.28,68.24l-24-23.56a16,16,0,0,0-22.59,0L104,136.94V152h16l92.68-92.24,24,23.56L144,175.6V192h16l83.28-82.76a16,16,0,0,0,0-22.62ZM216,208H40V32h96a8,8,0,0,0,0-16H40A16,16,0,0,0,24,32V208a16,16,0,0,0,16,16H216a16,16,0,0,0,16-16V152a8,8,0,0,0-16,0Z"/></svg>
-        Chi tiết đánh giá
-      </div>
-      <div class="review-detail__grid">
-        <div class="review-detail__item">
-          <span class="review-detail__k">Đánh giá của AI</span>
-          <span class="review-detail__v">${rec.rate}%</span>
-        </div>
-        <div class="review-detail__item">
-          <span class="review-detail__k">Bạn chốt</span>
-          <span class="review-detail__v review-detail__v--user">${rec.userRate}%</span>
-        </div>
-        <div class="review-detail__item">
-          <span class="review-detail__k">Chênh lệch</span>
-          <span class="review-detail__v ${diffClass}">${diffTxt}</span>
-        </div>
-      </div>
-      <div class="review-detail__note">
-        <span class="review-detail__k">Chú thích</span>
-        <p class="review-detail__notetext">${note ? escAttr(note) : "Không có ghi chú."}</p>
-      </div>`;
-  }
-  {
-    const box = $("#outcomeReview");
-    if (box) {
-      box.addEventListener("click", e => {
-        if (e.target.closest("[data-outcome-edit]")) { outcomeEditing = true; renderOutcomeReview(); }
-        else if (e.target.closest("[data-outcome-confirm]")) confirmOutcomeInline();
+  /* Inline editing — Transcript & Tóm tắt each have an edit toggle that makes
+     their content directly editable in place (mock; edits live in the DOM). */
+  function setupInlineEdit(btnId, getEditables) {
+    const btn = $("#" + btnId);
+    if (!btn) return;
+    const label = btn.querySelector(".edit-btn__label");
+    let editing = false;
+    btn.addEventListener("click", () => {
+      editing = !editing;
+      const els = getEditables();
+      els.forEach(el => {
+        el.contentEditable = editing ? "true" : "false";
+        el.classList.toggle("is-editing", editing);
       });
-      box.addEventListener("input", e => {
-        if (e.target.id === "inlineRate") {
-          const v = $("#inlineRateVal");
-          if (v) v.textContent = e.target.value + "%";
-        }
-      });
-    }
+      btn.classList.toggle("is-editing", editing);
+      if (label) label.textContent = editing ? "Xong" : "Chỉnh sửa";
+      if (editing && els[0]) els[0].focus();
+    });
   }
-
-  /* Results toolbar — re-analyze with another model, save the final decision. */
-  const resultModel  = $("#resultModel");
-  const reanalyzeBtn = $("#reanalyzeBtn");
-  const saveResultBtn = $("#saveResultBtn");
-  if (reanalyzeBtn) reanalyzeBtn.addEventListener("click", () => {
-    // Cycle to the next model so "re-analyze" uses a different AI model.
-    if (resultModel && resultModel.options.length > 1) {
-      resultModel.selectedIndex = (resultModel.selectedIndex + 1) % resultModel.options.length;
-    }
-    if (procModelName) procModelName.textContent = resultModel ? resultModel.value : currentModelName();
-    if (typeof renderProcQueue === "function") renderProcQueue();
-    openProcModal();
-    runProcessing();
-  });
-  if (saveResultBtn) saveResultBtn.addEventListener("click", () => {
-    // Final decision — persist the current rate as the confirmed result.
-    const rec = (typeof UPLOAD_LOG !== "undefined") ? UPLOAD_LOG.find(u => u.id === resultUploadId) : null;
-    if (rec) {
-      if (!rec.reviewed) { rec.userRate = rec.rate; rec.reviewed = true; }
-      if (typeof renderUploads === "function") renderUploads();
-    }
-    if (typeof showToast === "function") showToast("Đã lưu kết quả vào Đánh giá cuộc gọi.");
-    show("uploads");
-  });
+  setupInlineEdit("editSummaryBtn", () => $$("#screen-results .card--summary [data-editable]"));
+  setupInlineEdit("editTranscriptBtn", () => $$("#screen-results .card--transcript .msg__bubble"));
 
   /* Transcript search — highlight & filter conversation lines by keyword. */
   const transcriptSearch = $("#transcriptSearch");
@@ -2302,36 +2183,34 @@
        mobile  (<768):   single column
      ------------------------------------------------------------------------- */
   const resultsPage = $("#screen-results .page");
-  let resultsCards = null;
-  let lastBp = null;
 
   function layoutResults() {
     if (!resultsPage) return;
-    if (!resultsCards) {
-      resultsCards = Array.prototype.filter.call(
-        resultsPage.children, el => el.classList.contains("card")
-      );
-    }
-    if (resultsCards.length < 10) return;
     if (resultsPage.classList.contains("is-cols")) return;   // build once; CSS is responsive
 
-    // cards: 0 outcome, 1 eval-detail, 2 audio-preview, 3 audio-quality,
-    //        4 keywords, 5 sentiment, 6 talk, 7 summary, 8 actions, 9 transcript.
-    // Layout: a wide MAIN column (outcome + a 2-col grid of analysis cards) and
-    // a right RAIL (audio player + transcript). The eval editor sits beside the
-    // outcome inside the outcome card. The standalone detail card is retired.
-    resultsCards[0].classList.add("results-outcome-card");
-    if (resultsCards[1]) resultsCards[1].hidden = true;
+    // Select cards by role (index-independent) and arrange into a wide MAIN
+    // column (outcome result + a grid of analysis cards) and a right RAIL
+    // (audio player + transcript, which sticks and scrolls internally).
+    const pick = sel => resultsPage.querySelector(sel);
+    const outcome    = pick(".card--outcome");
+    const summary    = pick(".card--summary");
+    const keywords   = pick(".card--keywords");
+    const talk       = pick(".card--talk");
+    const quality    = pick(".card--audio");
+    const audio      = pick(".card--audio-preview");
+    const transcript = pick(".card--transcript");
+    if (!outcome || !transcript) return;
+    outcome.classList.add("results-outcome-card");
 
     const main = document.createElement("div"); main.className = "results-main";
     const cardsWrap = document.createElement("div"); cardsWrap.className = "results-cards";
     const side = document.createElement("div"); side.className = "results-side";
 
-    main.appendChild(resultsCards[0]);                       // outcome (+ inline eval)
-    [5, 6, 7, 3, 4, 8].forEach(i => cardsWrap.appendChild(resultsCards[i]));
+    main.appendChild(outcome);
+    [summary, keywords, talk, quality].forEach(c => { if (c) cardsWrap.appendChild(c); });
     main.appendChild(cardsWrap);
-    side.appendChild(resultsCards[2]);                       // audio preview
-    side.appendChild(resultsCards[9]);                       // transcript
+    if (audio) side.appendChild(audio);       // audio player
+    side.appendChild(transcript);             // transcript
 
     while (resultsPage.firstChild) resultsPage.removeChild(resultsPage.firstChild);
     resultsPage.appendChild(main);

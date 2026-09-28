@@ -1317,6 +1317,26 @@ button { font-family: inherit; }
 .tr-head .subtabs__export { flex: 0 0 auto; width: 34px; height: 34px; color: var(--tcp-fg-secondary); }
 .tr-head .subtabs__export svg { width: 18px; height: 18px; }
 .tr-head .subtabs__export:hover { color: var(--tcp-ink); }
+.tr-head .edit-btn { flex: 0 0 auto; }
+
+/* Card header with an action (label left, edit button right) */
+.card-head {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: var(--tcp-space-3); margin-bottom: var(--tcp-space-3);
+}
+.card-head .result-card__label { margin-bottom: 0; }
+
+/* Inline-edit toggle button + editable regions */
+.edit-btn { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
+.edit-btn svg { width: 15px; height: 15px; }
+.edit-btn.is-editing {
+  background: var(--tcp-accent); border-color: var(--tcp-accent); color: #fff;
+}
+[contenteditable="true"].is-editing {
+  outline: 1px dashed var(--tcp-accent); outline-offset: 2px;
+  border-radius: var(--tcp-radius-sm); background: var(--tcp-accent-subtle);
+}
+.msg__bubble.is-editing { cursor: text; }
 
 /* Segmented "Toàn bộ / Nổi bật" toggle */
 .tr-tabs { display: flex; gap: var(--tcp-space-4); border-bottom: 1px solid var(--tcp-border-subtle); margin-bottom: var(--tcp-space-3); }
@@ -2427,16 +2447,19 @@ body {
 
 /* Home (Dashboard) · overview / call-list tabs */
 .dash-tabs { display: inline-flex; margin: 0 0 var(--tcp-space-5); }
+/* Search box nested inside the call-list filter (shares its white card) */
 .dash-calls-search {
   display: flex; align-items: center; gap: 8px;
-  margin: 0 0 var(--tcp-space-3); padding: 0 12px;
-  border: 1px solid var(--tcp-border); border-radius: var(--tcp-radius-lg);
-  background: var(--tcp-bg); max-width: 420px;
+  padding: 0 12px; min-width: 200px; flex: 1 1 240px;
+  border: 1px solid var(--tcp-border); border-radius: var(--tcp-radius-pill);
+  background: var(--tcp-bg-muted);
 }
 .dash-calls-search svg { width: 18px; height: 18px; flex: 0 0 auto; color: var(--tcp-fg-tertiary); }
-.dash-calls-search__input { border: 0; box-shadow: none; padding: 10px 0; background: none; flex: 1 1 auto; }
+.dash-calls-search__input { border: 0; box-shadow: none; padding: 9px 0; background: none; flex: 1 1 auto; }
 .dash-calls-search__input:focus { outline: 0; box-shadow: none; }
 .dash-calls-filter { margin-bottom: var(--tcp-space-4); }
+.dash-calls-filter .dash-filter__field { flex: 0 0 auto; }
+.dash-calls-filter #dashCallReset { margin-left: auto; }
 .dash-calls-table th.tbl-act-col { width: 1%; white-space: nowrap; }
 .dash-calls-table .dc-detail { white-space: nowrap; }
 /* Inbound / Outbound classification badge */
