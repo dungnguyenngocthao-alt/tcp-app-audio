@@ -1744,10 +1744,10 @@ mark.mark--neg { background: var(--tcp-error-bg); color: var(--tcp-error-900); }
 .cl-dot--out { background: var(--tcp-accent); }
 .dash-chart__total { font-size: 32px; font-weight: 600; color: var(--tcp-ink); letter-spacing: -0.6px; line-height: 1.1; }
 .dash-chart__cap { font-size: 12px; color: var(--tcp-fg-tertiary); text-transform: uppercase; letter-spacing: .8px; margin-top: 3px; }
-.seg { display: inline-flex; background: var(--tcp-bg-muted); border-radius: var(--tcp-radius-pill); padding: 3px; gap: 2px; }
+.seg { display: inline-flex; background: var(--tcp-bg-muted); border-radius: var(--tcp-radius-md); padding: 3px; gap: 2px; }
 .seg__btn {
   border: 0; background: none; padding: 6px 14px;
-  border-radius: var(--tcp-radius-pill); font: inherit; font-size: 13px; font-weight: 500;
+  border-radius: var(--tcp-radius-sm); font: inherit; font-size: 13px; font-weight: 500;
   color: var(--tcp-fg-secondary); cursor: pointer;
   transition: background var(--tcp-dur-fast) var(--tcp-ease), color var(--tcp-dur-fast) var(--tcp-ease);
 }
@@ -2727,3 +2727,30 @@ body {
 .dash-tabs { border-radius: var(--tcp-radius-md); }
 .dash-tabs .seg__btn,
 .dash-tabs .seg__btn.is-active { border-radius: var(--tcp-radius-sm); }
+
+/* ===========================================================================
+   Chi tiết cuộc gọi — mobile: tighter spacing + icon-only transcript actions
+   =========================================================================== */
+@media (max-width: 640px) {
+  #screen-results .page { padding: var(--tcp-space-4); }
+  #screen-results .page.results-grid { gap: var(--tcp-space-3); }
+  #screen-results .results-main,
+  #screen-results .results-side,
+  #screen-results .results-cards { gap: var(--tcp-space-3); }
+  #screen-results .card { padding: var(--tcp-space-4); }
+
+  /* Transcript header: search drops to its own row; edit + download become
+     matching icon-only buttons so nothing spills past the card border. */
+  #screen-results .tr-head { flex-wrap: wrap; gap: var(--tcp-space-2); }
+  #screen-results .tr-head__title { flex: 1 1 auto; }
+  #screen-results .tr-head .transcript-search { order: 3; flex: 1 1 100%; margin: 0; }
+  #screen-results .tr-head .edit-btn {
+    width: 36px; height: 36px; padding: 0; justify-content: center; flex: 0 0 auto;
+  }
+  #screen-results .tr-head .edit-btn .edit-btn__label { display: none; }
+  #screen-results .tr-head .subtabs__export {
+    width: 36px; height: 36px; flex: 0 0 auto;
+    border: 1px solid var(--tcp-border); border-radius: var(--tcp-radius-md);
+    color: var(--tcp-fg-primary);
+  }
+}
