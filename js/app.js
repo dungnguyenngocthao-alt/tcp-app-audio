@@ -483,15 +483,7 @@
   /* -------------------------------------------------------------------------
      Screen 3 · transcript sub-tabs + export
      ------------------------------------------------------------------------- */
-  $$("[data-scripttab]").forEach(tab =>
-    tab.addEventListener("click", () => {
-      const which = tab.dataset.scripttab;
-      $$("[data-scripttab]").forEach(t => t.classList.toggle("is-active", t === tab));
-      $$("[data-scriptpane]").forEach(p =>
-        p.hidden = p.dataset.scriptpane !== which
-      );
-    })
-  );
+  /* (Transcript sub-tabs removed — only the full transcript is shown.) */
 
   /* Briefly confirm an export action on any button */
   const CHECK_SVG =

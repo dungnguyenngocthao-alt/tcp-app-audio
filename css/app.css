@@ -2825,7 +2825,7 @@ body {
 @media (max-width: 640px) { .topcaller__bar { display: none; } }
 
 /* Top 5 caller + callee side by side (stack on narrow screens) */
-.dash-topgrid { display: grid; grid-template-columns: 1fr; gap: 20px; align-items: stretch; }
+.dash-topgrid { display: grid; grid-template-columns: 1fr; gap: 20px; margin-bottom: var(--tcp-space-5); align-items: stretch; }
 .dash-topgrid > .card { margin: 0; }
 @media (min-width: 768px) { .dash-topgrid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 /* the two Top-5 lists sit closer together, so the bar shrinks a touch */
