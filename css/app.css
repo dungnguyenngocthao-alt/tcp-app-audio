@@ -1076,6 +1076,8 @@ button { font-family: inherit; }
   margin-bottom: var(--tcp-space-4);
 }
 .result-card__label svg { width: 15px; height: 15px; }
+/* softer, non-uppercase qualifier appended to a card label */
+.label-note { text-transform: none; letter-spacing: normal; font-weight: var(--tcp-fw-regular); color: var(--tcp-fg-tertiary); opacity: .8; }
 .result-card__label--success { color: var(--tcp-success-solid); }
 .result-card__label--error { color: var(--tcp-error-solid); }
 
@@ -1896,16 +1898,16 @@ mark.mark--neg { background: var(--tcp-error-bg); color: var(--tcp-error-900); }
 /* Results column wrappers: transparent on mobile/tablet (cards flow as before),
    real flex columns on desktop. Cards carry their own bottom margin because the
    wrappers break .card + .card adjacency. */
-/* Results columns are built by JS (see layoutResults). Until then — and in
-   static contexts like the tablet gallery — the cards stack in one column. */
-#screen-results .card { margin: 0 0 16px; }
+/* Results columns are built by JS (see layoutResults); the flex/grid `gap`
+   is the single source of spacing, so cards carry no margin of their own. */
+#screen-results .card { margin: 0; }
 /* Results — two-column shell: a wide MAIN column (outcome + analysis grid) and
    a right RAIL (audio player + transcript). Built once by layoutResults(). */
 #screen-results .page.results-grid { display: flex; flex-direction: column; gap: 20px; align-items: stretch; }
-.results-main { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
-.results-side { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+.results-main { display: flex; flex-direction: column; gap: 20px; min-width: 0; }
+.results-side { display: flex; flex-direction: column; gap: 20px; min-width: 0; }
 .results-main > .card, .results-side > .card { margin: 0; }
-.results-cards { display: flex; flex-direction: column; gap: 16px; }
+.results-cards { display: flex; flex-direction: column; gap: 20px; }
 .results-cards > .card { margin: 0; }
 
 /* Outcome result card + inline rate editor (stacked). */
@@ -1937,7 +1939,7 @@ mark.mark--neg { background: var(--tcp-error-bg); color: var(--tcp-error-900); }
   .results-side .card--transcript { display: flex; flex-direction: column; max-height: calc(100dvh - 140px); }
   .results-side .transcript-scroll { flex: 1 1 auto; min-height: 0; overflow-y: auto; }
   /* Analysis cards: even 2-column grid (equal-height rows). */
-  .results-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; align-items: stretch; }
+  .results-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items: stretch; }
   .results-cards > .card { width: 100%; margin: 0; }
   /* Audio player spans the full analysis width, above the two smaller cards. */
   .results-cards .card--audio-preview { grid-column: 1 / -1; }
