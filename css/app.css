@@ -2754,3 +2754,12 @@ body {
     color: var(--tcp-fg-primary);
   }
 }
+
+/* Transcript & Tóm tắt: icon-only edit buttons + matching download at all sizes */
+#screen-results .edit-btn { width: 36px; height: 36px; padding: 0; justify-content: center; flex: 0 0 auto; }
+#screen-results .edit-btn .edit-btn__label { display: none; }
+#screen-results .tr-head .subtabs__export {
+  width: 36px; height: 36px; flex: 0 0 auto;
+  border: 1px solid var(--tcp-border); border-radius: var(--tcp-radius-md);
+  color: var(--tcp-fg-primary);
+}
