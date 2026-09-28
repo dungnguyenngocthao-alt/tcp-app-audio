@@ -2775,9 +2775,16 @@ body {
    below) to stop the transcript overlapping the analysis cards.
    =========================================================================== */
 @media (min-width: 1024px) and (max-width: 1279px) {
-  .phone.is-shell #screen-results .page.results-grid { flex-direction: column; }
+  .phone.is-shell #screen-results .page.results-grid {
+    flex-direction: column;
+    /* restore stretch (the >=900px rule set flex-start for the row layout);
+       otherwise each stacked card shrinks to its content width and the
+       transcript ends up wider than the summary. */
+    align-items: stretch;
+  }
+  .phone.is-shell #screen-results .results-main,
   .phone.is-shell #screen-results .results-side {
-    flex: 1 1 auto; position: static; top: auto;
+    flex: 1 1 auto; width: 100%; position: static; top: auto;
   }
   .phone.is-shell #screen-results .results-side .card--transcript { max-height: none; }
 }

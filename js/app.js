@@ -1395,6 +1395,19 @@
     { id: "UP-1037", time: "24/10/2023, 10:02", agent: "Nguyễn Thị Hà",  caller: "1001", to: "0977 654 321", dir: "out", dur: "18:41", rate: 79, outcome: "warning", file: "Upsell_GreenFoods.wav",      date: "10/23/2023, 5:30 PM" },
     { id: "UP-1036", time: "23/10/2023, 13:47", agent: "Phạm Minh Châu",  caller: "1004", to: "0905 778 990", dir: "out", dur: "27:39", rate: 91, outcome: "success", file: "Pitch_SaigonRetail.wav",     date: "10/22/2023, 10:11 AM" },
     { id: "UP-1035", time: "23/10/2023, 08:15", agent: "Lê Hoàng Nam",   caller: "1003", to: "0918 003 476", dir: "in",  dur: "10:08", rate: 64, outcome: "warning", file: "Q3_Review_HaiPhong.flac",    date: "10/21/2023, 4:44 PM" },
+    { id: "UP-1034", time: "22/10/2023, 16:20", agent: "Nguyễn Thị Hà",  caller: "1001", to: "0902 551 300", dir: "out", dur: "09:12", rate: 71, outcome: "warning", file: "Followup_MienTay.wav",      date: "10/21/2023, 9:10 AM" },
+    { id: "UP-1033", time: "22/10/2023, 09:41", agent: "Trần Văn Dũng",  caller: "1002", to: "0933 776 512", dir: "out", dur: "13:57", rate: 58, outcome: "neutral", file: "Cold_Call_DongNai.mp3",     date: "10/20/2023, 3:02 PM" },
+    { id: "UP-1032", time: "21/10/2023, 15:03", agent: "Phạm Minh Châu",  caller: "1004", to: "0908 112 900", dir: "out", dur: "24:05", rate: 88, outcome: "success", file: "Renewal_VietPost.flac",     date: "10/20/2023, 10:45 AM" },
+    { id: "UP-1031", time: "21/10/2023, 10:18", agent: "Vũ Thanh Tùng",  caller: "1005", to: "0977 220 118", dir: "in",  dur: "07:44", rate: 49, outcome: "neutral", file: "Discovery_CanTho.mp3",      date: "10/19/2023, 4:30 PM" },
+    { id: "UP-1030", time: "20/10/2023, 14:55", agent: "Lê Hoàng Nam",   caller: "1003", to: "0912 660 771", dir: "out", dur: "19:36", rate: 77, outcome: "warning", file: "Upsell_HaTinh.wav",        date: "10/19/2023, 9:20 AM" },
+    { id: "UP-1029", time: "20/10/2023, 08:47", agent: "Nguyễn Thị Hà",  caller: "1006", to: "0903 909 004", dir: "out", dur: "16:02", rate: 84, outcome: "success", file: "Pitch_DaNang.wav",         date: "10/18/2023, 2:15 PM" },
+    { id: "UP-1028", time: "19/10/2023, 13:29", agent: "Trần Văn Dũng",  caller: "1002", to: "0938 445 190", dir: "in",  dur: "05:51", rate: 44, outcome: "neutral", file: "Support_BinhDuong.mp3",    date: "10/18/2023, 8:40 AM" },
+    { id: "UP-1027", time: "19/10/2023, 09:12", agent: "Phạm Minh Châu",  caller: "1004", to: "0905 331 228", dir: "out", dur: "28:14", rate: 92, outcome: "success", file: "Demo_QuangNinh.flac",      date: "10/17/2023, 5:05 PM" },
+    { id: "UP-1026", time: "18/10/2023, 16:37", agent: "Vũ Thanh Tùng",  caller: "1005", to: "0917 008 653", dir: "in",  dur: "11:23", rate: 66, outcome: "warning", file: "Q3_Review_NgheAn.mp3",      date: "10/17/2023, 10:50 AM" },
+    { id: "UP-1025", time: "18/10/2023, 10:44", agent: "Nguyễn Thị Hà",  caller: "1001", to: "0902 774 619", dir: "out", dur: "14:09", rate: 80, outcome: "warning", file: "Followup_HaiDuong.wav",     date: "10/16/2023, 3:28 PM" },
+    { id: "UP-1024", time: "17/10/2023, 15:22", agent: "Lê Hoàng Nam",   caller: "1003", to: "0913 552 084", dir: "out", dur: "21:47", rate: 87, outcome: "success", file: "Renewal_LongAn.flac",      date: "10/16/2023, 9:12 AM" },
+    { id: "UP-1023", time: "17/10/2023, 09:03", agent: "Trần Văn Dũng",  caller: "1007", to: "0939 118 762", dir: "out", dur: "08:58", rate: 52, outcome: "neutral", file: "Cold_Call_VinhLong.mp3",   date: "10/15/2023, 4:41 PM" },
+    { id: "UP-1022", time: "16/10/2023, 14:10", agent: "Phạm Minh Châu",  caller: "1004", to: "0906 700 145", dir: "in",  dur: "17:31", rate: 75, outcome: "warning", file: "Discovery_BacNinh.wav",    date: "10/15/2023, 10:03 AM" },
   ];
 
   const upTbody   = $("#upTbody");
@@ -1549,7 +1562,7 @@
   const dashCallFrom   = $("#dashCallFrom");
   const dashCallTo     = $("#dashCallTo");
   const dashCallSearch = $("#dashCallSearch");
-  const DASH_CALLS_PER_PAGE = 5;
+  const DASH_CALLS_PER_PAGE = 10;
   let dashCallsPage = 1;
 
   function filteredDashCalls() {
@@ -1634,7 +1647,7 @@
         <div class="topcaller">
           <span class="topcaller__rank">${i + 1}</span>
           <div class="topcaller__info">
-            <div class="topcaller__name">caller <b>ID</b>: ${escAttr(t.caller)}</div>
+            <div class="topcaller__name">caller id: <b>${escAttr(t.caller)}</b></div>
           </div>
           <div class="topcaller__bar"><span style="width:${Math.round(t.count / max * 100)}%"></span></div>
           <span class="topcaller__count">${t.count} <small>cuộc gọi</small></span>
