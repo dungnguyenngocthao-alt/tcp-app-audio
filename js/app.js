@@ -970,6 +970,24 @@
   const chartPlot  = $("#chartPlot");
   const chartRange = $("#chartRange");
   const chartDelta = $("#chartDelta");
+  // Date-axis labels: dd/mm/yyyy for week + month, mm/yyyy for year.
+  const pad2 = n => String(n).padStart(2, "0");
+  const fmtDMY = dt => `${pad2(dt.getDate())}/${pad2(dt.getMonth() + 1)}/${dt.getFullYear()}`;
+  const fmtMY  = dt => `${pad2(dt.getMonth() + 1)}/${dt.getFullYear()}`;
+  function weekDates(base) {                    // Mon..Sun of base's week
+    const mon = new Date(base);
+    mon.setDate(mon.getDate() - ((mon.getDay() + 6) % 7));
+    mon.setHours(0, 0, 0, 0);
+    return Array.from({ length: 7 }, (_, i) => { const d = new Date(mon); d.setDate(mon.getDate() + i); return d; });
+  }
+  function axisLabels(range, n) {
+    const now = new Date();
+    if (range === "year")
+      return Array.from({ length: n }, (_, i) => fmtMY(new Date(now.getFullYear(), i, 1)));
+    if (range === "month")
+      return Array.from({ length: n }, (_, i) => fmtDMY(new Date(now.getFullYear(), now.getMonth(), i + 1)));
+    return weekDates(now).slice(0, n).map(fmtDMY);   // week
+  }
   // Totals are DERIVED from the bars, so the volume chart, the call-direction
   // donut and the heatmap all report the same numbers for the active range.
   function rangeTotals(d) {
@@ -997,21 +1015,29 @@
       }
     }
     const max = Math.max(...d.bars.map(b => Math.max(b[1], b[2])));
-    const many = d.bars.length > 12;
+    const n = d.bars.length;
+    const labels = axisLabels(range, n);
+    // Thin the dd/mm/yyyy ticks so they never overlap: fewer on narrow screens.
+    const narrow = window.innerWidth <= 640;
+    const maxLabels = narrow ? 5 : Math.min(n, 7);
+    const stepLbl = Math.max(1, Math.ceil(n / maxLabels));
     chartPlot.innerHTML = d.bars.map(([x, inc, out], i) => {
-      const showX = !many || i % 5 === 0;
-      return `<div class="chart-col" data-x="${x}" data-in="${inc}" data-out="${out}">
+      const lbl = labels[i] || x;
+      const showX = i % stepLbl === 0;
+      return `<div class="chart-col" data-x="${lbl}" data-in="${inc}" data-out="${out}">
         <div class="chart-col__track">
           <div class="chart-col__bar chart-col__bar--in" style="height:${Math.max(3, Math.round(inc / max * 100))}%"></div>
           <div class="chart-col__bar chart-col__bar--out" style="height:${Math.max(3, Math.round(out / max * 100))}%"></div>
         </div>
-        <div class="chart-col__x">${showX ? x : ""}</div>
+        <div class="chart-col__x">${showX ? lbl : ""}</div>
       </div>`;
     }).join("");
     // Keep the donut and heatmap in lockstep with this range's numbers.
     renderCallPie(inTotal, outTotal);
     renderHeatmap(range, d);
+    chartRangeCur = range;
   }
+  let chartRangeCur = "week";
   if (chartRange) {
     chartRange.addEventListener("click", e => {
       const btn = e.target.closest(".seg__btn");
@@ -1020,6 +1046,17 @@
       renderChart(btn.dataset.range);
     });
   }
+  // Re-render on width changes so the date-axis tick density stays readable.
+  (function () {
+    let raf = null, lastNarrow = window.innerWidth <= 640;
+    window.addEventListener("resize", () => {
+      const narrow = window.innerWidth <= 640;
+      if (narrow === lastNarrow) return;      // only when crossing the breakpoint
+      lastNarrow = narrow;
+      if (raf) cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => renderChart(chartRangeCur));
+    });
+  })();
   // Initial render happens after renderCallPie/renderHeatmap are defined below
   // (they use `const`s declared later — calling here would hit the TDZ).
 
@@ -1094,9 +1131,11 @@
     }
     const grid = colTotals.map(ct => splitTotal(ct, HEAT_SLOT_W));  // grid[day][slot]
     const max = Math.max(1, ...grid.flat());
+    const dayLabels = weekDates(new Date()).map(fmtDMY);   // dd/mm/yyyy, Mon..Sun
     let html = '<div class="heatmap__cell heatmap__corner"></div>';
     HEAT_SLOTS.forEach(s => { html += `<div class="heatmap__head">${s}</div>`; });
-    HEAT_DAYS.forEach((day, di) => {
+    HEAT_DAYS.forEach((_day, di) => {
+      const day = dayLabels[di];
       html += `<div class="heatmap__day">${day}</div>`;
       HEAT_SLOTS.forEach((s, si) => {
         const c = grid[di][si];

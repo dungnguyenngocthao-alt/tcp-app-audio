@@ -1770,7 +1770,7 @@ mark.mark--neg { background: var(--tcp-error-bg); color: var(--tcp-error-900); }
 }
 .chart-col__bar--in  { background: linear-gradient(180deg, #FB923C 0%, #F97316 100%); }
 .chart-col__bar--out { background: linear-gradient(180deg, #7C74EE 0%, var(--tcp-accent) 100%); }
-.chart-col__x { height: 18px; margin-top: 6px; text-align: center; font-size: 11px; color: var(--tcp-fg-tertiary); white-space: nowrap; overflow: hidden; }
+.chart-col__x { height: 18px; margin-top: 6px; text-align: center; font-size: 10px; color: var(--tcp-fg-tertiary); white-space: nowrap; overflow: visible; font-variant-numeric: tabular-nums; }
 
 /* Call-direction donut */
 .dash-pie { display: flex; flex-direction: column; }
@@ -2468,11 +2468,11 @@ body {
 /* Call-volume heatmap (weekday × time slot) */
 .dash-heatmap { margin-bottom: var(--tcp-space-5); }
 .heatmap {
-  display: grid; grid-template-columns: 40px repeat(5, minmax(0, 1fr));
+  display: grid; grid-template-columns: 88px repeat(5, minmax(0, 1fr));
   gap: 6px; margin-top: var(--tcp-space-3);
 }
 .heatmap__head { font-size: 11px; color: var(--tcp-fg-tertiary); text-align: center; padding-bottom: 2px; }
-.heatmap__day { font-size: 12px; color: var(--tcp-fg-secondary); display: flex; align-items: center; }
+.heatmap__day { font-size: 11px; color: var(--tcp-fg-secondary); display: flex; align-items: center; white-space: nowrap; font-variant-numeric: tabular-nums; }
 .heatmap__cell {
   height: 42px; border-radius: 8px;
   display: flex; align-items: center; justify-content: center;
