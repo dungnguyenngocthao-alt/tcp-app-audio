@@ -1761,7 +1761,21 @@ mark.mark--neg { background: var(--tcp-error-bg); color: var(--tcp-error-900); }
 }
 .seg__btn.is-active { background: var(--tcp-bg); color: var(--tcp-accent); box-shadow: var(--tcp-shadow-xs); }
 .dash-chart__plot { display: flex; align-items: stretch; gap: 6px; height: 180px; }
-.chart-col { flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; }
+.chart-col { flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; position: relative; }
+/* Pure-CSS hover tooltip (no JS) — shows the period's inbound/outbound counts */
+.chart-col__tip {
+  position: absolute; left: 50%; bottom: calc(100% - 24px); transform: translateX(-50%);
+  z-index: 6; pointer-events: none;
+  background: var(--tcp-ink); color: #fff;
+  font-size: 12px; line-height: 1.5; white-space: nowrap;
+  padding: 7px 11px; border-radius: var(--tcp-radius-md);
+  box-shadow: var(--tcp-shadow-lg);
+  opacity: 0; visibility: hidden; transition: opacity var(--tcp-dur-fast) var(--tcp-ease);
+}
+.chart-col:hover .chart-col__tip { opacity: 1; visibility: visible; }
+/* Edge columns: keep the tooltip inside the card */
+.chart-col:first-child .chart-col__tip { left: 0; transform: none; }
+.chart-col:last-child  .chart-col__tip { left: auto; right: 0; transform: none; }
 .chart-col__track { flex: 1; display: flex; align-items: flex-end; justify-content: center; gap: 2px; min-height: 0; }
 .chart-col__bar {
   flex: 1 1 0; max-width: 13px;
@@ -2705,8 +2719,10 @@ body {
   .dash-filter { flex-direction: column; align-items: stretch; gap: var(--tcp-space-3); }
   .dash-filter__label { margin: 0 0 2px; }
   .dash-filter__field { width: 100%; }
+  /* Fixed-width labels so "Từ" and "Đến" inputs line up and are equal width. */
+  .dash-filter__field label { flex: 0 0 40px; }
   .dash-filter__field .dash-filter__input,
-  .dash-filter__field .select { flex: 1 1 auto; min-width: 0; }
+  .dash-filter__field .select { flex: 1 1 auto; min-width: 0; width: auto; }
   .dash-filter__sep { display: none; }
   .dash-filter > .btn { width: 100%; }
   .dash-calls-search { width: 100%; flex-basis: auto; }

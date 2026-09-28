@@ -899,30 +899,10 @@
   const HIST_MIN = new Date(Math.min(...HIST_DATES));
   const HIST_MAX = new Date(Math.max(...HIST_DATES));
 
-  function renderDashboard(subset) {
-    const rows = subset || HISTORY;
-
-    const durEl = $("#dashAvgDur");
-
-    if (!rows.length) {
-      if (durEl) durEl.textContent = "—";
-      return;
-    }
-
-    const secs = rows.map(r => {
-      const [m, s] = r.dur.split(":").map(Number);
-      return m * 60 + s;
-    });
-    const avgSec = Math.round(secs.reduce((a, b) => a + b, 0) / secs.length);
-    const mm = Math.floor(avgSec / 60), ss = avgSec % 60;
-
-    if (durEl) durEl.textContent = mm + ":" + String(ss).padStart(2, "0");
-  }
-
-  renderDashboard();
-
-  /* Date-range filter — recompute the dashboard analysis over calls whose date
-     falls within [from, to]. Inputs are bounded to the available data span. */
+  /* Date-range filter — the overview blocks (donut + Top 5) show ALL call
+     records from oldest to now by default, and only narrow to a window when
+     the user picks a specific range here. It does NOT touch the chart block
+     (that follows the Tuần/Tháng/Năm toggle) or the heatmap (current week). */
   (function initDateFilter() {
     const from = $("#dateFrom"), to = $("#dateTo"), reset = $("#dateReset");
     if (!from || !to) return;
@@ -933,34 +913,35 @@
     setDefaults();
 
     function apply() {
-      // Empty "Từ" = open start; empty "Đến" = today. Swap if inverted.
+      // No dates set → all records (oldest to now).
+      if (!from.value && !to.value) { renderOverview(); return; }
       let a = from.value || "1970-01-01", b = to.value || todayISO;
       if (a > b) { const t = a; a = b; b = t; }
-      const lo = new Date(a).getTime(), hi = new Date(b).getTime();
-      const subset = HISTORY.filter(r => {
-        const t = parseHistDate(r.date).getTime();
+      const lo = new Date(a).getTime(), hi = new Date(b + "T23:59:59").getTime();
+      const subset = UPLOAD_LOG.filter(u => {
+        const t = parseHistDate(u.date).getTime();
         return t >= lo && t <= hi;
       });
-      renderDashboard(subset);
+      renderOverview(subset);
     }
     from.addEventListener("change", apply);
     to.addEventListener("change", apply);
-    if (reset) reset.addEventListener("click", () => { setDefaults(); apply(); });
+    if (reset) reset.addEventListener("click", () => { setDefaults(); renderOverview(); });
   })();
 
   /* Uploads-over-time bar chart (incoming + outgoing) with a range toggle.
      Each period shows two adjacent bars: [label, incoming, outgoing]. */
   const UPLOADS = {
     week: {
-      total: 128, prev: 114, prevLabel: "tuần trước",
+      total: 128, prev: 114, prevLabel: "tuần trước", avgDur: "12:45",
       bars: [["T2", 9, 5], ["T3", 14, 8], ["T4", 11, 7], ["T5", 16, 10], ["T6", 19, 12], ["T7", 7, 4], ["CN", 4, 3]],
     },
     month: {
-      total: 512, prev: 474, prevLabel: "tháng trước",
+      total: 512, prev: 474, prevLabel: "tháng trước", avgDur: "13:20",
       bars: Array.from({ length: 30 }, (_, i) => [String(i + 1), 4 + ((i * 5 + 2) % 15), 2 + ((i * 3 + 1) % 9)]),
     },
     year: {
-      total: 4870, prev: 3960, prevLabel: "năm trước",
+      total: 4870, prev: 3960, prevLabel: "năm trước", avgDur: "14:05",
       bars: [["T1", 200, 120], ["T2", 180, 110], ["T3", 220, 140], ["T4", 250, 160], ["T5", 230, 150],
              ["T6", 190, 110], ["T7", 210, 130], ["T8", 270, 180], ["T9", 290, 180], ["T10", 320, 200],
              ["T11", 340, 220], ["T12", 290, 180]],
@@ -1025,6 +1006,11 @@
       const lbl = labels[i] || x;
       const showX = i % stepLbl === 0;
       return `<div class="chart-col" data-x="${lbl}" data-in="${inc}" data-out="${out}">
+        <div class="chart-col__tip" aria-hidden="true">
+          <div class="chart-tip__x">${lbl}</div>
+          <div class="chart-tip__row"><span class="cl-dot cl-dot--in"></span>Inbound: ${inc}</div>
+          <div class="chart-tip__row"><span class="cl-dot cl-dot--out"></span>Outbound: ${out}</div>
+        </div>
         <div class="chart-col__track">
           <div class="chart-col__bar chart-col__bar--in" style="height:${Math.max(3, Math.round(inc / max * 100))}%"></div>
           <div class="chart-col__bar chart-col__bar--out" style="height:${Math.max(3, Math.round(out / max * 100))}%"></div>
@@ -1032,9 +1018,11 @@
         <div class="chart-col__x">${showX ? lbl : ""}</div>
       </div>`;
     }).join("");
-    // Keep the donut and heatmap in lockstep with this range's numbers.
-    renderCallPie(inTotal, outTotal);
-    renderHeatmap(range, d);
+    // The range toggle only drives THIS block: the volume chart + the avg
+    // call duration beside the total. The donut, Top 5 and heatmap are
+    // independent (all-data / current-week) — see below.
+    const durEl = $("#dashAvgDur");
+    if (durEl) durEl.textContent = d.avgDur || "—";
     chartRangeCur = range;
   }
   let chartRangeCur = "week";
@@ -1060,32 +1048,9 @@
   // Initial render happens after renderCallPie/renderHeatmap are defined below
   // (they use `const`s declared later — calling here would hit the TDZ).
 
-  /* Hover tooltip showing the incoming / outgoing counts for a period */
-  const chartTip = $("#chartTip");
-  function positionTip(col) {
-    if (!chartTip) return;
-    chartTip.innerHTML =
-      `<div class="chart-tip__x">${col.dataset.x}</div>` +
-      `<div class="chart-tip__row"><span class="cl-dot cl-dot--in"></span>Inbound: ${col.dataset.in}</div>` +
-      `<div class="chart-tip__row"><span class="cl-dot cl-dot--out"></span>Outbound: ${col.dataset.out}</div>`;
-    chartTip.hidden = false;
-    const p = chartTip.parentElement.getBoundingClientRect();
-    const c = col.getBoundingClientRect();
-    chartTip.style.left = (c.left - p.left + c.width / 2) + "px";
-    chartTip.style.top = (c.top - p.top - 8) + "px";
-  }
-  if (chartPlot && chartTip) {
-    // Pointer events unify mouse / pen / touch so the tooltip follows the
-    // pointer on hover (no click needed).
-    const showFor = e => {
-      const col = e.target.closest(".chart-col");
-      if (col) positionTip(col);
-    };
-    chartPlot.addEventListener("pointerover", showFor);
-    chartPlot.addEventListener("pointermove", showFor);
-    chartPlot.addEventListener("pointerleave", () => { chartTip.hidden = true; });
-  }
-
+  /* Per-column hover tooltip is pure CSS (.chart-col:hover .chart-col__tip),
+     so it appears on hover with no JS/pointer events — reliable inside the
+     embedded artifact iframe where JS pointer events can need a click first. */
 
   /* Call-direction donut — driven by the active range's in/out totals, so it
      always matches the volume chart. */
@@ -1117,18 +1082,12 @@
     for (let k = 0; k < rem; k++) out[frac[k % frac.length].i]++;
     return out;
   }
-  function renderHeatmap(range, d) {
+  // Heatmap always shows the CURRENT WEEK (independent of the range toggle).
+  function renderHeatmap() {
     const wrap = $("#heatmap");
     if (!wrap) return;
-    const { total } = rangeTotals(d);
-    // Per-weekday column totals: week uses the actual bar totals; other ranges
-    // distribute the range total across weekdays by a fixed weekday weighting.
-    let colTotals;
-    if (range === "week" && d.bars.length === 7) {
-      colTotals = d.bars.map(b => b[1] + b[2]);
-    } else {
-      colTotals = splitTotal(total, HEAT_DOW_W);
-    }
+    const week = UPLOADS.week;
+    const colTotals = week.bars.map(b => b[1] + b[2]);   // per-weekday totals
     const grid = colTotals.map(ct => splitTotal(ct, HEAT_SLOT_W));  // grid[day][slot]
     const max = Math.max(1, ...grid.flat());
     const dayLabels = weekDates(new Date()).map(fmtDMY);   // dd/mm/yyyy, Mon..Sun
@@ -1146,8 +1105,12 @@
     wrap.innerHTML = html;
   }
 
-  // Now that the chart, donut and heatmap renderers all exist, do the first draw.
+  // Now that the chart + heatmap renderers exist, do the first draw. The chart
+  // responds to the range toggle; the heatmap is fixed to the current week.
+  // (The donut + Top 5 "overview" blocks are drawn from UPLOAD_LOG once it is
+  // defined below — see renderOverview.)
   renderChart("week");
+  renderHeatmap();
 
   /* -------------------------------------------------------------------------
      Screen 5b · Employees — per-agent calling performance, with add support
@@ -1656,12 +1619,12 @@
   }
   renderDashCalls();
 
-  /* Top 5 callers by number of calls (grouped from UPLOAD_LOG). */
-  function renderDashTopCallers() {
+  /* Top 5 callers by number of calls (grouped from the given call list). */
+  function renderDashTopCallers(list) {
     const box = $("#dashTopCallers");
     if (!box) return;
     const byCaller = new Map();
-    UPLOAD_LOG.forEach(u => {
+    (list || UPLOAD_LOG).forEach(u => {
       const k = u.caller;
       if (!byCaller.has(k)) byCaller.set(k, { caller: k, agent: u.agent, count: 0 });
       byCaller.get(k).count++;
@@ -1678,14 +1641,12 @@
           <span class="topcaller__count">${t.count} <small>cuộc gọi</small></span>
         </div>`).join("");
   }
-  renderDashTopCallers();
-
-  /* Top 5 callees by number of calls received (grouped from UPLOAD_LOG). */
-  function renderDashTopCallees() {
+  /* Top 5 callees by number of calls received (grouped from the given list). */
+  function renderDashTopCallees(list) {
     const box = $("#dashTopCallees");
     if (!box) return;
     const byCallee = new Map();
-    UPLOAD_LOG.forEach(u => {
+    (list || UPLOAD_LOG).forEach(u => {
       const k = u.to;
       if (!byCallee.has(k)) byCallee.set(k, { callee: k, count: 0 });
       byCallee.get(k).count++;
@@ -1702,7 +1663,20 @@
           <span class="topcaller__count">${t.count} <small>cuộc gọi</small></span>
         </div>`).join("");
   }
-  renderDashTopCallees();
+
+  /* Overview blocks (Inbound/Outbound donut + Top 5 caller/callee) use the
+     TOTAL call records from oldest to now by default, and a date-filtered
+     subset when the user picks a range in the top date filter — independent
+     of the chart's Tuần/Tháng/Năm toggle. */
+  function renderOverview(list) {
+    const rows = list || UPLOAD_LOG;
+    const inC = rows.filter(u => u.dir === "in").length;
+    const outC = rows.filter(u => u.dir === "out").length;
+    renderCallPie(inC, outC);
+    renderDashTopCallers(rows);
+    renderDashTopCallees(rows);
+  }
+  renderOverview();
 
   if (dashCallsTbody) {
     dashCallsTbody.addEventListener("click", e => {
