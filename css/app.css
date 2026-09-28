@@ -2502,7 +2502,7 @@ body {
 
 /* Call-volume heatmap (weekday × time slot) — sky-blue so it doesn't clash
    with the TCP indigo. */
-:root { --heat: #0284C7; }
+:root { --heat: #2563EB; }
 .dash-heatmap { margin-bottom: var(--tcp-space-5); }
 .heatmap {
   display: grid; grid-template-columns: 88px repeat(5, minmax(0, 1fr));
