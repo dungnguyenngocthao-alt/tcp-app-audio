@@ -1933,6 +1933,8 @@ mark.mark--neg { background: var(--tcp-error-bg); color: var(--tcp-error-900); }
   /* Analysis cards: even 2-column grid (equal-height rows). */
   .results-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; align-items: stretch; }
   .results-cards > .card { width: 100%; margin: 0; }
+  /* Audio player spans the full analysis width, above the two smaller cards. */
+  .results-cards .card--audio-preview { grid-column: 1 / -1; }
   /* Talk-duration fills its (taller) row with a larger donut, vertically centered. */
   .results-cards .card--talk .talk { flex: 1; justify-content: center; gap: var(--tcp-space-8); }
   .results-cards .card--talk .donut { width: 128px; height: 128px; }

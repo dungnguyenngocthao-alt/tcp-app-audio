@@ -2097,8 +2097,8 @@
     const cardsWrap = document.createElement("div"); cardsWrap.className = "results-cards";
     const side = document.createElement("div"); side.className = "results-side";
 
-    // Talk-duration first, audio player last (audio stretched awkwardly on top).
-    [talk, quality, audio].forEach(c => { if (c) cardsWrap.appendChild(c); });
+    // Audio player on top (full width), then talk-duration + audio quality.
+    [audio, talk, quality].forEach(c => { if (c) cardsWrap.appendChild(c); });
     main.appendChild(cardsWrap);
     if (summary) main.appendChild(summary);   // full-width summary + customer info
     side.appendChild(transcript);             // transcript (large block)
