@@ -1549,7 +1549,7 @@
   const dashCallFrom   = $("#dashCallFrom");
   const dashCallTo     = $("#dashCallTo");
   const dashCallSearch = $("#dashCallSearch");
-  const DASH_CALLS_PER_PAGE = 8;
+  const DASH_CALLS_PER_PAGE = 5;
   let dashCallsPage = 1;
 
   function filteredDashCalls() {
@@ -1617,6 +1617,36 @@
     renderDashCallsPager(pages);
   }
   renderDashCalls();
+
+  /* Top 5 callers by number of calls (grouped from UPLOAD_LOG). */
+  function renderDashTopCallers() {
+    const box = $("#dashTopCallers");
+    if (!box) return;
+    const byCaller = new Map();
+    UPLOAD_LOG.forEach(u => {
+      const k = u.caller;
+      if (!byCaller.has(k)) byCaller.set(k, { caller: k, agent: u.agent, count: 0 });
+      byCaller.get(k).count++;
+    });
+    const top = [...byCaller.values()].sort((a, b) => b.count - a.count).slice(0, 5);
+    const max = top.length ? top[0].count : 1;
+    box.innerHTML = top.map((t, i) => {
+      const color = AVATAR_COLORS[nameHash(t.agent) % AVATAR_COLORS.length];
+      return `
+        <div class="topcaller">
+          <span class="topcaller__rank">${i + 1}</span>
+          <span class="emp-avatar topcaller__avatar" style="background:${color}">${initials(t.agent)}</span>
+          <div class="topcaller__info">
+            <div class="topcaller__name" title="${escAttr(t.agent)}">${t.agent}</div>
+            <div class="topcaller__id">Caller ID · ${escAttr(t.caller)}</div>
+          </div>
+          <div class="topcaller__bar"><span style="width:${Math.round(t.count / max * 100)}%"></span></div>
+          <span class="topcaller__count">${t.count} <small>cuộc gọi</small></span>
+        </div>`;
+    }).join("");
+  }
+  renderDashTopCallers();
+
   if (dashCallsTbody) {
     dashCallsTbody.addEventListener("click", e => {
       // Both the recording link and the detail button open the full analysis
