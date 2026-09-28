@@ -2742,6 +2742,10 @@ body {
    Mobile: keep the date/search filters tidy (no ragged wrapping)
    =========================================================================== */
 @media (max-width: 640px) {
+  /* Consistent, not-too-wide 16px gutter on phones (matches the app bar),
+     even on both sides across every screen. */
+  .page { padding: var(--tcp-space-4); }
+  .results-head { padding: var(--tcp-space-4) var(--tcp-space-4) var(--tcp-space-2); }
   .dash-filter { flex-direction: column; align-items: stretch; gap: var(--tcp-space-3); }
   .dash-filter__label { margin: 0 0 2px; }
   .dash-filter__field { width: 100%; }
