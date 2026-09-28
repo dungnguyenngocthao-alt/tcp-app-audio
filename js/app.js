@@ -1655,6 +1655,30 @@
   }
   renderDashTopCallers();
 
+  /* Top 5 callees by number of calls received (grouped from UPLOAD_LOG). */
+  function renderDashTopCallees() {
+    const box = $("#dashTopCallees");
+    if (!box) return;
+    const byCallee = new Map();
+    UPLOAD_LOG.forEach(u => {
+      const k = u.to;
+      if (!byCallee.has(k)) byCallee.set(k, { callee: k, count: 0 });
+      byCallee.get(k).count++;
+    });
+    const top = [...byCallee.values()].sort((a, b) => b.count - a.count).slice(0, 5);
+    const max = top.length ? top[0].count : 1;
+    box.innerHTML = top.map((t, i) => `
+        <div class="topcaller">
+          <span class="topcaller__rank">${i + 1}</span>
+          <div class="topcaller__info">
+            <div class="topcaller__name">Callee id: <b>${escAttr(t.callee)}</b></div>
+          </div>
+          <div class="topcaller__bar"><span style="width:${Math.round(t.count / max * 100)}%"></span></div>
+          <span class="topcaller__count">${t.count} <small>cuộc gọi</small></span>
+        </div>`).join("");
+  }
+  renderDashTopCallees();
+
   if (dashCallsTbody) {
     dashCallsTbody.addEventListener("click", e => {
       // Both the recording link and the detail button open the full analysis

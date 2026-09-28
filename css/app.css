@@ -2823,3 +2823,11 @@ body {
 .topcaller__count { flex: 0 0 auto; font-size: 14px; font-weight: 700; color: var(--tcp-ink); white-space: nowrap; }
 .topcaller__count small { font-size: 11px; font-weight: 400; color: var(--tcp-fg-tertiary); }
 @media (max-width: 640px) { .topcaller__bar { display: none; } }
+
+/* Top 5 caller + callee side by side (stack on narrow screens) */
+.dash-topgrid { display: grid; grid-template-columns: 1fr; gap: 20px; align-items: stretch; }
+.dash-topgrid > .card { margin: 0; }
+@media (min-width: 768px) { .dash-topgrid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+/* the two Top-5 lists sit closer together, so the bar shrinks a touch */
+.dash-topgrid .topcaller__bar { flex-basis: 90px; }
+@media (max-width: 900px) and (min-width: 768px) { .dash-topgrid .topcaller__bar { display: none; } }
