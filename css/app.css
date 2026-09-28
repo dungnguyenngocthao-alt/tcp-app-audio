@@ -1745,14 +1745,14 @@ mark.mark--neg { background: var(--tcp-error-bg); color: var(--tcp-error-900); }
 .cl-dot--in { background: #F97316; }
 .cl-dot--out { background: var(--tcp-accent); }
 /* Business-unit colours (PSO tím, TCP xanh, Chưa rõ xám) */
-:root { --bu-pso: #9333EA; --bu-tcp: #1E40AF; --bu-unknown: #94A3B8; }
+:root { --bu-pso: #7473C0; --bu-tcp: #1E40AF; --bu-unknown: #94A3B8; }
 .cl-dot--pso { background: var(--bu-pso); }
 .cl-dot--tcp { background: var(--bu-tcp); }
 .cl-dot--unknown { background: var(--bu-unknown); }
 /* BU chip in the call list */
 .bu-chip { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; padding: 3px 10px; border-radius: var(--tcp-radius-pill); white-space: nowrap; }
 .bu-chip::before { content: ""; width: 7px; height: 7px; border-radius: 999px; background: currentColor; }
-.bu-chip--pso { background: #F3E8FF; color: #7C2FBE; }
+.bu-chip--pso { background: #ECEBF7; color: #4F4EA0; }
 .bu-chip--tcp { background: #DBEAFE; color: #1E40AF; }
 .bu-chip--unknown { background: #F1F5F9; color: #64748B; }
 .dash-bu-select { width: 130px; }
