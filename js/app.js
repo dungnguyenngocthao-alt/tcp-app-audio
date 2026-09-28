@@ -929,6 +929,20 @@
     if (reset) reset.addEventListener("click", () => { setDefaults(); renderOverview(); });
   })();
 
+  /* Business Unit (BU) per call — mocked via a caller→BU map so a caller's BU
+     is stable. PSO (tím), TCP (xanh), unknown = "Chưa rõ" (xám). Declared here
+     (before the chart/heatmap renderers) so first-draw calls can use it. */
+  const BU_META = {
+    pso:     { label: "PSO",     color: "var(--bu-pso)" },
+    tcp:     { label: "TCP",     color: "var(--bu-tcp)" },
+    unknown: { label: "Chưa rõ", color: "var(--bu-unknown)" },
+  };
+  const BU_BY_CALLER = {
+    "1001": "pso", "1002": "tcp", "1003": "tcp", "1004": "pso",
+    "1005": "unknown", "1006": "pso", "1007": "unknown",
+  };
+  const buOf = u => BU_BY_CALLER[u && u.caller] || "unknown";
+
   /* Uploads-over-time bar chart (incoming + outgoing) with a range toggle.
      Each period shows two adjacent bars: [label, incoming, outgoing]. */
   const UPLOADS = {
@@ -1082,7 +1096,11 @@
     for (let k = 0; k < rem; k++) out[frac[k % frac.length].i]++;
     return out;
   }
-  // Heatmap always shows the CURRENT WEEK (independent of the range toggle).
+  // BU per weekday (Mon..Sun) — colours the heatmap cells by business unit.
+  const HEAT_DAY_BU = ["pso", "tcp", "tcp", "pso", "pso", "unknown", "unknown"];
+  const HEAT_LEVEL_PCT = [0, 28, 46, 70, 100];   // tint strength by intensity level
+  // Heatmap always shows the CURRENT WEEK (independent of the range toggle),
+  // with each cell tinted by its day's BU and darkened by call volume.
   function renderHeatmap() {
     const wrap = $("#heatmap");
     if (!wrap) return;
@@ -1095,11 +1113,16 @@
     HEAT_SLOTS.forEach(s => { html += `<div class="heatmap__head">${s}</div>`; });
     HEAT_DAYS.forEach((_day, di) => {
       const day = dayLabels[di];
+      const bu = HEAT_DAY_BU[di] || "unknown";
       html += `<div class="heatmap__day">${day}</div>`;
       HEAT_SLOTS.forEach((s, si) => {
         const c = grid[di][si];
         const level = c === 0 ? 0 : Math.min(4, Math.ceil(c / max * 4));
-        html += `<div class="heatmap__cell heatmap__cell--l${level}" title="${day} ${s}: ${c} cuộc gọi">${c || ""}</div>`;
+        const bg = level === 0
+          ? "var(--tcp-bg-muted)"
+          : `color-mix(in srgb, ${BU_META[bu].color} ${HEAT_LEVEL_PCT[level]}%, transparent)`;
+        const fg = level >= 3 ? "#fff" : (level === 0 ? "transparent" : "var(--tcp-ink)");
+        html += `<div class="heatmap__cell" style="background:${bg};color:${fg}" title="${day} · ${BU_META[bu].label} · ${s}: ${c} cuộc gọi">${c || ""}</div>`;
       });
     });
     wrap.innerHTML = html;
@@ -1550,6 +1573,7 @@
   const dashCallFrom   = $("#dashCallFrom");
   const dashCallTo     = $("#dashCallTo");
   const dashCallSearch = $("#dashCallSearch");
+  const dashCallBu     = $("#dashCallBu");
   const DASH_CALLS_PER_PAGE = 10;
   let dashCallsPage = 1;
 
@@ -1557,9 +1581,11 @@
     const lo = dashCallFrom && dashCallFrom.value ? new Date(dashCallFrom.value).getTime() : -Infinity;
     const hi = dashCallTo && dashCallTo.value ? new Date(dashCallTo.value).getTime() : Infinity;
     const q  = dashCallSearch ? dashCallSearch.value.trim().toLowerCase() : "";
+    const bu = dashCallBu ? dashCallBu.value : "all";
     return UPLOAD_LOG.filter(u => {
       const t = parseUpTime(u.time);
       if (t < lo || t > hi) return false;
+      if (bu !== "all" && buOf(u) !== bu) return false;
       if (q) {
         const hay = `${u.id} ${u.agent} ${u.caller} ${u.to}`.toLowerCase();
         if (!hay.includes(q)) return false;
@@ -1586,13 +1612,14 @@
       const msg = UPLOAD_LOG.length
         ? "Không có cuộc gọi phù hợp với bộ lọc."
         : "Chưa có cuộc gọi nào được tải lên.";
-      dashCallsTbody.innerHTML = `<tr><td class="emp-empty" colspan="8">${msg}</td></tr>`;
+      dashCallsTbody.innerHTML = `<tr><td class="emp-empty" colspan="9">${msg}</td></tr>`;
       renderDashCallsPager(pages);
       return;
     }
     dashCallsTbody.innerHTML = slice.map(u => {
       const isOut = u.dir === "out";
       const dirLabel = isOut ? "Outbound" : "Inbound";
+      const bu = buOf(u);
       return `
         <tr>
           <td class="up-id">${u.id}</td>
@@ -1600,6 +1627,7 @@
           <td class="up-to">${escAttr(u.caller)}</td>
           <td class="up-to">${escAttr(u.to)}</td>
           <td><span class="call-dir call-dir--${isOut ? "out" : "in"}">${dirLabel}</span></td>
+          <td><span class="bu-chip bu-chip--${bu}">${BU_META[bu].label}</span></td>
           <td class="up-dur">${u.dur}</td>
           <td>
             <button class="dc-audio" type="button"
@@ -1626,7 +1654,7 @@
     const byCaller = new Map();
     (list || UPLOAD_LOG).forEach(u => {
       const k = u.caller;
-      if (!byCaller.has(k)) byCaller.set(k, { caller: k, agent: u.agent, count: 0 });
+      if (!byCaller.has(k)) byCaller.set(k, { caller: k, agent: u.agent, bu: buOf(u), count: 0 });
       byCaller.get(k).count++;
     });
     const top = [...byCaller.values()].sort((a, b) => b.count - a.count).slice(0, 5);
@@ -1637,7 +1665,7 @@
           <div class="topcaller__info">
             <div class="topcaller__name">Caller id: <b>${escAttr(t.caller)}</b></div>
           </div>
-          <div class="topcaller__bar"><span style="width:${Math.round(t.count / max * 100)}%"></span></div>
+          <div class="topcaller__bar"><span style="width:${Math.round(t.count / max * 100)}%;background:${BU_META[t.bu].color}"></span></div>
           <span class="topcaller__count">${t.count} <small>cuộc gọi</small></span>
         </div>`).join("");
   }
@@ -1648,18 +1676,22 @@
     const byCallee = new Map();
     (list || UPLOAD_LOG).forEach(u => {
       const k = u.to;
-      if (!byCallee.has(k)) byCallee.set(k, { callee: k, count: 0 });
-      byCallee.get(k).count++;
+      if (!byCallee.has(k)) byCallee.set(k, { callee: k, count: 0, buCount: {} });
+      const g = byCallee.get(k);
+      g.count++;
+      const b = buOf(u);
+      g.buCount[b] = (g.buCount[b] || 0) + 1;
     });
     const top = [...byCallee.values()].sort((a, b) => b.count - a.count).slice(0, 5);
     const max = top.length ? top[0].count : 1;
+    const domBu = g => Object.keys(g.buCount).sort((a, b) => g.buCount[b] - g.buCount[a])[0] || "unknown";
     box.innerHTML = top.map((t, i) => `
         <div class="topcaller">
           <span class="topcaller__rank">${i + 1}</span>
           <div class="topcaller__info">
             <div class="topcaller__name">Callee id: <b>${escAttr(t.callee)}</b></div>
           </div>
-          <div class="topcaller__bar"><span style="width:${Math.round(t.count / max * 100)}%"></span></div>
+          <div class="topcaller__bar"><span style="width:${Math.round(t.count / max * 100)}%;background:${BU_META[domBu(t)].color}"></span></div>
           <span class="topcaller__count">${t.count} <small>cuộc gọi</small></span>
         </div>`).join("");
   }
@@ -1668,11 +1700,29 @@
      TOTAL call records from oldest to now by default, and a date-filtered
      subset when the user picks a range in the top date filter — independent
      of the chart's Tuần/Tháng/Năm toggle. */
+  function renderBuPie(rows) {
+    const pie = $("#buPie");
+    if (!pie) return;
+    const c = { pso: 0, tcp: 0, unknown: 0 };
+    rows.forEach(u => { c[buOf(u)]++; });
+    const total = c.pso + c.tcp + c.unknown;
+    const pct = n => total ? (n / total * 100) : 0;
+    const pPso = pct(c.pso), pTcp = pct(c.tcp);
+    pie.style.background =
+      `conic-gradient(var(--bu-pso) 0 ${pPso}%, var(--bu-tcp) ${pPso}% ${pPso + pTcp}%, var(--bu-unknown) ${pPso + pTcp}% 100%)`;
+    const set = (id, v) => { const el = $("#" + id); if (el) el.textContent = v; };
+    set("buTotal", total.toLocaleString("vi-VN"));
+    set("buPso", Math.round(pPso) + "%");
+    set("buTcp", Math.round(pTcp) + "%");
+    set("buUnknown", (total ? Math.round(pct(c.unknown)) : 0) + "%");
+  }
+
   function renderOverview(list) {
     const rows = list || UPLOAD_LOG;
     const inC = rows.filter(u => u.dir === "in").length;
     const outC = rows.filter(u => u.dir === "out").length;
     renderCallPie(inC, outC);
+    renderBuPie(rows);
     renderDashTopCallers(rows);
     renderDashTopCallees(rows);
   }
@@ -1686,13 +1736,14 @@
       if (btn) showSingleResult(btn.dataset.file, btn.dataset.date, "dashboard");
     });
   }
-  [dashCallFrom, dashCallTo].forEach(el =>
+  [dashCallFrom, dashCallTo, dashCallBu].forEach(el =>
     el && el.addEventListener("change", () => { dashCallsPage = 1; renderDashCalls(); }));
   if (dashCallSearch) dashCallSearch.addEventListener("input", () => { dashCallsPage = 1; renderDashCalls(); });
   if (dashCallReset) dashCallReset.addEventListener("click", () => {
     if (dashCallFrom) dashCallFrom.value = "";
     if (dashCallTo) dashCallTo.value = "";
     if (dashCallSearch) dashCallSearch.value = "";
+    if (dashCallBu) dashCallBu.value = "all";
     dashCallsPage = 1; renderDashCalls();
   });
   if (dashCallsPager) dashCallsPager.addEventListener("click", e => {

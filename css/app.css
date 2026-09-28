@@ -1744,6 +1744,19 @@ mark.mark--neg { background: var(--tcp-error-bg); color: var(--tcp-error-900); }
 .cl-dot { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 7px; vertical-align: middle; }
 .cl-dot--in { background: #F97316; }
 .cl-dot--out { background: var(--tcp-accent); }
+/* Business-unit colours (PSO tím, TCP xanh, Chưa rõ xám) */
+:root { --bu-pso: #9333EA; --bu-tcp: #2563EB; --bu-unknown: #94A3B8; }
+.cl-dot--pso { background: var(--bu-pso); }
+.cl-dot--tcp { background: var(--bu-tcp); }
+.cl-dot--unknown { background: var(--bu-unknown); }
+/* BU chip in the call list */
+.bu-chip { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; padding: 3px 10px; border-radius: var(--tcp-radius-pill); white-space: nowrap; }
+.bu-chip::before { content: ""; width: 7px; height: 7px; border-radius: 999px; background: currentColor; }
+.bu-chip--pso { background: #F3E8FF; color: #7C2FBE; }
+.bu-chip--tcp { background: #DBEAFE; color: #1D4ED8; }
+.bu-chip--unknown { background: #F1F5F9; color: #64748B; }
+.dash-bu-select { width: 130px; }
+@media (max-width: 640px) { .dash-bu-select { width: auto; } }
 .dash-chart__total { font-size: 32px; font-weight: 600; color: var(--tcp-ink); letter-spacing: -0.6px; line-height: 1.1; }
 .dash-chart__cap { font-size: 12px; color: var(--tcp-fg-tertiary); text-transform: uppercase; letter-spacing: .8px; margin-top: 3px; }
 /* Two metrics side by side in the chart head (total calls + avg duration) */
@@ -2003,8 +2016,8 @@ mark.mark--neg { background: var(--tcp-error-bg); color: var(--tcp-error-900); }
   .dash-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .dash-wordcloud { grid-column: 1 / -1; }
 
-  /* Top row: bar chart (wide) + call-direction donut */
-  .dash-toprow { grid-template-columns: 2fr 1fr; }
+  /* Top row: bar chart (wide) + call-direction donut + BU donut */
+  .dash-toprow { grid-template-columns: 2fr 1fr 1fr; }
 }
 
 @media (min-width: 1200px) {
@@ -2028,8 +2041,8 @@ mark.mark--neg { background: var(--tcp-error-bg); color: var(--tcp-error-900); }
   /* Dashboard — three-column card grid (sentiment · top 3 · word cloud) */
   .dash-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .dash-wordcloud { grid-column: auto; }
-  /* Top row: bar chart (wide) + call-direction donut */
-  .dash-toprow { grid-template-columns: 2fr 1fr; }
+  /* Top row: bar chart (wide) + call-direction donut + BU donut */
+  .dash-toprow { grid-template-columns: 2fr 1fr 1fr; }
 }
 
 body {
@@ -2499,6 +2512,9 @@ body {
 .heatmap__cell--l3 { background: #7C86F0; }
 .heatmap__cell--l4 { background: var(--tcp-accent); }
 .heatmap-legend { display: flex; align-items: center; justify-content: flex-end; gap: 8px; margin-top: var(--tcp-space-3); font-size: 11px; color: var(--tcp-fg-tertiary); }
+.heatmap-legend--bu { flex-wrap: wrap; gap: 14px; }
+.heatmap-legend--bu .cl-item { font-size: 11px; color: var(--tcp-fg-secondary); }
+.heatmap-legend__note { margin-left: auto; font-style: italic; }
 .heatmap-legend__scale { display: inline-flex; gap: 3px; }
 .heatmap-legend__scale i { width: 16px; height: 12px; border-radius: 3px; }
 .heatmap-legend__scale i:nth-child(1) { background: var(--tcp-bg-muted); }
