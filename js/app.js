@@ -894,20 +894,6 @@
     const [m, d, y] = s.split(",")[0].trim().split("/").map(Number);
     return new Date(y, m - 1, d);
   }
-  // Parse the same string into a full Date incl. hour (24h) — for weekday/time analysis.
-  function parseHistDateTime(s) {
-    const [datePart, timePart] = s.split(",").map(x => x.trim());
-    const [m, d, y] = datePart.split("/").map(Number);
-    let hh = 0, mm = 0;
-    const tm = /(\d{1,2}):(\d{2})\s*(AM|PM)?/i.exec(timePart || "");
-    if (tm) {
-      hh = +tm[1]; mm = +tm[2];
-      const ap = (tm[3] || "").toUpperCase();
-      if (ap === "PM" && hh < 12) hh += 12;
-      if (ap === "AM" && hh === 12) hh = 0;
-    }
-    return new Date(y, m - 1, d, hh, mm);
-  }
   // ISO yyyy-mm-dd (for <input type="date"> value/min/max)
   function isoDate(dt) {
     return dt.getFullYear() + "-" +
@@ -935,7 +921,6 @@
       renderCallPie(0);
       renderOutcomeDist([]);
       renderSuccessTrend([]);
-      renderHeatmap([]);
       return;
     }
 
@@ -959,7 +944,6 @@
     renderCallPie(fraction);
     renderOutcomeDist(rows);
     renderSuccessTrend(rows);
-    renderHeatmap(rows);
   }
 
   /* Outcome distribution donut — success / warning / neutral share, over the
@@ -1029,41 +1013,6 @@
     }).join("");
   }
 
-  /* Heatmap — call volume by weekday (rows) × time-of-day bucket (cols). */
-  const HEAT_DAYS = ["T2", "T3", "T4", "T5", "T6", "T7", "CN"];  // Mon..Sun
-  const HEAT_SLOTS = [
-    { label: "6–9h", lo: 6, hi: 9 },
-    { label: "9–12h", lo: 9, hi: 12 },
-    { label: "12–14h", lo: 12, hi: 14 },
-    { label: "14–17h", lo: 14, hi: 17 },
-    { label: "17–20h", lo: 17, hi: 20 },
-  ];
-  function renderHeatmap(rows) {
-    const wrap = $("#heatmap");
-    if (!wrap) return;
-    // grid[day][slot] = count
-    const grid = HEAT_DAYS.map(() => HEAT_SLOTS.map(() => 0));
-    rows.forEach(r => {
-      const dt = parseHistDateTime(r.date);
-      const dow = (dt.getDay() + 6) % 7;               // 0=Mon … 6=Sun
-      const h = dt.getHours();
-      const slot = HEAT_SLOTS.findIndex(s => h >= s.lo && h < s.hi);
-      if (slot >= 0) grid[dow][slot]++;
-    });
-    const max = Math.max(1, ...grid.flat());
-    // Header row (time slots) + one row per weekday.
-    let html = '<div class="heatmap__cell heatmap__corner"></div>';
-    HEAT_SLOTS.forEach(s => { html += `<div class="heatmap__head">${s.label}</div>`; });
-    HEAT_DAYS.forEach((day, di) => {
-      html += `<div class="heatmap__day">${day}</div>`;
-      HEAT_SLOTS.forEach((s, si) => {
-        const c = grid[di][si];
-        const level = c === 0 ? 0 : Math.min(4, Math.ceil(c / max * 4));
-        html += `<div class="heatmap__cell heatmap__cell--l${level}" title="${day} ${s.label}: ${c} cuộc gọi">${c || ""}</div>`;
-      });
-    });
-    wrap.innerHTML = html;
-  }
 
   // Top 3 employees by success rate (fed by the Nhân viên module, so it's
   // rendered separately once `employees` exists).
