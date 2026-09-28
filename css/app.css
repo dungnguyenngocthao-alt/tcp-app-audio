@@ -1746,7 +1746,7 @@ mark.mark--neg { background: var(--tcp-error-bg); color: var(--tcp-error-900); }
 .cl-dot--in { background: #F97316; }
 .cl-dot--out { background: var(--call-out); }
 /* Business-unit colours (PSO tím, TCP xanh, Chưa rõ xám) */
-:root { --bu-pso: #4E2A84; --bu-tcp: #4F46E5; --bu-unknown: #94A3B8; }
+:root { --bu-pso: #4E2A84; --bu-tcp: #1E40AF; --bu-unknown: #94A3B8; }
 .cl-dot--pso { background: var(--bu-pso); }
 .cl-dot--tcp { background: var(--bu-tcp); }
 .cl-dot--unknown { background: var(--bu-unknown); }
@@ -1754,7 +1754,7 @@ mark.mark--neg { background: var(--tcp-error-bg); color: var(--tcp-error-900); }
 .bu-chip { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; padding: 3px 10px; border-radius: var(--tcp-radius-pill); white-space: nowrap; }
 .bu-chip::before { content: ""; width: 7px; height: 7px; border-radius: 999px; background: currentColor; }
 .bu-chip--pso { background: #EDE6F5; color: #4E2A84; }
-.bu-chip--tcp { background: #E0E7FF; color: #4338CA; }
+.bu-chip--tcp { background: #DBEAFE; color: #1E40AF; }
 .bu-chip--unknown { background: #F1F5F9; color: #64748B; }
 .dash-bu-select { width: 130px; }
 @media (max-width: 640px) { .dash-bu-select { width: auto; } }
