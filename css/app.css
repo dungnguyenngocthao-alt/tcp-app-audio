@@ -1742,20 +1742,25 @@ mark.mark--neg { background: var(--tcp-error-bg); color: var(--tcp-error-900); }
 .dash-chart__legend { display: flex; gap: var(--tcp-space-4); margin-bottom: var(--tcp-space-4); }
 .cl-item { display: inline-flex; align-items: center; font-size: 12px; color: var(--tcp-fg-secondary); }
 .cl-dot { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 7px; vertical-align: middle; }
-:root { --call-out: #16A34A; }   /* Outbound = green */
-.cl-dot--in { background: #F97316; }
-.cl-dot--out { background: var(--call-out); }
+/* Direction colours with a lighter stop for soft gradients */
+:root { --call-in: #F97316; --call-in-lt: #FB923C; --call-out: #16A34A; --call-out-lt: #34D399; }
+.cl-dot--in { background: linear-gradient(135deg, var(--call-in-lt), var(--call-in)); }
+.cl-dot--out { background: linear-gradient(135deg, var(--call-out-lt), var(--call-out)); }
 /* Business-unit colours (PSO tím, TCP xanh, Chưa rõ xám) */
-:root { --bu-pso: #6B2EC6; --bu-tcp: #4F46E5; --bu-unknown: #94A3B8; }
-.cl-dot--pso { background: var(--bu-pso); }
-.cl-dot--tcp { background: var(--bu-tcp); }
-.cl-dot--unknown { background: var(--bu-unknown); }
+:root {
+  --bu-pso: #6B2EC6; --bu-pso-lt: #9B5DE5;
+  --bu-tcp: #4F46E5; --bu-tcp-lt: #8079F2;
+  --bu-unknown: #94A3B8; --bu-unknown-lt: #B9C2CE;
+}
+.cl-dot--pso { background: linear-gradient(135deg, var(--bu-pso-lt), var(--bu-pso)); }
+.cl-dot--tcp { background: linear-gradient(135deg, var(--bu-tcp-lt), var(--bu-tcp)); }
+.cl-dot--unknown { background: linear-gradient(135deg, var(--bu-unknown-lt), var(--bu-unknown)); }
 /* BU chip in the call list */
 .bu-chip { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; padding: 3px 10px; border-radius: var(--tcp-radius-pill); white-space: nowrap; }
 .bu-chip::before { content: ""; width: 7px; height: 7px; border-radius: 999px; background: currentColor; }
-.bu-chip--pso { background: #EEE3FA; color: #6B2EC6; }
-.bu-chip--tcp { background: #E0E7FF; color: #4338CA; }
-.bu-chip--unknown { background: #F1F5F9; color: #64748B; }
+.bu-chip--pso { background: linear-gradient(180deg, #F3EAFC, #EADDF8); color: #6B2EC6; }
+.bu-chip--tcp { background: linear-gradient(180deg, #E9ECFF, #DCE1FF); color: #4338CA; }
+.bu-chip--unknown { background: linear-gradient(180deg, #F6F8FB, #EDF1F5); color: #64748B; }
 .dash-bu-select { width: 130px; }
 @media (max-width: 640px) { .dash-bu-select { width: auto; } }
 .dash-chart__total { font-size: 32px; font-weight: 600; color: var(--tcp-ink); letter-spacing: -0.6px; line-height: 1.1; }
@@ -2548,8 +2553,8 @@ body {
   display: inline-block; padding: 3px 10px; border-radius: var(--tcp-radius-pill);
   font-size: 12px; font-weight: 600; white-space: nowrap;
 }
-.call-dir--out { background: #DCFCE7; color: #15803D; }
-.call-dir--in  { background: #FDECDF; color: #C2410C; }
+.call-dir--out { background: linear-gradient(180deg, #E7FCEE, #D4F7DF); color: #15803D; }
+.call-dir--in  { background: linear-gradient(180deg, #FEF0E4, #FCE6D5); color: #C2410C; }
 /* Recording link */
 .dc-audio {
   display: inline-flex; align-items: center; gap: 6px;
@@ -2571,7 +2576,7 @@ body {
    Figma feedback · results toolbar, inline evaluation, transcript search
    ============================================================================= */
 .results-head__top { display: flex; align-items: center; gap: var(--tcp-space-3); }
-.results-head__top .results-head__title { flex: 1 1 auto; min-width: 0; }
+.results-head__top .results-head__title { flex: 0 1 auto; min-width: 0; }
 .results-save, #reanalyzeBtn { white-space: nowrap; }
 .results-toolbar {
   display: flex; align-items: center; gap: var(--tcp-space-2);
@@ -2862,7 +2867,11 @@ body {
 .topcaller__name { font-size: 14px; font-weight: 500; color: var(--tcp-fg-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .topcaller__id { font-size: 12px; color: var(--tcp-fg-tertiary); }
 .topcaller__bar { flex: 0 0 120px; height: 8px; border-radius: 999px; background: var(--tcp-bg-muted); overflow: hidden; }
-.topcaller__bar span { display: block; height: 100%; border-radius: 999px; background: var(--tcp-accent); }
+.topcaller__bar span { display: block; height: 100%; border-radius: 999px; background: linear-gradient(90deg, var(--tcp-accent), var(--tcp-accent)); }
+/* BU-tinted bars with a soft light→base gradient (matches the chart bars) */
+.topcaller__bar--pso span { background: linear-gradient(90deg, var(--bu-pso-lt), var(--bu-pso)); }
+.topcaller__bar--tcp span { background: linear-gradient(90deg, var(--bu-tcp-lt), var(--bu-tcp)); }
+.topcaller__bar--unknown span { background: linear-gradient(90deg, var(--bu-unknown-lt), var(--bu-unknown)); }
 .topcaller__count { flex: 0 0 auto; font-size: 14px; font-weight: 700; color: var(--tcp-ink); white-space: nowrap; }
 .topcaller__count small { font-size: 11px; font-weight: 400; color: var(--tcp-fg-tertiary); }
 @media (max-width: 640px) { .topcaller__bar { display: none; } }

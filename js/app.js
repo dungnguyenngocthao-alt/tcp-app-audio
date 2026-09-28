@@ -1077,7 +1077,9 @@
     if (!pie) return;
     const total = (inCount || 0) + (outCount || 0);
     const inPct = total ? Math.round(inCount / total * 100) : 0;
-    pie.style.background = `conic-gradient(#F97316 0 ${inPct}%, var(--call-out) ${inPct}% 100%)`;
+    pie.style.background =
+      `radial-gradient(circle at 32% 28%, rgba(255,255,255,.28), rgba(255,255,255,0) 62%), ` +
+      `conic-gradient(var(--call-in) 0 ${inPct}%, var(--call-out) ${inPct}% 100%)`;
     const set = (id, v) => { const el = $("#" + id); if (el) el.textContent = v; };
     set("pieTotal", total.toLocaleString("vi-VN"));
     set("pieIn", inPct + "%");
@@ -1105,7 +1107,8 @@
   const HEAT_SLOT_W_IN  = [0.10, 0.30, 0.14, 0.28, 0.18];   // inbound peaks mid-morning / early-afternoon
   const HEAT_SLOT_W_OUT = [0.24, 0.17, 0.13, 0.19, 0.27];   // outbound peaks early & late
   const HEAT_LEVEL_PCT = [0, 28, 46, 70, 100];   // tint strength by intensity level
-  const DIR_COLOR = { in: "#F97316", out: "var(--call-out)" };
+  const DIR_COLOR = { in: "var(--call-in)", out: "var(--call-out)" };
+  const DIR_COLOR_LT = { in: "var(--call-in-lt)", out: "var(--call-out-lt)" };
   const DIR_LABEL = { in: "Inbound", out: "Outbound" };
   // Heatmap always shows the CURRENT WEEK (independent of the range toggle).
   // Each cell is coloured by its dominant direction (Inbound cam / Outbound
@@ -1129,9 +1132,10 @@
         const ci = inGrid[di][si], co = outGrid[di][si], c = ci + co;
         const dir = ci >= co ? "in" : "out";
         const level = c === 0 ? 0 : Math.min(4, Math.ceil(c / max * 4));
+        const pct = HEAT_LEVEL_PCT[level];
         const bg = level === 0
           ? "var(--tcp-bg-muted)"
-          : `color-mix(in srgb, ${DIR_COLOR[dir]} ${HEAT_LEVEL_PCT[level]}%, transparent)`;
+          : `linear-gradient(150deg, color-mix(in srgb, ${DIR_COLOR_LT[dir]} ${pct}%, transparent), color-mix(in srgb, ${DIR_COLOR[dir]} ${pct}%, transparent))`;
         const fg = level >= 3 ? "#fff" : (level === 0 ? "transparent" : "var(--tcp-ink)");
         html += `<div class="heatmap__cell" style="background:${bg};color:${fg}" title="${day} · ${s}: ${DIR_LABEL[dir]} nhiều hơn (Inbound ${ci} / Outbound ${co})">${c || ""}</div>`;
       });
@@ -1676,7 +1680,7 @@
           <div class="topcaller__info">
             <div class="topcaller__name" title="Caller id: ${escAttr(t.caller)}">Caller id: <b>${escAttr(t.caller)}</b></div>
           </div>
-          <div class="topcaller__bar"><span style="width:${Math.round(t.count / max * 100)}%;background:${BU_META[t.bu].color}"></span></div>
+          <div class="topcaller__bar topcaller__bar--${t.bu}"><span style="width:${Math.round(t.count / max * 100)}%"></span></div>
           <span class="topcaller__count">${t.count} <small>cuộc gọi</small></span>
         </div>`).join("");
   }
@@ -1702,7 +1706,7 @@
           <div class="topcaller__info">
             <div class="topcaller__name" title="Callee id: ${escAttr(t.callee)}">Callee id: <b>${escAttr(t.callee)}</b></div>
           </div>
-          <div class="topcaller__bar"><span style="width:${Math.round(t.count / max * 100)}%;background:${BU_META[domBu(t)].color}"></span></div>
+          <div class="topcaller__bar topcaller__bar--${domBu(t)}"><span style="width:${Math.round(t.count / max * 100)}%"></span></div>
           <span class="topcaller__count">${t.count} <small>cuộc gọi</small></span>
         </div>`).join("");
   }
@@ -1720,6 +1724,7 @@
     const pct = n => total ? (n / total * 100) : 0;
     const pPso = pct(c.pso), pTcp = pct(c.tcp);
     pie.style.background =
+      `radial-gradient(circle at 32% 28%, rgba(255,255,255,.28), rgba(255,255,255,0) 62%), ` +
       `conic-gradient(var(--bu-pso) 0 ${pPso}%, var(--bu-tcp) ${pPso}% ${pPso + pTcp}%, var(--bu-unknown) ${pPso + pTcp}% 100%)`;
     const set = (id, v) => { const el = $("#" + id); if (el) el.textContent = v; };
     set("buTotal", total.toLocaleString("vi-VN"));
@@ -2031,6 +2036,18 @@
     if (headTitle) headTitle.textContent = rec
       ? `Chi tiết cuộc gọi ${rec.id}`
       : "Chi tiết cuộc gọi";
+    // BU pill next to the title
+    const buPill = $("#resultBu");
+    if (buPill) {
+      if (rec) {
+        const bu = buOf(rec);
+        buPill.className = `bu-chip bu-chip--${bu}`;
+        buPill.textContent = BU_META[bu].label;
+        buPill.hidden = false;
+      } else {
+        buPill.hidden = true;
+      }
+    }
 
     if (fileStripScroll) {
       $$(".fchip", fileStripScroll).forEach(c =>
