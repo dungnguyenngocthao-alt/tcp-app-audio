@@ -1630,20 +1630,15 @@
     });
     const top = [...byCaller.values()].sort((a, b) => b.count - a.count).slice(0, 5);
     const max = top.length ? top[0].count : 1;
-    box.innerHTML = top.map((t, i) => {
-      const color = AVATAR_COLORS[nameHash(t.agent) % AVATAR_COLORS.length];
-      return `
+    box.innerHTML = top.map((t, i) => `
         <div class="topcaller">
           <span class="topcaller__rank">${i + 1}</span>
-          <span class="emp-avatar topcaller__avatar" style="background:${color}">${initials(t.agent)}</span>
           <div class="topcaller__info">
-            <div class="topcaller__name" title="${escAttr(t.agent)}">${t.agent}</div>
-            <div class="topcaller__id">Caller ID · ${escAttr(t.caller)}</div>
+            <div class="topcaller__name">Caller ID · ${escAttr(t.caller)}</div>
           </div>
           <div class="topcaller__bar"><span style="width:${Math.round(t.count / max * 100)}%"></span></div>
           <span class="topcaller__count">${t.count} <small>cuộc gọi</small></span>
-        </div>`;
-    }).join("");
+        </div>`).join("");
   }
   renderDashTopCallers();
 
