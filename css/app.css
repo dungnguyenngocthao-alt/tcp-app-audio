@@ -2500,7 +2500,9 @@ body {
 }
 .settings-section__title svg { width: 20px; height: 20px; flex: 0 0 auto; color: var(--tcp-accent); }
 
-/* Call-volume heatmap (weekday × time slot) */
+/* Call-volume heatmap (weekday × time slot) — sky-blue so it doesn't clash
+   with the TCP indigo. */
+:root { --heat: #0284C7; }
 .dash-heatmap { margin-bottom: var(--tcp-space-5); }
 .heatmap {
   display: grid; grid-template-columns: 88px repeat(5, minmax(0, 1fr));
@@ -2526,10 +2528,10 @@ body {
 .heatmap-legend__scale { display: inline-flex; gap: 3px; }
 .heatmap-legend__scale i { width: 16px; height: 12px; border-radius: 3px; }
 .heatmap-legend__scale i:nth-child(1) { background: var(--tcp-bg-muted); }
-.heatmap-legend__scale i:nth-child(2) { background: #DBE4FF; }
-.heatmap-legend__scale i:nth-child(3) { background: #A9B8FB; }
-.heatmap-legend__scale i:nth-child(4) { background: #7C86F0; }
-.heatmap-legend__scale i:nth-child(5) { background: var(--tcp-accent); }
+.heatmap-legend__scale i:nth-child(2) { background: color-mix(in srgb, var(--heat) 28%, transparent); }
+.heatmap-legend__scale i:nth-child(3) { background: color-mix(in srgb, var(--heat) 46%, transparent); }
+.heatmap-legend__scale i:nth-child(4) { background: color-mix(in srgb, var(--heat) 70%, transparent); }
+.heatmap-legend__scale i:nth-child(5) { background: var(--heat); }
 
 /* Home (Dashboard) · overview / call-list tabs */
 .dash-tabs { display: inline-flex; margin: 0 0 var(--tcp-space-5); }

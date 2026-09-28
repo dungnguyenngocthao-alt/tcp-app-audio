@@ -1124,7 +1124,7 @@
         const pct = HEAT_LEVEL_PCT[level];
         const bg = level === 0
           ? "var(--tcp-bg-muted)"
-          : `linear-gradient(150deg, color-mix(in srgb, var(--tcp-accent) ${Math.round(pct * 0.72)}%, transparent), color-mix(in srgb, var(--tcp-accent) ${pct}%, transparent))`;
+          : `linear-gradient(150deg, color-mix(in srgb, var(--heat) ${Math.round(pct * 0.72)}%, transparent), color-mix(in srgb, var(--heat) ${pct}%, transparent))`;
         const fg = level >= 3 ? "#fff" : (level === 0 ? "transparent" : "var(--tcp-ink)");
         html += `<div class="heatmap__cell" style="background:${bg};color:${fg}" title="${day} · ${s}: ${c} cuộc gọi">${c || ""}</div>`;
       });
