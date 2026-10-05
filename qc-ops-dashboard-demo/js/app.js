@@ -84,14 +84,14 @@
     const q = (filter || "").trim().toLowerCase();
     let rows = D.USERS;
     if (q) rows = rows.filter((u) => u.id.toLowerCase().includes(q));
-    const shown = rows.slice(0, 15);
+    const shown = rows.slice(0, 7);
     const body = $("#uvBody");
     body.innerHTML = shown.length
       ? shown.map(uvRowHtml).join("")
       : `<tr><td colspan="5" class="uv-empty">Không có User ID nào khớp "${esc(filter)}"</td></tr>`;
     $("#uvFoot").textContent = q
-      ? `Hiển thị ${Math.min(15, rows.length)} / ${rows.length} User ID khớp · tổng ${D.USERS.length} ID trong dữ liệu`
-      : `Hiển thị Top 15 / ${D.USERS.length} User ID có nhiều cuộc gọi nhất`;
+      ? `Hiển thị ${Math.min(7, rows.length)} / ${rows.length} User ID khớp · tổng ${D.USERS.length} ID trong dữ liệu`
+      : `Hiển thị Top 7 / ${D.USERS.length} User ID có nhiều cuộc gọi nhất`;
   }
 
   /* ---- Modal: all user IDs ---- */
@@ -116,8 +116,15 @@
     if (heatStatus === "unanswered") return c.unanswered;
     return c.answered + c.unanswered;
   }
+  // Tint base colour per status: Tất cả = blue, Nghe máy = xanh tím đậm, Không nghe máy = xám
+  const HEAT_COLORS = {
+    all: [37, 99, 235],          // #2563eb  (giữ nguyên)
+    answered: [79, 70, 229],     // #4f46e5  xanh tím đậm
+    unanswered: [100, 116, 139], // #64748b  xám
+  };
   function renderHeatmap() {
     const hm = D.HEATMAP;
+    const [cr, cg, cb] = HEAT_COLORS[heatStatus] || HEAT_COLORS.all;
     let max = 0;
     hm.rows.forEach((r) => r.cells.forEach((c) => { max = Math.max(max, cellValue(c)); }));
     max = Math.max(1, max);
@@ -131,7 +138,7 @@
         const t = v / max;                       // 0..1 intensity
         const alpha = v === 0 ? 0.04 : 0.1 + t * 0.78;
         const color = t > 0.62 ? "#fff" : "#12142f";
-        parts.push(`<div class="heat-cell" style="background:rgba(37,99,235,${alpha.toFixed(3)});color:${color}">${v}</div>`);
+        parts.push(`<div class="heat-cell" style="background:rgba(${cr},${cg},${cb},${alpha.toFixed(3)});color:${color}">${v}</div>`);
       });
     });
     $("#heatmap").innerHTML = parts.join("");
