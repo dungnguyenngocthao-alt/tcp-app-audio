@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="vi" dir="ltr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>TCPVoiceAI — Acoustic Intelligence</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+  <div class="app">
+    <!-- ===================== SIDEBAR ===================== -->
+    <aside class="sidebar">
+      <div class="sidebar__brand">
+        <svg class="brand__logo" viewBox="0 0 34 30" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#8391F7"/><stop offset="1" stop-color="#312E81"/>
+          </linearGradient></defs>
+          <path d="M17 1 33 29H1L17 1Z" fill="url(#lg)"/>
+          <path d="M17 9 25 23H9L17 9Z" fill="#fff" fill-opacity=".92"/>
+        </svg>
+        <span class="brand__name">Talent Connect +</span>
+      </div>
+
+      <div class="sb-group">
+        <div class="sb-group__label">General</div>
+        <a class="sb-item is-active" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg><span>Dashboard</span></a>
+        <a class="sb-item" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 5h8"/><path d="M13 12h8"/><path d="M13 19h8"/><path d="m3 17 2 2 4-4"/><rect x="3" y="4" width="6" height="6" rx="1"/></svg><span>Tasks</span></a>
+        <a class="sb-item" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 21.73a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73z"/><path d="M12 22V12"/><polyline points="3.29 7 12 12 20.71 7"/><path d="m7.5 4.27 9 5.15"/></svg><span>Apps</span></a>
+        <a class="sb-item" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 10a2 2 0 0 1-2 2H6.828a2 2 0 0 0-1.414.586l-2.202 2.202A.71.71 0 0 1 2 14.286V4a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/><path d="M20 9a2 2 0 0 1 2 2v10.286a.71.71 0 0 1-1.212.502l-2.202-2.202A2 2 0 0 0 17.172 19H10a2 2 0 0 1-2-2v-1"/></svg><span>Chats</span><span class="sb-badge">3</span></a>
+        <a class="sb-item" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><path d="M16 3.128a4 4 0 0 1 0 7.744"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><circle cx="9" cy="7" r="4"/></svg><span>Users</span></a>
+      </div>
+
+      <div class="sb-group">
+        <div class="sb-group__label">Pages</div>
+        <a class="sb-item" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></svg><span>Auth</span><svg class="sb-item__chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></a>
+        <a class="sb-item" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20v-9"/><path d="M14 7a4 4 0 0 1 4 4v3a6 6 0 0 1-12 0v-3a4 4 0 0 1 4-4z"/><path d="M14.12 3.88 16 2"/><path d="M21 21a4 4 0 0 0-3.81-4"/><path d="M21 5a4 4 0 0 1-3.55 3.97"/><path d="M22 13h-4"/><path d="M3 21a4 4 0 0 1 3.81-4"/><path d="M3 5a4 4 0 0 0 3.55 3.97"/><path d="M6 13H2"/><path d="m8 2 1.88 1.88"/><path d="M9 7.13V6a3 3 0 1 1 6 0v1.13"/></svg><span>Errors</span><svg class="sb-item__chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></a>
+      </div>
+
+      <div class="sb-group">
+        <div class="sb-group__label">Other</div>
+        <a class="sb-item" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.671 4.136a2.34 2.34 0 0 1 4.659 0 2.34 2.34 0 0 0 3.319 1.915 2.34 2.34 0 0 1 2.33 4.033 2.34 2.34 0 0 0 0 3.831 2.34 2.34 0 0 1-2.33 4.033 2.34 2.34 0 0 0-3.319 1.915 2.34 2.34 0 0 1-4.659 0 2.34 2.34 0 0 0-3.32-1.915 2.34 2.34 0 0 1-2.33-4.033 2.34 2.34 0 0 0 0-3.831A2.34 2.34 0 0 1 6.35 6.051a2.34 2.34 0 0 0 3.319-1.915"/><circle cx="12" cy="12" r="3"/></svg><span>Settings</span><svg class="sb-item__chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></a>
+        <a class="sb-item" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg><span>Help Center</span></a>
+      </div>
+
+      <div class="sidebar__spacer"></div>
+
+      <div class="sb-user">
+        <span class="avatar">SN</span>
+        <span class="sb-user__meta">
+          <span class="sb-user__name">satnaing</span>
+          <span class="sb-user__mail">satnaingdev@gmail.com</span>
+        </span>
+        <svg class="sb-user__chev" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m7 15 5 5 5-5"/><path d="m7 9 5-5 5 5"/></svg>
+      </div>
+    </aside>
+
+    <!-- ===================== INSET / MAIN ===================== -->
+    <div class="inset">
+      <header class="topbar">
+        <button class="iconbtn" aria-label="Toggle Sidebar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M9 3v18"/></svg></button>
+        <div class="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/></svg><span>Search</span><span class="kbd">⌘ K</span></div>
+        <div class="topbar__spacer"></div>
+        <button class="iconbtn" aria-label="Toggle theme"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg></button>
+        <button class="iconbtn" aria-label="Settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.671 4.136a2.34 2.34 0 0 1 4.659 0 2.34 2.34 0 0 0 3.319 1.915 2.34 2.34 0 0 1 2.33 4.033 2.34 2.34 0 0 0 0 3.831 2.34 2.34 0 0 1-2.33 4.033 2.34 2.34 0 0 0-3.319 1.915 2.34 2.34 0 0 1-4.659 0 2.34 2.34 0 0 0-3.32-1.915 2.34 2.34 0 0 1-2.33-4.033 2.34 2.34 0 0 0 0-3.831A2.34 2.34 0 0 1 6.35 6.051a2.34 2.34 0 0 0 3.319-1.915"/><circle cx="12" cy="12" r="3"/></svg></button>
+        <span class="avatar" style="width:28px;height:28px;flex-basis:28px;border-radius:999px;">SN</span>
+      </header>
+
+      <div class="content">
+        <div class="page-head">
+          <h1 class="page-title">Dashboard</h1>
+          <button class="btn-export"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7z"/><path d="M14 2v5a1 1 0 0 0 1 1h5"/><path d="M8 13h2"/><path d="M14 13h2"/><path d="M8 17h2"/><path d="M14 17h2"/></svg>Xuất báo cáo</button>
+        </div>
+
+        <div class="tabs">
+          <button class="tab is-active">Tổng quan</button>
+          <button class="tab">Danh sách cuộc gọi</button>
+        </div>
+
+        <div class="filter">
+          <span class="filter__label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v3"/><path d="M16 2v3"/><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M8 13h.01"/><path d="M12 13h.01"/><path d="M16 13h.01"/><path d="M8 17h.01"/><path d="M12 17h.01"/><path d="M16 17h.01"/></svg>Khoảng ngày</span>
+          <span class="filter__field"><label>Từ</label><input class="input" type="date" /></span>
+          <span class="filter__sep">–</span>
+          <span class="filter__field"><label>Đến</label><input class="input" type="date" /></span>
+          <span class="filter__field"><label>BU</label>
+            <select class="select"><option>Tất cả</option><option>PSO</option><option>TCP</option><option>Chưa rõ</option></select>
+          </span>
+          <button class="btn-reset"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>Đặt lại</button>
+        </div>
+
+        <!-- Row 1: stat+chart | inbound/outbound donut -->
+        <div class="grid grid--2">
+          <div class="card">
+            <div class="stat-row">
+              <div class="stat">
+                <div class="stat__value" id="statUploaded">0</div>
+                <div class="stat__cap">Cuộc gọi đã upload</div>
+                <div class="stat__delta"><span class="down">▼ -100%</span><span class="note">so với kỳ trước</span></div>
+              </div>
+              <div class="stat">
+                <div class="stat__value" id="statAvg">—</div>
+                <div class="stat__cap">TB thời lượng gọi</div>
+              </div>
+              <div class="range-toggle">
+                <button class="is-active">Tuần</button><button>Tháng</button><button>Năm</button>
+              </div>
+            </div>
+            <div class="legend">
+              <span class="legend__item"><span class="dot dot--in"></span>Inbound</span>
+              <span class="legend__item"><span class="dot dot--out"></span>Outbound</span>
+            </div>
+            <div class="chart" id="chart"></div>
+          </div>
+
+          <div class="card">
+            <div class="card__head">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3 4 7l4 4"/><path d="M4 7h16"/><path d="m16 21 4-4-4-4"/><path d="M20 17H4"/></svg>
+              <span class="card__title">Inbound / Outbound</span>
+            </div>
+            <div class="donut-wrap">
+              <div class="donut"><div class="donut__ring" id="ioRing"></div>
+                <div class="donut__center"><div class="donut__num">11.087</div><div class="donut__cap">cuộc gọi</div></div>
+              </div>
+              <div class="donut-legend">
+                <span class="legend__item"><span class="dot dot--in"></span>Inbound <b class="legend__pct">39%</b></span>
+                <span class="legend__item"><span class="dot dot--out"></span>Outbound <b class="legend__pct">61%</b></span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Row 2: top5 caller | top5 callee | BU donut -->
+        <div class="grid grid--3">
+          <div class="card">
+            <div class="card__head"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><path d="M16 3.128a4 4 0 0 1 0 7.744"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><circle cx="9" cy="7" r="4"/></svg><span class="card__title">Top 5 Caller</span></div>
+            <div class="top5" id="top5Caller"></div>
+          </div>
+          <div class="card">
+            <div class="card__head"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13.832 16.568a1 1 0 0 0 1.213-.303l.355-.465A2 2 0 0 1 17 15h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2A18 18 0 0 1 2 4a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v3a2 2 0 0 1-.8 1.6l-.468.351a1 1 0 0 0-.292 1.233 14 14 0 0 0 6.392 6.384"/></svg><span class="card__title">Top 5 Callee</span></div>
+            <div class="top5" id="top5Callee"></div>
+          </div>
+          <div class="card">
+            <div class="card__head"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v16a2 2 0 0 0 2 2h16"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></svg><span class="card__title">Cơ cấu theo BU</span></div>
+            <div class="donut-wrap">
+              <div class="donut"><div class="donut__ring" id="buRing"></div>
+                <div class="donut__center"><div class="donut__num">11.087</div><div class="donut__cap">cuộc gọi</div></div>
+              </div>
+              <div class="donut-legend">
+                <span class="legend__item"><span class="dot dot--pso"></span>PSO <b class="legend__pct">17%</b></span>
+                <span class="legend__item"><span class="dot dot--tcp"></span>TCP <b class="legend__pct">1%</b></span>
+                <span class="legend__item"><span class="dot dot--unk"></span>Chưa rõ <b class="legend__pct">82%</b></span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- NEW BLOCK: User-ID call-volume table (above heatmap) -->
+        <div class="card" style="margin-bottom:20px;">
+          <div class="card__head">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v16a2 2 0 0 0 2 2h16"/><rect x="7" y="13" width="9" height="4" rx="1"/><rect x="7" y="5" width="12" height="4" rx="1"/></svg>
+            <span class="card__title">Lưu lượng cuộc gọi theo User ID</span>
+            <div class="uv-head-actions">
+              <label class="uv-search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/></svg><input id="uvFilter" type="text" placeholder="Lọc theo User ID…" /></label>
+              <button class="btn-detail" id="uvDetailBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>Xem chi tiết</button>
+            </div>
+          </div>
+          <div class="uv-legend">
+            <span class="legend__item"><span class="dot dot--odoo"></span>Cuộc gọi từ Odoo</span>
+            <span class="legend__item"><span class="dot dot--rest"></span>Nguồn khác</span>
+          </div>
+          <table class="uv-table">
+            <thead><tr>
+              <th class="uv-rank">#</th><th>User ID</th><th>Loại</th><th class="col-total">Tổng cuộc gọi (stacked: Odoo / khác)</th>
+            </tr></thead>
+            <tbody id="uvBody"></tbody>
+          </table>
+          <div class="uv-foot" id="uvFoot"></div>
+        </div>
+
+        <!-- Heatmap -->
+        <div class="card">
+          <div class="card__head"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M3 9h18"/><path d="M3 15h18"/><path d="M9 3v18"/><path d="M15 3v18"/></svg><span class="card__title">Mật độ cuộc gọi theo khung giờ</span>
+            <div class="range-toggle" id="heatStatus" style="margin-left:auto;">
+              <button class="is-active" data-status="all">All</button>
+              <button data-status="unanswered">Unanswered</button>
+              <button data-status="answered">Answered</button>
+            </div>
+          </div>
+          <div class="heatmap" id="heatmap"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== MODAL (view all) ===================== -->
+  <div class="modal-overlay" id="uvModal">
+    <div class="modal" role="dialog" aria-modal="true" aria-label="Tất cả User ID">
+      <div class="modal__head">
+        <div>
+          <div class="modal__title">Tất cả User ID</div>
+          <div class="modal__sub" id="uvModalSub"></div>
+        </div>
+        <button class="modal__close" id="uvModalClose" aria-label="Đóng"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button>
+      </div>
+      <div class="modal__tools">
+        <label class="uv-search" style="flex:1 1 auto;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/></svg><input id="uvModalFilter" type="text" placeholder="Tìm User ID…" style="width:100%;" /></label>
+        <select class="select" id="uvModalType"><option value="all">Tất cả loại</option><option value="caller">Caller</option><option value="callee">Callee</option><option value="both">Cả hai</option></select>
+      </div>
+      <div class="modal__body">
+        <table class="uv-table">
+          <thead><tr><th class="uv-rank">#</th><th>User ID</th><th>Loại</th><th class="col-total">Tổng cuộc gọi (stacked: Odoo / khác)</th></tr></thead>
+          <tbody id="uvModalBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
