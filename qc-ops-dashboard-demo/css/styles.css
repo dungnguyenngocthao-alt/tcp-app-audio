@@ -80,7 +80,7 @@ a { text-decoration: none; color: inherit; }
   padding: 8px; border-radius: var(--radius-sm); color: var(--brand-indigo);
 }
 .sb-brand__logo { display: inline-flex; width: 32px; justify-content: center; flex: 0 0 32px; }
-.brand__logo { width: 32px; height: 28px; display: block; }
+.brand__logo { width: 30px; height: auto; display: block; }
 .brand__name { font-weight: 900; font-size: 15px; letter-spacing: -.3px; color: var(--brand-indigo); }
 
 .sidebar__content { flex: 1 1 auto; overflow-y: auto; overflow-x: hidden; padding-top: 4px; }

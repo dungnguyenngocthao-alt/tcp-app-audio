@@ -24,9 +24,16 @@
       <div class="sidebar__header" data-slot="sidebar-header">
         <a class="sb-brand" href="#" data-slot="sidebar-menu-button">
           <span class="sb-brand__logo">
-            <svg class="brand__logo" viewBox="0 0 34 30" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-              <defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8391F7"/><stop offset="1" stop-color="#312E81"/></linearGradient></defs>
-              <path d="M17 1 33 29H1L17 1Z" fill="url(#lg)"/><path d="M17 9 25 23H9L17 9Z" fill="#fff" fill-opacity=".92"/>
+            <svg class="brand__logo" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 444" role="img" aria-label="Talent Connect Plus">
+              <defs>
+                <linearGradient id="tcOuter" x1="256" y1="0" x2="256" y2="444" gradientUnits="userSpaceOnUse"><stop stop-color="#3223A8"/><stop offset="0.54" stop-color="#8792F5"/><stop offset="1" stop-color="#FFFFFF"/></linearGradient>
+                <linearGradient id="tcInner" x1="256" y1="150" x2="256" y2="444" gradientUnits="userSpaceOnUse"><stop stop-color="#30249E"/><stop offset="0.62" stop-color="#8D98F6"/><stop offset="1" stop-color="#FFFFFF"/></linearGradient>
+                <linearGradient id="tcFront" x1="256" y1="294" x2="256" y2="444" gradientUnits="userSpaceOnUse"><stop stop-color="#3931B8"/><stop offset="0.58" stop-color="#929CF6"/><stop offset="1" stop-color="#FFFFFF"/></linearGradient>
+              </defs>
+              <path fill="url(#tcOuter)" d="M256 0 512 444H0L256 0Z"/>
+              <path fill="url(#tcInner)" d="M256 150 512 444H0L256 150Z"/>
+              <circle cx="256" cy="284" r="19" fill="#F2552C"/>
+              <path fill="url(#tcFront)" d="m0 444 256-150 256 150H0Z"/>
             </svg>
           </span>
           <span class="sb-label brand__name">Talent Connect +</span>
