@@ -7,50 +7,50 @@
   const $ = (s, r = document) => r.querySelector(s);
   const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
   const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
-  const nfmt = (n) => n.toLocaleString("vi-VN"); // 11.087 style
+  const nfmt = (n) => n.toLocaleString("vi-VN");
 
-  /* ---- Donut rings (conic-gradient, matches live) ---- */
+  /* ---- Donuts ---- */
   function conic(stops) {
-    // stops: [[cssColor, pct], ...] cumulative percentages
-    const parts = [];
-    let prev = 0;
+    const parts = []; let prev = 0;
     stops.forEach(([color, pct]) => { parts.push(`${color} ${prev}%`, `${color} ${pct}%`); prev = pct; });
     return `conic-gradient(${parts.join(", ")})`;
   }
   function paintDonuts() {
     const io = D.OVERVIEW;
-    $("#ioRing").style.background = conic([
-      ["#f97316", io.inboundPct],
-      ["#16a34a", 100],
-    ]);
+    $("#ioRing").style.background = conic([["#f97316", io.inboundPct], ["#16a34a", 100]]);
     const bu = io.bu;
-    $("#buRing").style.background = conic([
-      ["#6b2ec6", bu.pso],
-      ["#4f46e5", bu.pso + bu.tcp],
-      ["#94a3b8", 100],
-    ]);
+    $("#buRing").style.background = conic([["#6b2ec6", bu.pso], ["#4f46e5", bu.pso + bu.tcp], ["#94a3b8", 100]]);
   }
 
-  /* ---- Bar chart (current-week, near-empty like live) ---- */
+  /* ---- Bar chart (7 ngày / 30 ngày / 12 tháng) ---- */
+  let curRange = "7d";
   function renderChart() {
-    const el = $("#chart");
-    const s = D.OVERVIEW.series;
-    const max = Math.max(1, ...s.map((d) => Math.max(d.in, d.out)));
-    el.innerHTML = D.OVERVIEW.rangeDays.map((day, i) => {
-      const d = s[i];
-      const hIn = Math.max(5, Math.round((d.in / max) * 170));
-      const hOut = Math.max(5, Math.round((d.out / max) * 170));
-      return `<div class="chart__col">
+    const c = D.CHART[curRange];
+    const n = c.series.length;
+    const max = Math.max(1, ...c.series.reduce((a, s) => a.concat(s.in, s.out), []));
+    const barW = n <= 7 ? 13 : n <= 12 ? 11 : 6;
+    const labelEvery = n <= 12 ? 1 : 5;
+    $("#chart").innerHTML = c.series.map((s, i) => {
+      const hIn = Math.max(3, Math.round((s.in / max) * 170));
+      const hOut = Math.max(3, Math.round((s.out / max) * 170));
+      const showLabel = i % labelEvery === 0 || i === n - 1;
+      return `<div class="chart__col" title="${c.labels[i]} · Inbound ${s.in} · Outbound ${s.out}">
         <div class="chart__bars">
-          <div class="chart__bar chart__bar--in" style="height:${hIn}px"></div>
-          <div class="chart__bar chart__bar--out" style="height:${hOut}px"></div>
+          <div class="chart__bar chart__bar--in" style="width:${barW}px;height:${hIn}px"></div>
+          <div class="chart__bar chart__bar--out" style="width:${barW}px;height:${hOut}px"></div>
         </div>
-        <div class="chart__x">${day}</div>
+        <div class="chart__x">${showLabel ? c.labels[i] : ""}</div>
       </div>`;
     }).join("");
+
+    const total = c.series.reduce((a, s) => a + s.in + s.out, 0);
+    $("#statUploaded").textContent = nfmt(total);
+    $("#statAvg").textContent = c.avg;
+    const delta = curRange === "7d" ? 12.4 : curRange === "30d" ? 8.1 : 15.6;
+    $("#statDelta").innerHTML = `<span class="up">▲ +${delta}%</span><span class="note">so với kỳ trước</span>`;
   }
 
-  /* ---- Top-5 lists ---- */
+  /* ---- Top-5 ---- */
   function renderTop5(elId, rows, label) {
     const max = Math.max(...rows.map((r) => r.calls));
     $(elId).innerHTML = rows.map((r, i) => `
@@ -62,7 +62,7 @@
       </div>`).join("");
   }
 
-  /* ---- NEW BLOCK: User-ID call volume table ---- */
+  /* ---- User-ID block ---- */
   const GLOBAL_MAX = Math.max(...D.USERS.map((u) => u.total));
   function uvRowHtml(u, i) {
     const barW = Math.max(6, Math.round((u.total / GLOBAL_MAX) * 100));
@@ -85,57 +85,50 @@
     let rows = D.USERS;
     if (q) rows = rows.filter((u) => u.id.toLowerCase().includes(q));
     const shown = rows.slice(0, 7);
-    const body = $("#uvBody");
-    body.innerHTML = shown.length
-      ? shown.map(uvRowHtml).join("")
+    $("#uvBody").innerHTML = shown.length ? shown.map(uvRowHtml).join("")
       : `<tr><td colspan="5" class="uv-empty">Không có User ID nào khớp "${esc(filter)}"</td></tr>`;
     $("#uvFoot").textContent = q
       ? `Hiển thị ${Math.min(7, rows.length)} / ${rows.length} User ID khớp · tổng ${D.USERS.length} ID trong dữ liệu`
       : `Hiển thị Top 7 / ${D.USERS.length} User ID có nhiều cuộc gọi nhất`;
   }
 
-  /* ---- Modal: all user IDs ---- */
+  /* ---- Modal ---- */
   function renderModalTable() {
     const q = ($("#uvModalFilter").value || "").trim().toLowerCase();
-    const type = $("#uvModalType").value;
     let rows = D.USERS;
-    if (type !== "all") rows = rows.filter((u) => u.type === type);
     if (q) rows = rows.filter((u) => u.id.toLowerCase().includes(q));
-    $("#uvModalBody").innerHTML = rows.length
-      ? rows.map(uvRowHtml).join("")
+    $("#uvModalBody").innerHTML = rows.length ? rows.map(uvRowHtml).join("")
       : `<tr><td colspan="5" class="uv-empty">Không có kết quả</td></tr>`;
     $("#uvModalSub").textContent = `${rows.length} / ${D.USERS.length} User ID`;
   }
   function openModal() { $("#uvModal").classList.add("is-open"); document.body.style.overflow = "hidden"; renderModalTable(); setTimeout(() => $("#uvModalFilter").focus(), 30); }
   function closeModal() { $("#uvModal").classList.remove("is-open"); document.body.style.overflow = ""; }
 
-  /* ---- Heatmap (with status filter) ---- */
+  /* ---- Heatmap (status filter + per-status colour) ---- */
   let heatStatus = "all";
+  const HEAT_COLORS = {
+    all: [234, 88, 12],          // cam đỏ
+    answered: [79, 70, 229],     // xanh tím
+    unanswered: [100, 116, 139], // xám (giữ nguyên)
+  };
   function cellValue(c) {
     if (heatStatus === "answered") return c.answered;
     if (heatStatus === "unanswered") return c.unanswered;
     return c.answered + c.unanswered;
   }
-  // Tint base colour per status: Tất cả = blue, Nghe máy = xanh tím đậm, Không nghe máy = xám
-  const HEAT_COLORS = {
-    all: [37, 99, 235],          // #2563eb  (giữ nguyên)
-    answered: [79, 70, 229],     // #4f46e5  xanh tím đậm
-    unanswered: [100, 116, 139], // #64748b  xám
-  };
   function renderHeatmap() {
     const hm = D.HEATMAP;
     const [cr, cg, cb] = HEAT_COLORS[heatStatus] || HEAT_COLORS.all;
     let max = 0;
     hm.rows.forEach((r) => r.cells.forEach((c) => { max = Math.max(max, cellValue(c)); }));
     max = Math.max(1, max);
-    const parts = [];
-    parts.push(`<div class="heat-colhead"></div>`);
+    const parts = [`<div class="heat-colhead"></div>`];
     hm.cols.forEach((c) => parts.push(`<div class="heat-colhead">${c}</div>`));
     hm.rows.forEach((row) => {
       parts.push(`<div class="heat-rowlabel">${row.label}</div>`);
       row.cells.forEach((c) => {
         const v = cellValue(c);
-        const t = v / max;                       // 0..1 intensity
+        const t = v / max;
         const alpha = v === 0 ? 0.04 : 0.1 + t * 0.78;
         const color = t > 0.62 ? "#fff" : "#12142f";
         parts.push(`<div class="heat-cell" style="background:rgba(${cr},${cg},${cb},${alpha.toFixed(3)});color:${color}">${v}</div>`);
@@ -144,30 +137,53 @@
     $("#heatmap").innerHTML = parts.join("");
   }
 
-  /* ---- Overview static-ish fills ---- */
-  function renderOverview() {
-    $("#statUploaded").textContent = nfmt(D.OVERVIEW.uploaded);
-    $("#statAvg").textContent = D.OVERVIEW.avgDuration;
+  /* ---- Sidebar interactions ---- */
+  function isMobile() { return window.matchMedia("(max-width: 860px)").matches; }
+  function initSidebar() {
+    const app = $("#app");
+    $("#sbTrigger").addEventListener("click", () => {
+      if (isMobile()) app.classList.toggle("sb-mobile-open");
+      else app.classList.toggle("sb-collapsed");
+    });
+    $("#sbBackdrop").addEventListener("click", () => app.classList.remove("sb-mobile-open"));
+    $$(".sb-collapsible-trigger").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        if (app.classList.contains("sb-collapsed") && !isMobile()) { app.classList.remove("sb-collapsed"); return; }
+        const item = btn.closest(".sb-menu-item");
+        const open = !item.classList.contains("is-open");
+        item.classList.toggle("is-open", open);
+        item.setAttribute("data-state", open ? "open" : "closed");
+      });
+    });
+    // mark active nav item on click (within a menu)
+    $$(".sb-menu-button:not(.sb-collapsible-trigger)").forEach((a) => {
+      a.addEventListener("click", (e) => {
+        if (a.getAttribute("href") === "#") e.preventDefault();
+        $$(".sb-menu-button").forEach((x) => x.classList.remove("is-active"));
+        a.classList.add("is-active");
+        if (isMobile()) app.classList.remove("sb-mobile-open");
+      });
+    });
+  }
+
+  /* ---- Init ---- */
+  function init() {
+    $("#statUploaded"); // ensure DOM ready
     paintDonuts();
     renderChart();
     renderTop5("#top5Caller", D.TOP5_CALLER, "Caller id:");
     renderTop5("#top5Callee", D.TOP5_CALLEE, "Callee id:");
-  }
-
-  /* ---- Wire up ---- */
-  function init() {
-    renderOverview();
     renderUvTable("");
     renderHeatmap();
+    initSidebar();
 
-    $("#uvFilter").addEventListener("input", (e) => renderUvTable(e.target.value));
-    $("#uvDetailBtn").addEventListener("click", openModal);
-    $("#uvModalClose").addEventListener("click", closeModal);
-    $("#uvModal").addEventListener("click", (e) => { if (e.target.id === "uvModal") closeModal(); });
-    $("#uvModalFilter").addEventListener("input", renderModalTable);
-    $("#uvModalType").addEventListener("change", renderModalTable);
-    document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeModal(); });
-
+    $("#rangeToggle").addEventListener("click", (e) => {
+      const btn = e.target.closest("button[data-range]");
+      if (!btn) return;
+      curRange = btn.dataset.range;
+      $$("#rangeToggle button").forEach((b) => b.classList.toggle("is-active", b === btn));
+      renderChart();
+    });
     $("#heatStatus").addEventListener("click", (e) => {
       const btn = e.target.closest("button[data-status]");
       if (!btn) return;
@@ -176,14 +192,17 @@
       renderHeatmap();
     });
 
-    // tabs + range toggles: visual-only active state switch
-    $$(".tabs .tab, .range-toggle button").forEach((b) => {
-      b.addEventListener("click", () => {
-        const sibs = b.parentElement.children;
-        Array.from(sibs).forEach((s) => s.classList.remove("is-active"));
-        b.classList.add("is-active");
-      });
-    });
+    $("#uvFilter").addEventListener("input", (e) => renderUvTable(e.target.value));
+    $("#uvDetailBtn").addEventListener("click", openModal);
+    $("#uvModalClose").addEventListener("click", closeModal);
+    $("#uvModal").addEventListener("click", (e) => { if (e.target.id === "uvModal") closeModal(); });
+    $("#uvModalFilter").addEventListener("input", renderModalTable);
+    document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeModal(); });
+
+    // tabs visual-only
+    $$(".tabs .tab").forEach((b) => b.addEventListener("click", () => {
+      $$(".tabs .tab").forEach((s) => s.classList.remove("is-active")); b.classList.add("is-active");
+    }));
   }
 
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
