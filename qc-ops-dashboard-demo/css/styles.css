@@ -241,14 +241,17 @@ a { text-decoration: none; color: inherit; }
 .chart__bar--out { background: linear-gradient(var(--out-1), var(--out-2)); }
 .chart__x { font-size: 10px; color: var(--muted); margin-top: 8px; height: 14px; white-space: nowrap; }
 
-/* Donut */
-.donut-wrap { display: flex; flex-direction: column; align-items: center; padding-top: 10px; }
+/* Donut cards — title pinned top, donut centered (equal gap), legend pinned bottom */
+.card--donut { display: flex; flex-direction: column; }
+.card--donut .card__head { flex: 0 0 auto; }
+.donut-area { flex: 1 1 auto; display: flex; align-items: center; justify-content: center; padding: 12px 0; }
+.donut-legend { flex: 0 0 auto; }
 .donut { position: relative; width: 150px; height: 150px; }
 .donut__ring { width: 150px; height: 150px; border-radius: 50%; -webkit-mask: radial-gradient(circle, transparent 53%, #000 54%); mask: radial-gradient(circle, transparent 53%, #000 54%); }
 .donut__center { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
 .donut__num { font-size: 24px; font-weight: 700; letter-spacing: -.5px; color: var(--ink); }
 .donut__cap { font-size: 11px; color: var(--muted); }
-.donut-legend { display: flex; gap: 20px; margin-top: 22px; flex-wrap: wrap; justify-content: center; }
+.donut-legend { display: flex; gap: 20px; margin-top: 0; flex-wrap: wrap; justify-content: center; }
 
 /* Top-5 */
 .top5 { margin-top: 6px; }

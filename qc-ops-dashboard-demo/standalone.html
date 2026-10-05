@@ -252,14 +252,17 @@ a { text-decoration: none; color: inherit; }
 .chart__bar--out { background: linear-gradient(var(--out-1), var(--out-2)); }
 .chart__x { font-size: 10px; color: var(--muted); margin-top: 8px; height: 14px; white-space: nowrap; }
 
-/* Donut */
-.donut-wrap { display: flex; flex-direction: column; align-items: center; padding-top: 10px; }
+/* Donut cards — title pinned top, donut centered (equal gap), legend pinned bottom */
+.card--donut { display: flex; flex-direction: column; }
+.card--donut .card__head { flex: 0 0 auto; }
+.donut-area { flex: 1 1 auto; display: flex; align-items: center; justify-content: center; padding: 12px 0; }
+.donut-legend { flex: 0 0 auto; }
 .donut { position: relative; width: 150px; height: 150px; }
 .donut__ring { width: 150px; height: 150px; border-radius: 50%; -webkit-mask: radial-gradient(circle, transparent 53%, #000 54%); mask: radial-gradient(circle, transparent 53%, #000 54%); }
 .donut__center { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
 .donut__num { font-size: 24px; font-weight: 700; letter-spacing: -.5px; color: var(--ink); }
 .donut__cap { font-size: 11px; color: var(--muted); }
-.donut-legend { display: flex; gap: 20px; margin-top: 22px; flex-wrap: wrap; justify-content: center; }
+.donut-legend { display: flex; gap: 20px; margin-top: 0; flex-wrap: wrap; justify-content: center; }
 
 /* Top-5 */
 .top5 { margin-top: 6px; }
@@ -469,19 +472,19 @@ a { text-decoration: none; color: inherit; }
             <div class="chart" id="chart"></div>
           </div>
 
-          <div class="card">
+          <div class="card card--donut">
             <div class="card__head">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3 4 7l4 4"/><path d="M4 7h16"/><path d="m16 21 4-4-4-4"/><path d="M20 17H4"/></svg>
               <span class="card__title">Inbound / Outbound</span>
             </div>
-            <div class="donut-wrap">
+            <div class="donut-area">
               <div class="donut"><div class="donut__ring" id="ioRing"></div>
                 <div class="donut__center"><div class="donut__num">11.087</div><div class="donut__cap">cuộc gọi</div></div>
               </div>
-              <div class="donut-legend">
-                <span class="legend__item"><span class="dot dot--in"></span>Inbound <b class="legend__pct">39%</b></span>
-                <span class="legend__item"><span class="dot dot--out"></span>Outbound <b class="legend__pct">61%</b></span>
-              </div>
+            </div>
+            <div class="donut-legend">
+              <span class="legend__item"><span class="dot dot--in"></span>Inbound <b class="legend__pct">39%</b></span>
+              <span class="legend__item"><span class="dot dot--out"></span>Outbound <b class="legend__pct">61%</b></span>
             </div>
           </div>
         </div>
@@ -496,17 +499,17 @@ a { text-decoration: none; color: inherit; }
             <div class="card__head"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13.832 16.568a1 1 0 0 0 1.213-.303l.355-.465A2 2 0 0 1 17 15h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2A18 18 0 0 1 2 4a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v3a2 2 0 0 1-.8 1.6l-.468.351a1 1 0 0 0-.292 1.233 14 14 0 0 0 6.392 6.384"/></svg><span class="card__title">Top 5 Callee</span></div>
             <div class="top5" id="top5Callee"></div>
           </div>
-          <div class="card">
+          <div class="card card--donut">
             <div class="card__head"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v16a2 2 0 0 0 2 2h16"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></svg><span class="card__title">Cơ cấu theo BU</span></div>
-            <div class="donut-wrap">
+            <div class="donut-area">
               <div class="donut"><div class="donut__ring" id="buRing"></div>
                 <div class="donut__center"><div class="donut__num">11.087</div><div class="donut__cap">cuộc gọi</div></div>
               </div>
-              <div class="donut-legend">
-                <span class="legend__item"><span class="dot dot--pso"></span>PSO <b class="legend__pct">17%</b></span>
-                <span class="legend__item"><span class="dot dot--tcp"></span>TCP <b class="legend__pct">1%</b></span>
-                <span class="legend__item"><span class="dot dot--unk"></span>Chưa rõ <b class="legend__pct">82%</b></span>
-              </div>
+            </div>
+            <div class="donut-legend">
+              <span class="legend__item"><span class="dot dot--pso"></span>PSO <b class="legend__pct">17%</b></span>
+              <span class="legend__item"><span class="dot dot--tcp"></span>TCP <b class="legend__pct">1%</b></span>
+              <span class="legend__item"><span class="dot dot--unk"></span>Chưa rõ <b class="legend__pct">82%</b></span>
             </div>
           </div>
         </div>
