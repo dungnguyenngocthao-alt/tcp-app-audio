@@ -64,22 +64,19 @@
 
   /* ---- NEW BLOCK: User-ID call volume table ---- */
   const GLOBAL_MAX = Math.max(...D.USERS.map((u) => u.total));
-  const TYPE_LABEL = { caller: "Caller", callee: "Callee", both: "Cả hai" };
   function uvRowHtml(u, i) {
     const barW = Math.max(6, Math.round((u.total / GLOBAL_MAX) * 100));
     const odooPct = u.total ? (u.odoo / u.total) * 100 : 0;
     return `<tr>
       <td class="uv-rank">${i + 1}</td>
       <td><span class="uv-id">${esc(u.id)}</span></td>
-      <td><span class="tag tag--${u.type}">${TYPE_LABEL[u.type]}</span></td>
-      <td>
-        <div class="uv-bar-cell">
-          <span class="uv-bar" style="width:${barW}%" title="${nfmt(u.odoo)} từ Odoo · ${nfmt(u.total - u.odoo)} nguồn khác">
-            <span class="uv-bar__odoo" style="width:${odooPct}%"></span>
-            <span class="uv-bar__rest" style="width:${100 - odooPct}%"></span>
-          </span>
-          <span class="uv-nums"><span class="uv-total">${nfmt(u.total)}</span><span class="uv-sub">${nfmt(u.odoo)} Odoo</span></span>
-        </div>
+      <td class="num"><span class="uv-num-total">${nfmt(u.total)}</span></td>
+      <td class="num"><span class="uv-num-odoo">${nfmt(u.odoo)}</span></td>
+      <td class="col-bar">
+        <span class="uv-bar" style="width:${barW}%" title="${nfmt(u.odoo)} từ Odoo · ${nfmt(u.total - u.odoo)} nguồn khác">
+          <span class="uv-bar__odoo" style="width:${odooPct}%"></span>
+          <span class="uv-bar__rest" style="width:${100 - odooPct}%"></span>
+        </span>
       </td>
     </tr>`;
   }
@@ -91,7 +88,7 @@
     const body = $("#uvBody");
     body.innerHTML = shown.length
       ? shown.map(uvRowHtml).join("")
-      : `<tr><td colspan="4" class="uv-empty">Không có User ID nào khớp "${esc(filter)}"</td></tr>`;
+      : `<tr><td colspan="5" class="uv-empty">Không có User ID nào khớp "${esc(filter)}"</td></tr>`;
     $("#uvFoot").textContent = q
       ? `Hiển thị ${Math.min(15, rows.length)} / ${rows.length} User ID khớp · tổng ${D.USERS.length} ID trong dữ liệu`
       : `Hiển thị Top 15 / ${D.USERS.length} User ID có nhiều cuộc gọi nhất`;
@@ -106,7 +103,7 @@
     if (q) rows = rows.filter((u) => u.id.toLowerCase().includes(q));
     $("#uvModalBody").innerHTML = rows.length
       ? rows.map(uvRowHtml).join("")
-      : `<tr><td colspan="4" class="uv-empty">Không có kết quả</td></tr>`;
+      : `<tr><td colspan="5" class="uv-empty">Không có kết quả</td></tr>`;
     $("#uvModalSub").textContent = `${rows.length} / ${D.USERS.length} User ID`;
   }
   function openModal() { $("#uvModal").classList.add("is-open"); document.body.style.overflow = "hidden"; renderModalTable(); setTimeout(() => $("#uvModalFilter").focus(), 30); }

@@ -306,27 +306,20 @@ button { font-family: inherit; cursor: pointer; }
   text-align: left; font-size: 11px; font-weight: 600; letter-spacing: .4px; text-transform: uppercase;
   color: var(--muted); padding: 8px 10px; border-bottom: 1px solid var(--border);
 }
-.uv-table th.col-total { width: 46%; }
+.uv-table th.num, .uv-table td.num { text-align: right; white-space: nowrap; }
+.uv-table th.col-bar { width: 40%; }
 .uv-table tbody td { padding: 11px 10px; border-bottom: 1px solid var(--border-soft); font-size: 13px; vertical-align: middle; }
 .uv-table tbody tr:last-child td { border-bottom: 0; }
 .uv-table tbody tr:hover { background: #fafaff; }
 .uv-rank { color: var(--muted); font-weight: 700; width: 28px; }
 .uv-id { font-family: var(--mono); font-size: 13px; color: var(--ink); font-weight: 500; }
-.tag {
-  display: inline-flex; align-items: center; height: 20px; padding: 0 8px; border-radius: 999px;
-  font-size: 11px; font-weight: 600; white-space: nowrap;
-}
-.tag--caller { background: #eef2ff; color: #4338ca; }
-.tag--callee { background: #ecfdf5; color: #047857; }
-.tag--both   { background: #fef3f2; color: #b42318; }
+.uv-num-total { font-size: 14px; font-weight: 700; color: var(--ink); }
+.uv-num-odoo { font-size: 13px; font-weight: 600; color: var(--accent-600); }
 
-.uv-bar-cell { display: flex; align-items: center; gap: 12px; }
-.uv-bar { flex: 1 1 auto; height: 16px; border-radius: 6px; background: var(--seg); overflow: hidden; display: flex; min-width: 80px; }
+.col-bar { min-width: 140px; }
+.uv-bar { height: 16px; border-radius: 6px; background: var(--seg); overflow: hidden; display: flex; min-width: 60px; }
 .uv-bar__odoo { height: 100%; background: linear-gradient(90deg, #6d63ec, var(--odoo)); }
 .uv-bar__rest { height: 100%; background: var(--odoo-rest); }
-.uv-nums { flex: 0 0 auto; text-align: right; min-width: 118px; }
-.uv-total { font-size: 14px; font-weight: 700; color: var(--ink); }
-.uv-sub { font-size: 11px; color: var(--muted); margin-left: 4px; }
 .uv-empty { text-align: center; color: var(--muted); padding: 24px 0; font-size: 13px; }
 .uv-foot { font-size: 12px; color: var(--muted); margin-top: 12px; }
 
