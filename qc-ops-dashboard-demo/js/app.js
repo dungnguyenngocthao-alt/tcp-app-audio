@@ -88,20 +88,32 @@
     }
   }
 
-  /* ---------- Chart (stacked bar) ---------- */
+  /* ---------- Chart (line: inbound + outbound) ---------- */
   function renderChart() {
     const c = D.CHART[curRange], n = c.series.length;
-    const max = Math.max(1, ...c.series.map((s) => s.in + s.out));
-    // bars fill the full column width (scale with container), capped so wide
-    // ranges don't produce chunky bars.
-    const barMax = n <= 7 ? 54 : n <= 12 ? 38 : 20;
+    const el = $("#chart");
+    const W = Math.max(260, Math.round(el.clientWidth) || 640), H = 196;
+    const padX = 16, padT = 14, padB = 24;
+    const plotH = H - padT - padB, plotBottom = padT + plotH;
+    const maxV = Math.max(1, ...c.series.map((s) => Math.max(s.in, s.out)));
+    const xAt = (i) => (n <= 1 ? W / 2 : padX + (i / (n - 1)) * (W - 2 * padX));
+    const yAt = (v) => padT + plotH - (v / maxV) * plotH;
+    const line = (key) => c.series.map((s, i) => `${i ? "L" : "M"}${xAt(i).toFixed(1)} ${yAt(s[key]).toFixed(1)}`).join(" ");
+    const dots = (key, cls) => (n <= 12 ? c.series.map((s, i) => `<circle class="${cls}" cx="${xAt(i).toFixed(1)}" cy="${yAt(s[key]).toFixed(1)}" r="3"><title>${c.labels[i]} · ${s[key]}</title></circle>`).join("") : "");
+    const grid = [0.5, 1].map((f) => `<line class="chart__grid" x1="${padX}" y1="${(plotBottom - f * plotH).toFixed(1)}" x2="${W - padX}" y2="${(plotBottom - f * plotH).toFixed(1)}"/>`).join("");
     const labelEvery = n <= 12 ? 1 : 5;
-    $("#chart").innerHTML = c.series.map((s, i) => {
-      const tot = s.in + s.out, h = Math.max(3, Math.round((tot / max) * 170));
-      const inH = tot ? Math.round((s.in / tot) * h) : 0, outH = h - inH;
-      const show = i % labelEvery === 0 || i === n - 1;
-      return `<div class="chart__col" title="${c.labels[i]} · In ${s.in} · Out ${s.out}"><div class="chart__stack" style="width:100%;max-width:${barMax}px;height:${h}px"><div class="chart__seg chart__seg--out" style="height:${outH}px"></div><div class="chart__seg chart__seg--in" style="height:${inH}px"></div></div><div class="chart__x">${show ? c.labels[i] : ""}</div></div>`;
-    }).join("");
+    const labels = c.series.map((s, i) => ((i % labelEvery === 0 || i === n - 1)
+      ? `<text class="chart__xlabel" x="${xAt(i).toFixed(1)}" y="${H - 7}" text-anchor="middle">${c.labels[i]}</text>` : "")).join("");
+    el.innerHTML =
+      `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Inbound / Outbound theo thời gian">
+        ${grid}
+        <line class="chart__axis" x1="${padX}" y1="${plotBottom}" x2="${W - padX}" y2="${plotBottom}"/>
+        <path class="chart__line chart__line--out" d="${line("out")}"/>
+        <path class="chart__line chart__line--in" d="${line("in")}"/>
+        ${dots("out", "chart__dot chart__dot--out")}
+        ${dots("in", "chart__dot chart__dot--in")}
+        ${labels}
+      </svg>`;
     if (dashFiltered()) {
       const us = matchedUsers();
       const total = us.reduce((a, u) => a + u.total, 0);
@@ -376,6 +388,7 @@
     $$("#tabs .tab").forEach((b) => b.classList.toggle("is-active", b.dataset.tab === name));
     $$("[data-pane]").forEach((p) => { p.hidden = p.getAttribute("data-pane") !== name; });
     if (name === "calls") renderCalls();
+    if (name === "overview") renderChart(); // re-measure width now the pane is visible
   }
 
   /* ---------- Init ---------- */
@@ -452,6 +465,9 @@
     $("#callsPerPage").addEventListener("change", () => { callsPage = 1; renderCalls(); });
     $("#callsPrev").addEventListener("click", () => { if (callsPage > 1) { callsPage--; renderCalls(); } });
     $("#callsNext").addEventListener("click", () => { callsPage++; renderCalls(); });
+
+    // keep the line chart's width/height crisp on resize
+    let rz; window.addEventListener("resize", () => { clearTimeout(rz); rz = setTimeout(renderChart, 150); });
   }
 
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);

@@ -146,12 +146,17 @@ a { text-decoration: none; color: inherit; }
 .dot--tcp { background: linear-gradient(135deg, var(--tcp-1), var(--tcp-2)); }
 .dot--unk { background: linear-gradient(135deg, var(--unk-1), var(--unk-2)); }
 .legend__pct { color: var(--ink); font-weight: 700; }
-.chart { display: flex; align-items: flex-end; gap: 2px; height: 196px; }
-.chart__col { flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; height: 100%; border-bottom: 1px solid var(--border); }
-.chart__stack { display: flex; flex-direction: column; justify-content: flex-end; border-radius: 4px 4px 0 0; overflow: hidden; max-width: 100%; }
-.chart__seg--out { background: linear-gradient(var(--out-1), var(--out-2)); }
-.chart__seg--in { background: linear-gradient(var(--in-1), var(--in-2)); }
-.chart__x { font-size: 10px; color: var(--muted); margin-top: 8px; height: 14px; white-space: nowrap; }
+.chart { height: 196px; width: 100%; }
+.chart svg { display: block; width: 100%; height: auto; }
+.chart__axis { stroke: var(--border); stroke-width: 1; }
+.chart__grid { stroke: var(--border-soft); stroke-width: 1; }
+.chart__line { fill: none; stroke-width: 2.5; stroke-linejoin: round; stroke-linecap: round; }
+.chart__line--in { stroke: var(--in-2); }
+.chart__line--out { stroke: var(--out-2); }
+.chart__dot { stroke: #fff; stroke-width: 1.5; }
+.chart__dot--in { fill: var(--in-2); }
+.chart__dot--out { fill: var(--out-2); }
+.chart__xlabel { fill: var(--muted); font-size: 10px; font-family: var(--sans); }
 
 /* Donut cards */
 .card--donut { display: flex; flex-direction: column; }
