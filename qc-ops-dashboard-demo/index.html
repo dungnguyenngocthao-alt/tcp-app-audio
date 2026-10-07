@@ -11,7 +11,6 @@
 </head>
 <body>
   <div class="inset">
-    <!-- Topbar: brand + search + avatar (sidebar removed; only Dashboard existed) -->
     <header class="topbar" data-slot="site-header">
       <a class="tb-brand" href="#">
         <svg class="brand__logo" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 444" role="img" aria-label="Talent Connect Plus">
@@ -48,17 +47,13 @@
           <span class="filter__field"><label>Từ</label><input class="input" type="date" /></span>
           <span class="filter__sep">–</span>
           <span class="filter__field"><label>Đến</label><input class="input" type="date" /></span>
-          <span class="filter__field"><label>BU</label>
-            <select class="select"><option>Tất cả</option><option>PSO</option><option>TCP</option><option>Chưa rõ</option></select>
-          </span>
-          <span class="filter__field"><label>Email</label><input class="input input--email" id="emailFilter" type="text" placeholder="Nhập email/Ext để lọc…" /></span>
+          <span class="filter__field"><label>BU</label><select class="select"><option>Tất cả</option><option>PSO</option><option>TCP</option><option>Chưa rõ</option></select></span>
+          <span class="filter__field"><label>Email</label><input class="input input--email" data-filter="email" type="email" placeholder="email@talentconnectplus.edu.vn" /></span>
+          <span class="filter__field"><label>Ext.</label><input class="input input--ext" data-filter="ext" type="text" placeholder="VD: 203" /></span>
           <button class="btn-reset" id="ovReset"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>Đặt lại</button>
         </div>
 
-        <div class="user-banner" id="userBanner" hidden>
-          <span>Đang xem dữ liệu của <b id="ubName"></b> · <span class="mono" id="ubEmail"></span> <span class="mono ub-ext" id="ubExt"></span></span>
-          <button class="ub-clear" id="ubClear">Bỏ lọc ×</button>
-        </div>
+        <div class="filter-chips" id="filterChips" hidden></div>
 
         <div class="grid grid--2">
           <div class="card">
@@ -94,7 +89,6 @@
           </div>
         </div>
 
-        <!-- Ext block -->
         <div class="card" style="margin-bottom:20px;">
           <div class="card__head">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v16a2 2 0 0 0 2 2h16"/><rect x="7" y="13" width="9" height="4" rx="1"/><rect x="7" y="5" width="12" height="4" rx="1"/></svg>
@@ -104,15 +98,13 @@
               <button class="btn-detail" id="uvDetailBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>Xem chi tiết</button>
             </div>
           </div>
-          <div class="uv-legend"><span class="legend__item"><span class="dot dot--odoo"></span>Cuộc gọi từ Odoo</span><span class="legend__item"><span class="dot dot--rest"></span>Nguồn khác</span></div>
           <table class="uv-table">
-            <thead><tr><th class="uv-rank">#</th><th>Ext.</th><th>Email</th><th class="num">Tổng cuộc gọi</th><th class="num">Cuộc gọi từ Odoo</th><th class="col-bar">Biểu đồ (Odoo / nguồn khác)</th></tr></thead>
+            <thead><tr><th class="uv-rank">#</th><th>Ext.</th><th>Email</th><th class="num">Tổng cuộc gọi</th><th class="num">Cuộc gọi từ Odoo</th><th class="col-bar">% cuộc gọi từ Odoo</th></tr></thead>
             <tbody id="uvBody"></tbody>
           </table>
           <div class="uv-foot" id="uvFoot"></div>
         </div>
 
-        <!-- Heatmap 24h -->
         <div class="card">
           <div class="card__head"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M3 9h18"/><path d="M3 15h18"/><path d="M9 3v18"/><path d="M15 3v18"/></svg><span class="card__title">Mật độ cuộc gọi theo khung giờ</span>
             <div class="range-toggle" id="heatStatus" style="margin-left:auto;"><button class="is-active" data-status="all">Tất cả</button><button data-status="answered">Nghe máy</button><button data-status="unanswered">Không nghe máy</button></div>
@@ -128,6 +120,8 @@
           <span class="filter__field"><label>Từ ngày</label><input class="input" type="date" /></span>
           <span class="filter__field"><label>Đến ngày</label><input class="input" type="date" /></span>
           <span class="filter__field"><label>BU</label><select class="select" id="callBu"><option value="all">Tất cả</option><option value="pso">PSO</option><option value="tcp">TCP</option><option value="unknown">Chưa rõ</option></select></span>
+          <span class="filter__field"><label>Email</label><input class="input input--email" data-filter="email" type="email" placeholder="email@talentconnectplus.edu.vn" /></span>
+          <span class="filter__field"><label>Ext.</label><input class="input input--ext" data-filter="ext" type="text" placeholder="VD: 203" /></span>
           <button class="btn-reset" id="callReset"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>Đặt lại</button>
         </div>
 
@@ -135,7 +129,7 @@
           <div class="calls-table-wrap">
             <table class="calls-table">
               <thead><tr>
-                <th>CALL ID</th><th>THỜI GIAN</th><th>GỌI TỪ</th><th>GỌI ĐẾN</th><th>PHÂN LOẠI</th><th>BU</th><th>THỜI LƯỢNG</th><th>GHI ÂM</th><th>CHI TIẾT</th>
+                <th>EMAIL</th><th>THỜI GIAN</th><th>GỌI TỪ</th><th>GỌI ĐẾN</th><th>PHÂN LOẠI</th><th>BU</th><th>THỜI LƯỢNG</th><th>GHI ÂM</th><th>CHI TIẾT</th>
               </tr></thead>
               <tbody id="callsBody"></tbody>
             </table>
@@ -143,9 +137,7 @@
           <div class="calls-foot">
             <div class="calls-foot__count" id="callsCount"></div>
             <div class="calls-foot__pager">
-              <span class="calls-perpage">Số dòng mỗi trang
-                <select class="select select--sm" id="callsPerPage"><option>10</option><option>20</option><option>50</option></select>
-              </span>
+              <span class="calls-perpage">Số dòng mỗi trang <select class="select select--sm" id="callsPerPage"><option>10</option><option>20</option><option>50</option></select></span>
               <button class="iconbtn pgbtn" id="callsPrev" aria-label="Trang trước"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg></button>
               <span class="calls-pageinfo" id="callsPageInfo">Trang 1 / 1</span>
               <button class="iconbtn pgbtn" id="callsNext" aria-label="Trang sau"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></button>
@@ -161,7 +153,7 @@
     <div class="modal" role="dialog" aria-modal="true" aria-label="Tất cả Ext.">
       <div class="modal__head"><div><div class="modal__title">Tất cả Ext.</div><div class="modal__sub" id="uvModalSub"></div></div><button class="modal__close" id="uvModalClose" aria-label="Đóng"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button></div>
       <div class="modal__tools"><label class="uv-search" style="flex:1 1 auto;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/></svg><input id="uvModalFilter" type="text" placeholder="Tìm Ext / Email…" style="width:100%;" /></label></div>
-      <div class="modal__body"><table class="uv-table"><thead><tr><th class="uv-rank">#</th><th>Ext.</th><th>Email</th><th class="num">Tổng cuộc gọi</th><th class="num">Cuộc gọi từ Odoo</th><th class="col-bar">Biểu đồ (Odoo / nguồn khác)</th></tr></thead><tbody id="uvModalBody"></tbody></table></div>
+      <div class="modal__body"><table class="uv-table"><thead><tr><th class="uv-rank">#</th><th>Ext.</th><th>Email</th><th class="num">Tổng cuộc gọi</th><th class="num">Cuộc gọi từ Odoo</th><th class="col-bar">% cuộc gọi từ Odoo</th></tr></thead><tbody id="uvModalBody"></tbody></table></div>
     </div>
   </div>
 
