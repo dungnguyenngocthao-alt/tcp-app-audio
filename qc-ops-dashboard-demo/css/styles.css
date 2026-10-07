@@ -105,8 +105,8 @@ a { text-decoration: none; color: inherit; }
 .combo__main { font-size: 13px; color: var(--ink); font-weight: 500; }
 .combo__sub { font-size: 11px; color: var(--muted); }
 
-/* Filter pills */
-.filter-pills { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: -6px 0 20px; }
+/* Filter pills (sit on their own row inside the filter box) */
+.filter-pills { width: 100%; display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
 .filter-pills[hidden] { display: none; }
 .fpill { display: inline-flex; align-items: center; gap: 6px; height: 28px; padding: 0 6px 0 10px; border-radius: 999px; background: #eef0ff; border: 1px solid #d9d5ff; color: var(--accent-600); font-size: 12px; font-weight: 600; }
 .fpill svg { width: 13px; height: 13px; }
