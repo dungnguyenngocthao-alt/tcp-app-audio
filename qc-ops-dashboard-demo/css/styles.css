@@ -122,8 +122,8 @@ a { text-decoration: none; color: inherit; }
 .card__head svg { width: 17px; height: 17px; color: var(--muted); }
 .card__title { font-size: 14px; font-weight: 500; color: var(--label); }
 .grid { display: grid; gap: 20px; margin-bottom: 20px; }
-.grid--2 { grid-template-columns: 2fr 1fr; }
-.grid--3 { grid-template-columns: repeat(3, 1fr); }
+.grid--2 { grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); }
+.grid--3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 
 /* Stat + chart */
 .stat-row { display: flex; align-items: flex-start; gap: 0; flex-wrap: wrap; }
@@ -169,7 +169,7 @@ a { text-decoration: none; color: inherit; }
 .top5__row { display: flex; align-items: center; gap: 12px; padding: 17px 0; border-top: 1px solid var(--border); }
 .top5__row:first-child { border-top: 0; }
 .top5__rank { width: 10px; font-size: 13px; font-weight: 700; color: var(--muted); flex: 0 0 auto; }
-.top5__email { flex: 1 1 auto; font-size: 13px; color: var(--accent-600); font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer; }
+.top5__email { flex: 1 1 auto; min-width: 0; font-size: 13px; color: var(--accent-600); font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer; }
 .top5__email:hover { text-decoration: underline; }
 .top5__right { flex: 0 0 auto; white-space: nowrap; }
 .top5__count { font-size: 14px; font-weight: 700; color: var(--ink); }
@@ -291,11 +291,24 @@ a { text-decoration: none; color: inherit; }
 .modal__foot { display: flex; justify-content: flex-end; gap: 10px; padding: 16px 20px 18px; }
 
 /* Responsive */
-@media (max-width: 1100px) { .grid--2, .grid--3 { grid-template-columns: 1fr; } }
+@media (max-width: 1100px) { .grid--2, .grid--3 { grid-template-columns: minmax(0, 1fr); } }
 @media (max-width: 760px) {
   .content { padding: 16px; }
   .page-title { font-size: 24px; }
   .search { display: none; }
   /* heatmap tab list drops onto its own full-width row */
   .card__head--heat #heatStatus { margin-left: 0; width: 100%; justify-content: flex-start; overflow-x: auto; }
+}
+
+/* Mobile filter: everything except the date fields fills the full width;
+   the two date fields share a row; the reset button wraps to its own full row */
+@media (max-width: 480px) {
+  .filter { gap: 10px; }
+  .filter__sep { display: none; }
+  .filter__field--date { flex: 1 1 calc(50% - 5px); min-width: 0; }
+  .filter__field--date .input { min-width: 0; }
+  .filter__field--bu, .filter__field--combo { flex: 1 1 100%; }
+  .filter__field--bu .select { width: 100%; }
+  .input--email, .input--ext { min-width: 0; width: 100%; }
+  .btn-reset, .btn-apply { flex: 1 1 100%; margin-left: 0; justify-content: center; }
 }

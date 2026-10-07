@@ -50,6 +50,42 @@
   USERS.sort((a, b) => b.total - a.total);
   const byExt = {}; USERS.forEach((u) => (byExt[u.ext] = u));
 
+  /* ---- Per-user daily distribution (lets a date range re-scope the dashboard) ---- */
+  const DAYS = 371; // ~53 weeks ending today
+  const START = new Date(TODAY); START.setDate(TODAY.getDate() - (DAYS - 1));
+  let _ds = 999983; function dr() { _ds = (_ds * 1103515245 + 12345) & 0x7fffffff; return _ds / 0x7fffffff; }
+  const dayW = [];
+  for (let i = 0; i < DAYS; i++) {
+    const d = new Date(START); d.setDate(START.getDate() + i);
+    const wd = d.getDay();
+    const base = (wd === 0 || wd === 6) ? 0.35 : 1; // weekends lighter
+    dayW.push(base * (0.75 + dr() * 0.5));
+  }
+  const sumW = dayW.reduce((a, b) => a + b, 0);
+  const wOrder = dayW.map((w, i) => i).sort((a, b) => dayW[b] - dayW[a]);
+  USERS.forEach((u) => {
+    const daily = new Array(DAYS); let acc = 0;
+    for (let i = 0; i < DAYS; i++) { const n = Math.floor(u.total * dayW[i] / sumW); daily[i] = n; acc += n; }
+    let rem = u.total - acc; // spread the rounding remainder onto the busiest days
+    for (let k = 0; rem > 0; k = (k + 1) % DAYS) { daily[wOrder[k]]++; rem--; }
+    u.daily = daily;
+  });
+  function dayIndexOf(str) { return Math.round((new Date(str + "T00:00:00") - START) / 86400000); }
+  // sum each user's calls within [from,to] (yyyy-mm-dd); empty = whole window
+  function usersInRange(fromStr, toStr) {
+    let lo = fromStr ? dayIndexOf(fromStr) : 0;
+    let hi = toStr ? dayIndexOf(toStr) : DAYS - 1;
+    lo = Math.max(0, Math.min(DAYS - 1, lo));
+    hi = Math.max(0, Math.min(DAYS - 1, hi));
+    if (lo > hi) { const t = lo; lo = hi; hi = t; }
+    return USERS.map((u) => {
+      let t = 0; for (let i = lo; i <= hi; i++) t += u.daily[i];
+      const rin = u.total ? u.inbound / u.total : 0, rod = u.total ? u.odoo / u.total : 0;
+      const inbound = Math.round(t * rin);
+      return { ext: u.ext, email: u.email, name: u.name, bu: u.bu, total: t, inbound, outbound: t - inbound, odoo: Math.round(t * rod) };
+    });
+  }
+
   /* ---- Overview headline (global, when no user selected) ---- */
   const OVERVIEW = { totalCalls: 11087, inboundPct: 39, outboundPct: 61, bu: { pso: 17, tcp: 1, unknown: 82 } };
 
@@ -145,5 +181,6 @@
 
   global.DEMO_DATA = {
     OVERVIEW, CHART, TOP5_CALLER, TOP5_CALLEE, HEATMAP, USERS, byExt, CALLS, CALLS_TOTAL_LABEL,
+    usersInRange,
   };
 })(window);

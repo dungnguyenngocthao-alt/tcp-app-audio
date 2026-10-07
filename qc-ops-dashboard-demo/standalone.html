@@ -133,8 +133,8 @@ a { text-decoration: none; color: inherit; }
 .card__head svg { width: 17px; height: 17px; color: var(--muted); }
 .card__title { font-size: 14px; font-weight: 500; color: var(--label); }
 .grid { display: grid; gap: 20px; margin-bottom: 20px; }
-.grid--2 { grid-template-columns: 2fr 1fr; }
-.grid--3 { grid-template-columns: repeat(3, 1fr); }
+.grid--2 { grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); }
+.grid--3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 
 /* Stat + chart */
 .stat-row { display: flex; align-items: flex-start; gap: 0; flex-wrap: wrap; }
@@ -180,7 +180,7 @@ a { text-decoration: none; color: inherit; }
 .top5__row { display: flex; align-items: center; gap: 12px; padding: 17px 0; border-top: 1px solid var(--border); }
 .top5__row:first-child { border-top: 0; }
 .top5__rank { width: 10px; font-size: 13px; font-weight: 700; color: var(--muted); flex: 0 0 auto; }
-.top5__email { flex: 1 1 auto; font-size: 13px; color: var(--accent-600); font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer; }
+.top5__email { flex: 1 1 auto; min-width: 0; font-size: 13px; color: var(--accent-600); font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer; }
 .top5__email:hover { text-decoration: underline; }
 .top5__right { flex: 0 0 auto; white-space: nowrap; }
 .top5__count { font-size: 14px; font-weight: 700; color: var(--ink); }
@@ -302,13 +302,26 @@ a { text-decoration: none; color: inherit; }
 .modal__foot { display: flex; justify-content: flex-end; gap: 10px; padding: 16px 20px 18px; }
 
 /* Responsive */
-@media (max-width: 1100px) { .grid--2, .grid--3 { grid-template-columns: 1fr; } }
+@media (max-width: 1100px) { .grid--2, .grid--3 { grid-template-columns: minmax(0, 1fr); } }
 @media (max-width: 760px) {
   .content { padding: 16px; }
   .page-title { font-size: 24px; }
   .search { display: none; }
   /* heatmap tab list drops onto its own full-width row */
   .card__head--heat #heatStatus { margin-left: 0; width: 100%; justify-content: flex-start; overflow-x: auto; }
+}
+
+/* Mobile filter: everything except the date fields fills the full width;
+   the two date fields share a row; the reset button wraps to its own full row */
+@media (max-width: 480px) {
+  .filter { gap: 10px; }
+  .filter__sep { display: none; }
+  .filter__field--date { flex: 1 1 calc(50% - 5px); min-width: 0; }
+  .filter__field--date .input { min-width: 0; }
+  .filter__field--bu, .filter__field--combo { flex: 1 1 100%; }
+  .filter__field--bu .select { width: 100%; }
+  .input--email, .input--ext { min-width: 0; width: 100%; }
+  .btn-reset, .btn-apply { flex: 1 1 100%; margin-left: 0; justify-content: center; }
 }
 
 </style>
@@ -346,10 +359,10 @@ a { text-decoration: none; color: inherit; }
       <!-- ============== PANE: TỔNG QUAN ============== -->
       <div data-pane="overview">
         <div class="filter">
-          <span class="filter__field"><label>Từ</label><input class="input" type="date" data-date="from" /></span>
+          <span class="filter__field filter__field--date"><label>Từ</label><input class="input" type="date" data-date="from" /></span>
           <span class="filter__sep">–</span>
-          <span class="filter__field"><label>Đến</label><input class="input" type="date" data-date="to" /></span>
-          <span class="filter__field"><label>BU</label><select class="select"><option>Tất cả</option><option>PSO</option><option>TCP</option><option>Chưa rõ</option></select></span>
+          <span class="filter__field filter__field--date"><label>Đến</label><input class="input" type="date" data-date="to" /></span>
+          <span class="filter__field filter__field--bu"><label>BU</label><select class="select"><option>Tất cả</option><option>PSO</option><option>TCP</option><option>Chưa rõ</option></select></span>
           <span class="filter__field filter__field--combo"><label>Email</label><span class="combo"><input class="input input--email" data-filter="email" type="text" autocomplete="off" placeholder="Nhập email…" /><span class="combo__menu" data-menu="email" hidden></span></span></span>
           <span class="filter__field filter__field--combo"><label>Ext.</label><span class="combo"><input class="input input--ext" data-filter="ext" type="text" autocomplete="off" placeholder="Nhập Ext…" /><span class="combo__menu" data-menu="ext" hidden></span></span></span>
           <button class="btn-reset" data-filter-reset><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>Đặt lại</button>
@@ -418,10 +431,10 @@ a { text-decoration: none; color: inherit; }
       <!-- ============== PANE: DANH SÁCH CUỘC GỌI ============== -->
       <div data-pane="calls" hidden>
         <div class="filter calls-filter">
-          <span class="filter__field"><label>Từ</label><input class="input" type="date" data-date="from" /></span>
+          <span class="filter__field filter__field--date"><label>Từ</label><input class="input" type="date" data-date="from" /></span>
           <span class="filter__sep">–</span>
-          <span class="filter__field"><label>Đến</label><input class="input" type="date" data-date="to" /></span>
-          <span class="filter__field"><label>BU</label><select class="select" id="callBu"><option value="all">Tất cả</option><option value="pso">PSO</option><option value="tcp">TCP</option><option value="unknown">Chưa rõ</option></select></span>
+          <span class="filter__field filter__field--date"><label>Đến</label><input class="input" type="date" data-date="to" /></span>
+          <span class="filter__field filter__field--bu"><label>BU</label><select class="select" id="callBu"><option value="all">Tất cả</option><option value="pso">PSO</option><option value="tcp">TCP</option><option value="unknown">Chưa rõ</option></select></span>
           <span class="filter__field filter__field--combo"><label>Email</label><span class="combo"><input class="input input--email" data-filter="email" type="text" autocomplete="off" placeholder="Nhập email…" /><span class="combo__menu" data-menu="email" hidden></span></span></span>
           <span class="filter__field filter__field--combo"><label>Ext.</label><span class="combo"><input class="input input--ext" data-filter="ext" type="text" autocomplete="off" placeholder="Nhập Ext…" /><span class="combo__menu" data-menu="ext" hidden></span></span></span>
           <button class="btn-reset" data-filter-reset><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>Đặt lại</button>
@@ -541,6 +554,42 @@ a { text-decoration: none; color: inherit; }
   USERS.sort((a, b) => b.total - a.total);
   const byExt = {}; USERS.forEach((u) => (byExt[u.ext] = u));
 
+  /* ---- Per-user daily distribution (lets a date range re-scope the dashboard) ---- */
+  const DAYS = 371; // ~53 weeks ending today
+  const START = new Date(TODAY); START.setDate(TODAY.getDate() - (DAYS - 1));
+  let _ds = 999983; function dr() { _ds = (_ds * 1103515245 + 12345) & 0x7fffffff; return _ds / 0x7fffffff; }
+  const dayW = [];
+  for (let i = 0; i < DAYS; i++) {
+    const d = new Date(START); d.setDate(START.getDate() + i);
+    const wd = d.getDay();
+    const base = (wd === 0 || wd === 6) ? 0.35 : 1; // weekends lighter
+    dayW.push(base * (0.75 + dr() * 0.5));
+  }
+  const sumW = dayW.reduce((a, b) => a + b, 0);
+  const wOrder = dayW.map((w, i) => i).sort((a, b) => dayW[b] - dayW[a]);
+  USERS.forEach((u) => {
+    const daily = new Array(DAYS); let acc = 0;
+    for (let i = 0; i < DAYS; i++) { const n = Math.floor(u.total * dayW[i] / sumW); daily[i] = n; acc += n; }
+    let rem = u.total - acc; // spread the rounding remainder onto the busiest days
+    for (let k = 0; rem > 0; k = (k + 1) % DAYS) { daily[wOrder[k]]++; rem--; }
+    u.daily = daily;
+  });
+  function dayIndexOf(str) { return Math.round((new Date(str + "T00:00:00") - START) / 86400000); }
+  // sum each user's calls within [from,to] (yyyy-mm-dd); empty = whole window
+  function usersInRange(fromStr, toStr) {
+    let lo = fromStr ? dayIndexOf(fromStr) : 0;
+    let hi = toStr ? dayIndexOf(toStr) : DAYS - 1;
+    lo = Math.max(0, Math.min(DAYS - 1, lo));
+    hi = Math.max(0, Math.min(DAYS - 1, hi));
+    if (lo > hi) { const t = lo; lo = hi; hi = t; }
+    return USERS.map((u) => {
+      let t = 0; for (let i = lo; i <= hi; i++) t += u.daily[i];
+      const rin = u.total ? u.inbound / u.total : 0, rod = u.total ? u.odoo / u.total : 0;
+      const inbound = Math.round(t * rin);
+      return { ext: u.ext, email: u.email, name: u.name, bu: u.bu, total: t, inbound, outbound: t - inbound, odoo: Math.round(t * rod) };
+    });
+  }
+
   /* ---- Overview headline (global, when no user selected) ---- */
   const OVERVIEW = { totalCalls: 11087, inboundPct: 39, outboundPct: 61, bu: { pso: 17, tcp: 1, unknown: 82 } };
 
@@ -636,6 +685,7 @@ a { text-decoration: none; color: inherit; }
 
   global.DEMO_DATA = {
     OVERVIEW, CHART, TOP5_CALLER, TOP5_CALLEE, HEATMAP, USERS, byExt, CALLS, CALLS_TOTAL_LABEL,
+    usersInRange,
   };
 })(window);
 
@@ -684,16 +734,20 @@ a { text-decoration: none; color: inherit; }
   const emailOf = (c) => (D.byExt[extOf(c)] ? D.byExt[extOf(c)].email : "—");
 
   const filterActive = () => selEmails.length > 0 || selExts.length > 0;
+  const dateActive = () => !!(selFrom || selTo);
+  const dashFiltered = () => filterActive() || dateActive();
+  // the user set, scoped by the date range (if any) then the email/ext pills
   function matchedUsers() {
-    if (!filterActive()) return D.USERS;
-    return D.USERS.filter((u) => selEmails.includes(u.email) || selExts.includes(u.ext));
+    let us = dateActive() ? D.usersInRange(selFrom, selTo) : D.USERS;
+    if (filterActive()) us = us.filter((u) => selEmails.includes(u.email) || selExts.includes(u.ext));
+    return us;
   }
   const userSelected = (u) => selEmails.includes(u.email) || selExts.includes(u.ext);
 
   /* ---------- Donuts ---------- */
   function conic(stops) { const p = []; let prev = 0; stops.forEach(([c, x]) => { p.push(`${c} ${prev}%`, `${c} ${x}%`); prev = x; }); return `conic-gradient(${p.join(", ")})`; }
   function paintDonuts() {
-    if (filterActive()) {
+    if (dashFiltered()) {
       const us = matchedUsers();
       const total = us.reduce((a, u) => a + u.total, 0);
       const inb = us.reduce((a, u) => a + u.inbound, 0);
@@ -741,12 +795,13 @@ a { text-decoration: none; color: inherit; }
       const show = i % labelEvery === 0 || i === n - 1;
       return `<div class="chart__col" title="${c.labels[i]} · In ${s.in} · Out ${s.out}"><div class="chart__stack" style="width:100%;max-width:${barMax}px;height:${h}px"><div class="chart__seg chart__seg--out" style="height:${outH}px"></div><div class="chart__seg chart__seg--in" style="height:${inH}px"></div></div><div class="chart__x">${show ? c.labels[i] : ""}</div></div>`;
     }).join("");
-    if (filterActive()) {
+    if (dashFiltered()) {
       const us = matchedUsers();
       const total = us.reduce((a, u) => a + u.total, 0);
       $("#statUploaded").textContent = nfmt(total);
       $("#statAvg").textContent = c.avg;
-      const lbl = us.length === 1 ? ("Ext. " + esc(us[0].ext)) : (us.length + " Ext đã chọn");
+      const lbl = filterActive() && us.length === 1 ? ("Ext. " + esc(us[0].ext))
+        : filterActive() ? (us.length + " Ext đã chọn") : "Theo khoảng ngày";
       $("#statDelta").innerHTML = `<span class="note">${lbl}</span>`;
     } else {
       const total = c.series.reduce((a, s) => a + s.in + s.out, 0);
@@ -771,7 +826,7 @@ a { text-decoration: none; color: inherit; }
   // caller → outbound calls, callee → inbound calls. With no filter use the
   // production Top-5 lists; with a filter, derive from the matching Ext users.
   function topRows(kind) {
-    if (!filterActive()) return kind === "caller" ? D.TOP5_CALLER : D.TOP5_CALLEE;
+    if (!dashFiltered()) return kind === "caller" ? D.TOP5_CALLER : D.TOP5_CALLEE;
     const key = kind === "caller" ? "outbound" : "inbound";
     return matchedUsers()
       .map((u) => ({ ext: u.ext, email: u.email, calls: u[key], bu: u.bu }))
@@ -799,8 +854,8 @@ a { text-decoration: none; color: inherit; }
     </tr>`;
   }
   function renderUvTable() {
-    const all = matchedUsers();
-    // with a filter applied, show exactly the filtered Ext (no Top-7 cap)
+    const all = matchedUsers().slice().sort((a, b) => b.total - a.total);
+    // with an email/ext filter, show exactly the filtered Ext (no Top-7 cap)
     const rows = filterActive() ? all : all.slice(0, 7);
     $("#uvBody").innerHTML = rows.length ? rows.map((u, i) => uvRowHtml(u, i, false)).join("")
       : `<tr><td colspan="8" class="uv-empty">Không có Ext/Email nào khớp bộ lọc</td></tr>`;
@@ -812,7 +867,7 @@ a { text-decoration: none; color: inherit; }
   /* ---------- Modal ---------- */
   function renderModalTable() {
     const q = ($("#uvModalFilter").value || "").trim().toLowerCase();
-    let rows = D.USERS;
+    let rows = (dateActive() ? D.usersInRange(selFrom, selTo) : D.USERS).slice().sort((a, b) => b.total - a.total);
     if (q) rows = rows.filter((u) => u.ext.toLowerCase().includes(q) || u.email.toLowerCase().includes(q) || u.name.toLowerCase().includes(q));
     $("#uvModalBody").innerHTML = rows.length ? rows.map((u, i) => uvRowHtml(u, i, true)).join("") : `<tr><td colspan="8" class="uv-empty">Không có kết quả</td></tr>`;
     $("#uvModalSub").textContent = `${rows.length} / ${D.USERS.length} Ext`;
@@ -1043,7 +1098,7 @@ a { text-decoration: none; color: inherit; }
       const which = i.getAttribute("data-date");
       if (which === "from") selFrom = i.value; else selTo = i.value;
       $$(`[data-date="${which}"]`).forEach((o) => { if (o.value !== i.value) o.value = i.value; });
-      callsPage = 1; renderCalls();
+      callsPage = 1; renderFiltered();
     }));
 
     // Pick a suggestion (mousedown beats the input blur / document click)

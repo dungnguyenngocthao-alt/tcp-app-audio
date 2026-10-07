@@ -41,16 +41,20 @@
   const emailOf = (c) => (D.byExt[extOf(c)] ? D.byExt[extOf(c)].email : "—");
 
   const filterActive = () => selEmails.length > 0 || selExts.length > 0;
+  const dateActive = () => !!(selFrom || selTo);
+  const dashFiltered = () => filterActive() || dateActive();
+  // the user set, scoped by the date range (if any) then the email/ext pills
   function matchedUsers() {
-    if (!filterActive()) return D.USERS;
-    return D.USERS.filter((u) => selEmails.includes(u.email) || selExts.includes(u.ext));
+    let us = dateActive() ? D.usersInRange(selFrom, selTo) : D.USERS;
+    if (filterActive()) us = us.filter((u) => selEmails.includes(u.email) || selExts.includes(u.ext));
+    return us;
   }
   const userSelected = (u) => selEmails.includes(u.email) || selExts.includes(u.ext);
 
   /* ---------- Donuts ---------- */
   function conic(stops) { const p = []; let prev = 0; stops.forEach(([c, x]) => { p.push(`${c} ${prev}%`, `${c} ${x}%`); prev = x; }); return `conic-gradient(${p.join(", ")})`; }
   function paintDonuts() {
-    if (filterActive()) {
+    if (dashFiltered()) {
       const us = matchedUsers();
       const total = us.reduce((a, u) => a + u.total, 0);
       const inb = us.reduce((a, u) => a + u.inbound, 0);
@@ -98,12 +102,13 @@
       const show = i % labelEvery === 0 || i === n - 1;
       return `<div class="chart__col" title="${c.labels[i]} · In ${s.in} · Out ${s.out}"><div class="chart__stack" style="width:100%;max-width:${barMax}px;height:${h}px"><div class="chart__seg chart__seg--out" style="height:${outH}px"></div><div class="chart__seg chart__seg--in" style="height:${inH}px"></div></div><div class="chart__x">${show ? c.labels[i] : ""}</div></div>`;
     }).join("");
-    if (filterActive()) {
+    if (dashFiltered()) {
       const us = matchedUsers();
       const total = us.reduce((a, u) => a + u.total, 0);
       $("#statUploaded").textContent = nfmt(total);
       $("#statAvg").textContent = c.avg;
-      const lbl = us.length === 1 ? ("Ext. " + esc(us[0].ext)) : (us.length + " Ext đã chọn");
+      const lbl = filterActive() && us.length === 1 ? ("Ext. " + esc(us[0].ext))
+        : filterActive() ? (us.length + " Ext đã chọn") : "Theo khoảng ngày";
       $("#statDelta").innerHTML = `<span class="note">${lbl}</span>`;
     } else {
       const total = c.series.reduce((a, s) => a + s.in + s.out, 0);
@@ -128,7 +133,7 @@
   // caller → outbound calls, callee → inbound calls. With no filter use the
   // production Top-5 lists; with a filter, derive from the matching Ext users.
   function topRows(kind) {
-    if (!filterActive()) return kind === "caller" ? D.TOP5_CALLER : D.TOP5_CALLEE;
+    if (!dashFiltered()) return kind === "caller" ? D.TOP5_CALLER : D.TOP5_CALLEE;
     const key = kind === "caller" ? "outbound" : "inbound";
     return matchedUsers()
       .map((u) => ({ ext: u.ext, email: u.email, calls: u[key], bu: u.bu }))
@@ -156,8 +161,8 @@
     </tr>`;
   }
   function renderUvTable() {
-    const all = matchedUsers();
-    // with a filter applied, show exactly the filtered Ext (no Top-7 cap)
+    const all = matchedUsers().slice().sort((a, b) => b.total - a.total);
+    // with an email/ext filter, show exactly the filtered Ext (no Top-7 cap)
     const rows = filterActive() ? all : all.slice(0, 7);
     $("#uvBody").innerHTML = rows.length ? rows.map((u, i) => uvRowHtml(u, i, false)).join("")
       : `<tr><td colspan="8" class="uv-empty">Không có Ext/Email nào khớp bộ lọc</td></tr>`;
@@ -169,7 +174,7 @@
   /* ---------- Modal ---------- */
   function renderModalTable() {
     const q = ($("#uvModalFilter").value || "").trim().toLowerCase();
-    let rows = D.USERS;
+    let rows = (dateActive() ? D.usersInRange(selFrom, selTo) : D.USERS).slice().sort((a, b) => b.total - a.total);
     if (q) rows = rows.filter((u) => u.ext.toLowerCase().includes(q) || u.email.toLowerCase().includes(q) || u.name.toLowerCase().includes(q));
     $("#uvModalBody").innerHTML = rows.length ? rows.map((u, i) => uvRowHtml(u, i, true)).join("") : `<tr><td colspan="8" class="uv-empty">Không có kết quả</td></tr>`;
     $("#uvModalSub").textContent = `${rows.length} / ${D.USERS.length} Ext`;
@@ -400,7 +405,7 @@
       const which = i.getAttribute("data-date");
       if (which === "from") selFrom = i.value; else selTo = i.value;
       $$(`[data-date="${which}"]`).forEach((o) => { if (o.value !== i.value) o.value = i.value; });
-      callsPage = 1; renderCalls();
+      callsPage = 1; renderFiltered();
     }));
 
     // Pick a suggestion (mousedown beats the input blur / document click)

@@ -42,10 +42,10 @@
       <!-- ============== PANE: TỔNG QUAN ============== -->
       <div data-pane="overview">
         <div class="filter">
-          <span class="filter__field"><label>Từ</label><input class="input" type="date" data-date="from" /></span>
+          <span class="filter__field filter__field--date"><label>Từ</label><input class="input" type="date" data-date="from" /></span>
           <span class="filter__sep">–</span>
-          <span class="filter__field"><label>Đến</label><input class="input" type="date" data-date="to" /></span>
-          <span class="filter__field"><label>BU</label><select class="select"><option>Tất cả</option><option>PSO</option><option>TCP</option><option>Chưa rõ</option></select></span>
+          <span class="filter__field filter__field--date"><label>Đến</label><input class="input" type="date" data-date="to" /></span>
+          <span class="filter__field filter__field--bu"><label>BU</label><select class="select"><option>Tất cả</option><option>PSO</option><option>TCP</option><option>Chưa rõ</option></select></span>
           <span class="filter__field filter__field--combo"><label>Email</label><span class="combo"><input class="input input--email" data-filter="email" type="text" autocomplete="off" placeholder="Nhập email…" /><span class="combo__menu" data-menu="email" hidden></span></span></span>
           <span class="filter__field filter__field--combo"><label>Ext.</label><span class="combo"><input class="input input--ext" data-filter="ext" type="text" autocomplete="off" placeholder="Nhập Ext…" /><span class="combo__menu" data-menu="ext" hidden></span></span></span>
           <button class="btn-reset" data-filter-reset><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>Đặt lại</button>
@@ -114,10 +114,10 @@
       <!-- ============== PANE: DANH SÁCH CUỘC GỌI ============== -->
       <div data-pane="calls" hidden>
         <div class="filter calls-filter">
-          <span class="filter__field"><label>Từ</label><input class="input" type="date" data-date="from" /></span>
+          <span class="filter__field filter__field--date"><label>Từ</label><input class="input" type="date" data-date="from" /></span>
           <span class="filter__sep">–</span>
-          <span class="filter__field"><label>Đến</label><input class="input" type="date" data-date="to" /></span>
-          <span class="filter__field"><label>BU</label><select class="select" id="callBu"><option value="all">Tất cả</option><option value="pso">PSO</option><option value="tcp">TCP</option><option value="unknown">Chưa rõ</option></select></span>
+          <span class="filter__field filter__field--date"><label>Đến</label><input class="input" type="date" data-date="to" /></span>
+          <span class="filter__field filter__field--bu"><label>BU</label><select class="select" id="callBu"><option value="all">Tất cả</option><option value="pso">PSO</option><option value="tcp">TCP</option><option value="unknown">Chưa rõ</option></select></span>
           <span class="filter__field filter__field--combo"><label>Email</label><span class="combo"><input class="input input--email" data-filter="email" type="text" autocomplete="off" placeholder="Nhập email…" /><span class="combo__menu" data-menu="email" hidden></span></span></span>
           <span class="filter__field filter__field--combo"><label>Ext.</label><span class="combo"><input class="input input--ext" data-filter="ext" type="text" autocomplete="off" placeholder="Nhập Ext…" /><span class="combo__menu" data-menu="ext" hidden></span></span></span>
           <button class="btn-reset" data-filter-reset><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>Đặt lại</button>
