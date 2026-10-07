@@ -10,81 +10,39 @@
   <link rel="stylesheet" href="css/styles.css" />
 </head>
 <body>
-  <!--
-    Structure mirrors the live shadcn-admin app (qc-ops.talentconnectplus.edu.vn):
-    Sidebar  = header / content (groups > menu > menu-item > menu-button [+ sub-menu]) / footer
-    Inset    = topbar (SidebarTrigger + search + actions) / scrollable content
-    data-slot="*" attributes echo shadcn's component slots.
-  -->
-  <div class="app" id="app">
-    <div class="sb-backdrop" id="sbBackdrop"></div>
+  <div class="inset">
+    <!-- Topbar: brand + search + avatar (sidebar removed; only Dashboard existed) -->
+    <header class="topbar" data-slot="site-header">
+      <a class="tb-brand" href="#">
+        <svg class="brand__logo" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 444" role="img" aria-label="Talent Connect Plus">
+          <defs>
+            <linearGradient id="tcOuter" x1="256" y1="0" x2="256" y2="444" gradientUnits="userSpaceOnUse"><stop stop-color="#3223A8"/><stop offset="0.54" stop-color="#8792F5"/><stop offset="1" stop-color="#FFFFFF"/></linearGradient>
+            <linearGradient id="tcInner" x1="256" y1="150" x2="256" y2="444" gradientUnits="userSpaceOnUse"><stop stop-color="#30249E"/><stop offset="0.62" stop-color="#8D98F6"/><stop offset="1" stop-color="#FFFFFF"/></linearGradient>
+            <linearGradient id="tcFront" x1="256" y1="294" x2="256" y2="444" gradientUnits="userSpaceOnUse"><stop stop-color="#3931B8"/><stop offset="0.58" stop-color="#929CF6"/><stop offset="1" stop-color="#FFFFFF"/></linearGradient>
+          </defs>
+          <path fill="url(#tcOuter)" d="M256 0 512 444H0L256 0Z"/><path fill="url(#tcInner)" d="M256 150 512 444H0L256 150Z"/>
+          <circle cx="256" cy="284" r="19" fill="#F2552C"/><path fill="url(#tcFront)" d="m0 444 256-150 256 150H0Z"/>
+        </svg>
+        <span class="brand__name">Talent Connect +</span>
+      </a>
+      <div class="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/></svg><span>Search</span><span class="kbd">⌘ K</span></div>
+      <div class="topbar__spacer"></div>
+      <span class="avatar avatar--sm">SN</span>
+    </header>
 
-    <!-- ===================== SIDEBAR ===================== -->
-    <aside class="sidebar" id="sidebar" data-slot="sidebar">
-      <div class="sidebar__header" data-slot="sidebar-header">
-        <a class="sb-brand" href="#" data-slot="sidebar-menu-button">
-          <span class="sb-brand__logo">
-            <svg class="brand__logo" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 444" role="img" aria-label="Talent Connect Plus">
-              <defs>
-                <linearGradient id="tcOuter" x1="256" y1="0" x2="256" y2="444" gradientUnits="userSpaceOnUse"><stop stop-color="#3223A8"/><stop offset="0.54" stop-color="#8792F5"/><stop offset="1" stop-color="#FFFFFF"/></linearGradient>
-                <linearGradient id="tcInner" x1="256" y1="150" x2="256" y2="444" gradientUnits="userSpaceOnUse"><stop stop-color="#30249E"/><stop offset="0.62" stop-color="#8D98F6"/><stop offset="1" stop-color="#FFFFFF"/></linearGradient>
-                <linearGradient id="tcFront" x1="256" y1="294" x2="256" y2="444" gradientUnits="userSpaceOnUse"><stop stop-color="#3931B8"/><stop offset="0.58" stop-color="#929CF6"/><stop offset="1" stop-color="#FFFFFF"/></linearGradient>
-              </defs>
-              <path fill="url(#tcOuter)" d="M256 0 512 444H0L256 0Z"/>
-              <path fill="url(#tcInner)" d="M256 150 512 444H0L256 150Z"/>
-              <circle cx="256" cy="284" r="19" fill="#F2552C"/>
-              <path fill="url(#tcFront)" d="m0 444 256-150 256 150H0Z"/>
-            </svg>
-          </span>
-          <span class="sb-label brand__name">Talent Connect +</span>
-        </a>
+    <div class="content">
+      <div class="page-head">
+        <h1 class="page-title">Dashboard</h1>
+        <button class="btn-export"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7z"/><path d="M14 2v5a1 1 0 0 0 1 1h5"/><path d="M8 13h2"/><path d="M14 13h2"/><path d="M8 17h2"/><path d="M14 17h2"/></svg>Xuất báo cáo</button>
       </div>
 
-      <div class="sidebar__content" data-slot="sidebar-content">
-        <div class="sb-group" data-slot="sidebar-group">
-          <div class="sb-group__label sb-label">General</div>
-          <ul class="sb-menu" data-slot="sidebar-menu">
-            <li class="sb-menu-item" data-slot="sidebar-menu-item">
-              <a class="sb-menu-button is-active" href="#" data-slot="sidebar-menu-button" data-active="true" title="Dashboard"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg><span class="sb-label">Dashboard</span></a>
-            </li>
-          </ul>
-        </div>
+      <div class="tabs" id="tabs">
+        <button class="tab is-active" data-tab="overview">Tổng quan</button>
+        <button class="tab" data-tab="calls">Danh sách cuộc gọi</button>
       </div>
 
-      <div class="sidebar__footer" data-slot="sidebar-footer">
-        <button class="sb-user" type="button" data-slot="sidebar-menu-button" title="satnaing">
-          <span class="avatar">SN</span>
-          <span class="sb-user__meta sb-label">
-            <span class="sb-user__name">satnaing</span>
-            <span class="sb-user__mail">satnaingdev@gmail.com</span>
-          </span>
-          <svg class="sb-user__chev sb-label" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m7 15 5 5 5-5"/><path d="m7 9 5-5 5 5"/></svg>
-        </button>
-      </div>
-    </aside>
-
-    <!-- ===================== INSET / MAIN ===================== -->
-    <div class="inset">
-      <header class="topbar" data-slot="site-header">
-        <button class="iconbtn" id="sbTrigger" data-slot="sidebar-trigger" aria-label="Toggle Sidebar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M9 3v18"/></svg></button>
-        <div class="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/></svg><span>Search</span><span class="kbd">⌘ K</span></div>
-        <div class="topbar__spacer"></div>
-        <button class="iconbtn" aria-label="Toggle theme"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg></button>
-        <button class="iconbtn" aria-label="Settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.671 4.136a2.34 2.34 0 0 1 4.659 0 2.34 2.34 0 0 0 3.319 1.915 2.34 2.34 0 0 1 2.33 4.033 2.34 2.34 0 0 0 0 3.831 2.34 2.34 0 0 1-2.33 4.033 2.34 2.34 0 0 0-3.319 1.915 2.34 2.34 0 0 1-4.659 0 2.34 2.34 0 0 0-3.32-1.915 2.34 2.34 0 0 1-2.33-4.033 2.34 2.34 0 0 0 0-3.831A2.34 2.34 0 0 1 6.35 6.051a2.34 2.34 0 0 0 3.319-1.915"/><circle cx="12" cy="12" r="3"/></svg></button>
-        <span class="avatar avatar--sm">SN</span>
-      </header>
-
-      <div class="content">
-        <div class="page-head">
-          <h1 class="page-title">Dashboard</h1>
-          <button class="btn-export"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7z"/><path d="M14 2v5a1 1 0 0 0 1 1h5"/><path d="M8 13h2"/><path d="M14 13h2"/><path d="M8 17h2"/><path d="M14 17h2"/></svg>Xuất báo cáo</button>
-        </div>
-
-        <div class="tabs">
-          <button class="tab is-active">Tổng quan</button>
-          <button class="tab">Danh sách cuộc gọi</button>
-        </div>
-
+      <!-- ============== PANE: TỔNG QUAN ============== -->
+      <div data-pane="overview">
         <div class="filter">
           <span class="filter__label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v3"/><path d="M16 2v3"/><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M8 13h.01"/><path d="M12 13h.01"/><path d="M16 13h.01"/><path d="M8 17h.01"/><path d="M12 17h.01"/><path d="M16 17h.01"/></svg>Khoảng ngày</span>
           <span class="filter__field"><label>Từ</label><input class="input" type="date" /></span>
@@ -93,70 +51,42 @@
           <span class="filter__field"><label>BU</label>
             <select class="select"><option>Tất cả</option><option>PSO</option><option>TCP</option><option>Chưa rõ</option></select>
           </span>
-          <button class="btn-reset"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>Đặt lại</button>
+          <span class="filter__field"><label>Email</label><input class="input input--email" id="emailFilter" type="text" placeholder="Nhập email/Ext để lọc…" /></span>
+          <button class="btn-reset" id="ovReset"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>Đặt lại</button>
         </div>
 
-        <!-- Row 1: stat+chart | inbound/outbound donut -->
+        <div class="user-banner" id="userBanner" hidden>
+          <span>Đang xem dữ liệu của <b id="ubName"></b> · <span class="mono" id="ubEmail"></span> <span class="mono ub-ext" id="ubExt"></span></span>
+          <button class="ub-clear" id="ubClear">Bỏ lọc ×</button>
+        </div>
+
         <div class="grid grid--2">
           <div class="card">
             <div class="stat-row">
-              <div class="stat">
-                <div class="stat__value" id="statUploaded">0</div>
-                <div class="stat__cap">Cuộc gọi đã upload</div>
-                <div class="stat__delta" id="statDelta"></div>
-              </div>
-              <div class="stat">
-                <div class="stat__value" id="statAvg">—</div>
-                <div class="stat__cap">TB thời lượng gọi</div>
-              </div>
-              <div class="range-toggle" id="rangeToggle">
-                <button class="is-active" data-range="7d">7 ngày</button>
-                <button data-range="30d">30 ngày</button>
-                <button data-range="12m">12 tháng</button>
-              </div>
+              <div class="stat"><div class="stat__value" id="statUploaded">0</div><div class="stat__cap">Cuộc gọi đã upload</div><div class="stat__delta" id="statDelta"></div></div>
+              <div class="stat"><div class="stat__value" id="statAvg">—</div><div class="stat__cap">TB thời lượng gọi</div></div>
+              <div class="range-toggle" id="rangeToggle"><button class="is-active" data-range="7d">7 ngày</button><button data-range="30d">30 ngày</button><button data-range="12m">12 tháng</button></div>
             </div>
-            <div class="legend">
-              <span class="legend__item"><span class="dot dot--in"></span>Inbound</span>
-              <span class="legend__item"><span class="dot dot--out"></span>Outbound</span>
-            </div>
+            <div class="legend"><span class="legend__item"><span class="dot dot--in"></span>Inbound</span><span class="legend__item"><span class="dot dot--out"></span>Outbound</span></div>
             <div class="chart" id="chart"></div>
           </div>
 
           <div class="card card--donut">
-            <div class="card__head">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3 4 7l4 4"/><path d="M4 7h16"/><path d="m16 21 4-4-4-4"/><path d="M20 17H4"/></svg>
-              <span class="card__title">Inbound / Outbound</span>
-            </div>
-            <div class="donut-area">
-              <div class="donut"><div class="donut__ring" id="ioRing"></div>
-                <div class="donut__center"><div class="donut__num">11.087</div><div class="donut__cap">cuộc gọi</div></div>
-              </div>
-            </div>
+            <div class="card__head"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3 4 7l4 4"/><path d="M4 7h16"/><path d="m16 21 4-4-4-4"/><path d="M20 17H4"/></svg><span class="card__title">Inbound / Outbound</span></div>
+            <div class="donut-area"><div class="donut"><div class="donut__ring" id="ioRing"></div><div class="donut__center"><div class="donut__num" id="ioNum">11.087</div><div class="donut__cap">cuộc gọi</div></div></div></div>
             <div class="donut-legend">
-              <span class="legend__item"><span class="dot dot--in"></span>Inbound <b class="legend__pct">39%</b></span>
-              <span class="legend__item"><span class="dot dot--out"></span>Outbound <b class="legend__pct">61%</b></span>
+              <span class="legend__item"><span class="dot dot--in"></span>Inbound <b class="legend__pct" id="ioInPct">39%</b></span>
+              <span class="legend__item"><span class="dot dot--out"></span>Outbound <b class="legend__pct" id="ioOutPct">61%</b></span>
             </div>
           </div>
         </div>
 
-        <!-- Row 2: top5 caller | top5 callee | BU donut -->
         <div class="grid grid--3">
-          <div class="card">
-            <div class="card__head"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><path d="M16 3.128a4 4 0 0 1 0 7.744"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><circle cx="9" cy="7" r="4"/></svg><span class="card__title">Top 5 Caller</span></div>
-            <div class="top5" id="top5Caller"></div>
-          </div>
-          <div class="card">
-            <div class="card__head"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13.832 16.568a1 1 0 0 0 1.213-.303l.355-.465A2 2 0 0 1 17 15h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2A18 18 0 0 1 2 4a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v3a2 2 0 0 1-.8 1.6l-.468.351a1 1 0 0 0-.292 1.233 14 14 0 0 0 6.392 6.384"/></svg><span class="card__title">Top 5 Callee</span></div>
-            <div class="top5" id="top5Callee"></div>
-          </div>
-          <div class="card card--donut">
-            <div class="card__head"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v16a2 2 0 0 0 2 2h16"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></svg><span class="card__title">Cơ cấu theo BU</span></div>
-            <div class="donut-area">
-              <div class="donut"><div class="donut__ring" id="buRing"></div>
-                <div class="donut__center"><div class="donut__num">11.087</div><div class="donut__cap">cuộc gọi</div></div>
-              </div>
-            </div>
-            <div class="donut-legend">
+          <div class="card"><div class="card__head"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><path d="M16 3.128a4 4 0 0 1 0 7.744"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><circle cx="9" cy="7" r="4"/></svg><span class="card__title">Top 5 Caller</span></div><div class="top5" id="top5Caller"></div></div>
+          <div class="card"><div class="card__head"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13.832 16.568a1 1 0 0 0 1.213-.303l.355-.465A2 2 0 0 1 17 15h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2A18 18 0 0 1 2 4a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v3a2 2 0 0 1-.8 1.6l-.468.351a1 1 0 0 0-.292 1.233 14 14 0 0 0 6.392 6.384"/></svg><span class="card__title">Top 5 Callee</span></div><div class="top5" id="top5Callee"></div></div>
+          <div class="card card--donut"><div class="card__head"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v16a2 2 0 0 0 2 2h16"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></svg><span class="card__title">Cơ cấu theo BU</span></div>
+            <div class="donut-area"><div class="donut"><div class="donut__ring" id="buRing"></div><div class="donut__center"><div class="donut__num" id="buNum">11.087</div><div class="donut__cap">cuộc gọi</div></div></div></div>
+            <div class="donut-legend" id="buLegend">
               <span class="legend__item"><span class="dot dot--pso"></span>PSO <b class="legend__pct">17%</b></span>
               <span class="legend__item"><span class="dot dot--tcp"></span>TCP <b class="legend__pct">1%</b></span>
               <span class="legend__item"><span class="dot dot--unk"></span>Chưa rõ <b class="legend__pct">82%</b></span>
@@ -164,65 +94,74 @@
           </div>
         </div>
 
-        <!-- NEW BLOCK: User-ID call-volume table (above heatmap) -->
+        <!-- Ext block -->
         <div class="card" style="margin-bottom:20px;">
           <div class="card__head">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v16a2 2 0 0 0 2 2h16"/><rect x="7" y="13" width="9" height="4" rx="1"/><rect x="7" y="5" width="12" height="4" rx="1"/></svg>
-            <span class="card__title">Lưu lượng cuộc gọi theo User ID</span>
+            <span class="card__title">Lưu lượng cuộc gọi theo Ext.</span>
             <div class="uv-head-actions">
-              <label class="uv-search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/></svg><input id="uvFilter" type="text" placeholder="Lọc theo User ID…" /></label>
+              <label class="uv-search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/></svg><input id="uvFilter" type="text" placeholder="Lọc theo Ext / Email…" /></label>
               <button class="btn-detail" id="uvDetailBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>Xem chi tiết</button>
             </div>
           </div>
-          <div class="uv-legend">
-            <span class="legend__item"><span class="dot dot--odoo"></span>Cuộc gọi từ Odoo</span>
-            <span class="legend__item"><span class="dot dot--rest"></span>Nguồn khác</span>
-          </div>
+          <div class="uv-legend"><span class="legend__item"><span class="dot dot--odoo"></span>Cuộc gọi từ Odoo</span><span class="legend__item"><span class="dot dot--rest"></span>Nguồn khác</span></div>
           <table class="uv-table">
-            <thead><tr>
-              <th class="uv-rank">#</th><th>User ID</th>
-              <th class="num">Tổng cuộc gọi</th><th class="num">Cuộc gọi từ Odoo</th>
-              <th class="col-bar">Biểu đồ (Odoo / nguồn khác)</th>
-            </tr></thead>
+            <thead><tr><th class="uv-rank">#</th><th>Ext.</th><th>Email</th><th class="num">Tổng cuộc gọi</th><th class="num">Cuộc gọi từ Odoo</th><th class="col-bar">Biểu đồ (Odoo / nguồn khác)</th></tr></thead>
             <tbody id="uvBody"></tbody>
           </table>
           <div class="uv-foot" id="uvFoot"></div>
         </div>
 
-        <!-- Heatmap -->
+        <!-- Heatmap 24h -->
         <div class="card">
           <div class="card__head"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M3 9h18"/><path d="M3 15h18"/><path d="M9 3v18"/><path d="M15 3v18"/></svg><span class="card__title">Mật độ cuộc gọi theo khung giờ</span>
-            <div class="range-toggle" id="heatStatus" style="margin-left:auto;">
-              <button class="is-active" data-status="all">Tất cả</button>
-              <button data-status="answered">Nghe máy</button>
-              <button data-status="unanswered">Không nghe máy</button>
+            <div class="range-toggle" id="heatStatus" style="margin-left:auto;"><button class="is-active" data-status="all">Tất cả</button><button data-status="answered">Nghe máy</button><button data-status="unanswered">Không nghe máy</button></div>
+          </div>
+          <div class="heatmap-scroll"><div class="heatmap" id="heatmap"></div></div>
+        </div>
+      </div>
+
+      <!-- ============== PANE: DANH SÁCH CUỘC GỌI ============== -->
+      <div data-pane="calls" hidden>
+        <div class="filter calls-filter">
+          <label class="calls-search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/></svg><input id="callSearch" type="text" placeholder="Mã cuộc gọi hoặc số điện thoại…" /></label>
+          <span class="filter__field"><label>Từ ngày</label><input class="input" type="date" /></span>
+          <span class="filter__field"><label>Đến ngày</label><input class="input" type="date" /></span>
+          <span class="filter__field"><label>BU</label><select class="select" id="callBu"><option value="all">Tất cả</option><option value="pso">PSO</option><option value="tcp">TCP</option><option value="unknown">Chưa rõ</option></select></span>
+          <button class="btn-reset" id="callReset"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>Đặt lại</button>
+        </div>
+
+        <div class="card calls-card">
+          <div class="calls-table-wrap">
+            <table class="calls-table">
+              <thead><tr>
+                <th>CALL ID</th><th>THỜI GIAN</th><th>GỌI TỪ</th><th>GỌI ĐẾN</th><th>PHÂN LOẠI</th><th>BU</th><th>THỜI LƯỢNG</th><th>GHI ÂM</th><th>CHI TIẾT</th>
+              </tr></thead>
+              <tbody id="callsBody"></tbody>
+            </table>
+          </div>
+          <div class="calls-foot">
+            <div class="calls-foot__count" id="callsCount"></div>
+            <div class="calls-foot__pager">
+              <span class="calls-perpage">Số dòng mỗi trang
+                <select class="select select--sm" id="callsPerPage"><option>10</option><option>20</option><option>50</option></select>
+              </span>
+              <button class="iconbtn pgbtn" id="callsPrev" aria-label="Trang trước"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg></button>
+              <span class="calls-pageinfo" id="callsPageInfo">Trang 1 / 1</span>
+              <button class="iconbtn pgbtn" id="callsNext" aria-label="Trang sau"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></button>
             </div>
           </div>
-          <div class="heatmap" id="heatmap"></div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- ===================== MODAL (view all) ===================== -->
+  <!-- MODAL (view all Ext) -->
   <div class="modal-overlay" id="uvModal">
-    <div class="modal" role="dialog" aria-modal="true" aria-label="Tất cả User ID">
-      <div class="modal__head">
-        <div>
-          <div class="modal__title">Tất cả User ID</div>
-          <div class="modal__sub" id="uvModalSub"></div>
-        </div>
-        <button class="modal__close" id="uvModalClose" aria-label="Đóng"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button>
-      </div>
-      <div class="modal__tools">
-        <label class="uv-search" style="flex:1 1 auto;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/></svg><input id="uvModalFilter" type="text" placeholder="Tìm User ID…" style="width:100%;" /></label>
-      </div>
-      <div class="modal__body">
-        <table class="uv-table">
-          <thead><tr><th class="uv-rank">#</th><th>User ID</th><th class="num">Tổng cuộc gọi</th><th class="num">Cuộc gọi từ Odoo</th><th class="col-bar">Biểu đồ (Odoo / nguồn khác)</th></tr></thead>
-          <tbody id="uvModalBody"></tbody>
-        </table>
-      </div>
+    <div class="modal" role="dialog" aria-modal="true" aria-label="Tất cả Ext.">
+      <div class="modal__head"><div><div class="modal__title">Tất cả Ext.</div><div class="modal__sub" id="uvModalSub"></div></div><button class="modal__close" id="uvModalClose" aria-label="Đóng"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button></div>
+      <div class="modal__tools"><label class="uv-search" style="flex:1 1 auto;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/></svg><input id="uvModalFilter" type="text" placeholder="Tìm Ext / Email…" style="width:100%;" /></label></div>
+      <div class="modal__body"><table class="uv-table"><thead><tr><th class="uv-rank">#</th><th>Ext.</th><th>Email</th><th class="num">Tổng cuộc gọi</th><th class="num">Cuộc gọi từ Odoo</th><th class="col-bar">Biểu đồ (Odoo / nguồn khác)</th></tr></thead><tbody id="uvModalBody"></tbody></table></div>
     </div>
   </div>
 

@@ -12,7 +12,6 @@
 /* =============================================================================
    TCPVoiceAI — QC Ops Dashboard demo
    Visual reproduction of https://qc-ops.talentconnectplus.edu.vn/dashboard
-   (shadcn-admin style). Tokens sampled from the live site.
    ============================================================================= */
 
 :root {
@@ -34,23 +33,16 @@
   --brand-indigo: #312e81;
   --export-grad: linear-gradient(90deg, #4a3fd1 0%, #5b4fe9 50%, #8b6cff 100%);
 
-  /* sidebar */
-  --sb-w: 256px;
-  --sb-w-icon: 64px;
-  --sb-fg: #1b1d36;
-  --sb-icon: #2b2d48;
-  --sb-active-bg: #f0f1f5;
-  --sb-hover-bg: #f3f3f8;
-  --sb-badge-bg: #26233b;
+  --in-1: #fb923c; --in-2: #f97316;
+  --out-1: #34d399; --out-2: #16a34a;
+  --pso-1: #9b5de5; --pso-2: #6b2ec6;
+  --tcp-1: #8079f2; --tcp-2: #4f46e5;
+  --unk-1: #b9c2ce; --unk-2: #94a3b8;
+  --odoo-rest: #e3e8f7;
 
-  --in-1: #fb923c; --in-2: #f97316;      /* Inbound (orange) */
-  --out-1: #34d399; --out-2: #16a34a;    /* Outbound (green) */
-
-  --pso-1: #9b5de5; --pso-2: #6b2ec6;    /* BU: PSO (purple) */
-  --tcp-1: #8079f2; --tcp-2: #4f46e5;    /* BU: TCP (indigo) */
-  --unk-1: #b9c2ce; --unk-2: #94a3b8;    /* BU: Chưa rõ (grey) */
-
-  --odoo-rest: #e3e8f7;                  /* remaining calls segment */
+  --chip-out-bg: #dcfce7; --chip-out-fg: #15803d;
+  --chip-in-bg: #ffedd5;  --chip-in-fg: #c2410c;
+  --chip-bu-bg: rgba(148,163,184,.14); --chip-bu-fg: #64748b;
 
   --shadow-sm: 0 1px 3px 0 rgba(0,0,0,.1), 0 1px 2px -1px rgba(0,0,0,.1);
   --shadow-xs: 0 1px 2px 0 rgba(0,0,0,.05);
@@ -62,160 +54,61 @@
 
 * { box-sizing: border-box; }
 html, body { margin: 0; padding: 0; }
-body {
-  font-family: var(--sans);
-  background: var(--bg);
-  color: var(--ink-2);
-  font-size: 14px; line-height: 1.45;
-  -webkit-font-smoothing: antialiased;
-}
+body { font-family: var(--sans); background: var(--bg); color: var(--ink-2); font-size: 14px; line-height: 1.45; -webkit-font-smoothing: antialiased; }
 button { font-family: inherit; cursor: pointer; }
 a { text-decoration: none; color: inherit; }
+.mono { font-family: var(--mono); }
 
-/* ---------------------------------------------------------------------------
-   App shell
-   --------------------------------------------------------------------------- */
-.app { display: flex; min-height: 100vh; }
-.sb-backdrop { display: none; }
-
-/* Sidebar */
-.sidebar {
-  width: var(--sb-w); flex: 0 0 var(--sb-w);
-  display: flex; flex-direction: column;
-  padding: 8px; background: var(--bg);
-  transition: width .2s ease;
-}
-.sidebar__header { padding: 4px; }
-.sb-brand {
-  display: flex; align-items: center; gap: 10px;
-  padding: 8px; border-radius: var(--radius-sm); color: var(--brand-indigo);
-}
-.sb-brand__logo { display: inline-flex; width: 32px; justify-content: center; flex: 0 0 32px; }
-.brand__logo { width: 30px; height: auto; display: block; }
-.brand__name { font-weight: 900; font-size: 15px; letter-spacing: -.3px; color: var(--brand-indigo); }
-
-.sidebar__content { flex: 1 1 auto; overflow-y: auto; overflow-x: hidden; padding-top: 4px; }
-.sidebar__content::-webkit-scrollbar { width: 6px; }
-.sidebar__content::-webkit-scrollbar-thumb { background: #e3e3ee; border-radius: 3px; }
-
-.sb-group { margin-top: 8px; }
-.sb-group__label { font-size: 12px; font-weight: 500; color: var(--muted); padding: 8px 8px 6px; }
-.sb-menu { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 2px; }
-.sb-menu-item { position: relative; }
-
-.sb-menu-button {
-  display: flex; align-items: center; gap: 10px; width: 100%;
-  padding: 8px; border: 0; background: transparent; text-align: left;
-  border-radius: var(--radius-sm); color: var(--sb-fg);
-  font-size: 14px; font-weight: 400; line-height: 1.3;
-}
-.sb-menu-button:hover { background: var(--sb-hover-bg); }
-.sb-menu-button.is-active { background: var(--sb-active-bg); font-weight: 500; color: var(--ink); }
-.sb-menu-button svg { width: 16px; height: 16px; flex: 0 0 16px; color: var(--sb-icon); }
-.sb-menu-button.is-active svg { color: var(--ink); }
-.sb-menu-button > .sb-label:first-of-type { flex: 1 1 auto; }
-
-.sb-badge {
-  margin-left: auto; min-width: 20px; height: 20px; padding: 0 6px;
-  border-radius: 999px; background: var(--sb-badge-bg); color: #fff;
-  font-size: 12px; font-weight: 600; display: inline-flex; align-items: center; justify-content: center;
-}
-.sb-chevron { margin-left: auto; width: 16px; height: 16px; color: var(--muted); transition: transform .18s ease; flex: 0 0 16px; }
-.sb-menu-item.is-open > .sb-collapsible-trigger .sb-chevron { transform: rotate(90deg); }
-
-.sb-submenu {
-  list-style: none; margin: 4px 0 2px; padding: 0 0 0 0;
-  margin-left: 24px; border-left: 1px solid var(--border);
-  display: none; flex-direction: column; gap: 1px;
-}
-.sb-menu-item.is-open > .sb-submenu { display: flex; }
-.sb-subitem {
-  display: block; padding: 6px 10px; margin-left: 8px; border-radius: 6px;
-  font-size: 13px; color: var(--label);
-}
-.sb-subitem:hover { background: var(--sb-hover-bg); color: var(--ink); }
-
-.sidebar__footer { padding: 4px; border-top: 1px solid var(--border-soft); margin-top: 4px; }
-.sb-user {
-  display: flex; align-items: center; gap: 10px; width: 100%;
-  padding: 8px; border: 0; background: transparent; border-radius: var(--radius-md); text-align: left;
-}
-.sb-user:hover { background: var(--sb-hover-bg); }
-.avatar {
-  width: 32px; height: 32px; border-radius: var(--radius-sm);
-  background: #e7e7f5; color: #4b4e6d;
-  display: inline-flex; align-items: center; justify-content: center;
-  font-size: 12px; font-weight: 600; flex: 0 0 32px;
-}
-.avatar--sm { width: 28px; height: 28px; flex-basis: 28px; border-radius: 999px; }
-.sb-user__meta { display: flex; flex-direction: column; min-width: 0; flex: 1 1 auto; }
-.sb-user__name { font-size: 14px; font-weight: 600; color: var(--ink); line-height: 1.25; }
-.sb-user__mail { font-size: 12px; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.sb-user__chev { color: var(--muted); flex: 0 0 16px; }
-
-/* ---- Collapsed (icon rail) ---- */
-.app.sb-collapsed .sidebar { width: var(--sb-w-icon); flex-basis: var(--sb-w-icon); }
-.app.sb-collapsed .sb-label { display: none !important; }
-.app.sb-collapsed .sb-group__label { height: 0; padding: 0; overflow: hidden; }
-.app.sb-collapsed .sb-menu-button,
-.app.sb-collapsed .sb-brand,
-.app.sb-collapsed .sb-user { justify-content: center; padding: 8px 0; }
-.app.sb-collapsed .sb-menu-button svg { margin: 0 auto; }
-.app.sb-collapsed .sb-badge { position: absolute; top: 2px; right: 6px; min-width: 16px; height: 16px; font-size: 10px; margin: 0; }
-.app.sb-collapsed .sb-submenu { display: none !important; }
-.app.sb-collapsed .sidebar__content { overflow: visible; }
-
-/* Inset (main panel) */
-.inset {
-  flex: 1 1 auto; margin: 8px 8px 8px 0;
-  background: var(--card); border-radius: var(--radius);
-  box-shadow: var(--shadow-sm); border: 1px solid var(--border-soft);
-  display: flex; flex-direction: column; min-width: 0; overflow: hidden;
-}
+.inset { min-height: 100vh; display: flex; flex-direction: column; background: var(--bg); }
 
 /* Topbar */
-.topbar { display: flex; align-items: center; gap: 12px; height: 56px; padding: 0 16px; border-bottom: 1px solid var(--border); }
-.iconbtn { width: 32px; height: 32px; border-radius: var(--radius-sm); border: 0; background: transparent; color: #3b3d57; display: inline-flex; align-items: center; justify-content: center; }
-.iconbtn:hover { background: #f1f1f8; }
-.iconbtn svg { width: 18px; height: 18px; }
+.topbar { display: flex; align-items: center; gap: 14px; height: 60px; padding: 0 20px; border-bottom: 1px solid var(--border); position: sticky; top: 0; background: #fff; z-index: 20; }
+.tb-brand { display: inline-flex; align-items: center; gap: 10px; margin-right: 6px; }
+.brand__logo { width: 28px; height: auto; display: block; }
+.brand__name { font-weight: 900; font-size: 15px; letter-spacing: -.3px; color: var(--brand-indigo); white-space: nowrap; }
 .search { display: inline-flex; align-items: center; gap: 8px; width: 240px; height: 32px; padding: 0 10px; border: 1px solid var(--border); border-radius: var(--radius-sm); color: var(--muted); background: #fff; }
 .search svg { width: 16px; height: 16px; }
 .search .kbd { margin-left: auto; font-family: var(--mono); font-size: 11px; color: var(--muted); background: #f4f4fc; border: 1px solid var(--border); border-radius: 5px; padding: 1px 5px; }
 .topbar__spacer { flex: 1 1 auto; }
+.avatar { width: 32px; height: 32px; border-radius: var(--radius-sm); background: #e7e7f5; color: #4b4e6d; display: inline-flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; flex: 0 0 32px; }
+.avatar--sm { width: 30px; height: 30px; flex-basis: 30px; border-radius: 999px; }
 
-.content { padding: 24px 32px 40px; overflow-y: auto; }
+.content { padding: 24px 32px 48px; max-width: 1480px; width: 100%; margin: 0 auto; }
 
-/* ---------------------------------------------------------------------------
-   Page header + tabs + filter
-   --------------------------------------------------------------------------- */
+/* Header + tabs */
 .page-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; }
 .page-title { font-size: 30px; font-weight: 700; letter-spacing: -.6px; color: var(--ink); margin: 0; }
 .btn-export { display: inline-flex; align-items: center; gap: 8px; height: 32px; padding: 0 14px; border: 0; border-radius: var(--radius-sm); color: #fff; font-size: 14px; font-weight: 500; background: var(--export-grad); box-shadow: 0 8px 20px -8px rgba(91,79,233,.55); }
 .btn-export svg { width: 16px; height: 16px; }
-
 .tabs { display: inline-flex; gap: 2px; margin: 16px 0 20px; background: var(--seg); border-radius: var(--radius-md); padding: 3px; }
 .tab { border: 0; background: transparent; color: var(--label); font-size: 14px; font-weight: 500; padding: 6px 14px; border-radius: var(--radius-sm); }
 .tab.is-active { background: #fff; color: var(--accent); box-shadow: var(--shadow-sm); }
 
-.filter { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; padding: 12px 14px; margin-bottom: 20px; background: var(--card); border: 1px solid var(--border); border-radius: var(--radius-md); box-shadow: var(--shadow-xs); }
+/* Filter */
+.filter { display: flex; align-items: center; gap: 10px 14px; flex-wrap: wrap; padding: 12px 14px; margin-bottom: 20px; background: var(--card); border: 1px solid var(--border); border-radius: var(--radius-md); box-shadow: var(--shadow-xs); }
 .filter__label { display: inline-flex; align-items: center; gap: 8px; font-weight: 600; color: var(--ink); }
 .filter__label svg { width: 16px; height: 16px; color: var(--accent); }
 .filter__field { display: inline-flex; align-items: center; gap: 8px; color: var(--label); }
 .filter__sep { color: var(--muted); }
 .input, .select { height: 36px; padding: 0 10px; font: inherit; font-size: 14px; color: var(--ink-2); border: 1px solid var(--border); border-radius: var(--radius-sm); background: #fff; }
+.input--email { min-width: 200px; }
 .select { padding-right: 30px; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%238a8db3' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 8px center; min-width: 120px; }
+.select--sm { height: 32px; min-width: 64px; }
 .input[type="date"] { min-width: 150px; color: var(--muted); }
 .btn-reset { display: inline-flex; align-items: center; gap: 8px; margin-left: auto; height: 36px; padding: 0 14px; background: #fff; color: var(--ink-2); border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: 14px; font-weight: 500; }
 .btn-reset svg { width: 16px; height: 16px; }
 
-/* ---------------------------------------------------------------------------
-   Cards + grid
-   --------------------------------------------------------------------------- */
+/* Selected-user banner */
+.user-banner[hidden] { display: none; }
+.user-banner { display: flex; align-items: center; gap: 12px; padding: 10px 14px; margin-bottom: 20px; background: #f3f2ff; border: 1px solid #ddd8ff; border-radius: var(--radius-md); font-size: 13px; color: var(--ink-2); }
+.user-banner .ub-ext { color: var(--muted); }
+.ub-clear { margin-left: auto; border: 1px solid #d9d5ff; background: #fff; color: var(--accent-600); font-size: 12px; font-weight: 600; padding: 4px 10px; border-radius: 999px; }
+
+/* Cards + grid */
 .card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow-sm); padding: 20px 24px; }
 .card__head { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
 .card__head svg { width: 17px; height: 17px; color: var(--muted); }
 .card__title { font-size: 14px; font-weight: 500; color: var(--label); }
-
 .grid { display: grid; gap: 20px; margin-bottom: 20px; }
 .grid--2 { grid-template-columns: 2fr 1fr; }
 .grid--3 { grid-template-columns: repeat(3, 1fr); }
@@ -227,13 +120,11 @@ a { text-decoration: none; color: inherit; }
 .stat__value { font-size: 32px; font-weight: 700; letter-spacing: -.6px; color: var(--ink); line-height: 1.1; }
 .stat__cap { font-size: 12px; color: var(--muted); margin-top: 4px; }
 .stat__delta { font-size: 13px; font-weight: 600; margin-top: 8px; }
-.stat__delta .up { color: #059669; }
-.stat__delta .down { color: #dc2626; }
+.stat__delta .up { color: #059669; } .stat__delta .down { color: #dc2626; }
 .stat__delta .note { color: var(--muted); font-weight: 400; font-size: 11px; margin-left: 6px; }
 .range-toggle { margin-left: auto; display: inline-flex; gap: 2px; background: var(--seg); border-radius: var(--radius-md); padding: 3px; }
 .range-toggle button { border: 0; background: transparent; color: var(--label); font-size: 14px; font-weight: 500; padding: 5px 12px; border-radius: var(--radius-sm); white-space: nowrap; }
 .range-toggle button.is-active { background: #fff; color: var(--accent); box-shadow: var(--shadow-sm); }
-
 .legend { display: flex; gap: 16px; margin: 16px 0 10px; }
 .legend__item { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; color: var(--label); }
 .dot { width: 10px; height: 10px; border-radius: 3px; display: inline-block; flex: 0 0 10px; }
@@ -243,7 +134,6 @@ a { text-decoration: none; color: inherit; }
 .dot--tcp { background: linear-gradient(135deg, var(--tcp-1), var(--tcp-2)); }
 .dot--unk { background: linear-gradient(135deg, var(--unk-1), var(--unk-2)); }
 .legend__pct { color: var(--ink); font-weight: 700; }
-
 .chart { display: flex; align-items: flex-end; gap: 4px; height: 196px; }
 .chart__col { flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; height: 100%; border-bottom: 1px solid var(--border); }
 .chart__bars { display: flex; gap: 2px; align-items: flex-end; height: 174px; }
@@ -252,26 +142,25 @@ a { text-decoration: none; color: inherit; }
 .chart__bar--out { background: linear-gradient(var(--out-1), var(--out-2)); }
 .chart__x { font-size: 10px; color: var(--muted); margin-top: 8px; height: 14px; white-space: nowrap; }
 
-/* Donut cards — title pinned top, donut centered (equal gap), legend pinned bottom */
+/* Donut cards */
 .card--donut { display: flex; flex-direction: column; }
 .card--donut .card__head { flex: 0 0 auto; }
 .donut-area { flex: 1 1 auto; display: flex; align-items: center; justify-content: center; padding: 12px 0; }
-.donut-legend { flex: 0 0 auto; }
+.donut-legend { flex: 0 0 auto; display: flex; gap: 20px; margin-top: 0; flex-wrap: wrap; justify-content: center; }
 .donut { position: relative; width: 150px; height: 150px; }
 .donut__ring { width: 150px; height: 150px; border-radius: 50%; -webkit-mask: radial-gradient(circle, transparent 53%, #000 54%); mask: radial-gradient(circle, transparent 53%, #000 54%); }
 .donut__center { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
 .donut__num { font-size: 24px; font-weight: 700; letter-spacing: -.5px; color: var(--ink); }
 .donut__cap { font-size: 11px; color: var(--muted); }
-.donut-legend { display: flex; gap: 20px; margin-top: 0; flex-wrap: wrap; justify-content: center; }
 
-/* Top-5 */
+/* Top-5 (email) */
 .top5 { margin-top: 6px; }
 .top5__row { display: flex; align-items: center; gap: 12px; padding: 17px 0; border-top: 1px solid var(--border); }
 .top5__row:first-child { border-top: 0; }
 .top5__rank { width: 10px; font-size: 13px; font-weight: 700; color: var(--muted); }
-.top5__label { font-size: 13px; color: var(--ink-2); white-space: nowrap; }
-.top5__id { font-weight: 700; }
-.top5__bar { flex: 1 1 auto; height: 8px; border-radius: 999px; background: var(--seg); overflow: hidden; }
+.top5__email { font-size: 13px; color: var(--accent-600); font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 150px; cursor: pointer; }
+.top5__email:hover { text-decoration: underline; }
+.top5__bar { flex: 1 1 auto; height: 8px; border-radius: 999px; background: var(--seg); overflow: hidden; min-width: 30px; }
 .top5__fill { height: 100%; border-radius: 999px; }
 .top5__fill--unk { background: linear-gradient(90deg, var(--unk-2), #64748b); }
 .top5__fill--pso { background: linear-gradient(90deg, var(--pso-1), var(--pso-2)); }
@@ -279,30 +168,30 @@ a { text-decoration: none; color: inherit; }
 .top5__count { font-size: 14px; font-weight: 700; color: var(--ink); }
 .top5__unit { font-size: 11px; color: var(--muted); margin-left: 4px; }
 
-/* ---------------------------------------------------------------------------
-   User-ID call-volume table block
-   --------------------------------------------------------------------------- */
+/* Ext table */
 .uv-head-actions { display: flex; align-items: center; gap: 10px; margin-left: auto; flex-wrap: wrap; }
 .uv-search { display: inline-flex; align-items: center; gap: 8px; height: 32px; padding: 0 10px; border: 1px solid var(--border); border-radius: var(--radius-sm); background: #fff; color: var(--muted); }
 .uv-search svg { width: 15px; height: 15px; }
-.uv-search input { border: 0; outline: 0; font: inherit; font-size: 13px; color: var(--ink-2); width: 160px; background: transparent; }
+.uv-search input { border: 0; outline: 0; font: inherit; font-size: 13px; color: var(--ink-2); width: 180px; background: transparent; }
 .btn-detail { display: inline-flex; align-items: center; gap: 6px; height: 32px; padding: 0 12px; border: 1px solid var(--border); border-radius: var(--radius-sm); background: #fff; color: var(--accent-600); font-size: 13px; font-weight: 600; }
 .btn-detail:hover { background: #f6f5ff; border-color: #d9d5ff; }
 .btn-detail svg { width: 15px; height: 15px; }
-
 .uv-legend { display: flex; gap: 18px; margin: 14px 0 8px; font-size: 12px; color: var(--label); }
 .uv-legend .dot--odoo { background: var(--export-grad); }
 .uv-legend .dot--rest { background: var(--odoo-rest); }
-
 .uv-table { width: 100%; border-collapse: collapse; }
 .uv-table thead th { text-align: left; font-size: 11px; font-weight: 600; letter-spacing: .4px; text-transform: uppercase; color: var(--muted); padding: 8px 10px; border-bottom: 1px solid var(--border); }
 .uv-table th.num, .uv-table td.num { text-align: right; white-space: nowrap; }
-.uv-table th.col-bar { width: 40%; }
+.uv-table th.col-bar { width: 32%; }
 .uv-table tbody td { padding: 11px 10px; border-bottom: 1px solid var(--border-soft); font-size: 13px; vertical-align: middle; }
 .uv-table tbody tr:last-child td { border-bottom: 0; }
 .uv-table tbody tr:hover { background: #fafaff; }
+.uv-table tbody tr.is-selected { background: #f3f2ff; }
 .uv-rank { color: var(--muted); font-weight: 700; width: 28px; }
-.uv-id { font-family: var(--mono); font-size: 13px; color: var(--ink); font-weight: 500; }
+.uv-ext { font-family: var(--mono); font-size: 13px; color: var(--ink); font-weight: 600; cursor: pointer; }
+.uv-ext:hover { color: var(--accent-600); text-decoration: underline; }
+.uv-email { color: var(--accent-600); font-weight: 500; cursor: pointer; }
+.uv-email:hover { text-decoration: underline; }
 .uv-num-total { font-size: 14px; font-weight: 700; color: var(--ink); }
 .uv-num-odoo { font-size: 13px; font-weight: 600; color: var(--accent); }
 .col-bar { min-width: 140px; }
@@ -312,20 +201,50 @@ a { text-decoration: none; color: inherit; }
 .uv-empty { text-align: center; color: var(--muted); padding: 24px 0; font-size: 13px; }
 .uv-foot { font-size: 12px; color: var(--muted); margin-top: 12px; }
 
-/* ---------------------------------------------------------------------------
-   Heatmap
-   --------------------------------------------------------------------------- */
-.heatmap { margin-top: 12px; display: grid; grid-template-columns: 88px repeat(5, minmax(0, 1fr)); gap: 8px; }
-.heat-colhead { font-size: 11px; color: var(--muted); text-align: center; padding-bottom: 2px; }
+/* Heatmap 24h */
+.heatmap-scroll { overflow-x: auto; margin-top: 12px; }
+.heatmap { display: grid; grid-template-columns: 76px repeat(24, minmax(30px, 1fr)); gap: 4px; min-width: 820px; }
+.heat-colhead { font-size: 10px; color: var(--muted); text-align: center; padding-bottom: 2px; }
 .heat-rowlabel { font-size: 11px; color: var(--label); display: flex; align-items: center; white-space: nowrap; }
-.heat-cell { height: 42px; border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; color: var(--ink); }
+.heat-cell { height: 34px; border-radius: 7px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; color: var(--ink); }
 
-/* ---------------------------------------------------------------------------
-   Modal
-   --------------------------------------------------------------------------- */
+/* ============== Calls table ============== */
+.calls-search { display: inline-flex; align-items: center; gap: 8px; flex: 1 1 320px; height: 36px; padding: 0 12px; border: 1px solid var(--border); border-radius: var(--radius-sm); background: #fff; color: var(--muted); }
+.calls-search svg { width: 16px; height: 16px; }
+.calls-search input { border: 0; outline: 0; font: inherit; font-size: 14px; color: var(--ink-2); width: 100%; background: transparent; }
+.calls-card { padding: 0; }
+.calls-table-wrap { overflow-x: auto; }
+.calls-table { width: 100%; border-collapse: collapse; min-width: 1040px; }
+.calls-table thead th { text-align: left; font-size: 11px; font-weight: 600; letter-spacing: .4px; text-transform: uppercase; color: var(--muted); padding: 14px 16px; border-bottom: 1px solid var(--border); white-space: nowrap; }
+.calls-table tbody td { padding: 13px 16px; border-bottom: 1px solid var(--border-soft); font-size: 14px; color: var(--ink-2); white-space: nowrap; vertical-align: middle; }
+.calls-table tbody tr:last-child td { border-bottom: 0; }
+.calls-table tbody tr:hover { background: #fafaff; }
+.call-id { font-family: var(--mono); font-size: 13px; color: var(--accent); cursor: pointer; }
+.call-id:hover { text-decoration: underline; }
+.chip { display: inline-flex; align-items: center; gap: 6px; height: 22px; padding: 0 10px; border-radius: 999px; font-size: 12px; font-weight: 600; white-space: nowrap; }
+.chip--out { background: var(--chip-out-bg); color: var(--chip-out-fg); }
+.chip--in { background: var(--chip-in-bg); color: var(--chip-in-fg); }
+.chip--bu { background: var(--chip-bu-bg); color: var(--chip-bu-fg); font-weight: 500; }
+.chip-dot { width: 7px; height: 7px; border-radius: 999px; display: inline-block; }
+.rec-link { display: inline-flex; align-items: center; gap: 6px; color: var(--accent); font-weight: 500; cursor: pointer; }
+.rec-link svg { width: 16px; height: 16px; }
+.rec-none { color: var(--muted); }
+.btn-ghost { display: inline-flex; align-items: center; height: 30px; padding: 0 12px; border: 1px solid var(--border); border-radius: var(--radius-sm); background: #fff; color: var(--ink-2); font-size: 13px; font-weight: 500; }
+.btn-ghost:hover { background: #f6f6fb; }
+.calls-foot { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 14px 16px; flex-wrap: wrap; }
+.calls-foot__count { font-size: 13px; color: var(--muted); }
+.calls-foot__pager { display: flex; align-items: center; gap: 10px; }
+.calls-perpage { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; color: var(--label); }
+.iconbtn { width: 32px; height: 32px; border-radius: var(--radius-sm); border: 1px solid var(--border); background: #fff; color: #3b3d57; display: inline-flex; align-items: center; justify-content: center; }
+.iconbtn:hover { background: #f1f1f8; }
+.iconbtn:disabled { opacity: .45; cursor: default; }
+.iconbtn svg { width: 16px; height: 16px; }
+.calls-pageinfo { font-size: 14px; font-weight: 500; color: var(--ink-2); min-width: 92px; text-align: center; }
+
+/* Modal */
 .modal-overlay { position: fixed; inset: 0; background: rgba(18,20,47,.45); display: none; align-items: center; justify-content: center; padding: 24px; z-index: 60; backdrop-filter: blur(2px); }
 .modal-overlay.is-open { display: flex; }
-.modal { background: #fff; border-radius: var(--radius); box-shadow: var(--shadow-pop); width: min(760px, 100%); max-height: min(82vh, 820px); display: flex; flex-direction: column; overflow: hidden; }
+.modal { background: #fff; border-radius: var(--radius); box-shadow: var(--shadow-pop); width: min(820px, 100%); max-height: min(82vh, 820px); display: flex; flex-direction: column; overflow: hidden; }
 .modal__head { display: flex; align-items: center; gap: 10px; padding: 18px 20px; border-bottom: 1px solid var(--border); }
 .modal__title { font-size: 16px; font-weight: 700; color: var(--ink); }
 .modal__sub { font-size: 12px; color: var(--muted); }
@@ -336,105 +255,50 @@ a { text-decoration: none; color: inherit; }
 .modal__body { overflow-y: auto; padding: 0 20px 16px; }
 .modal__body .uv-table thead th { position: sticky; top: 0; z-index: 3; background: #fff; border-bottom: 1px solid var(--border); }
 
-/* ---------------------------------------------------------------------------
-   Responsive
-   --------------------------------------------------------------------------- */
+/* Responsive */
 @media (max-width: 1100px) { .grid--2, .grid--3 { grid-template-columns: 1fr; } }
-
-@media (max-width: 860px) {
-  .sidebar {
-    position: fixed; top: 0; left: 0; bottom: 0; z-index: 70;
-    box-shadow: var(--shadow-pop); transform: translateX(-100%);
-  }
-  .app.sb-mobile-open .sidebar { transform: none; }
-  .app.sb-mobile-open .sb-backdrop { display: block; position: fixed; inset: 0; background: rgba(18,20,47,.4); z-index: 65; }
-  /* on mobile the collapsed icon-rail style is not used */
-  .app.sb-collapsed .sidebar { width: var(--sb-w); flex-basis: var(--sb-w); }
-  .app.sb-collapsed .sb-label { display: inline !important; }
-  .inset { margin: 0; border-radius: 0; border: 0; }
+@media (max-width: 760px) {
   .content { padding: 16px; }
   .page-title { font-size: 24px; }
-  .heatmap { overflow-x: auto; }
+  .search { display: none; }
 }
 
 </style>
 </head>
 <body>
-  <!--
-    Structure mirrors the live shadcn-admin app (qc-ops.talentconnectplus.edu.vn):
-    Sidebar  = header / content (groups > menu > menu-item > menu-button [+ sub-menu]) / footer
-    Inset    = topbar (SidebarTrigger + search + actions) / scrollable content
-    data-slot="*" attributes echo shadcn's component slots.
-  -->
-  <div class="app" id="app">
-    <div class="sb-backdrop" id="sbBackdrop"></div>
+  <div class="inset">
+    <!-- Topbar: brand + search + avatar (sidebar removed; only Dashboard existed) -->
+    <header class="topbar" data-slot="site-header">
+      <a class="tb-brand" href="#">
+        <svg class="brand__logo" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 444" role="img" aria-label="Talent Connect Plus">
+          <defs>
+            <linearGradient id="tcOuter" x1="256" y1="0" x2="256" y2="444" gradientUnits="userSpaceOnUse"><stop stop-color="#3223A8"/><stop offset="0.54" stop-color="#8792F5"/><stop offset="1" stop-color="#FFFFFF"/></linearGradient>
+            <linearGradient id="tcInner" x1="256" y1="150" x2="256" y2="444" gradientUnits="userSpaceOnUse"><stop stop-color="#30249E"/><stop offset="0.62" stop-color="#8D98F6"/><stop offset="1" stop-color="#FFFFFF"/></linearGradient>
+            <linearGradient id="tcFront" x1="256" y1="294" x2="256" y2="444" gradientUnits="userSpaceOnUse"><stop stop-color="#3931B8"/><stop offset="0.58" stop-color="#929CF6"/><stop offset="1" stop-color="#FFFFFF"/></linearGradient>
+          </defs>
+          <path fill="url(#tcOuter)" d="M256 0 512 444H0L256 0Z"/><path fill="url(#tcInner)" d="M256 150 512 444H0L256 150Z"/>
+          <circle cx="256" cy="284" r="19" fill="#F2552C"/><path fill="url(#tcFront)" d="m0 444 256-150 256 150H0Z"/>
+        </svg>
+        <span class="brand__name">Talent Connect +</span>
+      </a>
+      <div class="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/></svg><span>Search</span><span class="kbd">⌘ K</span></div>
+      <div class="topbar__spacer"></div>
+      <span class="avatar avatar--sm">SN</span>
+    </header>
 
-    <!-- ===================== SIDEBAR ===================== -->
-    <aside class="sidebar" id="sidebar" data-slot="sidebar">
-      <div class="sidebar__header" data-slot="sidebar-header">
-        <a class="sb-brand" href="#" data-slot="sidebar-menu-button">
-          <span class="sb-brand__logo">
-            <svg class="brand__logo" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 444" role="img" aria-label="Talent Connect Plus">
-              <defs>
-                <linearGradient id="tcOuter" x1="256" y1="0" x2="256" y2="444" gradientUnits="userSpaceOnUse"><stop stop-color="#3223A8"/><stop offset="0.54" stop-color="#8792F5"/><stop offset="1" stop-color="#FFFFFF"/></linearGradient>
-                <linearGradient id="tcInner" x1="256" y1="150" x2="256" y2="444" gradientUnits="userSpaceOnUse"><stop stop-color="#30249E"/><stop offset="0.62" stop-color="#8D98F6"/><stop offset="1" stop-color="#FFFFFF"/></linearGradient>
-                <linearGradient id="tcFront" x1="256" y1="294" x2="256" y2="444" gradientUnits="userSpaceOnUse"><stop stop-color="#3931B8"/><stop offset="0.58" stop-color="#929CF6"/><stop offset="1" stop-color="#FFFFFF"/></linearGradient>
-              </defs>
-              <path fill="url(#tcOuter)" d="M256 0 512 444H0L256 0Z"/>
-              <path fill="url(#tcInner)" d="M256 150 512 444H0L256 150Z"/>
-              <circle cx="256" cy="284" r="19" fill="#F2552C"/>
-              <path fill="url(#tcFront)" d="m0 444 256-150 256 150H0Z"/>
-            </svg>
-          </span>
-          <span class="sb-label brand__name">Talent Connect +</span>
-        </a>
+    <div class="content">
+      <div class="page-head">
+        <h1 class="page-title">Dashboard</h1>
+        <button class="btn-export"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7z"/><path d="M14 2v5a1 1 0 0 0 1 1h5"/><path d="M8 13h2"/><path d="M14 13h2"/><path d="M8 17h2"/><path d="M14 17h2"/></svg>Xuất báo cáo</button>
       </div>
 
-      <div class="sidebar__content" data-slot="sidebar-content">
-        <div class="sb-group" data-slot="sidebar-group">
-          <div class="sb-group__label sb-label">General</div>
-          <ul class="sb-menu" data-slot="sidebar-menu">
-            <li class="sb-menu-item" data-slot="sidebar-menu-item">
-              <a class="sb-menu-button is-active" href="#" data-slot="sidebar-menu-button" data-active="true" title="Dashboard"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg><span class="sb-label">Dashboard</span></a>
-            </li>
-          </ul>
-        </div>
+      <div class="tabs" id="tabs">
+        <button class="tab is-active" data-tab="overview">Tổng quan</button>
+        <button class="tab" data-tab="calls">Danh sách cuộc gọi</button>
       </div>
 
-      <div class="sidebar__footer" data-slot="sidebar-footer">
-        <button class="sb-user" type="button" data-slot="sidebar-menu-button" title="satnaing">
-          <span class="avatar">SN</span>
-          <span class="sb-user__meta sb-label">
-            <span class="sb-user__name">satnaing</span>
-            <span class="sb-user__mail">satnaingdev@gmail.com</span>
-          </span>
-          <svg class="sb-user__chev sb-label" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m7 15 5 5 5-5"/><path d="m7 9 5-5 5 5"/></svg>
-        </button>
-      </div>
-    </aside>
-
-    <!-- ===================== INSET / MAIN ===================== -->
-    <div class="inset">
-      <header class="topbar" data-slot="site-header">
-        <button class="iconbtn" id="sbTrigger" data-slot="sidebar-trigger" aria-label="Toggle Sidebar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M9 3v18"/></svg></button>
-        <div class="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/></svg><span>Search</span><span class="kbd">⌘ K</span></div>
-        <div class="topbar__spacer"></div>
-        <button class="iconbtn" aria-label="Toggle theme"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg></button>
-        <button class="iconbtn" aria-label="Settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.671 4.136a2.34 2.34 0 0 1 4.659 0 2.34 2.34 0 0 0 3.319 1.915 2.34 2.34 0 0 1 2.33 4.033 2.34 2.34 0 0 0 0 3.831 2.34 2.34 0 0 1-2.33 4.033 2.34 2.34 0 0 0-3.319 1.915 2.34 2.34 0 0 1-4.659 0 2.34 2.34 0 0 0-3.32-1.915 2.34 2.34 0 0 1-2.33-4.033 2.34 2.34 0 0 0 0-3.831A2.34 2.34 0 0 1 6.35 6.051a2.34 2.34 0 0 0 3.319-1.915"/><circle cx="12" cy="12" r="3"/></svg></button>
-        <span class="avatar avatar--sm">SN</span>
-      </header>
-
-      <div class="content">
-        <div class="page-head">
-          <h1 class="page-title">Dashboard</h1>
-          <button class="btn-export"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7z"/><path d="M14 2v5a1 1 0 0 0 1 1h5"/><path d="M8 13h2"/><path d="M14 13h2"/><path d="M8 17h2"/><path d="M14 17h2"/></svg>Xuất báo cáo</button>
-        </div>
-
-        <div class="tabs">
-          <button class="tab is-active">Tổng quan</button>
-          <button class="tab">Danh sách cuộc gọi</button>
-        </div>
-
+      <!-- ============== PANE: TỔNG QUAN ============== -->
+      <div data-pane="overview">
         <div class="filter">
           <span class="filter__label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v3"/><path d="M16 2v3"/><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M8 13h.01"/><path d="M12 13h.01"/><path d="M16 13h.01"/><path d="M8 17h.01"/><path d="M12 17h.01"/><path d="M16 17h.01"/></svg>Khoảng ngày</span>
           <span class="filter__field"><label>Từ</label><input class="input" type="date" /></span>
@@ -443,70 +307,42 @@ a { text-decoration: none; color: inherit; }
           <span class="filter__field"><label>BU</label>
             <select class="select"><option>Tất cả</option><option>PSO</option><option>TCP</option><option>Chưa rõ</option></select>
           </span>
-          <button class="btn-reset"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>Đặt lại</button>
+          <span class="filter__field"><label>Email</label><input class="input input--email" id="emailFilter" type="text" placeholder="Nhập email/Ext để lọc…" /></span>
+          <button class="btn-reset" id="ovReset"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>Đặt lại</button>
         </div>
 
-        <!-- Row 1: stat+chart | inbound/outbound donut -->
+        <div class="user-banner" id="userBanner" hidden>
+          <span>Đang xem dữ liệu của <b id="ubName"></b> · <span class="mono" id="ubEmail"></span> <span class="mono ub-ext" id="ubExt"></span></span>
+          <button class="ub-clear" id="ubClear">Bỏ lọc ×</button>
+        </div>
+
         <div class="grid grid--2">
           <div class="card">
             <div class="stat-row">
-              <div class="stat">
-                <div class="stat__value" id="statUploaded">0</div>
-                <div class="stat__cap">Cuộc gọi đã upload</div>
-                <div class="stat__delta" id="statDelta"></div>
-              </div>
-              <div class="stat">
-                <div class="stat__value" id="statAvg">—</div>
-                <div class="stat__cap">TB thời lượng gọi</div>
-              </div>
-              <div class="range-toggle" id="rangeToggle">
-                <button class="is-active" data-range="7d">7 ngày</button>
-                <button data-range="30d">30 ngày</button>
-                <button data-range="12m">12 tháng</button>
-              </div>
+              <div class="stat"><div class="stat__value" id="statUploaded">0</div><div class="stat__cap">Cuộc gọi đã upload</div><div class="stat__delta" id="statDelta"></div></div>
+              <div class="stat"><div class="stat__value" id="statAvg">—</div><div class="stat__cap">TB thời lượng gọi</div></div>
+              <div class="range-toggle" id="rangeToggle"><button class="is-active" data-range="7d">7 ngày</button><button data-range="30d">30 ngày</button><button data-range="12m">12 tháng</button></div>
             </div>
-            <div class="legend">
-              <span class="legend__item"><span class="dot dot--in"></span>Inbound</span>
-              <span class="legend__item"><span class="dot dot--out"></span>Outbound</span>
-            </div>
+            <div class="legend"><span class="legend__item"><span class="dot dot--in"></span>Inbound</span><span class="legend__item"><span class="dot dot--out"></span>Outbound</span></div>
             <div class="chart" id="chart"></div>
           </div>
 
           <div class="card card--donut">
-            <div class="card__head">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3 4 7l4 4"/><path d="M4 7h16"/><path d="m16 21 4-4-4-4"/><path d="M20 17H4"/></svg>
-              <span class="card__title">Inbound / Outbound</span>
-            </div>
-            <div class="donut-area">
-              <div class="donut"><div class="donut__ring" id="ioRing"></div>
-                <div class="donut__center"><div class="donut__num">11.087</div><div class="donut__cap">cuộc gọi</div></div>
-              </div>
-            </div>
+            <div class="card__head"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3 4 7l4 4"/><path d="M4 7h16"/><path d="m16 21 4-4-4-4"/><path d="M20 17H4"/></svg><span class="card__title">Inbound / Outbound</span></div>
+            <div class="donut-area"><div class="donut"><div class="donut__ring" id="ioRing"></div><div class="donut__center"><div class="donut__num" id="ioNum">11.087</div><div class="donut__cap">cuộc gọi</div></div></div></div>
             <div class="donut-legend">
-              <span class="legend__item"><span class="dot dot--in"></span>Inbound <b class="legend__pct">39%</b></span>
-              <span class="legend__item"><span class="dot dot--out"></span>Outbound <b class="legend__pct">61%</b></span>
+              <span class="legend__item"><span class="dot dot--in"></span>Inbound <b class="legend__pct" id="ioInPct">39%</b></span>
+              <span class="legend__item"><span class="dot dot--out"></span>Outbound <b class="legend__pct" id="ioOutPct">61%</b></span>
             </div>
           </div>
         </div>
 
-        <!-- Row 2: top5 caller | top5 callee | BU donut -->
         <div class="grid grid--3">
-          <div class="card">
-            <div class="card__head"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><path d="M16 3.128a4 4 0 0 1 0 7.744"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><circle cx="9" cy="7" r="4"/></svg><span class="card__title">Top 5 Caller</span></div>
-            <div class="top5" id="top5Caller"></div>
-          </div>
-          <div class="card">
-            <div class="card__head"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13.832 16.568a1 1 0 0 0 1.213-.303l.355-.465A2 2 0 0 1 17 15h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2A18 18 0 0 1 2 4a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v3a2 2 0 0 1-.8 1.6l-.468.351a1 1 0 0 0-.292 1.233 14 14 0 0 0 6.392 6.384"/></svg><span class="card__title">Top 5 Callee</span></div>
-            <div class="top5" id="top5Callee"></div>
-          </div>
-          <div class="card card--donut">
-            <div class="card__head"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v16a2 2 0 0 0 2 2h16"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></svg><span class="card__title">Cơ cấu theo BU</span></div>
-            <div class="donut-area">
-              <div class="donut"><div class="donut__ring" id="buRing"></div>
-                <div class="donut__center"><div class="donut__num">11.087</div><div class="donut__cap">cuộc gọi</div></div>
-              </div>
-            </div>
-            <div class="donut-legend">
+          <div class="card"><div class="card__head"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><path d="M16 3.128a4 4 0 0 1 0 7.744"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><circle cx="9" cy="7" r="4"/></svg><span class="card__title">Top 5 Caller</span></div><div class="top5" id="top5Caller"></div></div>
+          <div class="card"><div class="card__head"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13.832 16.568a1 1 0 0 0 1.213-.303l.355-.465A2 2 0 0 1 17 15h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2A18 18 0 0 1 2 4a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v3a2 2 0 0 1-.8 1.6l-.468.351a1 1 0 0 0-.292 1.233 14 14 0 0 0 6.392 6.384"/></svg><span class="card__title">Top 5 Callee</span></div><div class="top5" id="top5Callee"></div></div>
+          <div class="card card--donut"><div class="card__head"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v16a2 2 0 0 0 2 2h16"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></svg><span class="card__title">Cơ cấu theo BU</span></div>
+            <div class="donut-area"><div class="donut"><div class="donut__ring" id="buRing"></div><div class="donut__center"><div class="donut__num" id="buNum">11.087</div><div class="donut__cap">cuộc gọi</div></div></div></div>
+            <div class="donut-legend" id="buLegend">
               <span class="legend__item"><span class="dot dot--pso"></span>PSO <b class="legend__pct">17%</b></span>
               <span class="legend__item"><span class="dot dot--tcp"></span>TCP <b class="legend__pct">1%</b></span>
               <span class="legend__item"><span class="dot dot--unk"></span>Chưa rõ <b class="legend__pct">82%</b></span>
@@ -514,117 +350,152 @@ a { text-decoration: none; color: inherit; }
           </div>
         </div>
 
-        <!-- NEW BLOCK: User-ID call-volume table (above heatmap) -->
+        <!-- Ext block -->
         <div class="card" style="margin-bottom:20px;">
           <div class="card__head">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v16a2 2 0 0 0 2 2h16"/><rect x="7" y="13" width="9" height="4" rx="1"/><rect x="7" y="5" width="12" height="4" rx="1"/></svg>
-            <span class="card__title">Lưu lượng cuộc gọi theo User ID</span>
+            <span class="card__title">Lưu lượng cuộc gọi theo Ext.</span>
             <div class="uv-head-actions">
-              <label class="uv-search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/></svg><input id="uvFilter" type="text" placeholder="Lọc theo User ID…" /></label>
+              <label class="uv-search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/></svg><input id="uvFilter" type="text" placeholder="Lọc theo Ext / Email…" /></label>
               <button class="btn-detail" id="uvDetailBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>Xem chi tiết</button>
             </div>
           </div>
-          <div class="uv-legend">
-            <span class="legend__item"><span class="dot dot--odoo"></span>Cuộc gọi từ Odoo</span>
-            <span class="legend__item"><span class="dot dot--rest"></span>Nguồn khác</span>
-          </div>
+          <div class="uv-legend"><span class="legend__item"><span class="dot dot--odoo"></span>Cuộc gọi từ Odoo</span><span class="legend__item"><span class="dot dot--rest"></span>Nguồn khác</span></div>
           <table class="uv-table">
-            <thead><tr>
-              <th class="uv-rank">#</th><th>User ID</th>
-              <th class="num">Tổng cuộc gọi</th><th class="num">Cuộc gọi từ Odoo</th>
-              <th class="col-bar">Biểu đồ (Odoo / nguồn khác)</th>
-            </tr></thead>
+            <thead><tr><th class="uv-rank">#</th><th>Ext.</th><th>Email</th><th class="num">Tổng cuộc gọi</th><th class="num">Cuộc gọi từ Odoo</th><th class="col-bar">Biểu đồ (Odoo / nguồn khác)</th></tr></thead>
             <tbody id="uvBody"></tbody>
           </table>
           <div class="uv-foot" id="uvFoot"></div>
         </div>
 
-        <!-- Heatmap -->
+        <!-- Heatmap 24h -->
         <div class="card">
           <div class="card__head"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M3 9h18"/><path d="M3 15h18"/><path d="M9 3v18"/><path d="M15 3v18"/></svg><span class="card__title">Mật độ cuộc gọi theo khung giờ</span>
-            <div class="range-toggle" id="heatStatus" style="margin-left:auto;">
-              <button class="is-active" data-status="all">Tất cả</button>
-              <button data-status="answered">Nghe máy</button>
-              <button data-status="unanswered">Không nghe máy</button>
+            <div class="range-toggle" id="heatStatus" style="margin-left:auto;"><button class="is-active" data-status="all">Tất cả</button><button data-status="answered">Nghe máy</button><button data-status="unanswered">Không nghe máy</button></div>
+          </div>
+          <div class="heatmap-scroll"><div class="heatmap" id="heatmap"></div></div>
+        </div>
+      </div>
+
+      <!-- ============== PANE: DANH SÁCH CUỘC GỌI ============== -->
+      <div data-pane="calls" hidden>
+        <div class="filter calls-filter">
+          <label class="calls-search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/></svg><input id="callSearch" type="text" placeholder="Mã cuộc gọi hoặc số điện thoại…" /></label>
+          <span class="filter__field"><label>Từ ngày</label><input class="input" type="date" /></span>
+          <span class="filter__field"><label>Đến ngày</label><input class="input" type="date" /></span>
+          <span class="filter__field"><label>BU</label><select class="select" id="callBu"><option value="all">Tất cả</option><option value="pso">PSO</option><option value="tcp">TCP</option><option value="unknown">Chưa rõ</option></select></span>
+          <button class="btn-reset" id="callReset"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>Đặt lại</button>
+        </div>
+
+        <div class="card calls-card">
+          <div class="calls-table-wrap">
+            <table class="calls-table">
+              <thead><tr>
+                <th>CALL ID</th><th>THỜI GIAN</th><th>GỌI TỪ</th><th>GỌI ĐẾN</th><th>PHÂN LOẠI</th><th>BU</th><th>THỜI LƯỢNG</th><th>GHI ÂM</th><th>CHI TIẾT</th>
+              </tr></thead>
+              <tbody id="callsBody"></tbody>
+            </table>
+          </div>
+          <div class="calls-foot">
+            <div class="calls-foot__count" id="callsCount"></div>
+            <div class="calls-foot__pager">
+              <span class="calls-perpage">Số dòng mỗi trang
+                <select class="select select--sm" id="callsPerPage"><option>10</option><option>20</option><option>50</option></select>
+              </span>
+              <button class="iconbtn pgbtn" id="callsPrev" aria-label="Trang trước"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg></button>
+              <span class="calls-pageinfo" id="callsPageInfo">Trang 1 / 1</span>
+              <button class="iconbtn pgbtn" id="callsNext" aria-label="Trang sau"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></button>
             </div>
           </div>
-          <div class="heatmap" id="heatmap"></div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- ===================== MODAL (view all) ===================== -->
+  <!-- MODAL (view all Ext) -->
   <div class="modal-overlay" id="uvModal">
-    <div class="modal" role="dialog" aria-modal="true" aria-label="Tất cả User ID">
-      <div class="modal__head">
-        <div>
-          <div class="modal__title">Tất cả User ID</div>
-          <div class="modal__sub" id="uvModalSub"></div>
-        </div>
-        <button class="modal__close" id="uvModalClose" aria-label="Đóng"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button>
-      </div>
-      <div class="modal__tools">
-        <label class="uv-search" style="flex:1 1 auto;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/></svg><input id="uvModalFilter" type="text" placeholder="Tìm User ID…" style="width:100%;" /></label>
-      </div>
-      <div class="modal__body">
-        <table class="uv-table">
-          <thead><tr><th class="uv-rank">#</th><th>User ID</th><th class="num">Tổng cuộc gọi</th><th class="num">Cuộc gọi từ Odoo</th><th class="col-bar">Biểu đồ (Odoo / nguồn khác)</th></tr></thead>
-          <tbody id="uvModalBody"></tbody>
-        </table>
-      </div>
+    <div class="modal" role="dialog" aria-modal="true" aria-label="Tất cả Ext.">
+      <div class="modal__head"><div><div class="modal__title">Tất cả Ext.</div><div class="modal__sub" id="uvModalSub"></div></div><button class="modal__close" id="uvModalClose" aria-label="Đóng"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button></div>
+      <div class="modal__tools"><label class="uv-search" style="flex:1 1 auto;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/></svg><input id="uvModalFilter" type="text" placeholder="Tìm Ext / Email…" style="width:100%;" /></label></div>
+      <div class="modal__body"><table class="uv-table"><thead><tr><th class="uv-rank">#</th><th>Ext.</th><th>Email</th><th class="num">Tổng cuộc gọi</th><th class="num">Cuộc gọi từ Odoo</th><th class="col-bar">Biểu đồ (Odoo / nguồn khác)</th></tr></thead><tbody id="uvModalBody"></tbody></table></div>
     </div>
   </div>
 
   <script>
 /* =============================================================================
    Mock data for the QC-Ops TCPVoiceAI dashboard demo.
-   Figures seeded from the real production capture (qc-ops.talentconnectplus.edu.vn)
-   then extended with a plausible distribution so every block has realistic content.
-   "odoo" = number of that user's calls that originated in / were synced from Odoo.
-   "Today" is pinned to T2 05/10/2026 (as on the live snapshot).
+   Figures seeded from the real production capture (qc-ops.talentconnectplus.edu.vn).
+   Extensions ("Ext.") are internal agents with a name + email; external parties in
+   the call list are plain phone numbers. "Today" is pinned to 05/10/2026.
    ============================================================================= */
 (function (global) {
   "use strict";
 
-  const TODAY = new Date(2026, 9, 5); // 2026-10-05 (month is 0-based)
+  const TODAY = new Date(2026, 9, 5);
   const pad = (n) => String(n).padStart(2, "0");
   const ddmm = (d) => `${pad(d.getDate())}/${pad(d.getMonth() + 1)}`;
 
-  // Deterministic pseudo-random so the demo renders identically each load.
   let _seed = 20251005;
   function rand() { _seed = (_seed * 1103515245 + 12345) & 0x7fffffff; return _seed / 0x7fffffff; }
   function ri(min, max) { return Math.floor(min + rand() * (max - min + 1)); }
+  function pick(a) { return a[ri(0, a.length - 1)]; }
 
-  /* ---- Overview headline figures (match the live snapshot) ---- */
-  const OVERVIEW = {
-    totalCalls: 11087,
-    inboundPct: 39,
-    outboundPct: 61,
-    bu: { pso: 17, tcp: 1, unknown: 82 },
-  };
+  function deaccent(s) {
+    return s.normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/đ/g, "d").replace(/Đ/g, "D");
+  }
+  const FIRST = ["An", "Bình", "Chi", "Dũng", "Giang", "Hà", "Hải", "Hoa", "Hùng", "Khoa", "Lan", "Linh", "Long", "Mai", "Minh", "Nam", "Nga", "Ngọc", "Như", "Phong", "Phúc", "Quân", "Quỳnh", "Sơn", "Tâm", "Thảo", "Thành", "Trang", "Trung", "Tuấn", "Vân", "Việt", "Yến", "Đạt"];
+  const LAST = ["Nguyễn", "Trần", "Lê", "Phạm", "Hoàng", "Huỳnh", "Phan", "Vũ", "Đặng", "Bùi", "Đỗ", "Hồ", "Ngô", "Dương", "Lý"];
+  const BUS = ["pso", "tcp", "unknown"];
+  function pickBu() { const r = rand(); return r < 0.17 ? "pso" : r < 0.18 ? "tcp" : "unknown"; }
 
-  /* ---- Bar chart: 3 ranges, always populated, ending today (05/10/2026) ---- */
+  /* ---- Extensions (internal agents) ---- */
+  // [ext, totalCalls]  — the first block are the real Top-caller/callee extensions.
+  const extSeeds = [
+    ["203", 986], ["2303", 893], ["2302", 351], ["196", 347], ["204", 327],
+    ["212", 318], ["231", 204], ["510", 142], ["522", 131], ["423", 96],
+    ["6200", 1665], ["6205", 558], ["110", 271], ["279", 262], ["6201", 156],
+    ["6202", 143], ["6210", 121], ["6305", 98], ["6306", 86], ["6207", 74],
+    ["205", 69], ["206", 63], ["207", 58], ["233", 51], ["234", 47],
+    ["511", 44], ["512", 41], ["235", 38], ["236", 35], ["6211", 31],
+    ["6212", 28], ["208", 24], ["209", 21], ["513", 18], ["237", 14], ["238", 9],
+  ];
+  const usedEmails = {};
+  const USERS = extSeeds.map(([ext, total]) => {
+    const first = pick(FIRST), last = pick(LAST);
+    let base = (deaccent(first) + "." + deaccent(last)).toLowerCase();
+    let email = base + "@talentconnectplus.edu.vn";
+    if (usedEmails[email]) { email = base + ext.slice(-2) + "@talentconnectplus.edu.vn"; }
+    usedEmails[email] = 1;
+    const inbound = Math.round(total * (0.3 + rand() * 0.35));
+    const outbound = total - inbound;
+    const odoo = Math.min(total, Math.round(total * (0.25 + rand() * 0.5)));
+    return { ext, name: last + " " + first, email, total, inbound, outbound, odoo, bu: pickBu() };
+  });
+  USERS.sort((a, b) => b.total - a.total);
+  const byExt = {}; USERS.forEach((u) => (byExt[u.ext] = u));
+
+  /* ---- Overview headline (global, when no user selected) ---- */
+  const OVERVIEW = { totalCalls: 11087, inboundPct: 39, outboundPct: 61, bu: { pso: 17, tcp: 1, unknown: 82 } };
+
+  /* ---- Bar chart ranges (always populated, ending today) ---- */
   function dayRange(n) {
     const labels = [], series = [];
     for (let i = n - 1; i >= 0; i--) {
       const d = new Date(TODAY); d.setDate(TODAY.getDate() - i);
       labels.push(ddmm(d));
-      const dow = d.getDay(); // 0 Sun .. 6 Sat
-      const base = dow === 0 || dow === 6 ? 0.4 : 1;
+      const base = (d.getDay() === 0 || d.getDay() === 6) ? 0.4 : 1;
       series.push({ in: Math.round(base * ri(8, 55)), out: Math.round(base * ri(10, 70)) });
     }
-    return { labels, series, unit: "ngày" };
+    return { labels, series };
   }
   function monthRange(n) {
-    const labels = [], series = [];
-    const MON = ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"];
+    const labels = [], series = [], MON = ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"];
     for (let i = n - 1; i >= 0; i--) {
       const d = new Date(TODAY.getFullYear(), TODAY.getMonth() - i, 1);
       labels.push(`${MON[d.getMonth()]}/${String(d.getFullYear()).slice(2)}`);
       series.push({ in: ri(260, 820), out: ri(360, 1050) });
     }
-    return { labels, series, unit: "tháng" };
+    return { labels, series };
   }
   const CHART = {
     "7d": Object.assign(dayRange(7), { avg: "3:48" }),
@@ -632,61 +503,73 @@ a { text-decoration: none; color: inherit; }
     "12m": Object.assign(monthRange(12), { avg: "4:05" }),
   };
 
-  const TOP5_CALLER = [
-    { id: "203", calls: 986, bu: "unknown" },
-    { id: "2303", calls: 893, bu: "pso" },
-    { id: "2302", calls: 351, bu: "pso" },
-    { id: "196", calls: 347, bu: "unknown" },
-    { id: "204", calls: 327, bu: "unknown" },
-  ];
-  const TOP5_CALLEE = [
-    { id: "6200", calls: 1665, bu: "unknown" },
-    { id: "6205", calls: 558, bu: "unknown" },
-    { id: "110", calls: 271, bu: "unknown" },
-    { id: "279", calls: 262, bu: "unknown" },
-    { id: "6201", calls: 156, bu: "unknown" },
-  ];
+  /* ---- Top-5 caller / callee (show email) ---- */
+  const topCallerExts = ["203", "2303", "2302", "196", "204"];
+  const topCalleeExts = ["6200", "6205", "110", "279", "6201"];
+  const callerCalls = { "203": 986, "2303": 893, "2302": 351, "196": 347, "204": 327 };
+  const calleeCalls = { "6200": 1665, "6205": 558, "110": 271, "279": 262, "6201": 156 };
+  const TOP5_CALLER = topCallerExts.map((e) => ({ ext: e, email: byExt[e].email, calls: callerCalls[e], bu: byExt[e].bu }));
+  const TOP5_CALLEE = topCalleeExts.map((e) => ({ ext: e, email: byExt[e].email, calls: calleeCalls[e], bu: byExt[e].bu }));
 
-  /* ---- Heatmap: 7 days x 5 time buckets, split by call status ---- */
+  /* ---- Heatmap: 7 days x 24 hours (1 cell = 1 hour), split by status ---- */
   let _hs = 7; function hr() { _hs = (_hs * 1103515245 + 12345) & 0x7fffffff; return _hs / 0x7fffffff; }
   const HEAT_LABELS = ["T2 · 05-10", "T3 · 06-10", "T4 · 07-10", "T5 · 08-10", "T6 · 09-10", "T7 · 10-10", "CN · 11-10"];
-  const HEAT_WEIGHT = [
-    [0.5, 1, 0.7, 1, 0.5], [0.6, 1, 0.8, 1, 0.5], [0.5, 0.9, 0.7, 0.9, 0.5],
-    [0.6, 1, 0.8, 1.1, 0.6], [0.7, 1.2, 0.9, 1.2, 0.7], [0.2, 0.4, 0.3, 0.4, 0.2], [0.1, 0.3, 0.2, 0.3, 0.1],
-  ];
+  // hourly weight 0..23 — quiet overnight, busy 8-11 & 13-18
+  const HOUR_W = [0, 0, 0, 0, 0, .05, .15, .4, .9, 1, 1, .85, .5, .8, 1, .95, .85, .6, .35, .2, .1, .05, 0, 0];
+  const DAY_W = [1, 1, .95, 1.05, 1.1, .4, .25];
   const HEATMAP = {
-    cols: ["6–9h", "9–12h", "12–14h", "14–17h", "17–20h"],
+    cols: Array.from({ length: 24 }, (_, h) => h),
     rows: HEAT_LABELS.map((label, r) => ({
       label,
-      cells: HEAT_WEIGHT[r].map((w) => ({
-        answered: Math.round(w * (6 + hr() * 10)),
-        unanswered: Math.round(w * (1 + hr() * 4)),
-      })),
+      cells: HOUR_W.map((w) => {
+        const scale = w * DAY_W[r];
+        const answered = Math.round(scale * (8 + hr() * 14));
+        const unanswered = Math.round(scale * (1 + hr() * 5));
+        return { answered, unanswered };
+      }),
     })),
   };
 
-  /* ---- User-ID call-volume dataset ---- */
-  const seeds = [
-    ["203", 986], ["2303", 893], ["2302", 351], ["196", 347], ["204", 327],
-    ["212", 318], ["231", 204], ["510", 142], ["522", 131], ["423", 96],
-    ["6200", 1665], ["6205", 558], ["110", 271], ["279", 262], ["6201", 156],
-    ["6202", 143], ["6210", 121], ["6305", 98], ["0983989878", 77], ["0979892297", 214],
-    ["0903826230", 63], ["0963671679", 58], ["0765685911", 51], ["0866160366", 47],
-    ["0903758626", 44], ["0906656898", 73], ["0768471839", 69], ["0912888021", 41],
-    ["0987112233", 38], ["0901234567", 35],
+  /* ---- Call list rows ---- */
+  const extPool = USERS.map((u) => u.ext);
+  const phonePool = ["0983989878", "0979892297", "0903826230", "0963671679", "0765685911",
+    "0866160366", "0903758626", "0906656898", "0768471839", "0912888021", "0987112233",
+    "0901234567", "0938220145", "0905778990", "0918003476", "0902551300", "0933776512"];
+  // The first rows mirror the live snapshot exactly.
+  const CALLS_SEED = [
+    ["1790665965.18048", "14:12 29/9/26", "510", "0983989878", "Outbound", "0:12", true],
+    ["1790665935.18046", "14:12 29/9/26", "231", "0903826230", "Outbound", "0:32", true],
+    ["1790665776.18040", "14:11 29/9/26", "0979892297", "6205", "Inbound", "3:24", true],
+    ["1790665775.18038", "14:09 29/9/26", "212", "0963671679", "Outbound", "0:49", false],
+    ["1790665687.18031", "14:09 29/9/26", "0979892297", "6205", "Inbound", "0:18", false],
+    ["1790665665.18028", "14:07 29/9/26", "522", "0765685911", "Outbound", "0:19", false],
+    ["1790665606.18026", "14:06 29/9/26", "212", "0866160366", "Outbound", "1:35", true],
+    ["1790665446.18023", "14:04 29/9/26", "212", "0903758626", "Outbound", "0:53", true],
+    ["1790665278.18012", "14:02 29/9/26", "0906656898", "423", "Inbound", "0:13", false],
+    ["1790664434.18006", "13:47 29/9/26", "0768471839", "6200", "Inbound", "5:37", true],
   ];
-  const USERS = seeds.map(([id, total]) => ({ id, total, odoo: Math.min(total, Math.round(total * (0.25 + rand() * 0.5))) }));
-  const prefixes = ["20", "21", "23", "61", "62", "63", "0901", "0902", "0903", "0908", "0912", "0987"];
-  for (let i = 0; i < 95; i++) {
-    const pfx = prefixes[ri(0, prefixes.length - 1)];
-    const id = pfx + String(ri(0, 9999)).padStart(pfx.length > 2 ? 6 : 2, "0");
-    if (USERS.some((u) => u.id === id)) continue;
-    const total = ri(3, 120);
-    USERS.push({ id, total, odoo: Math.min(total, Math.round(total * (0.1 + rand() * 0.7))) });
+  const CALLS = CALLS_SEED.map((r) => ({ id: r[0], time: r[1], from: r[2], to: r[3], dir: r[4], bu: "unknown", dur: r[5], rec: r[6] }));
+  // generate more rows for pagination
+  let callUid = 1790664400, mm = 44;
+  for (let i = 0; i < 110; i++) {
+    const dir = rand() < 0.62 ? "Outbound" : "Inbound";
+    const ext = pick(extPool), phone = pick(phonePool);
+    const from = dir === "Outbound" ? ext : phone;
+    const to = dir === "Outbound" ? phone : ext;
+    callUid -= ri(20, 160); mm -= 1; if (mm < 0) mm = 59;
+    const hh = 13 - Math.floor(i / 12);
+    const secs = ri(3, 380);
+    const dur = Math.floor(secs / 60) + ":" + pad(secs % 60);
+    CALLS.push({
+      id: callUid + "." + (18005 - i), time: `${pad(Math.max(8, hh))}:${pad(ri(0, 59))} ${pick(["29/9/26", "28/9/26", "27/9/26"])}`,
+      from, to, dir, bu: pickBu(), dur, rec: rand() < 0.6,
+    });
   }
-  USERS.sort((a, b) => b.total - a.total);
+  const CALLS_TOTAL_LABEL = 11095; // headline total shown like the live site
 
-  global.DEMO_DATA = { OVERVIEW, CHART, TOP5_CALLER, TOP5_CALLEE, HEATMAP, USERS };
+  global.DEMO_DATA = {
+    OVERVIEW, CHART, TOP5_CALLER, TOP5_CALLEE, HEATMAP, USERS, byExt, CALLS, CALLS_TOTAL_LABEL,
+  };
 })(window);
 
 </script>
@@ -700,23 +583,50 @@ a { text-decoration: none; color: inherit; }
   const $ = (s, r = document) => r.querySelector(s);
   const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
   const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
-  const nfmt = (n) => n.toLocaleString("vi-VN");
+  const nfmt = (n) => Number(n).toLocaleString("vi-VN");
 
-  /* ---- Donuts ---- */
+  const BU_LABEL = { pso: "PSO", tcp: "TCP", unknown: "Chưa rõ" };
+  const BU_DOT = { pso: "#6b2ec6", tcp: "#4f46e5", unknown: "#94a3b8" };
+
+  let selectedUser = null;   // ext string or null
+  let curRange = "7d";
+  let heatStatus = "all";
+
+  /* ---------- Donuts ---------- */
   function conic(stops) {
     const parts = []; let prev = 0;
-    stops.forEach(([color, pct]) => { parts.push(`${color} ${prev}%`, `${color} ${pct}%`); prev = pct; });
+    stops.forEach(([c, p]) => { parts.push(`${c} ${prev}%`, `${c} ${p}%`); prev = p; });
     return `conic-gradient(${parts.join(", ")})`;
   }
   function paintDonuts() {
-    const io = D.OVERVIEW;
-    $("#ioRing").style.background = conic([["#f97316", io.inboundPct], ["#16a34a", 100]]);
-    const bu = io.bu;
-    $("#buRing").style.background = conic([["#6b2ec6", bu.pso], ["#4f46e5", bu.pso + bu.tcp], ["#94a3b8", 100]]);
+    if (selectedUser) {
+      const u = D.byExt[selectedUser];
+      const inPct = u.total ? Math.round((u.inbound / u.total) * 100) : 0;
+      $("#ioRing").style.background = conic([["#f97316", inPct], ["#16a34a", 100]]);
+      $("#ioNum").textContent = nfmt(u.total);
+      $("#ioInPct").textContent = inPct + "%";
+      $("#ioOutPct").textContent = (100 - inPct) + "%";
+      // BU donut → single BU 100%
+      $("#buRing").style.background = conic([[BU_DOT[u.bu], 100]]);
+      $("#buNum").textContent = nfmt(u.total);
+      $("#buLegend").innerHTML = `<span class="legend__item"><span class="dot dot--${u.bu}"></span>${BU_LABEL[u.bu]} <b class="legend__pct">100%</b></span>`;
+    } else {
+      const io = D.OVERVIEW;
+      $("#ioRing").style.background = conic([["#f97316", io.inboundPct], ["#16a34a", 100]]);
+      $("#ioNum").textContent = nfmt(io.totalCalls);
+      $("#ioInPct").textContent = io.inboundPct + "%";
+      $("#ioOutPct").textContent = io.outboundPct + "%";
+      const bu = io.bu;
+      $("#buRing").style.background = conic([["#6b2ec6", bu.pso], ["#4f46e5", bu.pso + bu.tcp], ["#94a3b8", 100]]);
+      $("#buNum").textContent = nfmt(io.totalCalls);
+      $("#buLegend").innerHTML =
+        `<span class="legend__item"><span class="dot dot--pso"></span>PSO <b class="legend__pct">${bu.pso}%</b></span>` +
+        `<span class="legend__item"><span class="dot dot--tcp"></span>TCP <b class="legend__pct">${bu.tcp}%</b></span>` +
+        `<span class="legend__item"><span class="dot dot--unk"></span>Chưa rõ <b class="legend__pct">${bu.unknown}%</b></span>`;
+    }
   }
 
-  /* ---- Bar chart (7 ngày / 30 ngày / 12 tháng) ---- */
-  let curRange = "7d";
+  /* ---------- Chart ---------- */
   function renderChart() {
     const c = D.CHART[curRange];
     const n = c.series.length;
@@ -726,176 +636,216 @@ a { text-decoration: none; color: inherit; }
     $("#chart").innerHTML = c.series.map((s, i) => {
       const hIn = Math.max(3, Math.round((s.in / max) * 170));
       const hOut = Math.max(3, Math.round((s.out / max) * 170));
-      const showLabel = i % labelEvery === 0 || i === n - 1;
-      return `<div class="chart__col" title="${c.labels[i]} · Inbound ${s.in} · Outbound ${s.out}">
-        <div class="chart__bars">
-          <div class="chart__bar chart__bar--in" style="width:${barW}px;height:${hIn}px"></div>
-          <div class="chart__bar chart__bar--out" style="width:${barW}px;height:${hOut}px"></div>
-        </div>
-        <div class="chart__x">${showLabel ? c.labels[i] : ""}</div>
-      </div>`;
+      const show = i % labelEvery === 0 || i === n - 1;
+      return `<div class="chart__col" title="${c.labels[i]} · In ${s.in} · Out ${s.out}"><div class="chart__bars"><div class="chart__bar chart__bar--in" style="width:${barW}px;height:${hIn}px"></div><div class="chart__bar chart__bar--out" style="width:${barW}px;height:${hOut}px"></div></div><div class="chart__x">${show ? c.labels[i] : ""}</div></div>`;
     }).join("");
-
-    const total = c.series.reduce((a, s) => a + s.in + s.out, 0);
-    $("#statUploaded").textContent = nfmt(total);
-    $("#statAvg").textContent = c.avg;
-    const delta = curRange === "7d" ? 12.4 : curRange === "30d" ? 8.1 : 15.6;
-    $("#statDelta").innerHTML = `<span class="up">▲ +${delta}%</span><span class="note">so với kỳ trước</span>`;
+    if (selectedUser) {
+      const u = D.byExt[selectedUser];
+      $("#statUploaded").textContent = nfmt(u.total);
+      $("#statAvg").textContent = c.avg;
+      $("#statDelta").innerHTML = `<span class="note">Ext. ${esc(u.ext)}</span>`;
+    } else {
+      const total = c.series.reduce((a, s) => a + s.in + s.out, 0);
+      $("#statUploaded").textContent = nfmt(total);
+      $("#statAvg").textContent = c.avg;
+      const delta = curRange === "7d" ? 12.4 : curRange === "30d" ? 8.1 : 15.6;
+      $("#statDelta").innerHTML = `<span class="up">▲ +${delta}%</span><span class="note">so với kỳ trước</span>`;
+    }
   }
 
-  /* ---- Top-5 ---- */
+  /* ---------- Top-5 (email, clickable) ---------- */
   function renderTop5(elId, rows, label) {
     const max = Math.max(...rows.map((r) => r.calls));
     $(elId).innerHTML = rows.map((r, i) => `
       <div class="top5__row">
         <span class="top5__rank">${i + 1}</span>
-        <span class="top5__label">${label} <span class="top5__id">${esc(r.id)}</span></span>
+        <span class="top5__email" data-ext="${esc(r.ext)}" title="${esc(r.email)} · Ext. ${esc(r.ext)}">${esc(r.email)}</span>
         <span class="top5__bar"><span class="top5__fill top5__fill--${r.bu}" style="width:${Math.round((r.calls / max) * 100)}%"></span></span>
         <span><span class="top5__count">${nfmt(r.calls)}</span><span class="top5__unit">cuộc gọi</span></span>
       </div>`).join("");
   }
 
-  /* ---- User-ID block ---- */
+  /* ---------- Ext table ---------- */
   const GLOBAL_MAX = Math.max(...D.USERS.map((u) => u.total));
   function uvRowHtml(u, i) {
     const barW = Math.max(6, Math.round((u.total / GLOBAL_MAX) * 100));
     const odooPct = u.total ? (u.odoo / u.total) * 100 : 0;
-    return `<tr>
+    const sel = selectedUser === u.ext ? " is-selected" : "";
+    return `<tr class="${sel}">
       <td class="uv-rank">${i + 1}</td>
-      <td><span class="uv-id">${esc(u.id)}</span></td>
+      <td><span class="uv-ext" data-ext="${esc(u.ext)}">${esc(u.ext)}</span></td>
+      <td><span class="uv-email" data-ext="${esc(u.ext)}">${esc(u.email)}</span></td>
       <td class="num"><span class="uv-num-total">${nfmt(u.total)}</span></td>
       <td class="num"><span class="uv-num-odoo">${nfmt(u.odoo)}</span></td>
-      <td class="col-bar">
-        <span class="uv-bar" style="width:${barW}%" title="${nfmt(u.odoo)} từ Odoo · ${nfmt(u.total - u.odoo)} nguồn khác">
-          <span class="uv-bar__odoo" style="width:${odooPct}%"></span>
-          <span class="uv-bar__rest" style="width:${100 - odooPct}%"></span>
-        </span>
-      </td>
+      <td class="col-bar"><span class="uv-bar" style="width:${barW}%" title="${nfmt(u.odoo)} từ Odoo · ${nfmt(u.total - u.odoo)} nguồn khác"><span class="uv-bar__odoo" style="width:${odooPct}%"></span><span class="uv-bar__rest" style="width:${100 - odooPct}%"></span></span></td>
     </tr>`;
   }
-  function renderUvTable(filter) {
-    const q = (filter || "").trim().toLowerCase();
-    let rows = D.USERS;
-    if (q) rows = rows.filter((u) => u.id.toLowerCase().includes(q));
+  function filteredUsers() {
+    const qs = [$("#uvFilter").value, $("#emailFilter").value].map((s) => s.trim().toLowerCase()).filter(Boolean);
+    if (!qs.length) return D.USERS;
+    return D.USERS.filter((u) => qs.every((q) => u.ext.toLowerCase().includes(q) || u.email.toLowerCase().includes(q) || u.name.toLowerCase().includes(q)));
+  }
+  function renderUvTable() {
+    const rows = filteredUsers();
     const shown = rows.slice(0, 7);
     $("#uvBody").innerHTML = shown.length ? shown.map(uvRowHtml).join("")
-      : `<tr><td colspan="5" class="uv-empty">Không có User ID nào khớp "${esc(filter)}"</td></tr>`;
+      : `<tr><td colspan="6" class="uv-empty">Không có Ext/Email nào khớp bộ lọc</td></tr>`;
+    const q = $("#uvFilter").value.trim() || $("#emailFilter").value.trim();
     $("#uvFoot").textContent = q
-      ? `Hiển thị ${Math.min(7, rows.length)} / ${rows.length} User ID khớp · tổng ${D.USERS.length} ID trong dữ liệu`
-      : `Hiển thị Top 7 / ${D.USERS.length} User ID có nhiều cuộc gọi nhất`;
+      ? `Hiển thị ${Math.min(7, rows.length)} / ${rows.length} Ext khớp · tổng ${D.USERS.length} Ext trong dữ liệu`
+      : `Hiển thị Top 7 / ${D.USERS.length} Ext có nhiều cuộc gọi nhất`;
   }
 
-  /* ---- Modal ---- */
+  /* ---------- Modal ---------- */
   function renderModalTable() {
     const q = ($("#uvModalFilter").value || "").trim().toLowerCase();
     let rows = D.USERS;
-    if (q) rows = rows.filter((u) => u.id.toLowerCase().includes(q));
-    $("#uvModalBody").innerHTML = rows.length ? rows.map(uvRowHtml).join("")
-      : `<tr><td colspan="5" class="uv-empty">Không có kết quả</td></tr>`;
-    $("#uvModalSub").textContent = `${rows.length} / ${D.USERS.length} User ID`;
+    if (q) rows = rows.filter((u) => u.ext.toLowerCase().includes(q) || u.email.toLowerCase().includes(q) || u.name.toLowerCase().includes(q));
+    $("#uvModalBody").innerHTML = rows.length ? rows.map(uvRowHtml).join("") : `<tr><td colspan="6" class="uv-empty">Không có kết quả</td></tr>`;
+    $("#uvModalSub").textContent = `${rows.length} / ${D.USERS.length} Ext`;
   }
   function openModal() { $("#uvModal").classList.add("is-open"); document.body.style.overflow = "hidden"; renderModalTable(); setTimeout(() => $("#uvModalFilter").focus(), 30); }
   function closeModal() { $("#uvModal").classList.remove("is-open"); document.body.style.overflow = ""; }
 
-  /* ---- Heatmap (status filter + per-status colour) ---- */
-  let heatStatus = "all";
-  const HEAT_COLORS = {
-    all: [234, 88, 12],          // cam đỏ
-    answered: [79, 70, 229],     // xanh tím
-    unanswered: [100, 116, 139], // xám (giữ nguyên)
-  };
-  function cellValue(c) {
-    if (heatStatus === "answered") return c.answered;
-    if (heatStatus === "unanswered") return c.unanswered;
-    return c.answered + c.unanswered;
+  /* ---------- User select (auto-fill) ---------- */
+  function selectUser(ext) {
+    const u = D.byExt[ext]; if (!u) return;
+    selectedUser = ext;
+    $("#emailFilter").value = u.email;
+    const banner = $("#userBanner");
+    banner.hidden = false;
+    $("#ubName").textContent = u.name;
+    $("#ubEmail").textContent = u.email;
+    $("#ubExt").textContent = "Ext. " + u.ext;
+    closeModal();
+    activateTab("overview");
+    paintDonuts(); renderChart(); renderUvTable();
+    window.scrollTo({ top: 0, behavior: "smooth" });
   }
+  function clearUser() {
+    selectedUser = null;
+    $("#userBanner").hidden = true;
+    $("#emailFilter").value = "";
+    $("#uvFilter").value = "";
+    paintDonuts(); renderChart(); renderUvTable();
+  }
+
+  /* ---------- Heatmap 24h ---------- */
+  const HEAT_COLORS = { all: [234, 88, 12], answered: [79, 70, 229], unanswered: [100, 116, 139] };
+  function cellValue(c) { return heatStatus === "answered" ? c.answered : heatStatus === "unanswered" ? c.unanswered : c.answered + c.unanswered; }
   function renderHeatmap() {
     const hm = D.HEATMAP;
     const [cr, cg, cb] = HEAT_COLORS[heatStatus] || HEAT_COLORS.all;
-    let max = 0;
-    hm.rows.forEach((r) => r.cells.forEach((c) => { max = Math.max(max, cellValue(c)); }));
+    let max = 0; hm.rows.forEach((r) => r.cells.forEach((c) => { max = Math.max(max, cellValue(c)); }));
     max = Math.max(1, max);
     const parts = [`<div class="heat-colhead"></div>`];
-    hm.cols.forEach((c) => parts.push(`<div class="heat-colhead">${c}</div>`));
+    hm.cols.forEach((h) => parts.push(`<div class="heat-colhead">${h}h</div>`));
     hm.rows.forEach((row) => {
       parts.push(`<div class="heat-rowlabel">${row.label}</div>`);
       row.cells.forEach((c) => {
-        const v = cellValue(c);
-        const t = v / max;
+        const v = cellValue(c); const t = v / max;
         const alpha = v === 0 ? 0.04 : 0.1 + t * 0.78;
         const color = t > 0.62 ? "#fff" : "#12142f";
-        parts.push(`<div class="heat-cell" style="background:rgba(${cr},${cg},${cb},${alpha.toFixed(3)});color:${color}">${v}</div>`);
+        parts.push(`<div class="heat-cell" title="${v} cuộc gọi" style="background:rgba(${cr},${cg},${cb},${alpha.toFixed(3)});color:${color}">${v || ""}</div>`);
       });
     });
     $("#heatmap").innerHTML = parts.join("");
   }
 
-  /* ---- Sidebar interactions ---- */
-  function isMobile() { return window.matchMedia("(max-width: 860px)").matches; }
-  function initSidebar() {
-    const app = $("#app");
-    $("#sbTrigger").addEventListener("click", () => {
-      if (isMobile()) app.classList.toggle("sb-mobile-open");
-      else app.classList.toggle("sb-collapsed");
-    });
-    $("#sbBackdrop").addEventListener("click", () => app.classList.remove("sb-mobile-open"));
-    $$(".sb-collapsible-trigger").forEach((btn) => {
-      btn.addEventListener("click", () => {
-        if (app.classList.contains("sb-collapsed") && !isMobile()) { app.classList.remove("sb-collapsed"); return; }
-        const item = btn.closest(".sb-menu-item");
-        const open = !item.classList.contains("is-open");
-        item.classList.toggle("is-open", open);
-        item.setAttribute("data-state", open ? "open" : "closed");
-      });
-    });
-    // mark active nav item on click (within a menu)
-    $$(".sb-menu-button:not(.sb-collapsible-trigger)").forEach((a) => {
-      a.addEventListener("click", (e) => {
-        if (a.getAttribute("href") === "#") e.preventDefault();
-        $$(".sb-menu-button").forEach((x) => x.classList.remove("is-active"));
-        a.classList.add("is-active");
-        if (isMobile()) app.classList.remove("sb-mobile-open");
-      });
+  /* ---------- Calls list ---------- */
+  let callsPage = 1;
+  function filteredCalls() {
+    const q = ($("#callSearch").value || "").trim().toLowerCase();
+    const bu = $("#callBu").value;
+    return D.CALLS.filter((c) => {
+      if (bu !== "all" && c.bu !== bu) return false;
+      if (q && !(c.id.toLowerCase().includes(q) || c.from.toLowerCase().includes(q) || c.to.toLowerCase().includes(q))) return false;
+      return true;
     });
   }
+  function callRowHtml(c) {
+    const cls = c.dir === "Outbound" ? "chip--out" : "chip--in";
+    const rec = c.rec
+      ? `<span class="rec-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 14h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-7a9 9 0 0 1 18 0v7a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3"/></svg>Nghe ghi âm</span>`
+      : `<span class="rec-none">Chưa có</span>`;
+    return `<tr>
+      <td><span class="call-id">${esc(c.id)}</span></td>
+      <td>${esc(c.time)}</td>
+      <td>${esc(c.from)}</td>
+      <td>${esc(c.to)}</td>
+      <td><span class="chip ${cls}">${c.dir}</span></td>
+      <td><span class="chip chip--bu"><span class="chip-dot" style="background:${BU_DOT[c.bu]}"></span>${BU_LABEL[c.bu]}</span></td>
+      <td>${esc(c.dur)}</td>
+      <td>${rec}</td>
+      <td><button class="btn-ghost">Xem chi tiết</button></td>
+    </tr>`;
+  }
+  function renderCalls() {
+    const rows = filteredCalls();
+    const per = parseInt($("#callsPerPage").value, 10) || 10;
+    const pages = Math.max(1, Math.ceil(rows.length / per));
+    if (callsPage > pages) callsPage = pages;
+    const start = (callsPage - 1) * per;
+    const slice = rows.slice(start, start + per);
+    $("#callsBody").innerHTML = slice.length ? slice.map(callRowHtml).join("")
+      : `<tr><td colspan="9" class="uv-empty">Không có cuộc gọi nào khớp bộ lọc</td></tr>`;
+    const from = rows.length ? start + 1 : 0;
+    const to = start + slice.length;
+    $("#callsCount").textContent = `Hiển thị ${from}–${to} trên ${nfmt(rows.length)} cuộc gọi`;
+    $("#callsPageInfo").textContent = `Trang ${callsPage} / ${pages}`;
+    $("#callsPrev").disabled = callsPage <= 1;
+    $("#callsNext").disabled = callsPage >= pages;
+  }
 
-  /* ---- Init ---- */
+  /* ---------- Tabs ---------- */
+  function activateTab(name) {
+    $$("#tabs .tab").forEach((b) => b.classList.toggle("is-active", b.dataset.tab === name));
+    $$("[data-pane]").forEach((p) => { p.hidden = p.getAttribute("data-pane") !== name; });
+    if (name === "calls") renderCalls();
+  }
+
+  /* ---------- Init ---------- */
   function init() {
-    $("#statUploaded"); // ensure DOM ready
     paintDonuts();
     renderChart();
-    renderTop5("#top5Caller", D.TOP5_CALLER, "Caller id:");
-    renderTop5("#top5Callee", D.TOP5_CALLEE, "Callee id:");
-    renderUvTable("");
+    renderTop5("#top5Caller", D.TOP5_CALLER, "Caller");
+    renderTop5("#top5Callee", D.TOP5_CALLEE, "Callee");
+    renderUvTable();
     renderHeatmap();
-    initSidebar();
+    renderCalls();
 
-    $("#rangeToggle").addEventListener("click", (e) => {
-      const btn = e.target.closest("button[data-range]");
-      if (!btn) return;
-      curRange = btn.dataset.range;
-      $$("#rangeToggle button").forEach((b) => b.classList.toggle("is-active", b === btn));
-      renderChart();
-    });
-    $("#heatStatus").addEventListener("click", (e) => {
-      const btn = e.target.closest("button[data-status]");
-      if (!btn) return;
-      heatStatus = btn.dataset.status;
-      $$("#heatStatus button").forEach((b) => b.classList.toggle("is-active", b === btn));
-      renderHeatmap();
+    // Tabs (+ deep link ?tab=calls)
+    $("#tabs").addEventListener("click", (e) => { const b = e.target.closest(".tab"); if (b) activateTab(b.dataset.tab); });
+    try { if (new URLSearchParams(location.search).get("tab") === "calls") activateTab("calls"); } catch (e) {}
+
+    // Range + heatmap status
+    $("#rangeToggle").addEventListener("click", (e) => { const b = e.target.closest("button[data-range]"); if (!b) return; curRange = b.dataset.range; $$("#rangeToggle button").forEach((x) => x.classList.toggle("is-active", x === b)); renderChart(); });
+    $("#heatStatus").addEventListener("click", (e) => { const b = e.target.closest("button[data-status]"); if (!b) return; heatStatus = b.dataset.status; $$("#heatStatus button").forEach((x) => x.classList.toggle("is-active", x === b)); renderHeatmap(); });
+
+    // Ext table + email filter + user select
+    $("#uvFilter").addEventListener("input", renderUvTable);
+    $("#emailFilter").addEventListener("input", () => { if (!$("#emailFilter").value.trim() && selectedUser) clearUser(); else { if (selectedUser) { selectedUser = null; $("#userBanner").hidden = true; paintDonuts(); renderChart(); } renderUvTable(); } });
+    $("#ovReset").addEventListener("click", clearUser);
+    $("#ubClear").addEventListener("click", clearUser);
+    document.addEventListener("click", (e) => {
+      const el = e.target.closest("[data-ext]");
+      if (el) { selectUser(el.getAttribute("data-ext")); }
     });
 
-    $("#uvFilter").addEventListener("input", (e) => renderUvTable(e.target.value));
+    // Modal
     $("#uvDetailBtn").addEventListener("click", openModal);
     $("#uvModalClose").addEventListener("click", closeModal);
     $("#uvModal").addEventListener("click", (e) => { if (e.target.id === "uvModal") closeModal(); });
     $("#uvModalFilter").addEventListener("input", renderModalTable);
     document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeModal(); });
 
-    // tabs visual-only
-    $$(".tabs .tab").forEach((b) => b.addEventListener("click", () => {
-      $$(".tabs .tab").forEach((s) => s.classList.remove("is-active")); b.classList.add("is-active");
-    }));
+    // Calls filters + pagination
+    $("#callSearch").addEventListener("input", () => { callsPage = 1; renderCalls(); });
+    $("#callBu").addEventListener("change", () => { callsPage = 1; renderCalls(); });
+    $("#callsPerPage").addEventListener("change", () => { callsPage = 1; renderCalls(); });
+    $("#callReset").addEventListener("click", () => { $("#callSearch").value = ""; $("#callBu").value = "all"; callsPage = 1; renderCalls(); });
+    $("#callsPrev").addEventListener("click", () => { if (callsPage > 1) { callsPage--; renderCalls(); } });
+    $("#callsNext").addEventListener("click", () => { callsPage++; renderCalls(); });
   }
 
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
