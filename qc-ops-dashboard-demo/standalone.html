@@ -796,7 +796,20 @@ a { text-decoration: none; color: inherit; }
     const maxV = Math.max(1, ...c.series.map((s) => Math.max(s.in, s.out)));
     const xAt = (i) => (n <= 1 ? W / 2 : padX + (i / (n - 1)) * (W - 2 * padX));
     const yAt = (v) => padT + plotH - (v / maxV) * plotH;
-    const line = (key) => c.series.map((s, i) => `${i ? "L" : "M"}${xAt(i).toFixed(1)} ${yAt(s[key]).toFixed(1)}`).join(" ");
+    // smooth (Catmull-Rom → cubic Bézier) so the lines curve instead of kink
+    const smooth = (pts) => {
+      if (pts.length < 2) return pts.length ? `M${pts[0][0].toFixed(1)} ${pts[0][1].toFixed(1)}` : "";
+      const t = 0.18;
+      let d = `M${pts[0][0].toFixed(1)} ${pts[0][1].toFixed(1)}`;
+      for (let i = 0; i < pts.length - 1; i++) {
+        const p0 = pts[i - 1] || pts[i], p1 = pts[i], p2 = pts[i + 1], p3 = pts[i + 2] || p2;
+        const c1x = p1[0] + (p2[0] - p0[0]) * t, c1y = p1[1] + (p2[1] - p0[1]) * t;
+        const c2x = p2[0] - (p3[0] - p1[0]) * t, c2y = p2[1] - (p3[1] - p1[1]) * t;
+        d += ` C${c1x.toFixed(1)} ${c1y.toFixed(1)}, ${c2x.toFixed(1)} ${c2y.toFixed(1)}, ${p2[0].toFixed(1)} ${p2[1].toFixed(1)}`;
+      }
+      return d;
+    };
+    const line = (key) => smooth(c.series.map((s, i) => [xAt(i), yAt(s[key])]));
     const dots = (key, cls) => (n <= 12 ? c.series.map((s, i) => `<circle class="${cls}" cx="${xAt(i).toFixed(1)}" cy="${yAt(s[key]).toFixed(1)}" r="3"><title>${c.labels[i]} · ${s[key]}</title></circle>`).join("") : "");
     const grid = [0.5, 1].map((f) => `<line class="chart__grid" x1="${padX}" y1="${(plotBottom - f * plotH).toFixed(1)}" x2="${W - padX}" y2="${(plotBottom - f * plotH).toFixed(1)}"/>`).join("");
     const labelEvery = n <= 12 ? 1 : 5;
