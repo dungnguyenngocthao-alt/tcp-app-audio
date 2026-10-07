@@ -278,6 +278,8 @@ a { text-decoration: none; color: inherit; }
 
 /* Export-report modal */
 .modal--sm { width: min(520px, 100%); }
+/* let the combo dropdowns inside the export form overflow the modal box */
+#exportModal .modal { overflow: visible; }
 .modal__form { padding: 18px 20px 6px; display: flex; flex-direction: column; gap: 16px; }
 .ex-check { display: inline-flex; align-items: center; gap: 10px; font-size: 13px; font-weight: 600; color: var(--ink-2); cursor: pointer; }
 .ex-check input { width: 16px; height: 16px; accent-color: var(--accent); }
