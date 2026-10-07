@@ -142,8 +142,6 @@
       return d;
     };
     const line = (key) => smooth(c.series.map((s, i) => [xAt(i), yAt(s[key])]));
-    const r = n > 20 ? 2.6 : 3; // a dot on every data point, all ranges
-    const dots = (key, cls) => c.series.map((s, i) => `<circle class="${cls}" cx="${xAt(i).toFixed(1)}" cy="${yAt(s[key]).toFixed(1)}" r="${r}"/>`).join("");
     const grid = [0.5, 1].map((f) => `<line class="chart__grid" x1="${padX}" y1="${(plotBottom - f * plotH).toFixed(1)}" x2="${W - padX}" y2="${(plotBottom - f * plotH).toFixed(1)}"/>`).join("");
     const labelEvery = n <= 12 ? 1 : 5;
     const labels = c.series.map((s, i) => ((i % labelEvery === 0 || i === n - 1)
@@ -155,8 +153,6 @@
         <line class="chart__cursor" x1="0" y1="${padT}" x2="0" y2="${plotBottom}" style="display:none"/>
         <path class="chart__line chart__line--out" d="${line("out")}"/>
         <path class="chart__line chart__line--in" d="${line("in")}"/>
-        ${dots("out", "chart__dot chart__dot--out")}
-        ${dots("in", "chart__dot chart__dot--in")}
         <circle class="chart__hl chart__hl--out" r="5.5" style="display:none"/>
         <circle class="chart__hl chart__hl--in" r="5.5" style="display:none"/>
         ${labels}

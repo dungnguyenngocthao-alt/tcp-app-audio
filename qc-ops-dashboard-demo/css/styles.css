@@ -153,9 +153,6 @@ a { text-decoration: none; color: inherit; }
 .chart__line { fill: none; stroke-width: 2.5; stroke-linejoin: round; stroke-linecap: round; }
 .chart__line--in { stroke: var(--in-2); }
 .chart__line--out { stroke: var(--out-2); }
-.chart__dot { stroke: #fff; stroke-width: 1.5; }
-.chart__dot--in { fill: var(--in-2); }
-.chart__dot--out { fill: var(--out-2); }
 .chart__xlabel { fill: var(--muted); font-size: 10px; font-family: var(--sans); }
 /* hover guide + highlighted points */
 .chart__cursor { stroke: var(--accent); stroke-width: 1; opacity: .35; }
@@ -163,7 +160,7 @@ a { text-decoration: none; color: inherit; }
 .chart__hl--in { fill: var(--in-1); }
 .chart__hl--out { fill: var(--out-1); }
 /* hover tooltip */
-.chart__tip { position: absolute; z-index: 5; pointer-events: none; transform: translate(-50%, -100%); background: #fff; border: 1px solid var(--border); border-radius: 8px; box-shadow: var(--shadow-pop); padding: 8px 10px; font-size: 12px; white-space: nowrap; }
+.chart__tip { position: absolute; z-index: 5; pointer-events: none; transform: translate(-50%, -100%); background: #fff; border: 1px solid var(--border); border-radius: 8px; box-shadow: 0 6px 18px -8px rgba(18,20,47,.18), 0 2px 5px -2px rgba(18,20,47,.1); padding: 8px 10px; font-size: 12px; white-space: nowrap; }
 .chart__tip[hidden] { display: none; }
 .chart__tip-date { font-weight: 700; color: var(--ink); margin-bottom: 5px; }
 .chart__tip-row { display: flex; align-items: center; gap: 7px; color: var(--label); }
@@ -320,6 +317,12 @@ a { text-decoration: none; color: inherit; }
   .card__head--heat #heatStatus { margin-left: 0; width: 100%; justify-content: flex-start; overflow-x: auto; }
 }
 
+/* Tablet / small: lighter card padding so content has more room */
+@media (max-width: 600px) {
+  .card { padding: 16px; }
+  .page-title { font-size: 22px; }
+}
+
 /* Mobile filter: everything except the date fields fills the full width;
    the two date fields share a row; the reset button wraps to its own full row */
 @media (max-width: 480px) {
@@ -331,4 +334,26 @@ a { text-decoration: none; color: inherit; }
   .filter__field--bu .select { width: 100%; }
   .input--email, .input--ext { min-width: 0; width: 100%; }
   .btn-reset, .btn-apply { flex: 1 1 100%; margin-left: 0; justify-content: center; }
+
+  /* page head + tabs */
+  .page-head { gap: 10px; }
+  .btn-export { height: 34px; }
+  .tabs { width: 100%; }
+  .tab { flex: 1 1 0; text-align: center; }
+
+  /* stat row: two stats on a row, range toggle on its own full-width row */
+  .stat-row { align-items: flex-start; row-gap: 14px; }
+  .stat { padding-right: 16px; }
+  .stat + .stat { padding-left: 16px; border-left: 1px solid var(--border); }
+  .stat__value { font-size: 26px; }
+  .range-toggle { order: 3; width: 100%; margin-left: 0; }
+  .range-toggle button { flex: 1 1 0; text-align: center; }
+
+  /* donut + legend a touch tighter */
+  .donut, .donut__ring { width: 134px; height: 134px; }
+  .donut-legend { gap: 14px; }
+
+  /* export dialog fields stack */
+  .ex-row { gap: 10px; }
+  .ex-row .filter__field { flex: 1 1 100%; }
 }
