@@ -1276,9 +1276,14 @@ a { text-decoration: none; color: inherit; }
 
     // keep the line chart's width/height crisp on resize
     let rz; window.addEventListener("resize", () => { clearTimeout(rz); rz = setTimeout(renderChart, 150); });
-    // line-chart hover: tooltip + vertical guide + highlighted points
-    $("#chart").addEventListener("mousemove", onChartMove);
-    $("#chart").addEventListener("mouseleave", onChartLeave);
+    // line-chart hover: tooltip + vertical guide + highlighted points.
+    // pointer events unify mouse + touch; clear on leave/up/cancel so a tap on
+    // touch devices doesn't leave a highlighted point stuck on the line.
+    const chartHost = $("#chart");
+    chartHost.addEventListener("pointermove", onChartMove);
+    chartHost.addEventListener("pointerleave", onChartLeave);
+    chartHost.addEventListener("pointerup", onChartLeave);
+    chartHost.addEventListener("pointercancel", onChartLeave);
   }
 
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
