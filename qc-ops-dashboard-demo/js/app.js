@@ -115,8 +115,8 @@
     const sel = activeUser() && activeUser().ext === u.ext ? " is-selected" : "";
     return `<tr class="${sel}">
       <td class="uv-rank">${i + 1}</td>
-      <td><span class="uv-ext" data-ext="${esc(u.ext)}">${esc(u.ext)}</span></td>
       <td><span class="uv-email" data-email="${esc(u.email)}">${esc(u.email)}</span></td>
+      <td><span class="uv-ext" data-ext="${esc(u.ext)}">${esc(u.ext)}</span></td>
       <td class="num"><span class="uv-num-total">${nfmt(u.total)}</span></td>
       <td class="num"><span class="uv-num-odoo">${nfmt(u.odoo)}</span></td>
       <td class="col-bar"><div class="pct-cell"><span class="pct-bar"><span class="pct-bar__fill" style="width:${pct}%"></span></span><span class="pct-val">${pct}%</span></div></td>
@@ -184,9 +184,9 @@
     return `<tr>
       <td>${esc(c.time)}</td>
       <td><span class="call-email" data-email="${esc(emailOf(c))}">${esc(emailOf(c))}</span></td>
+      <td><span class="chip ${cls}">${c.dir}</span></td>
       <td>${esc(c.from)}</td>
       <td>${esc(c.to)}</td>
-      <td><span class="chip ${cls}">${c.dir}</span></td>
       <td><span class="chip chip--bu"><span class="chip-dot" style="background:${BU_DOT[c.bu]}"></span>${BU_LABEL[c.bu]}</span></td>
       <td>${esc(c.dur)}</td>
       <td>${rec}</td>
@@ -247,12 +247,14 @@
     $("#ovReset").addEventListener("click", resetAll);
     $("#callReset").addEventListener("click", resetAll);
 
-    // Click email / ext anywhere → fill the filter field with that value
+    // Click email / ext anywhere → fill the filter field, staying on the
+    // current tab (only the user switches tabs manually). Clicking inside the
+    // "Xem chi tiết" modal closes it back onto the overview it opened from.
     document.addEventListener("click", (e) => {
       const em = e.target.closest("[data-email]");
-      if (em) { closeModal(); activateTab("overview"); setFilter({ email: em.getAttribute("data-email"), ext: "" }); window.scrollTo({ top: 0, behavior: "smooth" }); return; }
+      if (em) { closeModal(); setFilter({ email: em.getAttribute("data-email"), ext: "" }); return; }
       const ex = e.target.closest("[data-ext]");
-      if (ex) { closeModal(); activateTab("overview"); setFilter({ ext: ex.getAttribute("data-ext"), email: "" }); window.scrollTo({ top: 0, behavior: "smooth" }); return; }
+      if (ex) { closeModal(); setFilter({ ext: ex.getAttribute("data-ext"), email: "" }); return; }
     });
 
     $("#uvDetailBtn").addEventListener("click", openModal);
