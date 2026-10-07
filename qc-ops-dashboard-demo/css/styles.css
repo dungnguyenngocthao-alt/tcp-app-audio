@@ -356,4 +356,10 @@ a { text-decoration: none; color: inherit; }
   /* export dialog fields stack */
   .ex-row { gap: 10px; }
   .ex-row .filter__field { flex: 1 1 100%; }
+
+  /* calls pagination: drop the rows-per-page control (defaults to 10) and
+     keep the footer tidy instead of wrapping into several lines */
+  .calls-perpage { display: none; }
+  .calls-foot { gap: 10px; }
+  .calls-foot__pager { margin-left: auto; }
 }
