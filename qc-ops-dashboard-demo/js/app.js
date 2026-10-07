@@ -12,8 +12,10 @@
   const BU_LABEL = { pso: "PSO", tcp: "TCP", unknown: "Chưa rõ" };
   const BU_DOT = { pso: "#6b2ec6", tcp: "#4f46e5", unknown: "#94a3b8" };
 
-  // shared filter state (applies to overview donuts, Ext table AND the calls list)
-  let fEmail = "", fExt = "";
+  // shared multi-select filter: pending pills (pendEmails/pendExts) are what the
+  // user is building; appEmails/appExts are the committed set the views render.
+  let pendEmails = [], pendExts = [];
+  let appEmails = [], appExts = [];
   let curRange = "7d";
   let heatStatus = "all";
   let callsPage = 1;
@@ -21,25 +23,35 @@
   const extOf = (c) => (c.dir === "Outbound" ? c.from : c.to);
   const emailOf = (c) => (D.byExt[extOf(c)] ? D.byExt[extOf(c)].email : "—");
 
-  function matchUsers() {
-    return D.USERS.filter((u) =>
-      (!fEmail || u.email.toLowerCase().includes(fEmail.toLowerCase())) &&
-      (!fExt || u.ext.toLowerCase().includes(fExt.toLowerCase())));
+  const filterActive = () => appEmails.length > 0 || appExts.length > 0;
+  function matchedUsers() {
+    if (!filterActive()) return D.USERS;
+    return D.USERS.filter((u) => appEmails.includes(u.email) || appExts.includes(u.ext));
   }
-  function activeUser() { if (!fEmail && !fExt) return null; const m = matchUsers(); return m.length === 1 ? m[0] : null; }
+  const userSelected = (u) => appEmails.includes(u.email) || appExts.includes(u.ext);
 
   /* ---------- Donuts ---------- */
   function conic(stops) { const p = []; let prev = 0; stops.forEach(([c, x]) => { p.push(`${c} ${prev}%`, `${c} ${x}%`); prev = x; }); return `conic-gradient(${p.join(", ")})`; }
   function paintDonuts() {
-    const u = activeUser();
-    if (u) {
-      const inPct = u.total ? Math.round((u.inbound / u.total) * 100) : 0;
+    if (filterActive()) {
+      const us = matchedUsers();
+      const total = us.reduce((a, u) => a + u.total, 0);
+      const inb = us.reduce((a, u) => a + u.inbound, 0);
+      const inPct = total ? Math.round((inb / total) * 100) : 0;
       $("#ioRing").style.background = conic([["#f97316", inPct], ["#16a34a", 100]]);
-      $("#ioNum").textContent = nfmt(u.total);
+      $("#ioNum").textContent = nfmt(total);
       $("#ioInPct").textContent = inPct + "%"; $("#ioOutPct").textContent = (100 - inPct) + "%";
-      $("#buRing").style.background = conic([[BU_DOT[u.bu], 100]]);
-      $("#buNum").textContent = nfmt(u.total);
-      $("#buLegend").innerHTML = `<span class="legend__item"><span class="dot dot--${u.bu}"></span>${BU_LABEL[u.bu]} <b class="legend__pct">100%</b></span>`;
+      const bt = { pso: 0, tcp: 0, unknown: 0 };
+      us.forEach((u) => { bt[u.bu] += u.total; });
+      const pso = total ? Math.round((bt.pso / total) * 100) : 0;
+      const tcp = total ? Math.round((bt.tcp / total) * 100) : 0;
+      const unk = Math.max(0, 100 - pso - tcp);
+      $("#buRing").style.background = conic([["#6b2ec6", pso], ["#4f46e5", pso + tcp], ["#94a3b8", 100]]);
+      $("#buNum").textContent = nfmt(total);
+      $("#buLegend").innerHTML =
+        `<span class="legend__item"><span class="dot dot--pso"></span>PSO <b class="legend__pct">${pso}%</b></span>` +
+        `<span class="legend__item"><span class="dot dot--tcp"></span>TCP <b class="legend__pct">${tcp}%</b></span>` +
+        `<span class="legend__item"><span class="dot dot--unk"></span>Chưa rõ <b class="legend__pct">${unk}%</b></span>`;
     } else {
       const io = D.OVERVIEW;
       $("#ioRing").style.background = conic([["#f97316", io.inboundPct], ["#16a34a", 100]]);
@@ -69,11 +81,13 @@
       const show = i % labelEvery === 0 || i === n - 1;
       return `<div class="chart__col" title="${c.labels[i]} · In ${s.in} · Out ${s.out}"><div class="chart__stack" style="width:100%;max-width:${barMax}px;height:${h}px"><div class="chart__seg chart__seg--out" style="height:${outH}px"></div><div class="chart__seg chart__seg--in" style="height:${inH}px"></div></div><div class="chart__x">${show ? c.labels[i] : ""}</div></div>`;
     }).join("");
-    const u = activeUser();
-    if (u) {
-      $("#statUploaded").textContent = nfmt(u.total);
+    if (filterActive()) {
+      const us = matchedUsers();
+      const total = us.reduce((a, u) => a + u.total, 0);
+      $("#statUploaded").textContent = nfmt(total);
       $("#statAvg").textContent = c.avg;
-      $("#statDelta").innerHTML = `<span class="note">Ext. ${esc(u.ext)}</span>`;
+      const lbl = us.length === 1 ? ("Ext. " + esc(us[0].ext)) : (us.length + " Ext đã chọn");
+      $("#statDelta").innerHTML = `<span class="note">${lbl}</span>`;
     } else {
       const total = c.series.reduce((a, s) => a + s.in + s.out, 0);
       $("#statUploaded").textContent = nfmt(total);
@@ -97,9 +111,9 @@
   // caller → outbound calls, callee → inbound calls. With no filter use the
   // production Top-5 lists; with a filter, derive from the matching Ext users.
   function topRows(kind) {
-    if (!fEmail && !fExt) return kind === "caller" ? D.TOP5_CALLER : D.TOP5_CALLEE;
+    if (!filterActive()) return kind === "caller" ? D.TOP5_CALLER : D.TOP5_CALLEE;
     const key = kind === "caller" ? "outbound" : "inbound";
-    return matchUsers()
+    return matchedUsers()
       .map((u) => ({ ext: u.ext, email: u.email, calls: u[key], bu: u.bu }))
       .sort((a, b) => b.calls - a.calls)
       .slice(0, 5);
@@ -112,7 +126,7 @@
   /* ---------- Ext table (% Odoo bar, equal length) ---------- */
   function uvRowHtml(u, i) {
     const pct = u.total ? Math.round((u.odoo / u.total) * 100) : 0;
-    const sel = activeUser() && activeUser().ext === u.ext ? " is-selected" : "";
+    const sel = userSelected(u) ? " is-selected" : "";
     return `<tr class="${sel}">
       <td class="uv-rank">${i + 1}</td>
       <td><span class="uv-email" data-email="${esc(u.email)}">${esc(u.email)}</span></td>
@@ -124,13 +138,13 @@
   }
   function filteredUsers() {
     const q = $("#uvFilter").value.trim().toLowerCase();
-    return matchUsers().filter((u) => !q || u.ext.toLowerCase().includes(q) || u.email.toLowerCase().includes(q) || u.name.toLowerCase().includes(q));
+    return matchedUsers().filter((u) => !q || u.ext.toLowerCase().includes(q) || u.email.toLowerCase().includes(q) || u.name.toLowerCase().includes(q));
   }
   function renderUvTable() {
     const rows = filteredUsers(), shown = rows.slice(0, 7);
     $("#uvBody").innerHTML = shown.length ? shown.map(uvRowHtml).join("")
       : `<tr><td colspan="6" class="uv-empty">Không có Ext/Email nào khớp bộ lọc</td></tr>`;
-    const q = $("#uvFilter").value.trim() || fEmail || fExt;
+    const q = $("#uvFilter").value.trim() || filterActive();
     $("#uvFoot").textContent = q
       ? `Hiển thị ${Math.min(7, rows.length)} / ${rows.length} Ext khớp · tổng ${D.USERS.length} Ext`
       : `Hiển thị Top 7 / ${D.USERS.length} Ext có nhiều cuộc gọi nhất`;
@@ -168,11 +182,10 @@
 
   /* ---------- Calls list ---------- */
   function filteredCalls() {
-    const bu = $("#callBu").value, fe = fEmail.toLowerCase(), fx = fExt.toLowerCase();
+    const bu = $("#callBu").value;
     return D.CALLS.filter((c) => {
       if (bu !== "all" && c.bu !== bu) return false;
-      if (fe && !emailOf(c).toLowerCase().includes(fe)) return false;
-      if (fx && !(extOf(c).toLowerCase().includes(fx) || c.from.toLowerCase().includes(fx) || c.to.toLowerCase().includes(fx))) return false;
+      if (filterActive() && !(appExts.includes(extOf(c)) || appEmails.includes(emailOf(c)))) return false;
       return true;
     });
   }
@@ -207,18 +220,87 @@
     $("#callsNext").disabled = callsPage >= pages;
   }
 
-  /* ---------- Shared filter setter ---------- */
-  function setFilter(p) {
-    if ("email" in p) fEmail = p.email;
-    if ("ext" in p) fExt = p.ext;
-    $$('[data-filter="email"]').forEach((i) => { if (i.value !== fEmail) i.value = fEmail; });
-    $$('[data-filter="ext"]').forEach((i) => { if (i.value !== fExt) i.value = fExt; });
-    callsPage = 1;
+  /* ---------- Filter: dropdown + pills + apply ---------- */
+  function renderFiltered() {
     paintDonuts(); renderChart(); renderTop5All(); renderUvTable(); renderCalls();
   }
-  function resetAll() {
-    $("#uvFilter").value = ""; $("#callBu").value = "all"; callsPage = 1;
-    setFilter({ email: "", ext: "" });
+  function applyFilter() {
+    appEmails = pendEmails.slice(); appExts = pendExts.slice();
+    callsPage = 1; renderFiltered();
+  }
+  function resetFilter() {
+    pendEmails = []; pendExts = []; appEmails = []; appExts = [];
+    $$('[data-filter]').forEach((i) => (i.value = ""));
+    closeMenu(); $("#callBu").value = "all"; $("#uvFilter").value = "";
+    callsPage = 1; renderPills(); renderFiltered();
+  }
+
+  const PILL_ICON = {
+    email: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>',
+    ext: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 5h8"/><path d="M13 12h8"/><path d="M13 19h8"/><path d="m3 17 2 2 4-4"/><rect x="3" y="4" width="6" height="6" rx="1"/></svg>',
+  };
+  function pillHtml(type, v) {
+    const label = type === "ext" ? "Ext. " + v : v;
+    return `<span class="fpill">${PILL_ICON[type]}<span class="fpill__t">${esc(label)}</span><button class="fpill__x" data-pill-remove data-type="${type}" data-val="${esc(v)}" aria-label="Bỏ">×</button></span>`;
+  }
+  function renderPills() {
+    const items = pendEmails.map((v) => pillHtml("email", v)).concat(pendExts.map((v) => pillHtml("ext", v)));
+    const has = items.length > 0;
+    const html = has ? items.join("") +
+      `<button class="fpill-reset" data-filter-reset><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>Đặt lại</button>` : "";
+    $$('[data-pills]').forEach((box) => { box.innerHTML = html; box.hidden = !has; });
+  }
+  function addPill(type, value) {
+    const arr = type === "email" ? pendEmails : pendExts;
+    if (!arr.includes(value)) arr.push(value);
+    renderPills();
+  }
+  function removePill(type, value) {
+    if (type === "email") pendEmails = pendEmails.filter((x) => x !== value);
+    else pendExts = pendExts.filter((x) => x !== value);
+    renderPills();
+  }
+
+  /* dropdown suggestions (max 5, from the data in the system) */
+  let openMenu = null, activeIdx = -1;
+  function suggestFor(type, q) {
+    q = q.trim().toLowerCase();
+    if (!q) return [];
+    if (type === "email") {
+      return D.USERS.filter((u) => !pendEmails.includes(u.email) && u.email.toLowerCase().includes(q))
+        .slice(0, 5).map((u) => ({ value: u.email, main: u.email, sub: "Ext. " + u.ext }));
+    }
+    return D.USERS.filter((u) => !pendExts.includes(u.ext) && (u.ext.toLowerCase().includes(q) || u.email.toLowerCase().includes(q)))
+      .slice(0, 5).map((u) => ({ value: u.ext, main: "Ext. " + u.ext, sub: u.email }));
+  }
+  function closeMenu() {
+    $$('[data-menu]').forEach((m) => { m.hidden = true; m.innerHTML = ""; });
+    openMenu = null; activeIdx = -1;
+  }
+  function openFor(input) {
+    const type = input.getAttribute("data-filter");
+    const menu = input.parentElement.querySelector("[data-menu]");
+    const items = suggestFor(type, input.value);
+    if (!items.length) { menu.hidden = true; menu.innerHTML = ""; if (openMenu === menu) openMenu = null; return; }
+    menu.innerHTML = items.map((it, i) =>
+      `<button type="button" class="combo__opt${i === 0 ? " is-active" : ""}" data-type="${type}" data-val="${esc(it.value)}"><span class="combo__main">${esc(it.main)}</span><span class="combo__sub">${esc(it.sub)}</span></button>`).join("");
+    menu.hidden = false; openMenu = menu; activeIdx = 0;
+  }
+  function moveActive(d) {
+    if (!openMenu) return;
+    const opts = Array.from(openMenu.querySelectorAll(".combo__opt"));
+    if (!opts.length) return;
+    activeIdx = (activeIdx + d + opts.length) % opts.length;
+    opts.forEach((o, i) => o.classList.toggle("is-active", i === activeIdx));
+    opts[activeIdx].scrollIntoView({ block: "nearest" });
+  }
+  function commitActive(input) {
+    if (!openMenu) return false;
+    const opt = openMenu.querySelector(".combo__opt.is-active") || openMenu.querySelector(".combo__opt");
+    if (!opt) return false;
+    addPill(opt.getAttribute("data-type"), opt.getAttribute("data-val"));
+    input.value = ""; closeMenu();
+    return true;
   }
 
   /* ---------- Tabs ---------- */
@@ -231,7 +313,7 @@
   /* ---------- Init ---------- */
   function init() {
     paintDonuts(); renderChart(); renderTop5All();
-    renderUvTable(); renderHeatmap(); renderCalls();
+    renderUvTable(); renderHeatmap(); renderCalls(); renderPills();
 
     $("#tabs").addEventListener("click", (e) => { const b = e.target.closest(".tab"); if (b) activateTab(b.dataset.tab); });
     try { if (new URLSearchParams(location.search).get("tab") === "calls") activateTab("calls"); } catch (e) {}
@@ -239,22 +321,43 @@
     $("#rangeToggle").addEventListener("click", (e) => { const b = e.target.closest("button[data-range]"); if (!b) return; curRange = b.dataset.range; $$("#rangeToggle button").forEach((x) => x.classList.toggle("is-active", x === b)); renderChart(); });
     $("#heatStatus").addEventListener("click", (e) => { const b = e.target.closest("button[data-status]"); if (!b) return; heatStatus = b.dataset.status; $$("#heatStatus button").forEach((x) => x.classList.toggle("is-active", x === b)); renderHeatmap(); });
 
-    // Shared Email / Ext inputs (overview + calls)
-    $$('[data-filter="email"]').forEach((i) => i.addEventListener("input", () => setFilter({ email: i.value.trim() })));
-    $$('[data-filter="ext"]').forEach((i) => i.addEventListener("input", () => setFilter({ ext: i.value.trim() })));
+    // Combo inputs (email + ext): live dropdown of data in the system.
+    $$('[data-filter]').forEach((i) => {
+      i.addEventListener("input", () => openFor(i));
+      i.addEventListener("focus", () => { if (i.value.trim()) openFor(i); });
+      i.addEventListener("keydown", (e) => {
+        if (e.key === "ArrowDown") { e.preventDefault(); moveActive(1); }
+        else if (e.key === "ArrowUp") { e.preventDefault(); moveActive(-1); }
+        else if (e.key === "Enter") { e.preventDefault(); if (!commitActive(i)) applyFilter(); }
+        else if (e.key === "Escape") { closeMenu(); }
+      });
+    });
+    // Pick a suggestion (mousedown beats the input blur / document click)
+    document.addEventListener("mousedown", (e) => {
+      const opt = e.target.closest(".combo__opt");
+      if (!opt) return;
+      e.preventDefault();
+      addPill(opt.getAttribute("data-type"), opt.getAttribute("data-val"));
+      const inp = opt.closest(".combo").querySelector("[data-filter]");
+      if (inp) inp.value = "";
+      closeMenu();
+    });
 
     $("#uvFilter").addEventListener("input", renderUvTable);
-    $("#ovReset").addEventListener("click", resetAll);
-    $("#callReset").addEventListener("click", resetAll);
 
-    // Click email / ext anywhere → fill the filter field, staying on the
-    // current tab (only the user switches tabs manually). Clicking inside the
-    // "Xem chi tiết" modal closes it back onto the overview it opened from.
+    // Delegated clicks: outside-close, apply, pill-remove, reset, table values
     document.addEventListener("click", (e) => {
+      if (!e.target.closest(".combo")) closeMenu();
+      if (e.target.closest("[data-apply]")) { applyFilter(); return; }
+      const rx = e.target.closest("[data-pill-remove]");
+      if (rx) { removePill(rx.getAttribute("data-type"), rx.getAttribute("data-val")); return; }
+      if (e.target.closest("[data-filter-reset]")) { resetFilter(); return; }
+      // Click an email / ext value in a table → add a pill + apply, staying on
+      // the current tab. Clicking inside the modal closes it first.
       const em = e.target.closest("[data-email]");
-      if (em) { closeModal(); setFilter({ email: em.getAttribute("data-email"), ext: "" }); return; }
+      if (em) { closeModal(); addPill("email", em.getAttribute("data-email")); applyFilter(); return; }
       const ex = e.target.closest("[data-ext]");
-      if (ex) { closeModal(); setFilter({ ext: ex.getAttribute("data-ext"), email: "" }); return; }
+      if (ex) { closeModal(); addPill("ext", ex.getAttribute("data-ext")); applyFilter(); return; }
     });
 
     $("#uvDetailBtn").addEventListener("click", openModal);
