@@ -281,9 +281,10 @@ a { text-decoration: none; color: inherit; }
 .modal__tools { padding: 12px 20px 10px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
 .modal__body { overflow: auto; padding: 0 20px 16px; }
 .modal__body .uv-table thead th { position: sticky; top: 0; z-index: 3; background: #fff; border-bottom: 1px solid var(--border); }
-/* keep the "Tất cả lưu lượng cuộc gọi" popup a steady height — blank space
-   below when the search returns fewer rows than fill it */
-#uvModal .modal__body { min-height: 440px; }
+/* keep the "Tất cả lưu lượng cuộc gọi" popup at full height always — blank
+   space below when the search returns fewer rows (never hug content) */
+#uvModal .modal { height: min(82vh, 820px); }
+#uvModal .modal__body { flex: 1 1 auto; min-height: 0; }
 
 /* Export-report modal */
 .modal--sm { width: min(520px, 100%); }
@@ -760,9 +761,9 @@ a { text-decoration: none; color: inherit; }
   }
 
   /* ---------- Ext table (% Odoo bar, equal length) ---------- */
-  function uvRowHtml(u, i) {
+  function uvRowHtml(u, i, highlight) {
     const pct = u.total ? Math.round((u.odoo / u.total) * 100) : 0;
-    const sel = userSelected(u) ? " is-selected" : "";
+    const sel = highlight && userSelected(u) ? " is-selected" : "";
     return `<tr class="${sel}">
       <td class="uv-rank">${i + 1}</td>
       <td><span class="uv-email" data-email="${esc(u.email)}">${esc(u.email)}</span></td>
@@ -778,7 +779,7 @@ a { text-decoration: none; color: inherit; }
     const all = matchedUsers();
     // with a filter applied, show exactly the filtered Ext (no Top-7 cap)
     const rows = filterActive() ? all : all.slice(0, 7);
-    $("#uvBody").innerHTML = rows.length ? rows.map(uvRowHtml).join("")
+    $("#uvBody").innerHTML = rows.length ? rows.map((u, i) => uvRowHtml(u, i, false)).join("")
       : `<tr><td colspan="8" class="uv-empty">Không có Ext/Email nào khớp bộ lọc</td></tr>`;
     $("#uvFoot").textContent = filterActive()
       ? `Hiển thị ${rows.length} Ext khớp bộ lọc · tổng ${D.USERS.length} Ext`
@@ -790,7 +791,7 @@ a { text-decoration: none; color: inherit; }
     const q = ($("#uvModalFilter").value || "").trim().toLowerCase();
     let rows = D.USERS;
     if (q) rows = rows.filter((u) => u.ext.toLowerCase().includes(q) || u.email.toLowerCase().includes(q) || u.name.toLowerCase().includes(q));
-    $("#uvModalBody").innerHTML = rows.length ? rows.map(uvRowHtml).join("") : `<tr><td colspan="8" class="uv-empty">Không có kết quả</td></tr>`;
+    $("#uvModalBody").innerHTML = rows.length ? rows.map((u, i) => uvRowHtml(u, i, true)).join("") : `<tr><td colspan="8" class="uv-empty">Không có kết quả</td></tr>`;
     $("#uvModalSub").textContent = `${rows.length} / ${D.USERS.length} Ext`;
   }
 

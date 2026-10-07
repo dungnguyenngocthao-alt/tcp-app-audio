@@ -270,9 +270,10 @@ a { text-decoration: none; color: inherit; }
 .modal__tools { padding: 12px 20px 10px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
 .modal__body { overflow: auto; padding: 0 20px 16px; }
 .modal__body .uv-table thead th { position: sticky; top: 0; z-index: 3; background: #fff; border-bottom: 1px solid var(--border); }
-/* keep the "Tất cả lưu lượng cuộc gọi" popup a steady height — blank space
-   below when the search returns fewer rows than fill it */
-#uvModal .modal__body { min-height: 440px; }
+/* keep the "Tất cả lưu lượng cuộc gọi" popup at full height always — blank
+   space below when the search returns fewer rows (never hug content) */
+#uvModal .modal { height: min(82vh, 820px); }
+#uvModal .modal__body { flex: 1 1 auto; min-height: 0; }
 
 /* Export-report modal */
 .modal--sm { width: min(520px, 100%); }

@@ -122,9 +122,9 @@
   }
 
   /* ---------- Ext table (% Odoo bar, equal length) ---------- */
-  function uvRowHtml(u, i) {
+  function uvRowHtml(u, i, highlight) {
     const pct = u.total ? Math.round((u.odoo / u.total) * 100) : 0;
-    const sel = userSelected(u) ? " is-selected" : "";
+    const sel = highlight && userSelected(u) ? " is-selected" : "";
     return `<tr class="${sel}">
       <td class="uv-rank">${i + 1}</td>
       <td><span class="uv-email" data-email="${esc(u.email)}">${esc(u.email)}</span></td>
@@ -140,7 +140,7 @@
     const all = matchedUsers();
     // with a filter applied, show exactly the filtered Ext (no Top-7 cap)
     const rows = filterActive() ? all : all.slice(0, 7);
-    $("#uvBody").innerHTML = rows.length ? rows.map(uvRowHtml).join("")
+    $("#uvBody").innerHTML = rows.length ? rows.map((u, i) => uvRowHtml(u, i, false)).join("")
       : `<tr><td colspan="8" class="uv-empty">Không có Ext/Email nào khớp bộ lọc</td></tr>`;
     $("#uvFoot").textContent = filterActive()
       ? `Hiển thị ${rows.length} Ext khớp bộ lọc · tổng ${D.USERS.length} Ext`
@@ -152,7 +152,7 @@
     const q = ($("#uvModalFilter").value || "").trim().toLowerCase();
     let rows = D.USERS;
     if (q) rows = rows.filter((u) => u.ext.toLowerCase().includes(q) || u.email.toLowerCase().includes(q) || u.name.toLowerCase().includes(q));
-    $("#uvModalBody").innerHTML = rows.length ? rows.map(uvRowHtml).join("") : `<tr><td colspan="8" class="uv-empty">Không có kết quả</td></tr>`;
+    $("#uvModalBody").innerHTML = rows.length ? rows.map((u, i) => uvRowHtml(u, i, true)).join("") : `<tr><td colspan="8" class="uv-empty">Không có kết quả</td></tr>`;
     $("#uvModalSub").textContent = `${rows.length} / ${D.USERS.length} Ext`;
   }
 
