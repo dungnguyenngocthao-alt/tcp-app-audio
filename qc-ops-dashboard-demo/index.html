@@ -31,7 +31,7 @@
     <div class="content">
       <div class="page-head">
         <h1 class="page-title">Dashboard</h1>
-        <button class="btn-export"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7z"/><path d="M14 2v5a1 1 0 0 0 1 1h5"/><path d="M8 13h2"/><path d="M14 13h2"/><path d="M8 17h2"/><path d="M14 17h2"/></svg>Xuất báo cáo</button>
+        <button class="btn-export" id="exportBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7z"/><path d="M14 2v5a1 1 0 0 0 1 1h5"/><path d="M8 13h2"/><path d="M14 13h2"/><path d="M8 17h2"/><path d="M14 17h2"/></svg>Xuất báo cáo</button>
       </div>
 
       <div class="tabs" id="tabs">
@@ -91,13 +91,12 @@
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v16a2 2 0 0 0 2 2h16"/><rect x="7" y="13" width="9" height="4" rx="1"/><rect x="7" y="5" width="12" height="4" rx="1"/></svg>
             <span class="card__title">Lưu lượng cuộc gọi theo Ext.</span>
             <div class="uv-head-actions">
-              <label class="uv-search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/></svg><input id="uvFilter" type="text" placeholder="Lọc theo Ext / Email…" /></label>
               <button class="btn-detail" id="uvDetailBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>Xem chi tiết</button>
             </div>
           </div>
           <div class="uv-table-scroll">
             <table class="uv-table">
-              <thead><tr><th class="uv-rank">#</th><th>Email</th><th>Ext.</th><th class="num">Tổng cuộc gọi</th><th class="num">Cuộc gọi từ Odoo</th><th class="col-bar">% cuộc gọi từ Odoo</th></tr></thead>
+              <thead><tr><th class="uv-rank">#</th><th>Email</th><th>Ext.</th><th class="num">Tổng cuộc gọi</th><th class="num">Inbound</th><th class="num">Outbound</th><th class="num">Cuộc gọi từ Odoo</th><th class="col-bar">% cuộc gọi từ Odoo</th></tr></thead>
               <tbody id="uvBody"></tbody>
             </table>
           </div>
@@ -148,12 +147,39 @@
     </div>
   </div>
 
-  <!-- MODAL (view all Ext) -->
+  <!-- MODAL (view all call volume) -->
   <div class="modal-overlay" id="uvModal">
-    <div class="modal" role="dialog" aria-modal="true" aria-label="Tất cả Ext.">
-      <div class="modal__head"><div><div class="modal__title">Tất cả Ext.</div><div class="modal__sub" id="uvModalSub"></div></div><button class="modal__close" id="uvModalClose" aria-label="Đóng"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button></div>
+    <div class="modal" role="dialog" aria-modal="true" aria-label="Tất cả lưu lượng cuộc gọi">
+      <div class="modal__head"><div><div class="modal__title">Tất cả lưu lượng cuộc gọi</div><div class="modal__sub" id="uvModalSub"></div></div><button class="modal__close" id="uvModalClose" aria-label="Đóng"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button></div>
       <div class="modal__tools"><label class="uv-search" style="flex:1 1 auto;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/></svg><input id="uvModalFilter" type="text" placeholder="Tìm Ext / Email…" style="width:100%;" /></label></div>
-      <div class="modal__body"><table class="uv-table"><thead><tr><th class="uv-rank">#</th><th>Email</th><th>Ext.</th><th class="num">Tổng cuộc gọi</th><th class="num">Cuộc gọi từ Odoo</th><th class="col-bar">% cuộc gọi từ Odoo</th></tr></thead><tbody id="uvModalBody"></tbody></table></div>
+      <div class="modal__body"><table class="uv-table"><thead><tr><th class="uv-rank">#</th><th>Email</th><th>Ext.</th><th class="num">Tổng cuộc gọi</th><th class="num">Inbound</th><th class="num">Outbound</th><th class="num">Cuộc gọi từ Odoo</th><th class="col-bar">% cuộc gọi từ Odoo</th></tr></thead><tbody id="uvModalBody"></tbody></table></div>
+    </div>
+  </div>
+
+  <!-- MODAL (export report) -->
+  <div class="modal-overlay" id="exportModal">
+    <div class="modal modal--sm" role="dialog" aria-modal="true" aria-label="Xuất báo cáo">
+      <div class="modal__head"><div><div class="modal__title">Xuất báo cáo</div><div class="modal__sub">Chọn phạm vi dữ liệu để xuất (.csv)</div></div><button class="modal__close" id="exportClose" aria-label="Đóng"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button></div>
+      <div class="modal__form">
+        <label class="ex-check"><input type="checkbox" id="exportUseFilter" /><span>Xuất báo cáo theo bộ lọc đang áp dụng</span></label>
+        <div class="ex-fields" id="exportFields">
+          <div class="ex-row">
+            <span class="filter__field"><label>Từ ngày</label><input class="input" type="date" id="exFrom" /></span>
+            <span class="filter__field"><label>Đến ngày</label><input class="input" type="date" id="exTo" /></span>
+          </div>
+          <div class="ex-row">
+            <span class="filter__field"><label>BU</label><select class="select" id="exBu"><option value="all">Tất cả</option><option value="pso">PSO</option><option value="tcp">TCP</option><option value="unknown">Chưa rõ</option></select></span>
+          </div>
+          <div class="ex-row">
+            <span class="filter__field"><label>Email</label><input class="input" type="text" id="exEmail" placeholder="Nhập email…" /></span>
+            <span class="filter__field"><label>Ext.</label><input class="input" type="text" id="exExt" placeholder="Nhập Ext…" /></span>
+          </div>
+        </div>
+      </div>
+      <div class="modal__foot">
+        <button class="btn-reset" id="exportCancel">Hủy</button>
+        <button class="btn-export" id="exportRun"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V3"/><path d="m7 10 5 5 5-5"/><path d="M21 21H3"/></svg>Xuất báo cáo</button>
+      </div>
     </div>
   </div>
 

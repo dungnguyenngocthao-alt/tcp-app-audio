@@ -188,10 +188,10 @@ a { text-decoration: none; color: inherit; }
 .uv-legend .dot--odoo { background: var(--export-grad); }
 .uv-legend .dot--rest { background: var(--odoo-rest); }
 .uv-table-scroll { overflow-x: auto; }
-.uv-table { width: 100%; border-collapse: collapse; min-width: 640px; }
+.uv-table { width: 100%; border-collapse: collapse; min-width: 860px; }
 .uv-table thead th { text-align: left; font-size: 11px; font-weight: 600; letter-spacing: .4px; text-transform: uppercase; color: var(--muted); padding: 8px 10px; border-bottom: 1px solid var(--border); }
 .uv-table th.num, .uv-table td.num { text-align: right; white-space: nowrap; }
-.uv-table th.col-bar { width: 32%; }
+.uv-table th.col-bar { width: 17%; }
 .uv-table tbody td { padding: 11px 10px; border-bottom: 1px solid var(--border-soft); font-size: 13px; vertical-align: middle; }
 .uv-table tbody tr:last-child td { border-bottom: 0; }
 .uv-table tbody tr:hover { background: #fafaff; }
@@ -202,10 +202,12 @@ a { text-decoration: none; color: inherit; }
 .uv-email { color: var(--accent-600); font-weight: 500; cursor: pointer; }
 .uv-email:hover { text-decoration: underline; }
 .uv-num-total { font-size: 14px; font-weight: 700; color: var(--ink); }
+.uv-num-in { font-size: 13px; font-weight: 600; color: var(--in-2); }
+.uv-num-out { font-size: 13px; font-weight: 600; color: var(--out-2); }
 .uv-num-odoo { font-size: 13px; font-weight: 600; color: var(--accent); }
-.col-bar { min-width: 160px; }
-.pct-cell { display: flex; align-items: center; gap: 10px; }
-.pct-bar { flex: 1 1 auto; height: 16px; border-radius: 6px; background: var(--odoo-rest); overflow: hidden; min-width: 60px; }
+.col-bar { min-width: 118px; }
+.pct-cell { display: flex; align-items: center; gap: 8px; }
+.pct-bar { flex: 1 1 auto; height: 16px; border-radius: 6px; background: var(--odoo-rest); overflow: hidden; min-width: 40px; }
 .pct-bar__fill { display: block; height: 100%; background: var(--export-grad); border-radius: 6px; }
 .pct-val { flex: 0 0 auto; font-size: 12px; font-weight: 700; color: var(--accent); min-width: 34px; text-align: right; }
 .uv-empty { text-align: center; color: var(--muted); padding: 24px 0; font-size: 13px; }
@@ -268,6 +270,21 @@ a { text-decoration: none; color: inherit; }
 .modal__tools { padding: 12px 20px 10px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
 .modal__body { overflow: auto; padding: 0 20px 16px; }
 .modal__body .uv-table thead th { position: sticky; top: 0; z-index: 3; background: #fff; border-bottom: 1px solid var(--border); }
+/* keep the "Tất cả lưu lượng cuộc gọi" popup a steady height — blank space
+   below when the search returns fewer rows than fill it */
+#uvModal .modal__body { min-height: 440px; }
+
+/* Export-report modal */
+.modal--sm { width: min(520px, 100%); }
+.modal__form { padding: 18px 20px 6px; display: flex; flex-direction: column; gap: 16px; }
+.ex-check { display: inline-flex; align-items: center; gap: 10px; font-size: 13px; font-weight: 600; color: var(--ink-2); cursor: pointer; }
+.ex-check input { width: 16px; height: 16px; accent-color: var(--accent); }
+.ex-fields { display: flex; flex-direction: column; gap: 12px; }
+.ex-fields.is-disabled { opacity: .45; pointer-events: none; }
+.ex-row { display: flex; gap: 12px; flex-wrap: wrap; }
+.ex-row .filter__field { flex: 1 1 150px; }
+.ex-row .input, .ex-row .select { width: 100%; }
+.modal__foot { display: flex; justify-content: flex-end; gap: 10px; padding: 16px 20px 18px; }
 
 /* Responsive */
 @media (max-width: 1100px) { .grid--2, .grid--3 { grid-template-columns: 1fr; } }

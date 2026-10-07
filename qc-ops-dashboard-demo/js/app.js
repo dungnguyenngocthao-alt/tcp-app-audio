@@ -130,21 +130,20 @@
       <td><span class="uv-email" data-email="${esc(u.email)}">${esc(u.email)}</span></td>
       <td><span class="uv-ext" data-ext="${esc(u.ext)}">${esc(u.ext)}</span></td>
       <td class="num"><span class="uv-num-total">${nfmt(u.total)}</span></td>
+      <td class="num"><span class="uv-num-in">${nfmt(u.inbound)}</span></td>
+      <td class="num"><span class="uv-num-out">${nfmt(u.outbound)}</span></td>
       <td class="num"><span class="uv-num-odoo">${nfmt(u.odoo)}</span></td>
       <td class="col-bar"><div class="pct-cell"><span class="pct-bar"><span class="pct-bar__fill" style="width:${pct}%"></span></span><span class="pct-val">${pct}%</span></div></td>
     </tr>`;
   }
-  function filteredUsers() {
-    const q = $("#uvFilter").value.trim().toLowerCase();
-    return matchedUsers().filter((u) => !q || u.ext.toLowerCase().includes(q) || u.email.toLowerCase().includes(q) || u.name.toLowerCase().includes(q));
-  }
   function renderUvTable() {
-    const rows = filteredUsers(), shown = rows.slice(0, 7);
-    $("#uvBody").innerHTML = shown.length ? shown.map(uvRowHtml).join("")
-      : `<tr><td colspan="6" class="uv-empty">Không có Ext/Email nào khớp bộ lọc</td></tr>`;
-    const q = $("#uvFilter").value.trim() || filterActive();
-    $("#uvFoot").textContent = q
-      ? `Hiển thị ${Math.min(7, rows.length)} / ${rows.length} Ext khớp · tổng ${D.USERS.length} Ext`
+    const all = matchedUsers();
+    // with a filter applied, show exactly the filtered Ext (no Top-7 cap)
+    const rows = filterActive() ? all : all.slice(0, 7);
+    $("#uvBody").innerHTML = rows.length ? rows.map(uvRowHtml).join("")
+      : `<tr><td colspan="8" class="uv-empty">Không có Ext/Email nào khớp bộ lọc</td></tr>`;
+    $("#uvFoot").textContent = filterActive()
+      ? `Hiển thị ${rows.length} Ext khớp bộ lọc · tổng ${D.USERS.length} Ext`
       : `Hiển thị Top 7 / ${D.USERS.length} Ext có nhiều cuộc gọi nhất`;
   }
 
@@ -153,8 +152,45 @@
     const q = ($("#uvModalFilter").value || "").trim().toLowerCase();
     let rows = D.USERS;
     if (q) rows = rows.filter((u) => u.ext.toLowerCase().includes(q) || u.email.toLowerCase().includes(q) || u.name.toLowerCase().includes(q));
-    $("#uvModalBody").innerHTML = rows.length ? rows.map(uvRowHtml).join("") : `<tr><td colspan="6" class="uv-empty">Không có kết quả</td></tr>`;
+    $("#uvModalBody").innerHTML = rows.length ? rows.map(uvRowHtml).join("") : `<tr><td colspan="8" class="uv-empty">Không có kết quả</td></tr>`;
     $("#uvModalSub").textContent = `${rows.length} / ${D.USERS.length} Ext`;
+  }
+
+  /* ---------- Export report (CSV) ---------- */
+  function openExport() {
+    $("#exportUseFilter").checked = filterActive();
+    toggleExportFields();
+    $("#exportModal").classList.add("is-open"); document.body.style.overflow = "hidden";
+  }
+  function closeExport() { $("#exportModal").classList.remove("is-open"); document.body.style.overflow = ""; }
+  function toggleExportFields() { $("#exportFields").classList.toggle("is-disabled", $("#exportUseFilter").checked); }
+  function exportRows() {
+    if ($("#exportUseFilter").checked) {
+      return D.CALLS.filter((c) => !filterActive() || selExts.includes(extOf(c)) || selEmails.includes(emailOf(c)));
+    }
+    const e = $("#exEmail").value.trim().toLowerCase();
+    const x = $("#exExt").value.trim().toLowerCase();
+    const bu = $("#exBu").value;
+    return D.CALLS.filter((c) => {
+      if (bu !== "all" && c.bu !== bu) return false;
+      if (e && !emailOf(c).toLowerCase().includes(e)) return false;
+      if (x && !(extOf(c).toLowerCase().includes(x) || c.from.toLowerCase().includes(x) || c.to.toLowerCase().includes(x))) return false;
+      return true;
+    });
+  }
+  function runExport() {
+    const rows = exportRows();
+    const cell = (v) => '"' + String(v).replace(/"/g, '""') + '"';
+    const head = ["Thời gian", "Email", "Phân loại", "Gọi từ", "Gọi đến", "BU", "Thời lượng", "Ghi âm"];
+    const lines = [head.map(cell).join(",")];
+    rows.forEach((c) => lines.push([c.time, emailOf(c), c.dir, c.from, c.to, BU_LABEL[c.bu], c.dur, c.rec ? "Có" : "Chưa"].map(cell).join(",")));
+    const csv = "﻿" + lines.join("\r\n");
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8" });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob); a.download = "bao-cao-cuoc-goi.csv";
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+    closeExport();
   }
   function openModal() { $("#uvModal").classList.add("is-open"); document.body.style.overflow = "hidden"; renderModalTable(); setTimeout(() => $("#uvModalFilter").focus(), 30); }
   function closeModal() { $("#uvModal").classList.remove("is-open"); document.body.style.overflow = ""; }
@@ -225,7 +261,7 @@
   function resetFilter() {
     selEmails = []; selExts = [];
     $$('[data-filter]').forEach((i) => (i.value = ""));
-    closeMenu(); $("#callBu").value = "all"; $("#uvFilter").value = "";
+    closeMenu(); $("#callBu").value = "all";
     callsPage = 1; renderPills(); renderFiltered();
   }
 
@@ -335,8 +371,6 @@
       closeMenu();
     });
 
-    $("#uvFilter").addEventListener("input", renderUvTable);
-
     // Delegated clicks: outside-close, pill-remove, reset, table values
     document.addEventListener("click", (e) => {
       if (!e.target.closest(".combo")) closeMenu();
@@ -355,7 +389,16 @@
     $("#uvModalClose").addEventListener("click", closeModal);
     $("#uvModal").addEventListener("click", (e) => { if (e.target.id === "uvModal") closeModal(); });
     $("#uvModalFilter").addEventListener("input", renderModalTable);
-    document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeModal(); });
+
+    // Export report
+    $("#exportBtn").addEventListener("click", openExport);
+    $("#exportClose").addEventListener("click", closeExport);
+    $("#exportCancel").addEventListener("click", closeExport);
+    $("#exportModal").addEventListener("click", (e) => { if (e.target.id === "exportModal") closeExport(); });
+    $("#exportUseFilter").addEventListener("change", toggleExportFields);
+    $("#exportRun").addEventListener("click", runExport);
+
+    document.addEventListener("keydown", (e) => { if (e.key === "Escape") { closeModal(); closeExport(); } });
 
     $("#callBu").addEventListener("change", () => { callsPage = 1; renderCalls(); });
     $("#callsPerPage").addEventListener("change", () => { callsPage = 1; renderCalls(); });
