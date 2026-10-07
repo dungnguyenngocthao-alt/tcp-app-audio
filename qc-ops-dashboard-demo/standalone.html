@@ -283,7 +283,8 @@ a { text-decoration: none; color: inherit; }
 .modal__body .uv-table thead th { position: sticky; top: 0; z-index: 3; background: #fff; border-bottom: 1px solid var(--border); }
 /* keep the "Tất cả lưu lượng cuộc gọi" popup at full height always — blank
    space below when the search returns fewer rows (never hug content) */
-#uvModal .modal { height: min(82vh, 820px); }
+/* match the width of the "Lưu lượng cuộc gọi" block (content max 1480 − 64 padding) */
+#uvModal .modal { width: min(1416px, calc(100% - 16px)); height: min(82vh, 820px); }
 #uvModal .modal__body { flex: 1 1 auto; min-height: 0; }
 
 /* Export-report modal */
