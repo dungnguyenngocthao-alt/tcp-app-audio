@@ -146,7 +146,7 @@ a { text-decoration: none; color: inherit; }
 .dot--tcp { background: linear-gradient(135deg, var(--tcp-1), var(--tcp-2)); }
 .dot--unk { background: linear-gradient(135deg, var(--unk-1), var(--unk-2)); }
 .legend__pct { color: var(--ink); font-weight: 700; }
-.chart { height: 196px; width: 100%; }
+.chart { height: 196px; width: 100%; position: relative; }
 .chart svg { display: block; width: 100%; height: auto; }
 .chart__axis { stroke: var(--border); stroke-width: 1; }
 .chart__grid { stroke: var(--border-soft); stroke-width: 1; }
@@ -157,6 +157,21 @@ a { text-decoration: none; color: inherit; }
 .chart__dot--in { fill: var(--in-2); }
 .chart__dot--out { fill: var(--out-2); }
 .chart__xlabel { fill: var(--muted); font-size: 10px; font-family: var(--sans); }
+/* hover guide + highlighted points */
+.chart__cursor { stroke: var(--accent); stroke-width: 1; opacity: .35; }
+.chart__hl { stroke: #fff; stroke-width: 2; }
+.chart__hl--in { fill: var(--in-1); }
+.chart__hl--out { fill: var(--out-1); }
+/* hover tooltip */
+.chart__tip { position: absolute; z-index: 5; pointer-events: none; transform: translate(-50%, -100%); background: #fff; border: 1px solid var(--border); border-radius: 8px; box-shadow: var(--shadow-pop); padding: 8px 10px; font-size: 12px; white-space: nowrap; }
+.chart__tip[hidden] { display: none; }
+.chart__tip-date { font-weight: 700; color: var(--ink); margin-bottom: 5px; }
+.chart__tip-row { display: flex; align-items: center; gap: 7px; color: var(--label); }
+.chart__tip-row + .chart__tip-row { margin-top: 2px; }
+.chart__tip-row b { margin-left: auto; padding-left: 14px; color: var(--ink); font-weight: 700; }
+.chart__tip-dot { width: 8px; height: 8px; border-radius: 3px; flex: 0 0 8px; }
+.chart__tip-dot--in { background: var(--in-2); }
+.chart__tip-dot--out { background: var(--out-2); }
 
 /* Donut cards */
 .card--donut { display: flex; flex-direction: column; }

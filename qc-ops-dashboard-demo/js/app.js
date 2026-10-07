@@ -89,6 +89,36 @@
   }
 
   /* ---------- Chart (line: inbound + outbound) ---------- */
+  let chartGeo = null;
+  function onChartMove(e) {
+    const g = chartGeo; if (!g) return;
+    const host = $("#chart"), svg = host.querySelector("svg"); if (!svg) return;
+    const hr = host.getBoundingClientRect(), sr = svg.getBoundingClientRect();
+    const scaleX = sr.width / g.W, scaleY = sr.height / g.H;
+    const mx = e.clientX - sr.left;
+    let best = 0, bd = Infinity;
+    for (let i = 0; i < g.xs.length; i++) { const d = Math.abs(g.xs[i] * scaleX - mx); if (d < bd) { bd = d; best = i; } }
+    const cur = svg.querySelector(".chart__cursor");
+    cur.setAttribute("x1", g.xs[best]); cur.setAttribute("x2", g.xs[best]); cur.style.display = "";
+    const hi = svg.querySelector(".chart__hl--in"), ho = svg.querySelector(".chart__hl--out");
+    hi.setAttribute("cx", g.xs[best]); hi.setAttribute("cy", g.yin[best]); hi.style.display = "";
+    ho.setAttribute("cx", g.xs[best]); ho.setAttribute("cy", g.yout[best]); ho.style.display = "";
+    const s = g.series[best], tip = host.querySelector(".chart__tip");
+    tip.innerHTML = `<div class="chart__tip-date">${g.labels[best]}</div>` +
+      `<div class="chart__tip-row"><span class="chart__tip-dot chart__tip-dot--in"></span>Inbound<b>${nfmt(s.in)}</b></div>` +
+      `<div class="chart__tip-row"><span class="chart__tip-dot chart__tip-dot--out"></span>Outbound<b>${nfmt(s.out)}</b></div>`;
+    tip.hidden = false;
+    const px = (sr.left - hr.left) + g.xs[best] * scaleX;
+    const py = (sr.top - hr.top) + Math.min(g.yin[best], g.yout[best]) * scaleY;
+    const half = tip.offsetWidth / 2;
+    const clampedX = Math.max(half + 2, Math.min(hr.width - half - 2, px));
+    tip.style.left = clampedX + "px"; tip.style.top = (py - 12) + "px";
+  }
+  function onChartLeave() {
+    const svg = $("#chart").querySelector("svg");
+    if (svg) svg.querySelectorAll(".chart__cursor,.chart__hl").forEach((el) => (el.style.display = "none"));
+    const tip = $("#chart").querySelector(".chart__tip"); if (tip) tip.hidden = true;
+  }
   function renderChart() {
     const c = D.CHART[curRange], n = c.series.length;
     const el = $("#chart");
@@ -112,7 +142,8 @@
       return d;
     };
     const line = (key) => smooth(c.series.map((s, i) => [xAt(i), yAt(s[key])]));
-    const dots = (key, cls) => (n <= 12 ? c.series.map((s, i) => `<circle class="${cls}" cx="${xAt(i).toFixed(1)}" cy="${yAt(s[key]).toFixed(1)}" r="3"><title>${c.labels[i]} · ${s[key]}</title></circle>`).join("") : "");
+    const r = n > 20 ? 2.6 : 3; // a dot on every data point, all ranges
+    const dots = (key, cls) => c.series.map((s, i) => `<circle class="${cls}" cx="${xAt(i).toFixed(1)}" cy="${yAt(s[key]).toFixed(1)}" r="${r}"/>`).join("");
     const grid = [0.5, 1].map((f) => `<line class="chart__grid" x1="${padX}" y1="${(plotBottom - f * plotH).toFixed(1)}" x2="${W - padX}" y2="${(plotBottom - f * plotH).toFixed(1)}"/>`).join("");
     const labelEvery = n <= 12 ? 1 : 5;
     const labels = c.series.map((s, i) => ((i % labelEvery === 0 || i === n - 1)
@@ -121,12 +152,23 @@
       `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Inbound / Outbound theo thời gian">
         ${grid}
         <line class="chart__axis" x1="${padX}" y1="${plotBottom}" x2="${W - padX}" y2="${plotBottom}"/>
+        <line class="chart__cursor" x1="0" y1="${padT}" x2="0" y2="${plotBottom}" style="display:none"/>
         <path class="chart__line chart__line--out" d="${line("out")}"/>
         <path class="chart__line chart__line--in" d="${line("in")}"/>
         ${dots("out", "chart__dot chart__dot--out")}
         ${dots("in", "chart__dot chart__dot--in")}
+        <circle class="chart__hl chart__hl--out" r="5.5" style="display:none"/>
+        <circle class="chart__hl chart__hl--in" r="5.5" style="display:none"/>
         ${labels}
-      </svg>`;
+      </svg>
+      <div class="chart__tip" hidden></div>`;
+    chartGeo = {
+      W, H, padX, padT, plotBottom,
+      xs: c.series.map((s, i) => +xAt(i).toFixed(2)),
+      yin: c.series.map((s) => +yAt(s.in).toFixed(2)),
+      yout: c.series.map((s) => +yAt(s.out).toFixed(2)),
+      labels: c.labels, series: c.series,
+    };
     if (dashFiltered()) {
       const us = matchedUsers();
       const total = us.reduce((a, u) => a + u.total, 0);
@@ -481,6 +523,9 @@
 
     // keep the line chart's width/height crisp on resize
     let rz; window.addEventListener("resize", () => { clearTimeout(rz); rz = setTimeout(renderChart, 150); });
+    // line-chart hover: tooltip + vertical guide + highlighted points
+    $("#chart").addEventListener("mousemove", onChartMove);
+    $("#chart").addEventListener("mouseleave", onChartLeave);
   }
 
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
