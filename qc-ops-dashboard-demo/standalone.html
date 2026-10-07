@@ -157,7 +157,7 @@ a { text-decoration: none; color: inherit; }
 .dot--tcp { background: linear-gradient(135deg, var(--tcp-1), var(--tcp-2)); }
 .dot--unk { background: linear-gradient(135deg, var(--unk-1), var(--unk-2)); }
 .legend__pct { color: var(--ink); font-weight: 700; }
-.chart { display: flex; align-items: flex-end; gap: 4px; height: 196px; }
+.chart { display: flex; align-items: flex-end; gap: 2px; height: 196px; }
 .chart__col { flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; height: 100%; border-bottom: 1px solid var(--border); }
 .chart__stack { display: flex; flex-direction: column; justify-content: flex-end; border-radius: 4px 4px 0 0; overflow: hidden; max-width: 100%; }
 .chart__seg--out { background: linear-gradient(var(--out-1), var(--out-2)); }
@@ -716,7 +716,7 @@ a { text-decoration: none; color: inherit; }
     const max = Math.max(1, ...c.series.map((s) => s.in + s.out));
     // bars fill the full column width (scale with container), capped so wide
     // ranges don't produce chunky bars.
-    const barMax = n <= 7 ? 30 : n <= 12 ? 22 : 12;
+    const barMax = n <= 7 ? 54 : n <= 12 ? 38 : 20;
     const labelEvery = n <= 12 ? 1 : 5;
     $("#chart").innerHTML = c.series.map((s, i) => {
       const tot = s.in + s.out, h = Math.max(3, Math.round((tot / max) * 170));

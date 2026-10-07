@@ -73,7 +73,7 @@
     const max = Math.max(1, ...c.series.map((s) => s.in + s.out));
     // bars fill the full column width (scale with container), capped so wide
     // ranges don't produce chunky bars.
-    const barMax = n <= 7 ? 30 : n <= 12 ? 22 : 12;
+    const barMax = n <= 7 ? 54 : n <= 12 ? 38 : 20;
     const labelEvery = n <= 12 ? 1 : 5;
     $("#chart").innerHTML = c.series.map((s, i) => {
       const tot = s.in + s.out, h = Math.max(3, Math.round((tot / max) * 170));
