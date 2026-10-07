@@ -890,9 +890,17 @@ a { text-decoration: none; color: inherit; }
     // show as many x labels as fit without overlapping, spaced evenly and
     // anchored on the latest point (adapts to width / mobile)
     const minLabelPx = 46, avail = W - 2 * padX;
-    const labelEvery = Math.max(1, Math.ceil(minLabelPx * (n - 1) / avail));
-    const shown = new Set();
-    for (let i = n - 1; i >= 0; i -= labelEvery) shown.add(i);
+    // spread labels evenly and always keep the first + last points labelled,
+    // shrinking the count until none overlap
+    const evenIdx = (kk) => { if (kk <= 1) return [0]; const s = new Set(); for (let j = 0; j < kk; j++) s.add(Math.round(j * (n - 1) / (kk - 1))); return [...s].sort((a, b) => a - b); };
+    let k = Math.min(n, Math.max(2, Math.floor(avail / minLabelPx) + 1)), idxs = evenIdx(k);
+    while (k > 2) {
+      let ok = true;
+      for (let j = 1; j < idxs.length; j++) if (xAt(idxs[j]) - xAt(idxs[j - 1]) < minLabelPx) { ok = false; break; }
+      if (ok) break;
+      idxs = evenIdx(--k);
+    }
+    const shown = new Set(idxs);
     const labels = c.series.map((s, i) => (shown.has(i)
       ? `<text class="chart__xlabel" x="${xAt(i).toFixed(1)}" y="${H - 7}" text-anchor="middle">${c.labels[i]}</text>` : "")).join("");
     el.innerHTML =
