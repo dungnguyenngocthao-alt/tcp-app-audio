@@ -300,7 +300,6 @@ a { text-decoration: none; color: inherit; }
       <!-- ============== PANE: TỔNG QUAN ============== -->
       <div data-pane="overview">
         <div class="filter">
-          <span class="filter__label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v3"/><path d="M16 2v3"/><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M8 13h.01"/><path d="M12 13h.01"/><path d="M16 13h.01"/><path d="M8 17h.01"/><path d="M12 17h.01"/><path d="M16 17h.01"/></svg>Khoảng ngày</span>
           <span class="filter__field"><label>Từ</label><input class="input" type="date" /></span>
           <span class="filter__sep">–</span>
           <span class="filter__field"><label>Đến</label><input class="input" type="date" /></span>
@@ -373,9 +372,9 @@ a { text-decoration: none; color: inherit; }
       <!-- ============== PANE: DANH SÁCH CUỘC GỌI ============== -->
       <div data-pane="calls" hidden>
         <div class="filter calls-filter">
-          <label class="calls-search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/></svg><input id="callSearch" type="text" placeholder="Mã cuộc gọi hoặc số điện thoại…" /></label>
-          <span class="filter__field"><label>Từ ngày</label><input class="input" type="date" /></span>
-          <span class="filter__field"><label>Đến ngày</label><input class="input" type="date" /></span>
+          <span class="filter__field"><label>Từ</label><input class="input" type="date" /></span>
+          <span class="filter__sep">–</span>
+          <span class="filter__field"><label>Đến</label><input class="input" type="date" /></span>
           <span class="filter__field"><label>BU</label><select class="select" id="callBu"><option value="all">Tất cả</option><option value="pso">PSO</option><option value="tcp">TCP</option><option value="unknown">Chưa rõ</option></select></span>
           <span class="filter__field"><label>Email</label><input class="input input--email" data-filter="email" type="email" placeholder="email@talentconnectplus.edu.vn" /></span>
           <span class="filter__field"><label>Ext.</label><input class="input input--ext" data-filter="ext" type="text" placeholder="VD: 203" /></span>
@@ -386,7 +385,7 @@ a { text-decoration: none; color: inherit; }
           <div class="calls-table-wrap">
             <table class="calls-table">
               <thead><tr>
-                <th>EMAIL</th><th>THỜI GIAN</th><th>GỌI TỪ</th><th>GỌI ĐẾN</th><th>PHÂN LOẠI</th><th>BU</th><th>THỜI LƯỢNG</th><th>GHI ÂM</th><th>CHI TIẾT</th>
+                <th>THỜI GIAN</th><th>EMAIL</th><th>GỌI TỪ</th><th>GỌI ĐẾN</th><th>PHÂN LOẠI</th><th>BU</th><th>THỜI LƯỢNG</th><th>GHI ÂM</th><th>CHI TIẾT</th>
               </tr></thead>
               <tbody id="callsBody"></tbody>
             </table>
@@ -735,11 +734,9 @@ a { text-decoration: none; color: inherit; }
 
   /* ---------- Calls list ---------- */
   function filteredCalls() {
-    const q = ($("#callSearch").value || "").trim().toLowerCase();
     const bu = $("#callBu").value, fe = fEmail.toLowerCase(), fx = fExt.toLowerCase();
     return D.CALLS.filter((c) => {
       if (bu !== "all" && c.bu !== bu) return false;
-      if (q && !(c.id.toLowerCase().includes(q) || c.from.toLowerCase().includes(q) || c.to.toLowerCase().includes(q))) return false;
       if (fe && !emailOf(c).toLowerCase().includes(fe)) return false;
       if (fx && !(extOf(c).toLowerCase().includes(fx) || c.from.toLowerCase().includes(fx) || c.to.toLowerCase().includes(fx))) return false;
       return true;
@@ -751,8 +748,8 @@ a { text-decoration: none; color: inherit; }
       ? `<span class="rec-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 14h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-7a9 9 0 0 1 18 0v7a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3"/></svg>Nghe ghi âm</span>`
       : `<span class="rec-none">Chưa có</span>`;
     return `<tr>
-      <td><span class="call-email" data-email="${esc(emailOf(c))}">${esc(emailOf(c))}</span></td>
       <td>${esc(c.time)}</td>
+      <td><span class="call-email" data-email="${esc(emailOf(c))}">${esc(emailOf(c))}</span></td>
       <td>${esc(c.from)}</td>
       <td>${esc(c.to)}</td>
       <td><span class="chip ${cls}">${c.dir}</span></td>
@@ -786,7 +783,7 @@ a { text-decoration: none; color: inherit; }
     renderChips(); paintDonuts(); renderChart(); renderUvTable(); renderCalls();
   }
   function resetAll() {
-    $("#uvFilter").value = ""; $("#callSearch").value = ""; $("#callBu").value = "all"; callsPage = 1;
+    $("#uvFilter").value = ""; $("#callBu").value = "all"; callsPage = 1;
     setFilter({ email: "", ext: "" });
   }
 
@@ -834,7 +831,6 @@ a { text-decoration: none; color: inherit; }
     $("#uvModalFilter").addEventListener("input", renderModalTable);
     document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeModal(); });
 
-    $("#callSearch").addEventListener("input", () => { callsPage = 1; renderCalls(); });
     $("#callBu").addEventListener("change", () => { callsPage = 1; renderCalls(); });
     $("#callsPerPage").addEventListener("change", () => { callsPage = 1; renderCalls(); });
     $("#callsPrev").addEventListener("click", () => { if (callsPage > 1) { callsPage--; renderCalls(); } });

@@ -43,7 +43,6 @@
       <!-- ============== PANE: TỔNG QUAN ============== -->
       <div data-pane="overview">
         <div class="filter">
-          <span class="filter__label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v3"/><path d="M16 2v3"/><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M8 13h.01"/><path d="M12 13h.01"/><path d="M16 13h.01"/><path d="M8 17h.01"/><path d="M12 17h.01"/><path d="M16 17h.01"/></svg>Khoảng ngày</span>
           <span class="filter__field"><label>Từ</label><input class="input" type="date" /></span>
           <span class="filter__sep">–</span>
           <span class="filter__field"><label>Đến</label><input class="input" type="date" /></span>
@@ -116,9 +115,9 @@
       <!-- ============== PANE: DANH SÁCH CUỘC GỌI ============== -->
       <div data-pane="calls" hidden>
         <div class="filter calls-filter">
-          <label class="calls-search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/></svg><input id="callSearch" type="text" placeholder="Mã cuộc gọi hoặc số điện thoại…" /></label>
-          <span class="filter__field"><label>Từ ngày</label><input class="input" type="date" /></span>
-          <span class="filter__field"><label>Đến ngày</label><input class="input" type="date" /></span>
+          <span class="filter__field"><label>Từ</label><input class="input" type="date" /></span>
+          <span class="filter__sep">–</span>
+          <span class="filter__field"><label>Đến</label><input class="input" type="date" /></span>
           <span class="filter__field"><label>BU</label><select class="select" id="callBu"><option value="all">Tất cả</option><option value="pso">PSO</option><option value="tcp">TCP</option><option value="unknown">Chưa rõ</option></select></span>
           <span class="filter__field"><label>Email</label><input class="input input--email" data-filter="email" type="email" placeholder="email@talentconnectplus.edu.vn" /></span>
           <span class="filter__field"><label>Ext.</label><input class="input input--ext" data-filter="ext" type="text" placeholder="VD: 203" /></span>
@@ -129,7 +128,7 @@
           <div class="calls-table-wrap">
             <table class="calls-table">
               <thead><tr>
-                <th>EMAIL</th><th>THỜI GIAN</th><th>GỌI TỪ</th><th>GỌI ĐẾN</th><th>PHÂN LOẠI</th><th>BU</th><th>THỜI LƯỢNG</th><th>GHI ÂM</th><th>CHI TIẾT</th>
+                <th>THỜI GIAN</th><th>EMAIL</th><th>GỌI TỪ</th><th>GỌI ĐẾN</th><th>PHÂN LOẠI</th><th>BU</th><th>THỜI LƯỢNG</th><th>GHI ÂM</th><th>CHI TIẾT</th>
               </tr></thead>
               <tbody id="callsBody"></tbody>
             </table>

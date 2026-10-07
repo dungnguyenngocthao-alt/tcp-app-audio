@@ -166,11 +166,9 @@
 
   /* ---------- Calls list ---------- */
   function filteredCalls() {
-    const q = ($("#callSearch").value || "").trim().toLowerCase();
     const bu = $("#callBu").value, fe = fEmail.toLowerCase(), fx = fExt.toLowerCase();
     return D.CALLS.filter((c) => {
       if (bu !== "all" && c.bu !== bu) return false;
-      if (q && !(c.id.toLowerCase().includes(q) || c.from.toLowerCase().includes(q) || c.to.toLowerCase().includes(q))) return false;
       if (fe && !emailOf(c).toLowerCase().includes(fe)) return false;
       if (fx && !(extOf(c).toLowerCase().includes(fx) || c.from.toLowerCase().includes(fx) || c.to.toLowerCase().includes(fx))) return false;
       return true;
@@ -182,8 +180,8 @@
       ? `<span class="rec-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 14h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-7a9 9 0 0 1 18 0v7a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3"/></svg>Nghe ghi âm</span>`
       : `<span class="rec-none">Chưa có</span>`;
     return `<tr>
-      <td><span class="call-email" data-email="${esc(emailOf(c))}">${esc(emailOf(c))}</span></td>
       <td>${esc(c.time)}</td>
+      <td><span class="call-email" data-email="${esc(emailOf(c))}">${esc(emailOf(c))}</span></td>
       <td>${esc(c.from)}</td>
       <td>${esc(c.to)}</td>
       <td><span class="chip ${cls}">${c.dir}</span></td>
@@ -217,7 +215,7 @@
     renderChips(); paintDonuts(); renderChart(); renderUvTable(); renderCalls();
   }
   function resetAll() {
-    $("#uvFilter").value = ""; $("#callSearch").value = ""; $("#callBu").value = "all"; callsPage = 1;
+    $("#uvFilter").value = ""; $("#callBu").value = "all"; callsPage = 1;
     setFilter({ email: "", ext: "" });
   }
 
@@ -265,7 +263,6 @@
     $("#uvModalFilter").addEventListener("input", renderModalTable);
     document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeModal(); });
 
-    $("#callSearch").addEventListener("input", () => { callsPage = 1; renderCalls(); });
     $("#callBu").addEventListener("change", () => { callsPage = 1; renderCalls(); });
     $("#callsPerPage").addEventListener("change", () => { callsPage = 1; renderCalls(); });
     $("#callsPrev").addEventListener("click", () => { if (callsPage > 1) { callsPage--; renderCalls(); } });
