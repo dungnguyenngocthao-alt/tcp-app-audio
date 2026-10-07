@@ -14,8 +14,25 @@
 
   // shared multi-select filter — selecting a value adds a pill and filters live.
   let selEmails = [], selExts = [];
+  // shared date range (yyyy-mm-dd from the <input type=date>), applies to calls.
+  let selFrom = "", selTo = "";
   // the Xuất báo cáo dialog keeps its own selection (same combo/pill UI).
   let exEmails = [], exExts = [];
+
+  // call.time looks like "14:12 29/9/26" → a Date (year 2000+yy)
+  function callDate(c) {
+    const m = String(c.time).match(/(\d{1,2}):(\d{2})\s+(\d{1,2})\/(\d{1,2})\/(\d{2})/);
+    if (!m) return null;
+    return new Date(2000 + +m[5], +m[4] - 1, +m[3], +m[1], +m[2]);
+  }
+  function inRange(c, from, to) {
+    if (!from && !to) return true;
+    const d = callDate(c);
+    if (!d) return true;
+    if (from && d < new Date(from + "T00:00:00")) return false;
+    if (to && d > new Date(to + "T23:59:59")) return false;
+    return true;
+  }
   let curRange = "7d";
   let heatStatus = "all";
   let callsPage = 1;
@@ -171,12 +188,15 @@
   function toggleExportFields() { $("#exportFields").classList.toggle("is-disabled", $("#exportUseFilter").checked); }
   function exportRows() {
     if ($("#exportUseFilter").checked) {
-      return D.CALLS.filter((c) => !filterActive() || selExts.includes(extOf(c)) || selEmails.includes(emailOf(c)));
+      return D.CALLS.filter((c) => inRange(c, selFrom, selTo) &&
+        (!filterActive() || selExts.includes(extOf(c)) || selEmails.includes(emailOf(c))));
     }
     const bu = $("#exBu").value;
+    const from = $("#exFrom").value, to = $("#exTo").value;
     const useSel = exEmails.length > 0 || exExts.length > 0;
     return D.CALLS.filter((c) => {
       if (bu !== "all" && c.bu !== bu) return false;
+      if (!inRange(c, from, to)) return false;
       if (useSel && !(exExts.includes(extOf(c)) || exEmails.includes(emailOf(c)))) return false;
       return true;
     });
@@ -222,6 +242,7 @@
     const bu = $("#callBu").value;
     return D.CALLS.filter((c) => {
       if (bu !== "all" && c.bu !== bu) return false;
+      if (!inRange(c, selFrom, selTo)) return false;
       if (filterActive() && !(selExts.includes(extOf(c)) || selEmails.includes(emailOf(c)))) return false;
       return true;
     });
@@ -267,8 +288,9 @@
   function arrFor(scope, type) { return storeFor(scope)[type]; }
 
   function resetFilter() {
-    selEmails.length = 0; selExts.length = 0;
+    selEmails.length = 0; selExts.length = 0; selFrom = ""; selTo = "";
     $$('[data-filter]').forEach((i) => { if ((i.getAttribute("data-scope") || "filter") === "filter") i.value = ""; });
+    $$('[data-date]').forEach((i) => (i.value = ""));
     closeMenu(); $("#callBu").value = "all";
     callsPage = 1; renderPills("filter"); renderFiltered();
   }
@@ -373,6 +395,14 @@
         else if (e.key === "Escape") { closeMenu(); }
       });
     });
+    // Shared date range (Từ / Đến) — syncs both filters and re-renders calls
+    $$('[data-date]').forEach((i) => i.addEventListener("change", () => {
+      const which = i.getAttribute("data-date");
+      if (which === "from") selFrom = i.value; else selTo = i.value;
+      $$(`[data-date="${which}"]`).forEach((o) => { if (o.value !== i.value) o.value = i.value; });
+      callsPage = 1; renderCalls();
+    }));
+
     // Pick a suggestion (mousedown beats the input blur / document click)
     document.addEventListener("mousedown", (e) => {
       const opt = e.target.closest(".combo__opt");
