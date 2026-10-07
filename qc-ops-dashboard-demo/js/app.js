@@ -59,13 +59,15 @@
   function renderChart() {
     const c = D.CHART[curRange], n = c.series.length;
     const max = Math.max(1, ...c.series.map((s) => s.in + s.out));
-    const barW = n <= 7 ? 18 : n <= 12 ? 15 : 7;
+    // bars fill the full column width (scale with container), capped so wide
+    // ranges don't produce chunky bars.
+    const barMax = n <= 7 ? 30 : n <= 12 ? 22 : 12;
     const labelEvery = n <= 12 ? 1 : 5;
     $("#chart").innerHTML = c.series.map((s, i) => {
       const tot = s.in + s.out, h = Math.max(3, Math.round((tot / max) * 170));
       const inH = tot ? Math.round((s.in / tot) * h) : 0, outH = h - inH;
       const show = i % labelEvery === 0 || i === n - 1;
-      return `<div class="chart__col" title="${c.labels[i]} · In ${s.in} · Out ${s.out}"><div class="chart__stack" style="width:${barW}px;height:${h}px"><div class="chart__seg chart__seg--out" style="height:${outH}px"></div><div class="chart__seg chart__seg--in" style="height:${inH}px"></div></div><div class="chart__x">${show ? c.labels[i] : ""}</div></div>`;
+      return `<div class="chart__col" title="${c.labels[i]} · In ${s.in} · Out ${s.out}"><div class="chart__stack" style="width:100%;max-width:${barMax}px;height:${h}px"><div class="chart__seg chart__seg--out" style="height:${outH}px"></div><div class="chart__seg chart__seg--in" style="height:${inH}px"></div></div><div class="chart__x">${show ? c.labels[i] : ""}</div></div>`;
     }).join("");
     const u = activeUser();
     if (u) {
@@ -83,12 +85,28 @@
 
   /* ---------- Top-5 (email, no bar) ---------- */
   function renderTop5(elId, rows) {
-    $(elId).innerHTML = rows.map((r, i) => `
+    $(elId).innerHTML = rows.length
+      ? rows.map((r, i) => `
       <div class="top5__row">
         <span class="top5__rank">${i + 1}</span>
         <span class="top5__email" data-email="${esc(r.email)}" title="${esc(r.email)} · Ext. ${esc(r.ext)}">${esc(r.email)}</span>
         <span class="top5__right"><span class="top5__count">${nfmt(r.calls)}</span><span class="top5__unit">cuộc gọi</span></span>
-      </div>`).join("");
+      </div>`).join("")
+      : `<div class="top5__empty">Không có dữ liệu khớp bộ lọc</div>`;
+  }
+  // caller → outbound calls, callee → inbound calls. With no filter use the
+  // production Top-5 lists; with a filter, derive from the matching Ext users.
+  function topRows(kind) {
+    if (!fEmail && !fExt) return kind === "caller" ? D.TOP5_CALLER : D.TOP5_CALLEE;
+    const key = kind === "caller" ? "outbound" : "inbound";
+    return matchUsers()
+      .map((u) => ({ ext: u.ext, email: u.email, calls: u[key], bu: u.bu }))
+      .sort((a, b) => b.calls - a.calls)
+      .slice(0, 5);
+  }
+  function renderTop5All() {
+    renderTop5("#top5Caller", topRows("caller"));
+    renderTop5("#top5Callee", topRows("callee"));
   }
 
   /* ---------- Ext table (% Odoo bar, equal length) ---------- */
@@ -128,22 +146,6 @@
   }
   function openModal() { $("#uvModal").classList.add("is-open"); document.body.style.overflow = "hidden"; renderModalTable(); setTimeout(() => $("#uvModalFilter").focus(), 30); }
   function closeModal() { $("#uvModal").classList.remove("is-open"); document.body.style.overflow = ""; }
-
-  /* ---------- Filter chips ---------- */
-  function chip(type, label) {
-    const ic = type === "email"
-      ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>'
-      : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 5h8"/><path d="M13 12h8"/><path d="M13 19h8"/><path d="m3 17 2 2 4-4"/><rect x="3" y="4" width="6" height="6" rx="1"/></svg>';
-    return `<span class="fchip">${ic}<span>${esc(label)}</span><button class="fchip__x" data-clear="${type}" aria-label="Bỏ lọc">×</button></span>`;
-  }
-  function renderChips() {
-    const chips = [];
-    if (fEmail) chips.push(chip("email", fEmail));
-    if (fExt) chips.push(chip("ext", "Ext. " + fExt));
-    const box = $("#filterChips");
-    box.innerHTML = chips.join("");
-    box.hidden = chips.length === 0;
-  }
 
   /* ---------- Heatmap 24h ---------- */
   const HEAT_COLORS = { all: [234, 88, 12], answered: [79, 70, 229], unanswered: [100, 116, 139] };
@@ -212,7 +214,7 @@
     $$('[data-filter="email"]').forEach((i) => { if (i.value !== fEmail) i.value = fEmail; });
     $$('[data-filter="ext"]').forEach((i) => { if (i.value !== fExt) i.value = fExt; });
     callsPage = 1;
-    renderChips(); paintDonuts(); renderChart(); renderUvTable(); renderCalls();
+    paintDonuts(); renderChart(); renderTop5All(); renderUvTable(); renderCalls();
   }
   function resetAll() {
     $("#uvFilter").value = ""; $("#callBu").value = "all"; callsPage = 1;
@@ -228,10 +230,8 @@
 
   /* ---------- Init ---------- */
   function init() {
-    paintDonuts(); renderChart();
-    renderTop5("#top5Caller", D.TOP5_CALLER);
-    renderTop5("#top5Callee", D.TOP5_CALLEE);
-    renderUvTable(); renderHeatmap(); renderCalls(); renderChips();
+    paintDonuts(); renderChart(); renderTop5All();
+    renderUvTable(); renderHeatmap(); renderCalls();
 
     $("#tabs").addEventListener("click", (e) => { const b = e.target.closest(".tab"); if (b) activateTab(b.dataset.tab); });
     try { if (new URLSearchParams(location.search).get("tab") === "calls") activateTab("calls"); } catch (e) {}
@@ -247,10 +247,8 @@
     $("#ovReset").addEventListener("click", resetAll);
     $("#callReset").addEventListener("click", resetAll);
 
-    // Click email / ext anywhere → set filter
+    // Click email / ext anywhere → fill the filter field with that value
     document.addEventListener("click", (e) => {
-      const clr = e.target.closest("[data-clear]");
-      if (clr) { setFilter(clr.getAttribute("data-clear") === "email" ? { email: "" } : { ext: "" }); return; }
       const em = e.target.closest("[data-email]");
       if (em) { closeModal(); activateTab("overview"); setFilter({ email: em.getAttribute("data-email"), ext: "" }); window.scrollTo({ top: 0, behavior: "smooth" }); return; }
       const ex = e.target.closest("[data-ext]");

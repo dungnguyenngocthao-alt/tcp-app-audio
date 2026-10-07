@@ -99,14 +99,6 @@ a { text-decoration: none; color: inherit; }
 .btn-reset { display: inline-flex; align-items: center; gap: 8px; margin-left: auto; height: 36px; padding: 0 14px; background: #fff; color: var(--ink-2); border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: 14px; font-weight: 500; }
 .btn-reset svg { width: 16px; height: 16px; }
 
-/* Filter chips (pill tags) */
-.filter-chips[hidden] { display: none; }
-.filter-chips { display: flex; flex-wrap: wrap; gap: 8px; margin: -4px 0 20px; }
-.fchip { display: inline-flex; align-items: center; gap: 6px; height: 28px; padding: 0 6px 0 10px; border-radius: 999px; background: #eef0ff; border: 1px solid #d9d5ff; color: var(--accent-600); font-size: 12px; font-weight: 600; }
-.fchip svg { width: 13px; height: 13px; }
-.fchip__x { display: inline-flex; align-items: center; justify-content: center; width: 18px; height: 18px; border: 0; border-radius: 999px; background: transparent; color: var(--accent-600); font-size: 15px; line-height: 1; }
-.fchip__x:hover { background: #ddd8ff; }
-
 /* Cards + grid */
 .card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow-sm); padding: 20px 24px; }
 .card__head { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
@@ -165,6 +157,7 @@ a { text-decoration: none; color: inherit; }
 .top5__right { flex: 0 0 auto; white-space: nowrap; }
 .top5__count { font-size: 14px; font-weight: 700; color: var(--ink); }
 .top5__unit { font-size: 11px; color: var(--muted); margin-left: 4px; }
+.top5__empty { padding: 18px 0; color: var(--muted); font-size: 13px; }
 
 /* Ext table */
 .uv-head-actions { display: flex; align-items: center; gap: 10px; margin-left: auto; flex-wrap: wrap; }
@@ -177,7 +170,8 @@ a { text-decoration: none; color: inherit; }
 .uv-legend { display: flex; gap: 18px; margin: 14px 0 8px; font-size: 12px; color: var(--label); }
 .uv-legend .dot--odoo { background: var(--export-grad); }
 .uv-legend .dot--rest { background: var(--odoo-rest); }
-.uv-table { width: 100%; border-collapse: collapse; }
+.uv-table-scroll { overflow-x: auto; }
+.uv-table { width: 100%; border-collapse: collapse; min-width: 640px; }
 .uv-table thead th { text-align: left; font-size: 11px; font-weight: 600; letter-spacing: .4px; text-transform: uppercase; color: var(--muted); padding: 8px 10px; border-bottom: 1px solid var(--border); }
 .uv-table th.num, .uv-table td.num { text-align: right; white-space: nowrap; }
 .uv-table th.col-bar { width: 32%; }
@@ -201,6 +195,8 @@ a { text-decoration: none; color: inherit; }
 .uv-foot { font-size: 12px; color: var(--muted); margin-top: 12px; }
 
 /* Heatmap 24h */
+.card__head--heat { flex-wrap: wrap; row-gap: 10px; }
+.card__head--heat #heatStatus { margin-left: auto; }
 .heatmap-scroll { overflow-x: auto; margin-top: 12px; }
 .heatmap { display: grid; grid-template-columns: 76px repeat(24, minmax(30px, 1fr)); gap: 4px; min-width: 820px; }
 .heat-colhead { font-size: 10px; color: var(--muted); text-align: center; padding-bottom: 2px; }
@@ -253,7 +249,7 @@ a { text-decoration: none; color: inherit; }
 .modal__close:hover { background: #f1f1f8; }
 .modal__close svg { width: 16px; height: 16px; }
 .modal__tools { padding: 12px 20px 10px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
-.modal__body { overflow-y: auto; padding: 0 20px 16px; }
+.modal__body { overflow: auto; padding: 0 20px 16px; }
 .modal__body .uv-table thead th { position: sticky; top: 0; z-index: 3; background: #fff; border-bottom: 1px solid var(--border); }
 
 /* Responsive */
@@ -262,6 +258,8 @@ a { text-decoration: none; color: inherit; }
   .content { padding: 16px; }
   .page-title { font-size: 24px; }
   .search { display: none; }
+  /* heatmap tab list drops onto its own full-width row */
+  .card__head--heat #heatStatus { margin-left: 0; width: 100%; justify-content: flex-start; overflow-x: auto; }
 }
 
 </style>
@@ -309,8 +307,6 @@ a { text-decoration: none; color: inherit; }
           <button class="btn-reset" id="ovReset"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>Đặt lại</button>
         </div>
 
-        <div class="filter-chips" id="filterChips" hidden></div>
-
         <div class="grid grid--2">
           <div class="card">
             <div class="stat-row">
@@ -354,16 +350,18 @@ a { text-decoration: none; color: inherit; }
               <button class="btn-detail" id="uvDetailBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>Xem chi tiết</button>
             </div>
           </div>
-          <table class="uv-table">
-            <thead><tr><th class="uv-rank">#</th><th>Ext.</th><th>Email</th><th class="num">Tổng cuộc gọi</th><th class="num">Cuộc gọi từ Odoo</th><th class="col-bar">% cuộc gọi từ Odoo</th></tr></thead>
-            <tbody id="uvBody"></tbody>
-          </table>
+          <div class="uv-table-scroll">
+            <table class="uv-table">
+              <thead><tr><th class="uv-rank">#</th><th>Ext.</th><th>Email</th><th class="num">Tổng cuộc gọi</th><th class="num">Cuộc gọi từ Odoo</th><th class="col-bar">% cuộc gọi từ Odoo</th></tr></thead>
+              <tbody id="uvBody"></tbody>
+            </table>
+          </div>
           <div class="uv-foot" id="uvFoot"></div>
         </div>
 
         <div class="card">
-          <div class="card__head"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M3 9h18"/><path d="M3 15h18"/><path d="M9 3v18"/><path d="M15 3v18"/></svg><span class="card__title">Mật độ cuộc gọi theo khung giờ</span>
-            <div class="range-toggle" id="heatStatus" style="margin-left:auto;"><button class="is-active" data-status="all">Tất cả</button><button data-status="answered">Nghe máy</button><button data-status="unanswered">Không nghe máy</button></div>
+          <div class="card__head card__head--heat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M3 9h18"/><path d="M3 15h18"/><path d="M9 3v18"/><path d="M15 3v18"/></svg><span class="card__title">Mật độ cuộc gọi theo khung giờ</span>
+            <div class="range-toggle" id="heatStatus"><button class="is-active" data-status="all">Tất cả</button><button data-status="answered">Nghe máy</button><button data-status="unanswered">Không nghe máy</button></div>
           </div>
           <div class="heatmap-scroll"><div class="heatmap" id="heatmap"></div></div>
         </div>
@@ -627,13 +625,15 @@ a { text-decoration: none; color: inherit; }
   function renderChart() {
     const c = D.CHART[curRange], n = c.series.length;
     const max = Math.max(1, ...c.series.map((s) => s.in + s.out));
-    const barW = n <= 7 ? 18 : n <= 12 ? 15 : 7;
+    // bars fill the full column width (scale with container), capped so wide
+    // ranges don't produce chunky bars.
+    const barMax = n <= 7 ? 30 : n <= 12 ? 22 : 12;
     const labelEvery = n <= 12 ? 1 : 5;
     $("#chart").innerHTML = c.series.map((s, i) => {
       const tot = s.in + s.out, h = Math.max(3, Math.round((tot / max) * 170));
       const inH = tot ? Math.round((s.in / tot) * h) : 0, outH = h - inH;
       const show = i % labelEvery === 0 || i === n - 1;
-      return `<div class="chart__col" title="${c.labels[i]} · In ${s.in} · Out ${s.out}"><div class="chart__stack" style="width:${barW}px;height:${h}px"><div class="chart__seg chart__seg--out" style="height:${outH}px"></div><div class="chart__seg chart__seg--in" style="height:${inH}px"></div></div><div class="chart__x">${show ? c.labels[i] : ""}</div></div>`;
+      return `<div class="chart__col" title="${c.labels[i]} · In ${s.in} · Out ${s.out}"><div class="chart__stack" style="width:100%;max-width:${barMax}px;height:${h}px"><div class="chart__seg chart__seg--out" style="height:${outH}px"></div><div class="chart__seg chart__seg--in" style="height:${inH}px"></div></div><div class="chart__x">${show ? c.labels[i] : ""}</div></div>`;
     }).join("");
     const u = activeUser();
     if (u) {
@@ -651,12 +651,28 @@ a { text-decoration: none; color: inherit; }
 
   /* ---------- Top-5 (email, no bar) ---------- */
   function renderTop5(elId, rows) {
-    $(elId).innerHTML = rows.map((r, i) => `
+    $(elId).innerHTML = rows.length
+      ? rows.map((r, i) => `
       <div class="top5__row">
         <span class="top5__rank">${i + 1}</span>
         <span class="top5__email" data-email="${esc(r.email)}" title="${esc(r.email)} · Ext. ${esc(r.ext)}">${esc(r.email)}</span>
         <span class="top5__right"><span class="top5__count">${nfmt(r.calls)}</span><span class="top5__unit">cuộc gọi</span></span>
-      </div>`).join("");
+      </div>`).join("")
+      : `<div class="top5__empty">Không có dữ liệu khớp bộ lọc</div>`;
+  }
+  // caller → outbound calls, callee → inbound calls. With no filter use the
+  // production Top-5 lists; with a filter, derive from the matching Ext users.
+  function topRows(kind) {
+    if (!fEmail && !fExt) return kind === "caller" ? D.TOP5_CALLER : D.TOP5_CALLEE;
+    const key = kind === "caller" ? "outbound" : "inbound";
+    return matchUsers()
+      .map((u) => ({ ext: u.ext, email: u.email, calls: u[key], bu: u.bu }))
+      .sort((a, b) => b.calls - a.calls)
+      .slice(0, 5);
+  }
+  function renderTop5All() {
+    renderTop5("#top5Caller", topRows("caller"));
+    renderTop5("#top5Callee", topRows("callee"));
   }
 
   /* ---------- Ext table (% Odoo bar, equal length) ---------- */
@@ -696,22 +712,6 @@ a { text-decoration: none; color: inherit; }
   }
   function openModal() { $("#uvModal").classList.add("is-open"); document.body.style.overflow = "hidden"; renderModalTable(); setTimeout(() => $("#uvModalFilter").focus(), 30); }
   function closeModal() { $("#uvModal").classList.remove("is-open"); document.body.style.overflow = ""; }
-
-  /* ---------- Filter chips ---------- */
-  function chip(type, label) {
-    const ic = type === "email"
-      ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>'
-      : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 5h8"/><path d="M13 12h8"/><path d="M13 19h8"/><path d="m3 17 2 2 4-4"/><rect x="3" y="4" width="6" height="6" rx="1"/></svg>';
-    return `<span class="fchip">${ic}<span>${esc(label)}</span><button class="fchip__x" data-clear="${type}" aria-label="Bỏ lọc">×</button></span>`;
-  }
-  function renderChips() {
-    const chips = [];
-    if (fEmail) chips.push(chip("email", fEmail));
-    if (fExt) chips.push(chip("ext", "Ext. " + fExt));
-    const box = $("#filterChips");
-    box.innerHTML = chips.join("");
-    box.hidden = chips.length === 0;
-  }
 
   /* ---------- Heatmap 24h ---------- */
   const HEAT_COLORS = { all: [234, 88, 12], answered: [79, 70, 229], unanswered: [100, 116, 139] };
@@ -780,7 +780,7 @@ a { text-decoration: none; color: inherit; }
     $$('[data-filter="email"]').forEach((i) => { if (i.value !== fEmail) i.value = fEmail; });
     $$('[data-filter="ext"]').forEach((i) => { if (i.value !== fExt) i.value = fExt; });
     callsPage = 1;
-    renderChips(); paintDonuts(); renderChart(); renderUvTable(); renderCalls();
+    paintDonuts(); renderChart(); renderTop5All(); renderUvTable(); renderCalls();
   }
   function resetAll() {
     $("#uvFilter").value = ""; $("#callBu").value = "all"; callsPage = 1;
@@ -796,10 +796,8 @@ a { text-decoration: none; color: inherit; }
 
   /* ---------- Init ---------- */
   function init() {
-    paintDonuts(); renderChart();
-    renderTop5("#top5Caller", D.TOP5_CALLER);
-    renderTop5("#top5Callee", D.TOP5_CALLEE);
-    renderUvTable(); renderHeatmap(); renderCalls(); renderChips();
+    paintDonuts(); renderChart(); renderTop5All();
+    renderUvTable(); renderHeatmap(); renderCalls();
 
     $("#tabs").addEventListener("click", (e) => { const b = e.target.closest(".tab"); if (b) activateTab(b.dataset.tab); });
     try { if (new URLSearchParams(location.search).get("tab") === "calls") activateTab("calls"); } catch (e) {}
@@ -815,10 +813,8 @@ a { text-decoration: none; color: inherit; }
     $("#ovReset").addEventListener("click", resetAll);
     $("#callReset").addEventListener("click", resetAll);
 
-    // Click email / ext anywhere → set filter
+    // Click email / ext anywhere → fill the filter field with that value
     document.addEventListener("click", (e) => {
-      const clr = e.target.closest("[data-clear]");
-      if (clr) { setFilter(clr.getAttribute("data-clear") === "email" ? { email: "" } : { ext: "" }); return; }
       const em = e.target.closest("[data-email]");
       if (em) { closeModal(); activateTab("overview"); setFilter({ email: em.getAttribute("data-email"), ext: "" }); window.scrollTo({ top: 0, behavior: "smooth" }); return; }
       const ex = e.target.closest("[data-ext]");
