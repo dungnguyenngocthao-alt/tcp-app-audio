@@ -881,8 +881,16 @@ a { text-decoration: none; color: inherit; }
     };
     const line = (key) => smooth(c.series.map((s, i) => [xAt(i), yAt(s[key])]));
     const grid = [0.5, 1].map((f) => `<line class="chart__grid" x1="${padX}" y1="${(plotBottom - f * plotH).toFixed(1)}" x2="${W - padX}" y2="${(plotBottom - f * plotH).toFixed(1)}"/>`).join("");
-    const labelEvery = n <= 12 ? 1 : 5;
-    const labels = c.series.map((s, i) => ((i % labelEvery === 0 || i === n - 1)
+    // show as many x labels as fit without overlapping (adapts to width/mobile)
+    const minLabelPx = 46;
+    const maxLabels = Math.max(2, Math.floor((W - 2 * padX) / minLabelPx));
+    const labelEvery = Math.max(1, Math.ceil(n / maxLabels));
+    const shown = new Set();
+    for (let i = 0; i < n; i += labelEvery) shown.add(i);
+    const lastMult = Math.floor((n - 1) / labelEvery) * labelEvery;
+    if (labelEvery > 1 && lastMult !== n - 1 && (n - 1 - lastMult) < labelEvery) shown.delete(lastMult);
+    shown.add(n - 1);
+    const labels = c.series.map((s, i) => (shown.has(i)
       ? `<text class="chart__xlabel" x="${xAt(i).toFixed(1)}" y="${H - 7}" text-anchor="middle">${c.labels[i]}</text>` : "")).join("");
     el.innerHTML =
       `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Inbound / Outbound theo thời gian">
