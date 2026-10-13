@@ -137,7 +137,10 @@ a { text-decoration: none; color: inherit; }
 .grid--3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 
 /* Stat + chart */
-.stat-row { display: flex; align-items: flex-start; gap: 0; flex-wrap: wrap; }
+.stat-row { display: flex; align-items: flex-start; gap: 0; flex-wrap: wrap; row-gap: 14px; }
+/* 4 stats share the row with the range toggle → slightly tighter gutters */
+.stat-row .stat { padding-right: 18px; }
+.stat-row .stat + .stat { padding-left: 18px; }
 .stat { padding-right: 24px; }
 .stat + .stat { padding-left: 24px; border-left: 1px solid var(--border); }
 .stat__value { font-size: 32px; font-weight: 700; letter-spacing: -.6px; color: var(--ink); line-height: 1.1; }
@@ -194,7 +197,7 @@ a { text-decoration: none; color: inherit; }
 
 /* Top-5 (email, no bar) */
 .top5 { margin-top: 6px; }
-.top5__row { display: flex; align-items: center; gap: 12px; padding: 17px 0; border-top: 1px solid var(--border); }
+.top5__row { display: flex; align-items: center; gap: 12px; padding: 15px 0; border-top: 1px solid var(--border); }
 .top5__row:first-child { border-top: 0; }
 .top5__rank { width: 10px; font-size: 13px; font-weight: 700; color: var(--muted); flex: 0 0 auto; }
 .top5__email { flex: 1 1 auto; min-width: 0; font-size: 13px; color: var(--accent-600); font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer; }
@@ -203,6 +206,13 @@ a { text-decoration: none; color: inherit; }
 .top5__count { font-size: 14px; font-weight: 700; color: var(--ink); }
 .top5__unit { font-size: 11px; color: var(--muted); margin-left: 4px; }
 .top5__empty { padding: 18px 0; color: var(--muted); font-size: 13px; }
+/* Ext column + header row */
+.top5__ext { flex: 0 0 52px; font-family: var(--mono); font-size: 13px; font-weight: 600; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer; }
+.top5__ext:hover { color: var(--accent-600); text-decoration: underline; }
+.top5__right { min-width: 56px; text-align: right; }
+.top5__head { display: flex; align-items: center; gap: 12px; padding: 6px 0 8px; }
+.top5__head span { font-size: 11px; font-weight: 600; letter-spacing: .4px; text-transform: uppercase; color: var(--muted); cursor: default; }
+.top5__head .top5__email:hover, .top5__head .top5__ext:hover { text-decoration: none; color: var(--muted); }
 
 /* Ext table */
 .uv-head-actions { display: flex; align-items: center; gap: 10px; margin-left: auto; flex-wrap: wrap; }
@@ -212,11 +222,12 @@ a { text-decoration: none; color: inherit; }
 .btn-detail { display: inline-flex; align-items: center; gap: 6px; height: 32px; padding: 0 12px; border: 1px solid var(--border); border-radius: var(--radius-sm); background: #fff; color: var(--accent-600); font-size: 13px; font-weight: 600; }
 .btn-detail:hover { background: #f6f5ff; border-color: #d9d5ff; }
 .btn-detail svg { width: 15px; height: 15px; }
+.btn-detail { white-space: nowrap; flex: 0 0 auto; }
 .uv-legend { display: flex; gap: 18px; margin: 14px 0 8px; font-size: 12px; color: var(--label); }
 .uv-legend .dot--odoo { background: var(--export-grad); }
 .uv-legend .dot--rest { background: var(--odoo-rest); }
 .uv-table-scroll { overflow-x: auto; }
-.uv-table { width: 100%; border-collapse: collapse; min-width: 860px; }
+.uv-table { width: 100%; border-collapse: collapse; min-width: 960px; }
 .uv-table thead th { text-align: left; font-size: 11px; font-weight: 600; letter-spacing: .4px; text-transform: uppercase; color: var(--muted); padding: 8px 10px; border-bottom: 1px solid var(--border); }
 .uv-table th.num, .uv-table td.num { text-align: right; white-space: nowrap; }
 .uv-table th.col-bar { width: 17%; }
@@ -232,6 +243,7 @@ a { text-decoration: none; color: inherit; }
 .uv-num-total { font-size: 14px; font-weight: 700; color: var(--ink); }
 .uv-num-in { font-size: 13px; font-weight: 600; color: var(--in-2); }
 .uv-num-out { font-size: 13px; font-weight: 600; color: var(--out-2); }
+.uv-num-avg { font-size: 13px; font-weight: 600; color: var(--ink-2); font-variant-numeric: tabular-nums; }
 .uv-num-odoo { font-size: 13px; font-weight: 600; color: var(--accent); }
 .col-bar { min-width: 118px; }
 .pct-cell { display: flex; align-items: center; gap: 8px; }
@@ -240,6 +252,135 @@ a { text-decoration: none; color: inherit; }
 .pct-val { flex: 0 0 auto; font-size: 12px; font-weight: 700; color: var(--accent); min-width: 34px; text-align: right; }
 .uv-empty { text-align: center; color: var(--muted); padding: 24px 0; font-size: 13px; }
 .uv-foot { font-size: 12px; color: var(--muted); margin-top: 12px; }
+.card--uv { margin-bottom: 20px; }
+
+/* AI analysis blocks */
+.ai-card { background: linear-gradient(135deg, #f6f3ff 0%, #fbfaff 45%, #ffffff 100%); border-color: #e2dafb; }
+.ai-card--wide { margin-bottom: 20px; }
+.card--heat { margin-bottom: 20px; }
+.ai-card__head { display: flex; align-items: center; flex-wrap: wrap; gap: 6px 10px; }
+.ai-card__icon { width: 28px; height: 28px; border-radius: 8px; flex: 0 0 28px; display: inline-flex; align-items: center; justify-content: center; color: #fff; background: linear-gradient(135deg, #4f46e5, #8b5cf6); box-shadow: 0 4px 10px -4px rgba(99, 70, 229, .6); }
+.ai-card__icon svg { width: 16px; height: 16px; }
+.ai-card__title { font-size: 14px; font-weight: 700; color: var(--ink); }
+.ai-card__topic { font-size: 13px; color: var(--label); }
+.ai-card__topic::before { content: "·"; margin-right: 8px; color: var(--muted); }
+.ai-card__badge { margin-left: auto; font-size: 11px; font-weight: 600; color: #6d28d9; background: #efe9ff; border-radius: 999px; padding: 3px 9px; white-space: nowrap; }
+.ai-lead { margin: 14px 0 10px; font-size: 14px; line-height: 1.55; color: var(--ink); }
+.ai-lead b { color: #3730a3; }
+.ai-lead .ai-up { color: var(--out-2, #16a34a); }
+.ai-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.ai-card--wide .ai-list { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px 24px; }
+.ai-item { display: flex; align-items: flex-start; gap: 9px; font-size: 13px; line-height: 1.5; color: var(--ink-2); min-width: 0; overflow-wrap: anywhere; }
+.ai-item b { color: var(--ink); font-weight: 600; }
+.ai-item__icon { width: 18px; height: 18px; flex: 0 0 18px; margin-top: 1px; border-radius: 999px; display: inline-flex; align-items: center; justify-content: center; }
+.ai-item__icon svg { width: 11px; height: 11px; }
+.ai-item--good .ai-item__icon { background: #dcfce7; color: #15803d; }
+.ai-item--warn .ai-item__icon { background: #fef3c7; color: #b45309; }
+.ai-item--info .ai-item__icon { background: #e0e7ff; color: #4338ca; }
+.ai-reco { margin-top: 14px; padding: 10px 12px; border-radius: 10px; background: rgba(79, 70, 229, .06); border: 1px dashed #c9c2f5; font-size: 13px; line-height: 1.5; color: var(--ink-2); }
+.ai-reco__lbl { display: block; font-size: 11px; font-weight: 700; letter-spacing: .4px; text-transform: uppercase; color: #6d28d9; margin-bottom: 4px; }
+.ai-reco ul { margin: 0; padding-left: 18px; }
+.ai-reco li + li { margin-top: 2px; }
+/* duration stats (TB / dài nhất / ngắn nhất) under the histogram */
+.stat-row--dur { margin: 14px 0 22px; }
+.stat__sub { margin-top: 4px; font-size: 12px; color: var(--muted); }
+.stat__sub b { color: #4338ca; font-weight: 700; }
+.stat-row--dur .stat__value { font-size: 26px; }
+
+/* Call-duration histogram */
+.card__head--dur { flex-wrap: wrap; row-gap: 8px; }
+.dh-chart { display: grid; gap: 14px; align-items: start; }
+.dh-col { display: flex; flex-direction: column; align-items: stretch; text-align: center; min-width: 0; }
+.dh-val { display: flex; justify-content: center; align-items: baseline; gap: 6px; height: 24px; margin-bottom: 6px; white-space: nowrap; }
+.dh-val b { font-size: 15px; color: var(--ink); }
+.dh-val span { font-size: 12px; font-weight: 600; color: var(--muted); }
+.dh-track { height: 170px; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; border-bottom: 1px solid var(--border); }
+.dh-bar { width: min(100%, 120px); border-radius: 8px 8px 2px 2px; }
+.dh-col--lt30 .dh-bar { background: linear-gradient(180deg, #cbd5e1, #94a3b8); }
+.dh-col--s30m1 .dh-bar { background: linear-gradient(180deg, #a5b4fc, #818cf8); }
+.dh-col--m1m3 .dh-bar { background: linear-gradient(180deg, #6366f1, #4f46e5); }
+.dh-col--gt3 .dh-bar { background: linear-gradient(180deg, #4f46e5, #3730a3); }
+.dh-lbl { margin-top: 8px; font-size: 13px; font-weight: 600; color: var(--ink-2); white-space: nowrap; }
+.dh-desc { margin-top: 2px; font-size: 11px; line-height: 1.3; color: var(--muted); }
+
+/* Dashboard sections (I. Tổng quan / II. Trạng thái cuộc gọi) */
+.dash-section + .dash-section { margin-top: 36px; }
+.section-title { display: flex; align-items: center; gap: 10px; margin: 0 0 16px; font-size: 18px; font-weight: 700; letter-spacing: -.3px; color: var(--ink); }
+.section-title__num { color: var(--accent); min-width: 22px; }
+.section-title::after { content: ""; flex: 1 1 auto; height: 1px; background: var(--border); margin-left: 6px; }
+.grid--status { grid-template-columns: minmax(0, 1fr) minmax(0, 2fr); }
+
+/* Conversion funnel */
+.card__head--funnel { flex-wrap: wrap; row-gap: 10px; }
+.funnel { display: flex; flex-direction: column; gap: 8px; margin-top: 16px; }
+.fn-row { display: grid; grid-template-columns: 205px minmax(0, 1fr) 225px; align-items: center; gap: 20px; }
+.fn-label { display: flex; align-items: center; gap: 12px; min-width: 0; }
+.fn-step { width: 26px; height: 26px; flex: 0 0 26px; border-radius: 999px; background: #eef0ff; color: var(--accent); font-size: 12px; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; }
+.fn-name { font-size: 14px; font-weight: 600; color: var(--ink); }
+.fn-sub { font-size: 12px; color: var(--muted); margin-top: 1px; }
+.fn-track { display: flex; justify-content: center; }
+.fn-bar { height: 46px; border-radius: 8px; display: flex; align-items: center; justify-content: center; min-width: 64px; transition: width .35s ease; }
+.fn-bar span { font-size: 15px; font-weight: 700; color: #fff; font-variant-numeric: tabular-nums; }
+.fn-row--1 .fn-bar { background: linear-gradient(90deg, #c7d2fe, #a5b4fc, #c7d2fe); }
+.fn-row--2 .fn-bar { background: linear-gradient(90deg, #a5b4fc, #818cf8, #a5b4fc); }
+.fn-row--3 .fn-bar { background: linear-gradient(90deg, #818cf8, #6366f1, #818cf8); }
+.fn-row--4 .fn-bar { background: linear-gradient(90deg, #6366f1, #4f46e5, #6366f1); }
+.fn-row--5 .fn-bar { background: linear-gradient(90deg, #4338ca, #3730a3, #4338ca); }
+.fn-row--1 .fn-bar span, .fn-row--2 .fn-bar span { color: #1e1b4b; }
+.fn-meta { min-width: 0; }
+.fn-pct { font-size: 18px; font-weight: 700; color: var(--ink); line-height: 1.1; }
+.fn-pct small { font-size: 12px; font-weight: 500; color: var(--muted); }
+.fn-conv { font-size: 12px; font-weight: 600; color: var(--accent-600); margin-top: 2px; }
+.fn-drop { font-size: 11px; line-height: 1.35; color: var(--muted); margin-top: 1px; }
+.funnel-foot { display: flex; flex-wrap: wrap; gap: 6px 14px; align-items: baseline; margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--border); font-size: 13px; color: var(--label); }
+.funnel-foot b { color: #3730a3; font-size: 15px; }
+.funnel-foot__note { margin-left: auto; font-size: 12px; color: var(--muted); }
+
+/* Success-rate table (Nghe máy / tổng) */
+.sr-table { min-width: 600px; }
+.sr-table th.col-bar { width: 30%; }
+.sr-num-ans { font-size: 13px; font-weight: 600; color: #4f46e5; }
+.pct-bar__fill--ans { background: linear-gradient(90deg, #4f46e5 0%, #6d64ef 100%); }
+.pct-val--ans { color: #4f46e5; }
+/* status dropdown sits right next to "Xem chi tiết" (call volume) and in the
+   heatmap head */
+.status-select { min-width: 170px; font-size: 13px; color: var(--ink-2); }
+
+/* Status multi-select in the filter (pills like email / ext) */
+.st-trigger { min-width: 180px; text-align: left; white-space: nowrap; color: var(--muted); }
+.st-trigger.has-value { color: var(--ink-2); }
+.st-menu { min-width: 220px; max-height: none; }
+.st-opt { display: flex; align-items: center; gap: 9px; width: 100%; border: 0; background: transparent; padding: 7px 9px; border-radius: 6px; font-size: 13px; color: var(--ink); text-align: left; }
+.st-opt:hover { background: #f3f2ff; }
+.st-opt__box { width: 16px; height: 16px; flex: 0 0 16px; border: 1.5px solid #c9cbe3; border-radius: 4px; display: inline-flex; align-items: center; justify-content: center; background: #fff; }
+.st-opt__box svg { width: 11px; height: 11px; color: #fff; opacity: 0; }
+.st-opt.is-checked .st-opt__box { background: var(--accent); border-color: var(--accent); }
+.st-opt.is-checked .st-opt__box svg { opacity: 1; }
+.st-opt .chip-dot { flex: 0 0 7px; }
+.fpill__dot { width: 9px; height: 9px; border-radius: 999px; flex: 0 0 9px; }
+.st-legend__row.is-off { opacity: .4; }
+/* single-choice status dropdown (call volume, its popup, heatmap) */
+.st-single { display: inline-block; }
+.st-single__trigger { display: inline-flex; align-items: center; gap: 8px; width: 100%; color: var(--ink-2); font-size: 13px; }
+.st-single__label { overflow: hidden; text-overflow: ellipsis; }
+.st-single--sm .st-single__trigger { height: 32px; }
+.st-dot { width: 9px; height: 9px; flex: 0 0 9px; }
+.st-single .st-menu { left: auto; right: 0; }
+.st-opt--single .st-opt__label { flex: 1 1 auto; }
+.st-opt__tick { display: inline-flex; width: 14px; height: 14px; color: var(--accent); opacity: 0; }
+.st-opt__tick svg { width: 14px; height: 14px; }
+.st-opt--single.is-current { color: var(--accent-600); font-weight: 600; }
+.st-opt--single.is-current .st-opt__tick { opacity: 1; }
+.st-opt:disabled { opacity: .4; cursor: not-allowed; background: transparent; }
+
+/* Status pie */
+.card--status .donut-area { padding: 16px 0; }
+.st-legend { display: flex; flex-direction: column; gap: 2px; }
+.st-legend__row { display: grid; grid-template-columns: 10px minmax(0, 1fr) auto 42px; align-items: center; gap: 10px; padding: 5px 2px; font-size: 13px; color: var(--label); border-top: 1px solid var(--border-soft); }
+.st-legend__row:first-child { border-top: 0; }
+.st-legend__label { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.st-legend__count { color: var(--ink-2); font-weight: 600; font-variant-numeric: tabular-nums; }
+.st-legend__row .legend__pct { text-align: right; }
 
 /* Heatmap 24h */
 .card__head--heat { flex-wrap: wrap; row-gap: 10px; }
@@ -256,7 +397,10 @@ a { text-decoration: none; color: inherit; }
 .calls-search input { border: 0; outline: 0; font: inherit; font-size: 14px; color: var(--ink-2); width: 100%; background: transparent; }
 .calls-card { padding: 0; }
 .calls-table-wrap { overflow-x: auto; }
-.calls-table { width: 100%; border-collapse: collapse; min-width: 1040px; }
+.calls-table { width: 100%; border-collapse: collapse; min-width: 1120px; }
+/* 10 columns now (added TRẠNG THÁI) → slightly tighter cell gutters */
+.calls-table thead th, .calls-table tbody td { padding-left: 10px; padding-right: 10px; }
+.calls-table thead th:first-child, .calls-table tbody td:first-child { padding-left: 16px; }
 .calls-table thead th { text-align: left; font-size: 11px; font-weight: 600; letter-spacing: .4px; text-transform: uppercase; color: var(--muted); padding: 14px 16px; border-bottom: 1px solid var(--border); white-space: nowrap; }
 .calls-table tbody td { padding: 13px 16px; border-bottom: 1px solid var(--border-soft); font-size: 14px; color: var(--ink-2); white-space: nowrap; vertical-align: middle; }
 .calls-table tbody tr:last-child td { border-bottom: 0; }
@@ -265,11 +409,14 @@ a { text-decoration: none; color: inherit; }
 .call-id:hover { text-decoration: underline; }
 .call-email { color: var(--accent-600); font-weight: 500; cursor: pointer; }
 .call-email:hover { text-decoration: underline; }
+.calls-table .call-email { display: inline-block; max-width: 210px; overflow: hidden; text-overflow: ellipsis; vertical-align: middle; }
 .chip { display: inline-flex; align-items: center; gap: 6px; height: 22px; padding: 0 10px; border-radius: 999px; font-size: 12px; font-weight: 600; white-space: nowrap; }
 .chip--out { background: var(--chip-out-bg); color: var(--chip-out-fg); }
 .chip--in { background: var(--chip-in-bg); color: var(--chip-in-fg); }
 .chip--bu { background: var(--chip-bu-bg); color: var(--chip-bu-fg); font-weight: 500; }
 .chip-dot { width: 7px; height: 7px; border-radius: 999px; display: inline-block; }
+.chip--st { background: rgba(var(--st), .12); color: var(--ink-2); font-weight: 500; }
+.chip--st .chip-dot { background: rgb(var(--st)); }
 .rec-link { display: inline-flex; align-items: center; gap: 6px; color: var(--accent); font-weight: 500; cursor: pointer; }
 .rec-link svg { width: 16px; height: 16px; }
 .rec-none { color: var(--muted); }
@@ -297,12 +444,15 @@ a { text-decoration: none; color: inherit; }
 .modal__close svg { width: 16px; height: 16px; }
 .modal__tools { padding: 12px 20px 10px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
 .modal__body { overflow: auto; padding: 0 20px 16px; }
+.modal__tools .status-select { flex: 0 0 190px; }
+.modal__tools .st-single__trigger { height: 32px; }
+@media (max-width: 480px) { .modal__tools .status-select { flex: 1 1 100%; } }
 .modal__body .uv-table thead th { position: sticky; top: 0; z-index: 3; background: #fff; border-bottom: 1px solid var(--border); }
 /* keep the "Tất cả lưu lượng cuộc gọi" popup at full height always — blank
    space below when the search returns fewer rows (never hug content) */
 /* match the width of the "Lưu lượng cuộc gọi" block (content max 1480 − 64 padding) */
-#uvModal .modal { width: min(1416px, calc(100% - 16px)); height: min(82vh, 820px); }
-#uvModal .modal__body { flex: 1 1 auto; min-height: 0; }
+#uvModal .modal, #srModal .modal { width: min(1416px, calc(100% - 16px)); height: min(82vh, 820px); }
+#uvModal .modal__body, #srModal .modal__body { flex: 1 1 auto; min-height: 0; }
 
 /* Export-report modal */
 .modal--sm { width: min(520px, 100%); }
@@ -319,13 +469,38 @@ a { text-decoration: none; color: inherit; }
 .modal__foot { display: flex; justify-content: flex-end; gap: 10px; padding: 16px 20px 18px; }
 
 /* Responsive */
-@media (max-width: 1100px) { .grid--2, .grid--3 { grid-template-columns: minmax(0, 1fr); } }
+@media (max-width: 1100px) {
+  .grid--2, .grid--3, .grid--status { grid-template-columns: minmax(0, 1fr); }
+}
 @media (max-width: 760px) {
   .content { padding: 16px; }
   .page-title { font-size: 24px; }
   .search { display: none; }
   /* heatmap tab list drops onto its own full-width row */
-  .card__head--heat #heatStatus { margin-left: 0; width: 100%; justify-content: flex-start; overflow-x: auto; }
+  .card__head--heat #heatStatus { margin-left: 0; width: 100%; }
+  .st-single .st-menu { left: 0; right: 0; }
+  .section-title { font-size: 16px; }
+  .dh-chart { gap: 8px; }
+  .dh-track { height: 150px; --dh-lbl: 40px; }
+  .dh-val { flex-direction: column; align-items: center; gap: 0; height: 34px; justify-content: flex-end; }
+  .dh-lbl { white-space: normal; font-size: 12px; line-height: 1.25; }
+  /* funnel: label + numbers on one line, bar underneath */
+  .funnel { gap: 14px; }
+  .fn-row { grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "label meta" "bar bar"; gap: 6px 12px; }
+  .fn-label { grid-area: label; }
+  .fn-meta { grid-area: meta; text-align: right; }
+  .fn-track { grid-area: bar; }
+  .fn-bar { height: 34px; }
+  .fn-drop { display: none; }
+  .funnel-foot__note { margin-left: 0; }
+  .ai-card--wide .ai-list { grid-template-columns: minmax(0, 1fr); }
+  .ai-card__badge { margin-left: 0; }
+  .stat-row--dur .stat__value { font-size: 22px; }
+  /* 4 stats → 2 × 2 grid, range toggle on its own row */
+  .stat-row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .stat-row .stat, .stat-row .stat + .stat { padding: 0 16px 0 0; border-left: 0; }
+  .stat-row .stat:nth-child(even) { padding-left: 16px; border-left: 1px solid var(--border); }
+  #rangeToggle { grid-column: 1 / -1; margin-left: 0; justify-self: start; }
 }
 
 /* Tablet / small: lighter card padding so content has more room */
@@ -343,7 +518,7 @@ a { text-decoration: none; color: inherit; }
   .filter__field--date .input { min-width: 0; }
   .filter__field--bu, .filter__field--combo { flex: 1 1 100%; }
   .filter__field--bu .select { width: 100%; }
-  .input--email, .input--ext { min-width: 0; width: 100%; }
+  .input--email, .input--ext, .st-trigger { min-width: 0; width: 100%; }
   .btn-reset, .btn-apply { flex: 1 1 100%; margin-left: 0; justify-content: center; }
 
   /* page head + tabs */
@@ -354,11 +529,9 @@ a { text-decoration: none; color: inherit; }
 
   /* stat row: two stats on a row, range toggle on its own full-width row */
   .stat-row { align-items: flex-start; row-gap: 14px; }
-  .stat { padding-right: 16px; }
-  .stat + .stat { padding-left: 16px; border-left: 1px solid var(--border); }
   .stat__value { font-size: 26px; }
-  .range-toggle { order: 3; width: 100%; margin-left: 0; }
-  .range-toggle button { flex: 1 1 0; text-align: center; }
+  #rangeToggle { order: 3; width: 100%; margin-left: 0; }
+  #rangeToggle button { flex: 1 1 0; text-align: center; }
 
   /* donut + legend a touch tighter */
   .donut, .donut__ring { width: 134px; height: 134px; }
@@ -416,22 +589,30 @@ a { text-decoration: none; color: inherit; }
           <span class="filter__field filter__field--bu"><label>BU</label><select class="select"><option>Tất cả</option><option>PSO</option><option>TCP</option><option>Chưa rõ</option></select></span>
           <span class="filter__field filter__field--combo"><label>Email</label><span class="combo"><input class="input input--email" data-filter="email" type="text" autocomplete="off" placeholder="Nhập email…" /><span class="combo__menu" data-menu="email" hidden></span></span></span>
           <span class="filter__field filter__field--combo"><label>Ext.</label><span class="combo"><input class="input input--ext" data-filter="ext" type="text" autocomplete="off" placeholder="Nhập Ext…" /><span class="combo__menu" data-menu="ext" hidden></span></span></span>
+          <span class="filter__field filter__field--combo filter__field--status"><label>Trạng thái</label><span class="combo"><button type="button" class="select st-trigger" data-st-trigger data-scope="filter">Chọn trạng thái…</button><span class="combo__menu st-menu" data-st-menu hidden></span></span></span>
           <button class="btn-reset" data-filter-reset><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>Đặt lại</button>
           <div class="filter-pills" data-pills="filter" hidden></div>
         </div>
 
+        <!-- ===== I. TỔNG QUAN ===== -->
+        <section class="dash-section" aria-labelledby="secOverview">
+        <h2 class="section-title" id="secOverview"><span class="section-title__num">I.</span>Tổng quan</h2>
+          <div class="card ai-card ai-card--wide" id="aiOverview">
+            <div class="ai-card__head"><span class="ai-card__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/><path d="M20 3v4"/><path d="M22 5h-4"/></svg></span><span class="ai-card__title">AI phân tích</span><span class="ai-card__topic">Tổng quan cuộc gọi</span><span class="ai-card__badge">Cập nhật theo bộ lọc</span></div>
+            <div class="ai-card__body" data-ai-body></div>
+          </div>
+
         <div class="grid grid--2">
           <div class="card">
             <div class="stat-row">
-              <div class="stat"><div class="stat__value" id="statUploaded">0</div><div class="stat__cap">Cuộc gọi đã upload</div><div class="stat__delta" id="statDelta"></div></div>
-              <div class="stat"><div class="stat__value" id="statAvg">—</div><div class="stat__cap">TB thời lượng gọi</div></div>
+              <div class="stat"><div class="stat__value" id="statUploaded">0</div><div class="stat__cap">Cuộc gọi đã thực hiện</div><div class="stat__delta" id="statDelta"></div></div>
               <div class="range-toggle" id="rangeToggle"><button class="is-active" data-range="7d">7 ngày</button><button data-range="30d">30 ngày</button><button data-range="12m">12 tháng</button></div>
             </div>
             <div class="legend"><span class="legend__item"><span class="dot dot--in"></span>Inbound</span><span class="legend__item"><span class="dot dot--out"></span>Outbound</span></div>
             <div class="chart" id="chart"></div>
           </div>
 
-          <div class="card card--donut">
+          <div class="card card--donut card--io">
             <div class="card__head"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3 4 7l4 4"/><path d="M4 7h16"/><path d="m16 21 4-4-4-4"/><path d="M20 17H4"/></svg><span class="card__title">Inbound / Outbound</span></div>
             <div class="donut-area"><div class="donut"><div class="donut__ring" id="ioRing"></div><div class="donut__center"><div class="donut__num" id="ioNum">11.087</div><div class="donut__cap">cuộc gọi</div></div></div></div>
             <div class="donut-legend">
@@ -454,7 +635,26 @@ a { text-decoration: none; color: inherit; }
           </div>
         </div>
 
-        <div class="card" style="margin-bottom:20px;">
+        <div class="grid grid--2">
+          <div class="card card--dur">
+            <div class="card__head card__head--dur"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2 2"/><path d="M5 3 2 6"/><path d="m22 6-3-3"/></svg><span class="card__title">Phân bổ thời lượng cuộc gọi</span>
+            </div>
+            <div class="stat-row stat-row--dur">
+              <div class="stat"><div class="stat__value" id="statUseful">—</div><div class="stat__cap">Cuộc gọi hiệu quả (&gt; 30s)</div></div>
+              <div class="stat"><div class="stat__value" id="statAvg">—</div><div class="stat__cap">TB thời lượng gọi</div></div>
+              <div class="stat"><div class="stat__value" id="statMax">—</div><div class="stat__cap">TL gọi dài nhất</div></div>
+              <div class="stat"><div class="stat__value" id="statMin">—</div><div class="stat__cap">TL gọi ngắn nhất</div></div>
+            </div>
+            <div class="dh-chart" id="durChart"></div>
+          </div>
+
+          <div class="card ai-card" id="aiDuration">
+            <div class="ai-card__head"><span class="ai-card__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/><path d="M20 3v4"/><path d="M22 5h-4"/></svg></span><span class="ai-card__title">AI phân tích</span><span class="ai-card__topic">Thời lượng cuộc gọi</span><span class="ai-card__badge">Cập nhật theo bộ lọc</span></div>
+            <div class="ai-card__body" data-ai-body></div>
+          </div>
+        </div>
+
+        <div class="card card--uv">
           <div class="card__head">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v16a2 2 0 0 0 2 2h16"/><rect x="7" y="13" width="9" height="4" rx="1"/><rect x="7" y="5" width="12" height="4" rx="1"/></svg>
             <span class="card__title">Lưu lượng cuộc gọi</span>
@@ -464,19 +664,75 @@ a { text-decoration: none; color: inherit; }
           </div>
           <div class="uv-table-scroll">
             <table class="uv-table">
-              <thead><tr><th class="uv-rank">#</th><th>Email</th><th>Ext.</th><th class="num">Tổng cuộc gọi</th><th class="num">Inbound</th><th class="num">Outbound</th><th class="num">Cuộc gọi từ Odoo</th><th class="col-bar">% cuộc gọi từ Odoo</th></tr></thead>
+              <thead><tr><th class="uv-rank">#</th><th>Email</th><th>Ext.</th><th class="num">Tổng cuộc gọi</th><th class="num">Inbound</th><th class="num">Outbound</th><th class="num">TB thời lượng gọi</th><th class="num">Cuộc gọi từ Odoo</th><th class="col-bar">% cuộc gọi từ Odoo</th></tr></thead>
               <tbody id="uvBody"></tbody>
             </table>
           </div>
           <div class="uv-foot" id="uvFoot"></div>
         </div>
+        </section>
 
-        <div class="card">
+        <!-- ===== II. TRẠNG THÁI CUỘC GỌI ===== -->
+        <section class="dash-section" aria-labelledby="secStatus">
+        <h2 class="section-title" id="secStatus"><span class="section-title__num">II.</span>Trạng thái cuộc gọi</h2>
+          <div class="card ai-card ai-card--wide" id="aiStatus">
+            <div class="ai-card__head"><span class="ai-card__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/><path d="M20 3v4"/><path d="M22 5h-4"/></svg></span><span class="ai-card__title">AI phân tích</span><span class="ai-card__topic">Trạng thái cuộc gọi</span><span class="ai-card__badge">Cập nhật theo bộ lọc</span></div>
+            <div class="ai-card__body" data-ai-body></div>
+          </div>
+
+        <div class="grid grid--status">
+        <div class="card card--donut card--status">
+          <div class="card__head"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12c.552 0 1.005-.449.95-.998a10 10 0 0 0-8.953-8.951c-.55-.055-.998.398-.998.95v8a1 1 0 0 0 1 1z"/><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/></svg><span class="card__title">Trạng thái cuộc gọi</span></div>
+          <div class="donut-area"><div class="donut"><div class="donut__ring" id="stRing"></div><div class="donut__center"><div class="donut__num" id="stNum">11.087</div><div class="donut__cap">cuộc gọi</div></div></div></div>
+          <div class="st-legend" id="stLegend"></div>
+        </div>
+
+        <div class="card card--sr">
+          <div class="card__head">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.801 10A10 10 0 1 1 17 3.335"/><path d="m9 11 3 3L22 4"/></svg>
+            <span class="card__title">Tỷ lệ gọi thành công theo nhân viên</span>
+            <div class="uv-head-actions">
+              <button class="btn-detail" id="srDetailBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>Xem chi tiết</button>
+            </div>
+          </div>
+          <div class="uv-table-scroll">
+            <table class="uv-table sr-table">
+              <thead><tr><th class="uv-rank">#</th><th>Email</th><th>Ext.</th><th class="num">Tổng cuộc gọi</th><th class="num">Nghe máy</th><th class="col-bar">% cuộc gọi nghe máy thành công</th></tr></thead>
+              <tbody id="srBody"></tbody>
+            </table>
+          </div>
+          <div class="uv-foot" id="srFoot"></div>
+        </div>
+        </div>
+
+        <div class="grid grid--2 grid--funnel">
+        <div class="card card--funnel">
+          <div class="card__head card__head--funnel">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 20a1 1 0 0 0 .553.895l2 1A1 1 0 0 0 14 21v-7a2 2 0 0 1 .517-1.341L21.74 4.67A1 1 0 0 0 21 3H3a1 1 0 0 0-.742 1.67l7.225 7.989A2 2 0 0 1 10 14z"/></svg>
+            <span class="card__title">Phễu chuyển đổi cuộc gọi</span>
+                      </div>
+          <div class="funnel" id="funnel"></div>
+          <div class="funnel-foot" id="funnelFoot"></div>
+        </div>
+
+          <div class="card ai-card" id="aiFunnel">
+            <div class="ai-card__head"><span class="ai-card__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/><path d="M20 3v4"/><path d="M22 5h-4"/></svg></span><span class="ai-card__title">AI phân tích</span><span class="ai-card__topic">Phễu chuyển đổi</span><span class="ai-card__badge">Cập nhật theo bộ lọc</span></div>
+            <div class="ai-card__body" data-ai-body></div>
+          </div>
+        </div>
+
+        <div class="card card--heat">
           <div class="card__head card__head--heat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M3 9h18"/><path d="M3 15h18"/><path d="M9 3v18"/><path d="M15 3v18"/></svg><span class="card__title">Mật độ cuộc gọi theo khung giờ</span>
-            <div class="range-toggle" id="heatStatus"><button class="is-active" data-status="all">Tất cả</button><button data-status="answered">Nghe máy</button><button data-status="unanswered">Không nghe máy</button></div>
+            <span class="combo st-single st-single--sm" id="heatStatus"><button type="button" class="select st-trigger st-single__trigger" data-st-trigger data-st-single data-target="heat" aria-haspopup="menu" aria-expanded="false" aria-label="Trạng thái"></button><span class="combo__menu st-menu" data-st-menu hidden></span></span>
           </div>
           <div class="heatmap-scroll"><div class="heatmap" id="heatmap"></div></div>
         </div>
+
+          <div class="card ai-card ai-card--wide" id="aiHeat">
+            <div class="ai-card__head"><span class="ai-card__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/><path d="M20 3v4"/><path d="M22 5h-4"/></svg></span><span class="ai-card__title">AI phân tích</span><span class="ai-card__topic">Mật độ theo khung giờ</span><span class="ai-card__badge">Cập nhật theo bộ lọc</span></div>
+            <div class="ai-card__body" data-ai-body></div>
+          </div>
+        </section>
       </div>
 
       <!-- ============== PANE: DANH SÁCH CUỘC GỌI ============== -->
@@ -488,6 +744,7 @@ a { text-decoration: none; color: inherit; }
           <span class="filter__field filter__field--bu"><label>BU</label><select class="select" id="callBu"><option value="all">Tất cả</option><option value="pso">PSO</option><option value="tcp">TCP</option><option value="unknown">Chưa rõ</option></select></span>
           <span class="filter__field filter__field--combo"><label>Email</label><span class="combo"><input class="input input--email" data-filter="email" type="text" autocomplete="off" placeholder="Nhập email…" /><span class="combo__menu" data-menu="email" hidden></span></span></span>
           <span class="filter__field filter__field--combo"><label>Ext.</label><span class="combo"><input class="input input--ext" data-filter="ext" type="text" autocomplete="off" placeholder="Nhập Ext…" /><span class="combo__menu" data-menu="ext" hidden></span></span></span>
+          <span class="filter__field filter__field--combo filter__field--status"><label>Trạng thái</label><span class="combo"><button type="button" class="select st-trigger" data-st-trigger data-scope="filter">Chọn trạng thái…</button><span class="combo__menu st-menu" data-st-menu hidden></span></span></span>
           <button class="btn-reset" data-filter-reset><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>Đặt lại</button>
           <div class="filter-pills" data-pills="filter" hidden></div>
         </div>
@@ -496,7 +753,7 @@ a { text-decoration: none; color: inherit; }
           <div class="calls-table-wrap">
             <table class="calls-table">
               <thead><tr>
-                <th>THỜI GIAN</th><th>EMAIL</th><th>PHÂN LOẠI</th><th>GỌI TỪ</th><th>GỌI ĐẾN</th><th>BU</th><th>THỜI LƯỢNG</th><th>GHI ÂM</th><th>CHI TIẾT</th>
+                <th>THỜI GIAN</th><th>EMAIL</th><th>PHÂN LOẠI</th><th>GỌI TỪ</th><th>GỌI ĐẾN</th><th>BU</th><th>THỜI LƯỢNG</th><th>TRẠNG THÁI</th><th>GHI ÂM</th><th>CHI TIẾT</th>
               </tr></thead>
               <tbody id="callsBody"></tbody>
             </table>
@@ -520,7 +777,16 @@ a { text-decoration: none; color: inherit; }
     <div class="modal" role="dialog" aria-modal="true" aria-label="Tất cả lưu lượng cuộc gọi">
       <div class="modal__head"><div><div class="modal__title">Tất cả lưu lượng cuộc gọi</div><div class="modal__sub" id="uvModalSub"></div></div><button class="modal__close" id="uvModalClose" aria-label="Đóng"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button></div>
       <div class="modal__tools"><label class="uv-search" style="flex:1 1 auto;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/></svg><input id="uvModalFilter" type="text" placeholder="Tìm Ext / Email…" style="width:100%;" /></label></div>
-      <div class="modal__body"><table class="uv-table"><thead><tr><th class="uv-rank">#</th><th>Email</th><th>Ext.</th><th class="num">Tổng cuộc gọi</th><th class="num">Inbound</th><th class="num">Outbound</th><th class="num">Cuộc gọi từ Odoo</th><th class="col-bar">% cuộc gọi từ Odoo</th></tr></thead><tbody id="uvModalBody"></tbody></table></div>
+      <div class="modal__body"><table class="uv-table"><thead><tr><th class="uv-rank">#</th><th>Email</th><th>Ext.</th><th class="num">Tổng cuộc gọi</th><th class="num">Inbound</th><th class="num">Outbound</th><th class="num">TB thời lượng gọi</th><th class="num">Cuộc gọi từ Odoo</th><th class="col-bar">% cuộc gọi từ Odoo</th></tr></thead><tbody id="uvModalBody"></tbody></table></div>
+    </div>
+  </div>
+
+  <!-- MODAL (success rate per agent) -->
+  <div class="modal-overlay" id="srModal">
+    <div class="modal" role="dialog" aria-modal="true" aria-label="Tỷ lệ gọi thành công theo nhân viên">
+      <div class="modal__head"><div><div class="modal__title">Tỷ lệ gọi thành công theo nhân viên</div><div class="modal__sub" id="srModalSub"></div></div><button class="modal__close" id="srModalClose" aria-label="Đóng"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button></div>
+      <div class="modal__tools"><label class="uv-search" style="flex:1 1 auto;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/></svg><input id="srModalFilter" type="text" placeholder="Tìm Ext / Email…" style="width:100%;" /></label></div>
+      <div class="modal__body"><table class="uv-table sr-table"><thead><tr><th class="uv-rank">#</th><th>Email</th><th>Ext.</th><th class="num">Tổng cuộc gọi</th><th class="num">Nghe máy</th><th class="col-bar">% cuộc gọi nghe máy thành công</th></tr></thead><tbody id="srModalBody"></tbody></table></div>
     </div>
   </div>
 
@@ -541,6 +807,9 @@ a { text-decoration: none; color: inherit; }
           <div class="ex-row">
             <span class="filter__field filter__field--combo"><label>Email</label><span class="combo"><input class="input" id="exEmail" data-filter="email" data-scope="export" type="text" autocomplete="off" placeholder="Nhập email…" /><span class="combo__menu" data-menu="email" hidden></span></span></span>
             <span class="filter__field filter__field--combo"><label>Ext.</label><span class="combo"><input class="input" id="exExt" data-filter="ext" data-scope="export" type="text" autocomplete="off" placeholder="Nhập Ext…" /><span class="combo__menu" data-menu="ext" hidden></span></span></span>
+          </div>
+          <div class="ex-row">
+            <span class="filter__field filter__field--combo filter__field--status"><label>Trạng thái</label><span class="combo"><button type="button" class="select st-trigger" data-st-trigger data-scope="export">Chọn trạng thái…</button><span class="combo__menu st-menu" data-st-menu hidden></span></span></span>
           </div>
           <div class="filter-pills" data-pills="export" hidden></div>
         </div>
@@ -605,6 +874,50 @@ a { text-decoration: none; color: inherit; }
   USERS.sort((a, b) => b.total - a.total);
   const byExt = {}; USERS.forEach((u) => (byExt[u.ext] = u));
 
+  /* ---- Call status (trạng thái) ---- */
+  const STATUS_KEYS = ["answered", "unanswered", "busy", "failed", "cancelled", "nosignal", "voicemail"];
+  const STATUS_LABEL = {
+    answered: "Nghe máy", unanswered: "Không nghe máy", busy: "Bận", failed: "Thất bại",
+    cancelled: "Huỷ cuộc gọi", nosignal: "Mất sóng", voicemail: "Hộp thư thoại",
+  };
+  /* ---- Call duration buckets (histogram) ---- */
+  const DUR_BUCKETS = [
+    { key: "lt30", label: "< 30s", desc: "Cuộc gọi rác / Dập máy nhanh" },
+    { key: "s30m1", label: "30s – 1 phút", desc: "Trao đổi ngắn" },
+    { key: "m1m3", label: "1 – 3 phút", desc: "Tư vấn tiêu chuẩn" },
+    { key: "gt3", label: "> 3 phút", desc: "Tư vấn chuyên sâu" },
+  ];
+  const DUR_BASE = [0.24, 0.21, 0.33, 0.22];
+  const STATUS_BASE = [0.68, 0.14, 0.07, 0.04, 0.03, 0.02, 0.02];
+  // split n into integer counts by weights (largest remainder, sums exactly to n)
+  // same split, returned as a plain array (used by the duration histogram)
+  function splitArr(n, w) {
+    const sw = w.reduce((a, b) => a + b, 0) || 1;
+    const raw = w.map((x) => (n * x) / sw), out = raw.map(Math.floor);
+    let rem = n - out.reduce((a, b) => a + b, 0);
+    raw.map((x, i) => [x - out[i], i]).sort((a, b) => b[0] - a[0]).forEach(([, i]) => { if (rem > 0) { out[i]++; rem--; } });
+    return out;
+  }
+  function splitCount(n, w) {
+    const sw = w.reduce((a, b) => a + b, 0) || 1;
+    const raw = w.map((x) => (n * x) / sw), out = raw.map(Math.floor);
+    let rem = n - out.reduce((a, b) => a + b, 0);
+    raw.map((x, i) => [x - out[i], i]).sort((a, b) => b[0] - a[0]).forEach(([, i]) => { if (rem > 0) { out[i]++; rem--; } });
+    const o = {}; STATUS_KEYS.forEach((k, i) => (o[k] = out[i])); return o;
+  }
+  let _ss = 424242; function sr() { _ss = (_ss * 1103515245 + 12345) & 0x7fffffff; return _ss / 0x7fffffff; }
+  USERS.forEach((u) => {
+    u.stw = STATUS_BASE.map((b) => b * (0.6 + sr() * 0.8));
+    u.status = splitCount(u.total, u.stw);
+    // call-duration mix per agent: < 30s, 30s–1', 1–3', > 3'
+    u.durw = DUR_BASE.map((b) => b * (0.65 + sr() * 0.7));
+  });
+  // average talk time per agent (seconds), own RNG so nothing above shifts
+  let _as = 8642; function ar() { _as = (_as * 1103515245 + 12345) & 0x7fffffff; return _as / 0x7fffffff; }
+  USERS.forEach((u) => {
+    u.avgSec = Math.round(140 + ar() * 190);
+  });
+
   /* ---- Per-user daily distribution (lets a date range re-scope the dashboard) ---- */
   const DAYS = 371; // ~53 weeks ending today
   const START = new Date(TODAY); START.setDate(TODAY.getDate() - (DAYS - 1));
@@ -637,12 +950,13 @@ a { text-decoration: none; color: inherit; }
       let t = 0; for (let i = lo; i <= hi; i++) t += u.daily[i];
       const rin = u.total ? u.inbound / u.total : 0, rod = u.total ? u.odoo / u.total : 0;
       const inbound = Math.round(t * rin);
-      return { ext: u.ext, email: u.email, name: u.name, bu: u.bu, total: t, inbound, outbound: t - inbound, odoo: Math.round(t * rod) };
+      return { ext: u.ext, email: u.email, name: u.name, bu: u.bu, total: t, inbound, outbound: t - inbound, odoo: Math.round(t * rod), stw: u.stw, durw: u.durw, avgSec: u.avgSec, status: splitCount(t, u.stw) };
     });
   }
 
   /* ---- Overview headline (global, when no user selected) ---- */
   const OVERVIEW = { totalCalls: 11087, inboundPct: 39, outboundPct: 61, bu: { pso: 17, tcp: 1, unknown: 82 } };
+  OVERVIEW.status = splitCount(OVERVIEW.totalCalls, STATUS_BASE);
 
   /* ---- Bar chart ranges (always populated, ending today) ---- */
   function dayRange(n) {
@@ -665,9 +979,9 @@ a { text-decoration: none; color: inherit; }
     return { labels, series };
   }
   const CHART = {
-    "7d": Object.assign(dayRange(7), { avg: "3:48" }),
-    "30d": Object.assign(dayRange(30), { avg: "3:41" }),
-    "12m": Object.assign(monthRange(12), { avg: "4:05" }),
+    "7d": Object.assign(dayRange(7), { avg: "3:48", max: "28:47", min: "0:04", dur: [0.25, 0.21, 0.32, 0.22] }),
+    "30d": Object.assign(dayRange(30), { avg: "3:41", max: "41:12", min: "0:02", dur: [0.23, 0.22, 0.33, 0.22] }),
+    "12m": Object.assign(monthRange(12), { avg: "4:05", max: "58:09", min: "0:01", dur: [0.22, 0.21, 0.34, 0.23] }),
   };
 
   /* ---- Top-5 caller / callee (show email) ---- */
@@ -680,6 +994,7 @@ a { text-decoration: none; color: inherit; }
 
   /* ---- Heatmap: 7 days x 24 hours (1 cell = 1 hour), split by status ---- */
   let _hs = 7; function hr() { _hs = (_hs * 1103515245 + 12345) & 0x7fffffff; return _hs / 0x7fffffff; }
+  let _hs2 = 31; function hr2() { _hs2 = (_hs2 * 1103515245 + 12345) & 0x7fffffff; return _hs2 / 0x7fffffff; }
   const HEAT_LABELS = ["T2 · 05-10", "T3 · 06-10", "T4 · 07-10", "T5 · 08-10", "T6 · 09-10", "T7 · 10-10", "CN · 11-10"];
   // hourly weight 0..23 — quiet overnight, busy 8-11 & 13-18
   const HOUR_W = [0, 0, 0, 0, 0, .05, .15, .4, .9, 1, 1, .85, .5, .8, 1, .95, .85, .6, .35, .2, .1, .05, 0, 0];
@@ -692,7 +1007,14 @@ a { text-decoration: none; color: inherit; }
         const scale = w * DAY_W[r];
         const answered = Math.round(scale * (8 + hr() * 14));
         const unanswered = Math.round(scale * (1 + hr() * 5));
-        return { answered, unanswered };
+        return {
+          answered, unanswered,
+          busy: Math.round(scale * (0.4 + hr2() * 2.6)),
+          failed: Math.round(scale * (0.2 + hr2() * 1.6)),
+          cancelled: Math.round(scale * (0.1 + hr2() * 1.4)),
+          nosignal: Math.round(scale * (hr2() * 1.2)),
+          voicemail: Math.round(scale * (hr2() * 1.3)),
+        };
       }),
     })),
   };
@@ -732,11 +1054,24 @@ a { text-decoration: none; color: inherit; }
       from, to, dir, bu: pickBu(), dur, rec: rand() < 0.6,
     });
   }
+  // status per call (own RNG). Answered calls may have a recording; any other
+  // status never has one. The first rows mirror the live snapshot.
+  const SEED_STATUS = ["answered", "answered", "answered", "unanswered", "busy", "unanswered", "answered", "answered", "voicemail", "answered"];
+  let _cs = 97531; function cr() { _cs = (_cs * 1103515245 + 12345) & 0x7fffffff; return _cs / 0x7fffffff; }
+  // calls without a recording: answered-but-not-uploaded is less common
+  const NOREC_W = [0.3, 0.26, 0.14, 0.1, 0.08, 0.06, 0.06];
+  const CUM = []; NOREC_W.reduce((a, b, i) => (CUM[i] = a + b), 0);
+  CALLS.forEach((c, i) => {
+    if (i < SEED_STATUS.length) { c.status = SEED_STATUS[i]; return; }
+    if (c.rec) { c.status = "answered"; return; }
+    const r = cr() * CUM[CUM.length - 1];
+    c.status = STATUS_KEYS[CUM.findIndex((x) => r < x)] || "answered";
+  });
   const CALLS_TOTAL_LABEL = 11095; // headline total shown like the live site
 
   global.DEMO_DATA = {
     OVERVIEW, CHART, TOP5_CALLER, TOP5_CALLEE, HEATMAP, USERS, byExt, CALLS, CALLS_TOTAL_LABEL,
-    usersInRange,
+    usersInRange, STATUS_KEYS, STATUS_LABEL, DUR_BUCKETS, DUR_BASE, splitArr,
   };
 })(window);
 
@@ -755,6 +1090,14 @@ a { text-decoration: none; color: inherit; }
 
   const BU_LABEL = { pso: "PSO", tcp: "TCP", unknown: "Chưa rõ" };
   const BU_DOT = { pso: "#6b2ec6", tcp: "#4f46e5", unknown: "#94a3b8" };
+  // call status (trạng thái) — one colour per status, shared by the pie,
+  // the heatmap and the status chips in the call list
+  const ST_KEYS = D.STATUS_KEYS, ST_LABEL = D.STATUS_LABEL;
+  const ST_RGB = {
+    answered: [79, 70, 229], unanswered: [100, 116, 139], busy: [245, 158, 11], failed: [220, 38, 38],
+    cancelled: [219, 39, 119], nosignal: [14, 165, 233], voicemail: [101, 163, 13],
+  };
+  const stHex = (k) => "#" + ST_RGB[k].map((v) => v.toString(16).padStart(2, "0")).join("");
 
   // shared multi-select filter — selecting a value adds a pill and filters live.
   let selEmails = [], selExts = [];
@@ -762,6 +1105,8 @@ a { text-decoration: none; color: inherit; }
   let selFrom = "", selTo = "";
   // the Xuất báo cáo dialog keeps its own selection (same combo/pill UI).
   let exEmails = [], exExts = [];
+  // multi-select status filter (pills, same as email / ext) — live + export scopes
+  let selStatuses = [], exStatuses = [];
 
   // call.time looks like "14:12 29/9/26" → a Date (year 2000+yy)
   function callDate(c) {
@@ -779,6 +1124,7 @@ a { text-decoration: none; color: inherit; }
   }
   let curRange = "7d";
   let heatStatus = "all";
+  let uvStatus = "all";
   let callsPage = 1;
 
   const extOf = (c) => (c.dir === "Outbound" ? c.from : c.to);
@@ -786,10 +1132,27 @@ a { text-decoration: none; color: inherit; }
 
   const filterActive = () => selEmails.length > 0 || selExts.length > 0;
   const dateActive = () => !!(selFrom || selTo);
-  const dashFiltered = () => filterActive() || dateActive();
-  // the user set, scoped by the date range (if any) then the email/ext pills
+  const statusActive = () => selStatuses.length > 0;
+  const dashFiltered = () => filterActive() || dateActive() || statusActive();
+  // keep only the given statuses: totals become those statuses' calls, with
+  // inbound / outbound / Odoo kept in the user's own proportions
+  function scaleToStatuses(us, keys) {
+    return us.map((u) => {
+      const t = keys.reduce((a, k) => a + (u.status[k] || 0), 0);
+      const rin = u.total ? u.inbound / u.total : 0, rod = u.total ? u.odoo / u.total : 0;
+      const inbound = Math.round(t * rin), status = {};
+      ST_KEYS.forEach((k) => (status[k] = keys.includes(k) ? u.status[k] : 0));
+      return Object.assign({}, u, { total: t, inbound, outbound: t - inbound, odoo: Math.round(t * rod), status });
+    });
+  }
+  // every Ext, scoped by the date range then the status pills (no email/ext pick)
+  function baseUsers() {
+    const us = dateActive() ? D.usersInRange(selFrom, selTo) : D.USERS;
+    return statusActive() ? scaleToStatuses(us, selStatuses) : us;
+  }
+  // ...then narrowed to the email / ext pills
   function matchedUsers() {
-    let us = dateActive() ? D.usersInRange(selFrom, selTo) : D.USERS;
+    let us = baseUsers();
     if (filterActive()) us = us.filter((u) => selEmails.includes(u.email) || selExts.includes(u.ext));
     return us;
   }
@@ -832,6 +1195,85 @@ a { text-decoration: none; color: inherit; }
     }
   }
 
+  /* ---------- Status pie ---------- */
+  function paintStatus() {
+    let counts;
+    if (dashFiltered()) {
+      counts = {}; ST_KEYS.forEach((k) => (counts[k] = 0));
+      matchedUsers().forEach((u) => ST_KEYS.forEach((k) => (counts[k] += u.status[k])));
+    } else counts = D.OVERVIEW.status;
+    const total = ST_KEYS.reduce((a, k) => a + counts[k], 0);
+    let acc = 0; const stops = [];
+    ST_KEYS.forEach((k) => { acc += counts[k]; stops.push([stHex(k), total ? (acc / total) * 100 : 0]); });
+    $("#stRing").style.background = total ? conic(stops) : "#eceef9";
+    $("#stNum").textContent = nfmt(total);
+    $("#stLegend").innerHTML = ST_KEYS.map((k) => {
+      const pct = total ? (counts[k] / total) * 100 : 0;
+      const p = pct > 0 && pct < 1 ? "<1" : Math.round(pct);
+      const off = statusActive() && !selStatuses.includes(k) ? " is-off" : "";
+      return `<div class="st-legend__row${off}"><span class="dot" style="background:${stHex(k)}"></span><span class="st-legend__label">${ST_LABEL[k]}</span><span class="st-legend__count">${nfmt(counts[k])}</span><b class="legend__pct">${p}%</b></div>`;
+    }).join("");
+  }
+
+  const secFmt = (sec) => Math.floor(sec / 60) + ":" + String(sec % 60).padStart(2, "0");
+
+  /* ---------- Conversion funnel ----------
+     Natural progression of a call. Built from the full status mix, so it
+     follows the date / email / ext filters but not the status pills (a funnel
+     cut down to a few statuses would no longer be a funnel). */
+  function funnelUsers() {
+    let us = dateActive() ? D.usersInRange(selFrom, selTo) : D.USERS;
+    if (filterActive()) us = us.filter((u) => selEmails.includes(u.email) || selExts.includes(u.ext));
+    return us;
+  }
+  // answered calls are rarely < 30s → skew each duration mix toward longer talks
+  const ANS_SKEW = [0.45, 1, 1.1, 1.2];
+  function qualityOf(answered, w) {
+    const aw = w.map((x, i) => x * ANS_SKEW[i]), sum = aw.reduce((a, b) => a + b, 0) || 1;
+    const share = (aw[1] + aw[2] + aw[3]) / sum; // > 30s
+    return Math.round(answered * share);
+  }
+  function renderFunnel() {
+    const st = {}; ST_KEYS.forEach((k) => (st[k] = 0));
+    let quality = 0;
+    if (filterActive() || dateActive()) {
+      funnelUsers().forEach((u) => { ST_KEYS.forEach((k) => (st[k] += u.status[k])); quality += qualityOf(u.status.answered, u.durw); });
+    } else {
+      Object.assign(st, D.OVERVIEW.status);
+      quality = qualityOf(st.answered, D.DUR_BASE);
+    }
+    const total = ST_KEYS.reduce((a, k) => a + st[k], 0);
+    const connected = total - st.failed - st.nosignal;
+    const rang = connected - st.busy - st.cancelled;
+    const drop = (parts) => parts.filter(([, v]) => v > 0).map(([l, v]) => `${l} ${nfmt(v)}`).join(" · ");
+    const stages = [
+      { name: "Tổng cuộc gọi", sub: "Gọi đi + gọi đến", v: total },
+      { name: "Tín hiệu kết nối", sub: "Trừ Thất bại, Mất sóng", v: connected, drop: drop([["Thất bại", st.failed], ["Mất sóng", st.nosignal]]) },
+      { name: "Đổ chuông / Khách bắt máy", sub: "Trừ Bận, Huỷ cuộc gọi", v: rang, drop: drop([["Bận", st.busy], ["Huỷ cuộc gọi", st.cancelled]]) },
+      { name: "Nghe máy thực tế", sub: "Answered", v: st.answered, drop: drop([["Không nghe máy", st.unanswered], ["Hộp thư thoại", st.voicemail]]) },
+      { name: "Cuộc gọi chất lượng", sub: "Nghe máy, thời lượng > 30 giây", v: quality,
+        dropLabel: "nghe máy ≤ 30 giây" },
+    ];
+    $("#funnel").innerHTML = stages.map((s, i) => {
+      const pctTotal = total ? (s.v / total) * 100 : 0;
+      const prev = i ? stages[i - 1].v : 0;
+      const step = i && prev ? Math.round((s.v / prev) * 100) : 100;
+      const w = Math.max(s.v ? 8 : 0, pctTotal);
+      return `<div class="fn-row fn-row--${i + 1}">
+        <div class="fn-label"><span class="fn-step">${i + 1}</span><div><div class="fn-name">${s.name}</div><div class="fn-sub">${s.sub}</div></div></div>
+        <div class="fn-track"><div class="fn-bar" style="width:${w.toFixed(1)}%"><span>${nfmt(s.v)}</span></div></div>
+        <div class="fn-meta">
+          <div class="fn-pct">${pctTotal >= 10 || !pctTotal ? Math.round(pctTotal) : pctTotal.toFixed(1).replace(".", ",")}%<small> tổng</small></div>
+          ${i ? `<div class="fn-conv">${step}% so với tầng trước</div>` : `<div class="fn-conv">Điểm bắt đầu</div>`}
+        </div>
+      </div>`;
+    }).join("");
+    lastFunnel = { stages, total };
+    const conv = total ? Math.round((quality / total) * 100) : 0;
+    $("#funnelFoot").innerHTML = `<span>Tỷ lệ chuyển đổi toàn phễu: <b>${conv}%</b> cuộc gọi trở thành cuộc gọi chất lượng</span>` +
+      (statusActive() ? `<span class="funnel-foot__note">Phễu luôn tính trên đủ 7 trạng thái, không áp dụng bộ lọc Trạng thái</span>` : "");
+  }
+
   /* ---------- Chart (line: inbound + outbound) ---------- */
   let chartGeo = null;
   function onChartMove(e) {
@@ -864,6 +1306,7 @@ a { text-decoration: none; color: inherit; }
     const tip = $("#chart").querySelector(".chart__tip"); if (tip) tip.hidden = true;
   }
   function renderChart() {
+    renderDuration();
     const c = D.CHART[curRange], n = c.series.length;
     const el = $("#chart");
     const W = Math.max(260, Math.round(el.clientWidth) || 640), H = 196;
@@ -927,26 +1370,65 @@ a { text-decoration: none; color: inherit; }
       const total = us.reduce((a, u) => a + u.total, 0);
       $("#statUploaded").textContent = nfmt(total);
       $("#statAvg").textContent = c.avg;
+      $("#statMax").textContent = c.max; $("#statMin").textContent = c.min;
       const lbl = filterActive() && us.length === 1 ? ("Ext. " + esc(us[0].ext))
-        : filterActive() ? (us.length + " Ext đã chọn") : "Theo khoảng ngày";
+        : filterActive() ? (us.length + " Ext đã chọn")
+        : statusActive() ? (selStatuses.length === 1 ? ST_LABEL[selStatuses[0]] : selStatuses.length + " trạng thái đã chọn")
+        : "Theo khoảng ngày";
       $("#statDelta").innerHTML = `<span class="note">${lbl}</span>`;
     } else {
       const total = c.series.reduce((a, s) => a + s.in + s.out, 0);
       $("#statUploaded").textContent = nfmt(total);
       $("#statAvg").textContent = c.avg;
+      $("#statMax").textContent = c.max; $("#statMin").textContent = c.min;
       const d = curRange === "7d" ? 12.4 : curRange === "30d" ? 8.1 : 15.6;
       $("#statDelta").innerHTML = `<span class="up">▲ +${d}%</span><span class="note">so với kỳ trước</span>`;
     }
   }
 
+  /* ---------- Call-duration histogram ---------- */
+  function durationCounts() {
+    if (dashFiltered()) {
+      const acc = D.DUR_BUCKETS.map(() => 0);
+      matchedUsers().forEach((u) => D.splitArr(u.total, u.durw).forEach((v, i) => (acc[i] += v)));
+      return acc;
+    }
+    const c = D.CHART[curRange];
+    return D.splitArr(c.series.reduce((a, s) => a + s.in + s.out, 0), c.dur);
+  }
+  function renderDuration() {
+    const counts = durationCounts();
+    const all = counts.reduce((a, b) => a + b, 0), noise = counts[0], useful = all - noise;
+    const idx = D.DUR_BUCKETS.map((b, i) => i);
+    const base = all;
+    const max = Math.max(1, ...idx.map((i) => counts[i]));
+    $("#statUseful").textContent = nfmt(useful);
+    $("#durChart").style.gridTemplateColumns = `repeat(${idx.length}, minmax(0, 1fr))`;
+    $("#durChart").innerHTML = idx.map((i) => {
+      const b = D.DUR_BUCKETS[i], v = counts[i];
+      const pct = base ? Math.round((v / base) * 100) : 0;
+      const h = Math.max(v ? 3 : 0, (v / max) * 100);
+      return `<div class="dh-col dh-col--${b.key}" title="${b.label} · ${b.desc}: ${nfmt(v)} cuộc gọi (${pct}%)">
+        <div class="dh-track">
+          <div class="dh-val"><b>${nfmt(v)}</b><span>${pct}%</span></div>
+          <div class="dh-bar" style="height:calc((100% - var(--dh-lbl, 30px)) * ${(h / 100).toFixed(3)})"></div>
+        </div>
+        <div class="dh-lbl">${b.label}</div>
+        <div class="dh-desc">${b.desc}</div>
+      </div>`;
+    }).join("");
+  }
+
   /* ---------- Top-5 (email, no bar) ---------- */
   function renderTop5(elId, rows) {
+    const head = `<div class="top5__head"><span class="top5__rank">#</span><span class="top5__email">Email</span><span class="top5__ext">Ext.</span><span class="top5__right">Cuộc gọi</span></div>`;
     $(elId).innerHTML = rows.length
-      ? rows.map((r, i) => `
+      ? head + rows.map((r, i) => `
       <div class="top5__row">
         <span class="top5__rank">${i + 1}</span>
-        <span class="top5__email" data-email="${esc(r.email)}" title="${esc(r.email)} · Ext. ${esc(r.ext)}">${esc(r.email)}</span>
-        <span class="top5__right"><span class="top5__count">${nfmt(r.calls)}</span><span class="top5__unit">cuộc gọi</span></span>
+        <span class="top5__email" data-email="${esc(r.email)}" title="${esc(r.email)}">${esc(r.email)}</span>
+        <span class="top5__ext" data-ext="${esc(r.ext)}" title="Ext. ${esc(r.ext)}">${esc(r.ext)}</span>
+        <span class="top5__right"><span class="top5__count">${nfmt(r.calls)}</span></span>
       </div>`).join("")
       : `<div class="top5__empty">Không có dữ liệu khớp bộ lọc</div>`;
   }
@@ -976,44 +1458,85 @@ a { text-decoration: none; color: inherit; }
       <td class="num"><span class="uv-num-total">${nfmt(u.total)}</span></td>
       <td class="num"><span class="uv-num-in">${nfmt(u.inbound)}</span></td>
       <td class="num"><span class="uv-num-out">${nfmt(u.outbound)}</span></td>
+      <td class="num"><span class="uv-num-avg">${secFmt(u.avgSec)}</span></td>
       <td class="num"><span class="uv-num-odoo">${nfmt(u.odoo)}</span></td>
       <td class="col-bar"><div class="pct-cell"><span class="pct-bar"><span class="pct-bar__fill" style="width:${pct}%"></span></span><span class="pct-val">${pct}%</span></div></td>
     </tr>`;
   }
+  // scope a user row to one status: totals become that status' calls, with
+  // inbound / outbound / Odoo kept in the user's own proportions
+  function byStatus(us) {
+    return uvStatus === "all" ? us : scaleToStatuses(us, [uvStatus]);
+  }
+  const uvStatusNote = () => (uvStatus === "all" ? "" : ` · Trạng thái: ${ST_LABEL[uvStatus]}`);
   function renderUvTable() {
-    const all = matchedUsers().slice().sort((a, b) => b.total - a.total);
+    const all = byStatus(matchedUsers()).sort((a, b) => b.total - a.total);
     // with an email/ext filter, show exactly the filtered Ext (no Top-7 cap)
     const rows = filterActive() ? all : all.slice(0, 7);
     $("#uvBody").innerHTML = rows.length ? rows.map((u, i) => uvRowHtml(u, i, false)).join("")
-      : `<tr><td colspan="8" class="uv-empty">Không có Ext/Email nào khớp bộ lọc</td></tr>`;
+      : `<tr><td colspan="9" class="uv-empty">Không có Ext/Email nào khớp bộ lọc</td></tr>`;
     $("#uvFoot").textContent = filterActive()
+      ? `Hiển thị ${rows.length} Ext khớp bộ lọc · tổng ${D.USERS.length} Ext${uvStatusNote()}`
+      : `Hiển thị Top 7 / ${D.USERS.length} Ext có nhiều cuộc gọi nhất${uvStatusNote()}`;
+  }
+
+  /* ---------- Success rate per agent (Nghe máy / tổng) ---------- */
+  function srRowHtml(u, i, highlight) {
+    const ans = u.status.answered || 0;
+    const pct = u.total ? Math.round((ans / u.total) * 100) : 0;
+    const sel = highlight && userSelected(u) ? " is-selected" : "";
+    return `<tr class="${sel}">
+      <td class="uv-rank">${i + 1}</td>
+      <td><span class="uv-email" data-email="${esc(u.email)}" title="${esc(u.email)}">${esc(u.email)}</span></td>
+      <td><span class="uv-ext" data-ext="${esc(u.ext)}">${esc(u.ext)}</span></td>
+      <td class="num"><span class="uv-num-total">${nfmt(u.total)}</span></td>
+      <td class="num"><span class="sr-num-ans">${nfmt(ans)}</span></td>
+      <td class="col-bar"><div class="pct-cell"><span class="pct-bar"><span class="pct-bar__fill pct-bar__fill--ans" style="width:${pct}%"></span></span><span class="pct-val pct-val--ans">${pct}%</span></div></td>
+    </tr>`;
+  }
+  function renderSrTable() {
+    const all = matchedUsers().slice().sort((a, b) => b.total - a.total);
+    const rows = filterActive() ? all : all.slice(0, 7);
+    $("#srBody").innerHTML = rows.length ? rows.map((u, i) => srRowHtml(u, i, false)).join("")
+      : `<tr><td colspan="6" class="uv-empty">Không có Ext/Email nào khớp bộ lọc</td></tr>`;
+    $("#srFoot").textContent = filterActive()
       ? `Hiển thị ${rows.length} Ext khớp bộ lọc · tổng ${D.USERS.length} Ext`
       : `Hiển thị Top 7 / ${D.USERS.length} Ext có nhiều cuộc gọi nhất`;
   }
+  function renderSrModalTable() {
+    const q = ($("#srModalFilter").value || "").trim().toLowerCase();
+    let rows = baseUsers().slice().sort((a, b) => b.total - a.total);
+    if (q) rows = rows.filter((u) => u.ext.toLowerCase().includes(q) || u.email.toLowerCase().includes(q) || u.name.toLowerCase().includes(q));
+    $("#srModalBody").innerHTML = rows.length ? rows.map((u, i) => srRowHtml(u, i, true)).join("") : `<tr><td colspan="6" class="uv-empty">Không có kết quả</td></tr>`;
+    $("#srModalSub").textContent = `${rows.length} / ${D.USERS.length} Ext`;
+  }
+  function openSrModal() { $("#srModal").classList.add("is-open"); document.body.style.overflow = "hidden"; renderSrModalTable(); setTimeout(() => $("#srModalFilter").focus(), 30); }
+  function closeSrModal() { $("#srModal").classList.remove("is-open"); if (!$("#uvModal").classList.contains("is-open")) document.body.style.overflow = ""; }
 
   /* ---------- Modal ---------- */
   function renderModalTable() {
     const q = ($("#uvModalFilter").value || "").trim().toLowerCase();
-    let rows = (dateActive() ? D.usersInRange(selFrom, selTo) : D.USERS).slice().sort((a, b) => b.total - a.total);
+    let rows = byStatus(baseUsers()).slice().sort((a, b) => b.total - a.total);
     if (q) rows = rows.filter((u) => u.ext.toLowerCase().includes(q) || u.email.toLowerCase().includes(q) || u.name.toLowerCase().includes(q));
-    $("#uvModalBody").innerHTML = rows.length ? rows.map((u, i) => uvRowHtml(u, i, true)).join("") : `<tr><td colspan="8" class="uv-empty">Không có kết quả</td></tr>`;
-    $("#uvModalSub").textContent = `${rows.length} / ${D.USERS.length} Ext`;
+    $("#uvModalBody").innerHTML = rows.length ? rows.map((u, i) => uvRowHtml(u, i, true)).join("") : `<tr><td colspan="9" class="uv-empty">Không có kết quả</td></tr>`;
+    $("#uvModalSub").textContent = `${rows.length} / ${D.USERS.length} Ext${uvStatusNote()}`;
   }
 
   /* ---------- Export report (CSV) ---------- */
   function openExport() {
-    $("#exportUseFilter").checked = filterActive();
+    $("#exportUseFilter").checked = filterActive() || statusActive();
     toggleExportFields();
-    exEmails.length = 0; exExts.length = 0; renderPills("export");
+    exEmails.length = 0; exExts.length = 0; exStatuses.length = 0; renderPills("export"); renderStatusPickers("export");
     $("#exEmail").value = ""; $("#exExt").value = ""; $("#exBu").value = "all";
     $("#exFrom").value = ""; $("#exTo").value = "";
     $("#exportModal").classList.add("is-open"); document.body.style.overflow = "hidden";
   }
-  function closeExport() { closeMenu(); $("#exportModal").classList.remove("is-open"); document.body.style.overflow = ""; }
+  function closeExport() { closeMenu(); closeStMenus(); $("#exportModal").classList.remove("is-open"); document.body.style.overflow = ""; }
   function toggleExportFields() { $("#exportFields").classList.toggle("is-disabled", $("#exportUseFilter").checked); }
   function exportRows() {
     if ($("#exportUseFilter").checked) {
       return D.CALLS.filter((c) => inRange(c, selFrom, selTo) &&
+        (!statusActive() || selStatuses.includes(c.status)) &&
         (!filterActive() || selExts.includes(extOf(c)) || selEmails.includes(emailOf(c))));
     }
     const bu = $("#exBu").value;
@@ -1023,15 +1546,16 @@ a { text-decoration: none; color: inherit; }
       if (bu !== "all" && c.bu !== bu) return false;
       if (!inRange(c, from, to)) return false;
       if (useSel && !(exExts.includes(extOf(c)) || exEmails.includes(emailOf(c)))) return false;
+      if (exStatuses.length && !exStatuses.includes(c.status)) return false;
       return true;
     });
   }
   function runExport() {
     const rows = exportRows();
     const cell = (v) => '"' + String(v).replace(/"/g, '""') + '"';
-    const head = ["Thời gian", "Email", "Phân loại", "Gọi từ", "Gọi đến", "BU", "Thời lượng", "Ghi âm"];
+    const head = ["Thời gian", "Email", "Phân loại", "Gọi từ", "Gọi đến", "BU", "Thời lượng", "Trạng thái", "Ghi âm"];
     const lines = [head.map(cell).join(",")];
-    rows.forEach((c) => lines.push([c.time, emailOf(c), c.dir, c.from, c.to, BU_LABEL[c.bu], c.dur, c.rec ? "Có" : "Chưa"].map(cell).join(",")));
+    rows.forEach((c) => lines.push([c.time, emailOf(c), c.dir, c.from, c.to, BU_LABEL[c.bu], c.dur, ST_LABEL[c.status], c.rec ? "Có" : "Chưa"].map(cell).join(",")));
     const csv = "﻿" + lines.join("\r\n");
     const blob = new Blob([csv], { type: "text/csv;charset=utf-8" });
     const a = document.createElement("a");
@@ -1040,12 +1564,21 @@ a { text-decoration: none; color: inherit; }
     setTimeout(() => URL.revokeObjectURL(a.href), 1000);
     closeExport();
   }
-  function openModal() { $("#uvModal").classList.add("is-open"); document.body.style.overflow = "hidden"; renderModalTable(); setTimeout(() => $("#uvModalFilter").focus(), 30); }
+  function setUvStatus(v) {
+    uvStatus = v; renderSingleStatus();
+    renderUvTable(); if ($("#uvModal").classList.contains("is-open")) renderModalTable();
+  }
+  function setHeatStatus(v) { heatStatus = v; renderSingleStatus(); renderHeatmap(); aiHeat(); }
+  function openModal() { renderSingleStatus(); $("#uvModal").classList.add("is-open"); document.body.style.overflow = "hidden"; renderModalTable(); setTimeout(() => $("#uvModalFilter").focus(), 30); }
   function closeModal() { $("#uvModal").classList.remove("is-open"); document.body.style.overflow = ""; }
 
   /* ---------- Heatmap 24h ---------- */
-  const HEAT_COLORS = { all: [234, 88, 12], answered: [79, 70, 229], unanswered: [100, 116, 139] };
-  const cellValue = (c) => (heatStatus === "answered" ? c.answered : heatStatus === "unanswered" ? c.unanswered : c.answered + c.unanswered);
+  const HEAT_COLORS = Object.assign({ all: [234, 88, 12] }, ST_RGB);
+  const heatKeys = () => {
+    const pool = statusActive() ? selStatuses : ST_KEYS;
+    return heatStatus === "all" ? pool : pool.filter((k) => k === heatStatus);
+  };
+  const cellValue = (c) => heatKeys().reduce((a, k) => a + (c[k] || 0), 0);
   function renderHeatmap() {
     const hm = D.HEATMAP, [cr, cg, cb] = HEAT_COLORS[heatStatus] || HEAT_COLORS.all;
     let max = 0; hm.rows.forEach((r) => r.cells.forEach((c) => { max = Math.max(max, cellValue(c)); })); max = Math.max(1, max);
@@ -1062,6 +1595,172 @@ a { text-decoration: none; color: inherit; }
     $("#heatmap").innerHTML = parts.join("");
   }
 
+  /* ---------- AI phân tích ----------
+     Text insights generated from the numbers currently on screen (rule-based,
+     so they update instantly with every filter / range / status change).
+     Swap aiCompose() for a call to an LLM endpoint when wiring real AI. */
+  const AI_ICON = {
+    good: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>',
+    warn: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4"/><path d="M12 17h.01"/><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg>',
+    info: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/></svg>',
+  };
+  const pctOf = (a, b) => (b ? Math.round((a / b) * 100) : 0);
+  const RANGE_TXT = { "7d": "7 ngày gần nhất", "30d": "30 ngày gần nhất", "12m": "12 tháng gần nhất" };
+  function aiScope() {
+    if (filterActive()) { const n = matchedUsers().length; return n === 1 ? `Ext. ${esc(matchedUsers()[0].ext)}` : `${n} Ext đang lọc`; }
+    if (dateActive()) return "khoảng ngày đã chọn";
+    if (statusActive()) return "các trạng thái đang lọc";
+    return RANGE_TXT[curRange];
+  }
+  function aiCompose(id, d) {
+    const items = d.items.filter(Boolean);
+    $(`#${id} [data-ai-body]`).innerHTML =
+      `<p class="ai-lead">${d.lead}</p>` +
+      (items.length ? `<ul class="ai-list">${items.map((it) => `<li class="ai-item ai-item--${it.t}"><span class="ai-item__icon">${AI_ICON[it.t]}</span><span>${it.h}</span></li>`).join("")}</ul>` : "") +
+      (d.reco && d.reco.length ? `<div class="ai-reco"><span class="ai-reco__lbl">Đề xuất</span><ul>${d.reco.map((r) => `<li>${r}</li>`).join("")}</ul></div>` : "");
+  }
+
+  function aiOverview() {
+    const us = matchedUsers(), c = D.CHART[curRange];
+    const calls = dashFiltered() ? us.reduce((a, u) => a + u.total, 0) : c.series.reduce((a, s) => a + s.in + s.out, 0);
+    const delta = dashFiltered() ? null : curRange === "7d" ? 12.4 : curRange === "30d" ? 8.1 : 15.6;
+    const tot = us.reduce((a, u) => a + u.total, 0);
+    const inPct = dashFiltered() ? pctOf(us.reduce((a, u) => a + u.inbound, 0), tot) : D.OVERVIEW.inboundPct;
+    const outPct = 100 - inPct;
+    let bu;
+    if (dashFiltered()) { const bt = { pso: 0, tcp: 0, unknown: 0 }; us.forEach((u) => (bt[u.bu] += u.total)); bu = { pso: pctOf(bt.pso, tot), tcp: pctOf(bt.tcp, tot) }; bu.unknown = Math.max(0, 100 - bu.pso - bu.tcp); }
+    else bu = D.OVERVIEW.bu;
+    const odooPct = pctOf(us.reduce((a, u) => a + u.odoo, 0), tot);
+    const callers = topRows("caller"), callees = topRows("callee");
+    const outAll = us.reduce((a, u) => a + u.outbound, 0);
+    const top5Share = pctOf(callers.reduce((a, r) => a + r.calls, 0), outAll);
+    const items = [
+      outPct >= 55 ? { t: "info", h: `${dashFiltered() ? "" : `Trên toàn bộ <b>${nfmt(D.OVERVIEW.totalCalls)}</b> cuộc gọi, `}Outbound chiếm <b>${outPct}%</b> — đội ngũ chủ yếu chủ động gọi ra; Inbound <b>${inPct}%</b>.` }
+        : inPct >= 55 ? { t: "info", h: `Inbound chiếm <b>${inPct}%</b> — khách hàng chủ động liên hệ nhiều hơn gọi ra (<b>${outPct}%</b>).` }
+        : { t: "info", h: `Inbound / Outbound khá cân bằng: <b>${inPct}%</b> / <b>${outPct}%</b>.` },
+      callers[0] && (us.length > 5
+        ? { t: top5Share >= 50 ? "warn" : "info", h: `<b>${esc(callers[0].email)}</b> (Ext. ${esc(callers[0].ext)}) gọi ra nhiều nhất với <b>${nfmt(callers[0].calls)}</b> cuộc; Top 5 caller chiếm <b>${top5Share}%</b> lượng gọi ra${top5Share >= 50 ? " — sản lượng đang phụ thuộc vào ít nhân sự" : ""}.` }
+        : { t: "info", h: `<b>${esc(callers[0].email)}</b> (Ext. ${esc(callers[0].ext)}) gọi ra nhiều nhất với <b>${nfmt(callers[0].calls)}</b> cuộc.` }),
+      callees[0] && { t: "info", h: `<b>${esc(callees[0].email)}</b> (Ext. ${esc(callees[0].ext)}) nhận nhiều cuộc gọi đến nhất: <b>${nfmt(callees[0].calls)}</b> cuộc.` },
+      bu.unknown >= 30 ? { t: "warn", h: `<b>${bu.unknown}%</b> cuộc gọi chưa xác định BU — cơ cấu PSO <b>${bu.pso}%</b> / TCP <b>${bu.tcp}%</b> chưa phản ánh đúng thực tế.` }
+        : { t: "good", h: `Phần lớn cuộc gọi đã gán BU: PSO <b>${bu.pso}%</b>, TCP <b>${bu.tcp}%</b>.` },
+      { t: odooPct >= 60 ? "good" : odooPct >= 40 ? "info" : "warn", h: `<b>${odooPct}%</b> cuộc gọi phát sinh từ Odoo${odooPct < 60 ? " — còn nhiều cuộc gọi chưa được lưu vết trên CRM" : ", lưu vết CRM tốt"}.` },
+    ];
+    const reco = [];
+    if (bu.unknown >= 30) reco.push("Chuẩn hoá mapping Ext → BU để báo cáo theo BU chính xác hơn.");
+    if (odooPct < 60) reco.push("Khuyến khích thực hiện cuộc gọi từ Odoo để đồng bộ lịch sử chăm sóc khách hàng.");
+    if (us.length > 5 && top5Share >= 50) reco.push("Phân bổ lại danh sách gọi để giảm phụ thuộc vào nhóm Top 5.");
+    aiCompose("aiOverview", {
+      lead: `Trong ${aiScope()}, hệ thống ghi nhận <b>${nfmt(calls)}</b> cuộc gọi` + (delta != null ? `, <b class="ai-up">tăng ${String(delta).replace(".", ",")}%</b> so với kỳ trước.` : "."),
+      items, reco,
+    });
+  }
+
+  function aiDuration() {
+    const counts = durationCounts(), all = counts.reduce((a, b) => a + b, 0), c = D.CHART[curRange];
+    const p = counts.map((v) => pctOf(v, all)), useful = all - counts[0];
+    let dom = 0; counts.forEach((v, i) => { if (v > counts[dom]) dom = i; });
+    const B = D.DUR_BUCKETS;
+    aiCompose("aiDuration", {
+      lead: `<b>${pctOf(useful, all)}%</b> cuộc gọi (${nfmt(useful)}/${nfmt(all)}) kéo dài trên 30 giây — được tính là cuộc gọi hiệu quả.`,
+      items: [
+        p[0] > 20 ? { t: "warn", h: `<b>${p[0]}%</b> cuộc gọi dưới 30 giây: nhiều cuộc gọi rác hoặc khách dập máy sớm.` }
+          : { t: "good", h: `Cuộc gọi dưới 30 giây ở mức thấp (<b>${p[0]}%</b>), ít nhiễu.` },
+        { t: "info", h: `Nhóm <b>${B[dom].label}</b> (${B[dom].desc.toLowerCase()}) chiếm tỷ trọng lớn nhất: <b>${p[dom]}%</b>.` },
+        { t: p[3] >= 20 ? "good" : "info", h: `<b>${p[3]}%</b> cuộc gọi tư vấn chuyên sâu trên 3 phút.` },
+        { t: "info", h: `TB thời lượng <b>${c.avg}</b>, dài nhất <b>${c.max}</b>.` },
+      ],
+      reco: [p[0] > 20 ? "Rà soát chất lượng data số điện thoại và câu mở đầu kịch bản để giảm cuộc gọi dưới 30 giây."
+        : "Phân tích ghi âm nhóm trên 3 phút để nhân rộng kịch bản tư vấn hiệu quả."],
+    });
+  }
+
+  function aiStatus() {
+    const counts = {}; ST_KEYS.forEach((k) => (counts[k] = 0));
+    if (dashFiltered()) matchedUsers().forEach((u) => ST_KEYS.forEach((k) => (counts[k] += u.status[k])));
+    else Object.assign(counts, D.OVERVIEW.status);
+    const total = ST_KEYS.reduce((a, k) => a + counts[k], 0);
+    if (!total) { aiCompose("aiStatus", { lead: "Không có cuộc gọi nào khớp bộ lọc để phân tích.", items: [] }); return; }
+    const ansPct = pctOf(counts.answered, total);
+    const miss = ST_KEYS.filter((k) => k !== "answered" && counts[k] > 0).sort((a, b) => counts[b] - counts[a]);
+    const tech = pctOf(counts.failed + counts.nosignal, total);
+    const agents = matchedUsers().filter((u) => u.total >= 30).map((u) => ({ u, r: u.total ? u.status.answered / u.total : 0 })).sort((a, b) => b.r - a.r);
+    const best = agents[0], worst = agents[agents.length - 1];
+    const gap = best && worst ? Math.round((best.r - worst.r) * 100) : 0;
+    const items = [
+      miss[0] && { t: "warn", h: `<b>${ST_LABEL[miss[0]]}</b> là nguyên nhân không kết nối lớn nhất: <b>${pctOf(counts[miss[0]], total)}%</b> tổng cuộc gọi${miss[1] ? `, tiếp theo là ${ST_LABEL[miss[1]]} (${pctOf(counts[miss[1]], total)}%)` : ""}.` },
+      (counts.failed + counts.nosignal) > 0 && { t: tech >= 5 ? "warn" : "good", h: `Lỗi kỹ thuật (Thất bại + Mất sóng) chiếm <b>${tech}%</b>${tech >= 5 ? " — cao hơn mức nên chấp nhận (~5%)" : ", trong ngưỡng an toàn"}.` },
+      best && agents.length > 1 && { t: "good", h: `<b>${esc(best.u.email)}</b> có tỷ lệ nghe máy cao nhất: <b>${Math.round(best.r * 100)}%</b>.` },
+      worst && agents.length > 1 && { t: gap >= 10 ? "warn" : "info", h: `<b>${esc(worst.u.email)}</b> thấp nhất: <b>${Math.round(worst.r * 100)}%</b> (chênh <b>${gap}</b> điểm % so với người cao nhất).` },
+    ];
+    const reco = [];
+    if (miss[0] === "unanswered" || miss[0] === "voicemail") reco.push("Gọi lại các số không nghe máy vào khung giờ có tỷ lệ nghe máy cao (xem mật độ theo khung giờ).");
+    if (miss[0] === "busy" || miss[0] === "cancelled") reco.push("Giãn lịch gọi lại 15–30 phút với các số báo bận / huỷ.");
+    if (tech >= 5) reco.push("Kiểm tra đường truyền, nhà mạng và lọc số không hợp lệ.");
+    if (gap >= 10) reco.push("Chia sẻ cách tiếp cận của nhân viên có tỷ lệ nghe máy cao cho nhóm thấp hơn.");
+    aiCompose("aiStatus", {
+      lead: `Tỷ lệ nghe máy đạt <b>${ansPct}%</b> trên <b>${nfmt(total)}</b> cuộc gọi${statusActive() ? " (trong phạm vi trạng thái đang lọc)" : ""}.`,
+      items, reco,
+    });
+  }
+
+  let lastFunnel = null;
+  function aiFunnel() {
+    const f = lastFunnel; if (!f || !f.total) { aiCompose("aiFunnel", { lead: "Chưa có dữ liệu phễu để phân tích.", items: [] }); return; }
+    const st = f.stages, conv = pctOf(st[4].v, f.total);
+    let li = 1; for (let i = 2; i < st.length; i++) if (st[i - 1].v - st[i].v > st[li - 1].v - st[li].v) li = i;
+    let wi = 1; for (let i = 2; i < st.length; i++) if (st[i].v / (st[i - 1].v || 1) < st[wi].v / (st[wi - 1].v || 1)) wi = i;
+    const loss = st[li - 1].v - st[li].v;
+    const RECO = [null,
+      "Kiểm tra chất lượng đường truyền / nhà mạng và làm sạch danh sách số trước khi gọi.",
+      "Hạn chế gọi lặp khi máy bận; đặt lịch gọi lại sau 15–30 phút.",
+      "Ưu tiên gọi vào khung giờ có tỷ lệ nghe máy cao và thiết lập lịch gọi lại cho số không nghe máy.",
+      "Chuẩn hoá 30 giây mở đầu của kịch bản để giữ chân khách sau khi bắt máy."];
+    aiCompose("aiFunnel", {
+      lead: `Toàn phễu chuyển đổi <b>${conv}%</b>: cứ 100 cuộc gọi có khoảng <b>${conv}</b> cuộc gọi chất lượng (nghe máy &gt; 30 giây).`,
+      items: [
+        { t: "warn", h: `Rơi nhiều nhất ở bước <b>${st[li - 1].name} → ${st[li].name}</b>: mất <b>${nfmt(loss)}</b> cuộc (${pctOf(loss, st[li - 1].v)}% tầng trước)${st[li].drop ? `, chủ yếu do ${st[li].drop}` : ""}.` },
+        wi !== li && { t: "info", h: `Bước có tỷ lệ chuyển đổi thấp nhất: <b>${st[wi].name}</b> (${pctOf(st[wi].v, st[wi - 1].v)}% so với tầng trước).` },
+        { t: pctOf(st[4].v, st[3].v) >= 85 ? "good" : "info", h: `<b>${pctOf(st[4].v, st[3].v)}%</b> cuộc gọi nghe máy duy trì được trên 30 giây.` },
+        { t: pctOf(st[1].v, st[0].v) >= 95 ? "good" : "warn", h: `Tín hiệu kết nối đạt <b>${pctOf(st[1].v, st[0].v)}%</b> tổng cuộc gọi.` },
+      ],
+      reco: [RECO[li]].concat(wi !== li ? [RECO[wi]] : []),
+    });
+  }
+
+  function aiHeat() {
+    const rows = D.HEATMAP.rows, keys = heatKeys(), H = D.HEATMAP.cols.length;
+    const what = heatStatus === "all" ? "cuộc gọi" : `cuộc gọi “${ST_LABEL[heatStatus]}”`;
+    const hourTot = Array(H).fill(0), dayTot = rows.map(() => 0);
+    rows.forEach((r, ri) => r.cells.forEach((c, h) => { const v = keys.reduce((a, k) => a + (c[k] || 0), 0); hourTot[h] += v; dayTot[ri] += v; }));
+    const all = hourTot.reduce((a, b) => a + b, 0);
+    if (!all) { aiCompose("aiHeat", { lead: `Không có ${what} trong dữ liệu khung giờ.`, items: [] }); return; }
+    let peak = 0; hourTot.forEach((v, h) => { if (v > hourTot[peak]) peak = h; });
+    let win = 0; for (let h = 0; h < H - 1; h++) if (hourTot[h] + hourTot[h + 1] > hourTot[win] + hourTot[win + 1]) win = h;
+    let bd = 0; dayTot.forEach((v, i) => { if (v > dayTot[bd]) bd = i; });
+    const weekend = pctOf(dayTot[5] + dayTot[6], all);
+    // answer rate per hour, always from the full status mix
+    const ans = Array(H).fill(0), tot = Array(H).fill(0);
+    rows.forEach((r) => r.cells.forEach((c, h) => { ans[h] += c.answered; tot[h] += ST_KEYS.reduce((a, k) => a + (c[k] || 0), 0); }));
+    const maxTot = Math.max(...tot), cand = tot.map((v, h) => h).filter((h) => tot[h] >= maxTot * 0.25);
+    const rate = (h) => ans[h] / (tot[h] || 1);
+    const bestH = cand.reduce((a, h) => (rate(h) > rate(a) ? h : a), cand[0]);
+    const worstH = cand.reduce((a, h) => (rate(h) < rate(a) ? h : a), cand[0]);
+    const lunch = (hourTot[12] || 0) < ((hourTot[10] + hourTot[14]) / 2) * 0.7;
+    const active = hourTot.map((v, h) => h).filter((h) => hourTot[h] > 0);
+    aiCompose("aiHeat", {
+      lead: `Cao điểm ${what} rơi vào <b>${peak}h–${peak + 1}h</b>; khung <b>${win}h–${win + 2}h</b> tập trung <b>${pctOf(hourTot[win] + hourTot[win + 1], all)}%</b> lưu lượng cả tuần.`,
+      items: [
+        { t: "info", h: `<b>${rows[bd].label}</b> là ngày nhiều ${what} nhất (<b>${nfmt(dayTot[bd])}</b>); cuối tuần chỉ chiếm <b>${weekend}%</b>.` },
+        { t: "good", h: `Tỷ lệ nghe máy cao nhất lúc <b>${bestH}h</b> (${Math.round(rate(bestH) * 100)}%), thấp nhất lúc <b>${worstH}h</b> (${Math.round(rate(worstH) * 100)}%).` },
+        lunch && { t: "info", h: `Lưu lượng giảm rõ trong giờ nghỉ trưa <b>12h–13h</b>.` },
+        active.length && { t: "info", h: `Hoạt động gọi diễn ra từ <b>${active[0]}h</b> đến <b>${active[active.length - 1] + 1}h</b>; ngoài khung này gần như không có cuộc gọi.` },
+      ],
+      reco: [`Dồn chiến dịch gọi ra vào khung có tỷ lệ nghe máy cao (quanh ${bestH}h); dùng giờ thấp điểm cho gọi lại và follow-up.`],
+    });
+  }
+  function renderAI() { aiOverview(); aiDuration(); aiStatus(); aiFunnel(); aiHeat(); }
+
   /* ---------- Calls list ---------- */
   function filteredCalls() {
     const bu = $("#callBu").value;
@@ -1069,6 +1768,7 @@ a { text-decoration: none; color: inherit; }
       if (bu !== "all" && c.bu !== bu) return false;
       if (!inRange(c, selFrom, selTo)) return false;
       if (filterActive() && !(selExts.includes(extOf(c)) || selEmails.includes(emailOf(c)))) return false;
+      if (statusActive() && !selStatuses.includes(c.status)) return false;
       return true;
     });
   }
@@ -1079,12 +1779,13 @@ a { text-decoration: none; color: inherit; }
       : `<span class="rec-none">Chưa có</span>`;
     return `<tr>
       <td>${esc(c.time)}</td>
-      <td><span class="call-email" data-email="${esc(emailOf(c))}">${esc(emailOf(c))}</span></td>
+      <td><span class="call-email" data-email="${esc(emailOf(c))}" title="${esc(emailOf(c))}">${esc(emailOf(c))}</span></td>
       <td><span class="chip ${cls}">${c.dir}</span></td>
       <td>${esc(c.from)}</td>
       <td>${esc(c.to)}</td>
       <td><span class="chip chip--bu"><span class="chip-dot" style="background:${BU_DOT[c.bu]}"></span>${BU_LABEL[c.bu]}</span></td>
       <td>${esc(c.dur)}</td>
+      <td><span class="chip chip--st" style="--st:${ST_RGB[c.status].join(",")}"><span class="chip-dot"></span>${ST_LABEL[c.status]}</span></td>
       <td>${rec}</td>
       <td><button class="btn-ghost">Xem chi tiết</button></td>
     </tr>`;
@@ -1096,7 +1797,7 @@ a { text-decoration: none; color: inherit; }
     if (callsPage > pages) callsPage = pages;
     const start = (callsPage - 1) * per, slice = rows.slice(start, start + per);
     $("#callsBody").innerHTML = slice.length ? slice.map(callRowHtml).join("")
-      : `<tr><td colspan="9" class="uv-empty">Không có cuộc gọi nào khớp bộ lọc</td></tr>`;
+      : `<tr><td colspan="10" class="uv-empty">Không có cuộc gọi nào khớp bộ lọc</td></tr>`;
     $("#callsCount").textContent = `Hiển thị ${rows.length ? start + 1 : 0}–${start + slice.length} trên ${nfmt(rows.length)} cuộc gọi`;
     $("#callsPageInfo").textContent = `Trang ${callsPage} / ${pages}`;
     $("#callsPrev").disabled = callsPage <= 1;
@@ -1104,20 +1805,55 @@ a { text-decoration: none; color: inherit; }
   }
 
   /* ---------- Filter: dropdown + pills (live) ---------- */
+  /* ---------- Per-block status dropdown (single choice, with status dots) ----------
+     Used by "Lưu lượng cuộc gọi" (+ its popup, shared value) and the heatmap.
+     Only statuses inside the filter selection can be picked; a block sitting
+     on a now-excluded status falls back to "Tất cả trạng thái". */
+  const stAllowed = (k) => !statusActive() || selStatuses.includes(k);
+  // "Tất cả" dot = a little ring of the statuses it currently covers
+  function allDotStyle() {
+    const keys = ST_KEYS.filter(stAllowed), n = keys.length || 1, stops = [];
+    keys.forEach((k, i) => stops.push([stHex(k), ((i + 1) / n) * 100]));
+    return `background:${conic(stops)}`;
+  }
+  const singleDot = (v) => `<span class="chip-dot st-dot" style="${v === "all" ? allDotStyle() : "background:" + stHex(v)}"></span>`;
+  const singleLabel = (v) => (v === "all" ? "Tất cả trạng thái" : ST_LABEL[v]);
+  const singleValue = (target) => (target === "heat" ? heatStatus : uvStatus);
+  function singleMenuHtml(target) {
+    const cur = singleValue(target);
+    return ["all"].concat(ST_KEYS).map((k) => {
+      const dis = k !== "all" && !stAllowed(k);
+      return `<button type="button" class="st-opt st-opt--single${k === cur ? " is-current" : ""}" data-st-pick data-target="${target}" data-val="${k}" role="menuitemradio" aria-checked="${k === cur}"${dis ? " disabled" : ""}>${singleDot(k)}<span class="st-opt__label">${singleLabel(k)}</span><span class="st-opt__tick">${CHECK_SVG}</span></button>`;
+    }).join("");
+  }
+  function renderSingleStatus() {
+    $$("[data-st-single]").forEach((t) => {
+      const target = t.getAttribute("data-target"), v = singleValue(target);
+      t.innerHTML = `${singleDot(v)}<span class="st-single__label">${singleLabel(v)}</span>`;
+      const menu = t.parentElement.querySelector("[data-st-menu]");
+      if (!menu.hidden) menu.innerHTML = singleMenuHtml(target);
+    });
+  }
+  function syncBlockStatusSelects() {
+    if (uvStatus !== "all" && !stAllowed(uvStatus)) uvStatus = "all";
+    if (heatStatus !== "all" && !stAllowed(heatStatus)) heatStatus = "all";
+    renderSingleStatus();
+  }
   function renderFiltered() {
-    paintDonuts(); renderChart(); renderTop5All(); renderUvTable(); renderCalls();
+    syncBlockStatusSelects();
+    paintDonuts(); paintStatus(); renderChart(); renderTop5All(); renderUvTable(); renderSrTable(); renderFunnel(); renderHeatmap(); renderCalls(); renderAI();
   }
   // two combo scopes share the machinery: "filter" (live dashboard) + "export"
   // (the Xuất báo cáo dialog). Arrays are mutated in place, never reassigned.
-  function storeFor(scope) { return scope === "export" ? { email: exEmails, ext: exExts } : { email: selEmails, ext: selExts }; }
+  function storeFor(scope) { return scope === "export" ? { email: exEmails, ext: exExts, status: exStatuses } : { email: selEmails, ext: selExts, status: selStatuses }; }
   function arrFor(scope, type) { return storeFor(scope)[type]; }
 
   function resetFilter() {
-    selEmails.length = 0; selExts.length = 0; selFrom = ""; selTo = "";
+    selEmails.length = 0; selExts.length = 0; selStatuses.length = 0; selFrom = ""; selTo = "";
     $$('[data-filter]').forEach((i) => { if ((i.getAttribute("data-scope") || "filter") === "filter") i.value = ""; });
     $$('[data-date]').forEach((i) => (i.value = ""));
-    closeMenu(); $("#callBu").value = "all";
-    callsPage = 1; renderPills("filter"); renderFiltered();
+    closeMenu(); closeStMenus(); $("#callBu").value = "all";
+    callsPage = 1; renderPills("filter"); renderStatusPickers("filter"); renderFiltered();
   }
 
   const PILL_ICON = {
@@ -1125,26 +1861,56 @@ a { text-decoration: none; color: inherit; }
     ext: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 5h8"/><path d="M13 12h8"/><path d="M13 19h8"/><path d="m3 17 2 2 4-4"/><rect x="3" y="4" width="6" height="6" rx="1"/></svg>',
   };
   function pillHtml(scope, type, v) {
-    const label = type === "ext" ? "Ext. " + v : v;
-    return `<span class="fpill">${PILL_ICON[type]}<span class="fpill__t">${esc(label)}</span><button class="fpill__x" data-pill-remove data-scope="${scope}" data-type="${type}" data-val="${esc(v)}" aria-label="Bỏ">×</button></span>`;
+    const label = type === "ext" ? "Ext. " + v : type === "status" ? ST_LABEL[v] : v;
+    const icon = type === "status" ? `<span class="fpill__dot" style="background:${stHex(v)}"></span>` : PILL_ICON[type];
+    return `<span class="fpill">${icon}<span class="fpill__t">${esc(label)}</span><button class="fpill__x" data-pill-remove data-scope="${scope}" data-type="${type}" data-val="${esc(v)}" aria-label="Bỏ">×</button></span>`;
   }
   function renderPills(scope) {
     const st = storeFor(scope);
-    const items = st.email.map((v) => pillHtml(scope, "email", v)).concat(st.ext.map((v) => pillHtml(scope, "ext", v)));
+    const items = st.email.map((v) => pillHtml(scope, "email", v)).concat(st.ext.map((v) => pillHtml(scope, "ext", v)))
+      .concat(ST_KEYS.filter((k) => st.status.includes(k)).map((v) => pillHtml(scope, "status", v)));
     const has = items.length > 0;
     $$(`[data-pills="${scope}"]`).forEach((box) => { box.innerHTML = items.join(""); box.hidden = !has; });
   }
   function addPill(scope, type, value) {
     const arr = arrFor(scope, type);
     if (!arr.includes(value)) arr.push(value);
-    renderPills(scope);
+    renderPills(scope); if (type === "status") renderStatusPickers(scope);
     if (scope === "filter") { callsPage = 1; renderFiltered(); }
   }
   function removePill(scope, type, value) {
     const arr = arrFor(scope, type), i = arr.indexOf(value);
     if (i >= 0) arr.splice(i, 1);
-    renderPills(scope);
+    renderPills(scope); if (type === "status") renderStatusPickers(scope);
     if (scope === "filter") { callsPage = 1; renderFiltered(); }
+  }
+
+  /* status dropdown (multi-select). Picking an option toggles a pill; the menu
+     stays open so several statuses can be picked in a row. */
+  const CHECK_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>';
+  function stMenuHtml(scope) {
+    const chosen = arrFor(scope, "status");
+    return ST_KEYS.map((k) => `<button type="button" class="st-opt${chosen.includes(k) ? " is-checked" : ""}" data-st-opt data-scope="${scope}" data-val="${k}" role="menuitemcheckbox" aria-checked="${chosen.includes(k)}"><span class="st-opt__box">${CHECK_SVG}</span><span class="chip-dot" style="background:${stHex(k)}"></span><span class="st-opt__label">${ST_LABEL[k]}</span></button>`).join("");
+  }
+  function renderStatusPickers(scope) {
+    const n = arrFor(scope, "status").length;
+    $$(`[data-st-trigger][data-scope="${scope}"]`).forEach((t) => {
+      t.textContent = n ? `Đã chọn ${n} trạng thái` : "Chọn trạng thái…";
+      t.classList.toggle("has-value", n > 0);
+      const menu = t.parentElement.querySelector("[data-st-menu]");
+      if (!menu.hidden) menu.innerHTML = stMenuHtml(scope);
+    });
+  }
+  function closeStMenus(except) {
+    $$("[data-st-menu]").forEach((m) => { if (m !== except) { m.hidden = true; m.innerHTML = ""; } });
+    $$("[data-st-trigger]").forEach((t) => t.setAttribute("aria-expanded", "false"));
+  }
+  function toggleStMenu(trigger) {
+    const menu = trigger.parentElement.querySelector("[data-st-menu]");
+    const open = menu.hidden;
+    closeMenu(); closeStMenus(menu);
+    if (open) { menu.innerHTML = trigger.hasAttribute("data-st-single") ? singleMenuHtml(trigger.getAttribute("data-target")) : stMenuHtml(trigger.getAttribute("data-scope")); menu.hidden = false; trigger.setAttribute("aria-expanded", "true"); }
+    else closeStMenus();
   }
 
   /* dropdown suggestions (max 5, from the data in the system) */
@@ -1201,14 +1967,15 @@ a { text-decoration: none; color: inherit; }
 
   /* ---------- Init ---------- */
   function init() {
-    paintDonuts(); renderChart(); renderTop5All();
-    renderUvTable(); renderHeatmap(); renderCalls(); renderPills("filter"); renderPills("export");
+    paintDonuts(); paintStatus(); renderChart(); renderTop5All();
+    renderUvTable(); renderSrTable(); renderFunnel(); renderHeatmap(); renderCalls(); renderAI(); renderPills("filter"); renderPills("export");
+    renderStatusPickers("filter"); renderStatusPickers("export"); renderSingleStatus();
 
     $("#tabs").addEventListener("click", (e) => { const b = e.target.closest(".tab"); if (b) activateTab(b.dataset.tab); });
     try { if (new URLSearchParams(location.search).get("tab") === "calls") activateTab("calls"); } catch (e) {}
 
-    $("#rangeToggle").addEventListener("click", (e) => { const b = e.target.closest("button[data-range]"); if (!b) return; curRange = b.dataset.range; $$("#rangeToggle button").forEach((x) => x.classList.toggle("is-active", x === b)); renderChart(); });
-    $("#heatStatus").addEventListener("click", (e) => { const b = e.target.closest("button[data-status]"); if (!b) return; heatStatus = b.dataset.status; $$("#heatStatus button").forEach((x) => x.classList.toggle("is-active", x === b)); renderHeatmap(); });
+    $("#rangeToggle").addEventListener("click", (e) => { const b = e.target.closest("button[data-range]"); if (!b) return; curRange = b.dataset.range; $$("#rangeToggle button").forEach((x) => x.classList.toggle("is-active", x === b)); renderChart(); aiOverview(); aiDuration(); });
+
 
     // Combo inputs (email + ext): live dropdown of data in the system.
     $$('[data-filter]').forEach((i) => {
@@ -1243,21 +2010,41 @@ a { text-decoration: none; color: inherit; }
     // Delegated clicks: outside-close, pill-remove, reset, table values
     document.addEventListener("click", (e) => {
       if (!e.target.closest(".combo")) closeMenu();
+      const stTrig = e.target.closest("[data-st-trigger]");
+      if (stTrig) { toggleStMenu(stTrig); return; }
+      const stPick = e.target.closest("[data-st-pick]");
+      if (stPick) {
+        if (stPick.disabled) return;
+        const v = stPick.getAttribute("data-val");
+        if (stPick.getAttribute("data-target") === "heat") setHeatStatus(v); else setUvStatus(v);
+        closeStMenus(); return;
+      }
+      const stOpt = e.target.closest("[data-st-opt]");
+      if (stOpt) {
+        const sc = stOpt.getAttribute("data-scope"), v = stOpt.getAttribute("data-val");
+        if (arrFor(sc, "status").includes(v)) removePill(sc, "status", v); else addPill(sc, "status", v);
+        return;
+      }
+      if (!e.target.closest("[data-st-menu]")) closeStMenus();
       const rx = e.target.closest("[data-pill-remove]");
       if (rx) { removePill(rx.getAttribute("data-scope"), rx.getAttribute("data-type"), rx.getAttribute("data-val")); return; }
       if (e.target.closest("[data-filter-reset]")) { resetFilter(); return; }
       // Click an email / ext value in a table → add a pill (filters live),
       // staying on the current tab. Clicking inside the modal closes it first.
       const em = e.target.closest("[data-email]");
-      if (em) { closeModal(); addPill("filter", "email", em.getAttribute("data-email")); return; }
+      if (em) { closeModal(); closeSrModal(); addPill("filter", "email", em.getAttribute("data-email")); return; }
       const ex = e.target.closest("[data-ext]");
-      if (ex) { closeModal(); addPill("filter", "ext", ex.getAttribute("data-ext")); return; }
+      if (ex) { closeModal(); closeSrModal(); addPill("filter", "ext", ex.getAttribute("data-ext")); return; }
     });
 
     $("#uvDetailBtn").addEventListener("click", openModal);
     $("#uvModalClose").addEventListener("click", closeModal);
     $("#uvModal").addEventListener("click", (e) => { if (e.target.id === "uvModal") closeModal(); });
     $("#uvModalFilter").addEventListener("input", renderModalTable);
+    $("#srDetailBtn").addEventListener("click", openSrModal);
+    $("#srModalClose").addEventListener("click", closeSrModal);
+    $("#srModal").addEventListener("click", (e) => { if (e.target.id === "srModal") closeSrModal(); });
+    $("#srModalFilter").addEventListener("input", renderSrModalTable);
 
     // Export report
     $("#exportBtn").addEventListener("click", openExport);
@@ -1267,7 +2054,12 @@ a { text-decoration: none; color: inherit; }
     $("#exportUseFilter").addEventListener("change", toggleExportFields);
     $("#exportRun").addEventListener("click", runExport);
 
-    document.addEventListener("keydown", (e) => { if (e.key === "Escape") { closeModal(); closeExport(); } });
+    document.addEventListener("keydown", (e) => {
+      if (e.key !== "Escape") return;
+      // first Escape closes an open status menu, the next one the dialog
+      if ($$("[data-st-menu]").some((m) => !m.hidden)) { closeStMenus(); return; }
+      closeModal(); closeSrModal(); closeExport();
+    });
 
     $("#callBu").addEventListener("change", () => { callsPage = 1; renderCalls(); });
     $("#callsPerPage").addEventListener("change", () => { callsPage = 1; renderCalls(); });

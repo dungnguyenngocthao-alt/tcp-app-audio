@@ -50,6 +50,50 @@
   USERS.sort((a, b) => b.total - a.total);
   const byExt = {}; USERS.forEach((u) => (byExt[u.ext] = u));
 
+  /* ---- Call status (trạng thái) ---- */
+  const STATUS_KEYS = ["answered", "unanswered", "busy", "failed", "cancelled", "nosignal", "voicemail"];
+  const STATUS_LABEL = {
+    answered: "Nghe máy", unanswered: "Không nghe máy", busy: "Bận", failed: "Thất bại",
+    cancelled: "Huỷ cuộc gọi", nosignal: "Mất sóng", voicemail: "Hộp thư thoại",
+  };
+  /* ---- Call duration buckets (histogram) ---- */
+  const DUR_BUCKETS = [
+    { key: "lt30", label: "< 30s", desc: "Cuộc gọi rác / Dập máy nhanh" },
+    { key: "s30m1", label: "30s – 1 phút", desc: "Trao đổi ngắn" },
+    { key: "m1m3", label: "1 – 3 phút", desc: "Tư vấn tiêu chuẩn" },
+    { key: "gt3", label: "> 3 phút", desc: "Tư vấn chuyên sâu" },
+  ];
+  const DUR_BASE = [0.24, 0.21, 0.33, 0.22];
+  const STATUS_BASE = [0.68, 0.14, 0.07, 0.04, 0.03, 0.02, 0.02];
+  // split n into integer counts by weights (largest remainder, sums exactly to n)
+  // same split, returned as a plain array (used by the duration histogram)
+  function splitArr(n, w) {
+    const sw = w.reduce((a, b) => a + b, 0) || 1;
+    const raw = w.map((x) => (n * x) / sw), out = raw.map(Math.floor);
+    let rem = n - out.reduce((a, b) => a + b, 0);
+    raw.map((x, i) => [x - out[i], i]).sort((a, b) => b[0] - a[0]).forEach(([, i]) => { if (rem > 0) { out[i]++; rem--; } });
+    return out;
+  }
+  function splitCount(n, w) {
+    const sw = w.reduce((a, b) => a + b, 0) || 1;
+    const raw = w.map((x) => (n * x) / sw), out = raw.map(Math.floor);
+    let rem = n - out.reduce((a, b) => a + b, 0);
+    raw.map((x, i) => [x - out[i], i]).sort((a, b) => b[0] - a[0]).forEach(([, i]) => { if (rem > 0) { out[i]++; rem--; } });
+    const o = {}; STATUS_KEYS.forEach((k, i) => (o[k] = out[i])); return o;
+  }
+  let _ss = 424242; function sr() { _ss = (_ss * 1103515245 + 12345) & 0x7fffffff; return _ss / 0x7fffffff; }
+  USERS.forEach((u) => {
+    u.stw = STATUS_BASE.map((b) => b * (0.6 + sr() * 0.8));
+    u.status = splitCount(u.total, u.stw);
+    // call-duration mix per agent: < 30s, 30s–1', 1–3', > 3'
+    u.durw = DUR_BASE.map((b) => b * (0.65 + sr() * 0.7));
+  });
+  // average talk time per agent (seconds), own RNG so nothing above shifts
+  let _as = 8642; function ar() { _as = (_as * 1103515245 + 12345) & 0x7fffffff; return _as / 0x7fffffff; }
+  USERS.forEach((u) => {
+    u.avgSec = Math.round(140 + ar() * 190);
+  });
+
   /* ---- Per-user daily distribution (lets a date range re-scope the dashboard) ---- */
   const DAYS = 371; // ~53 weeks ending today
   const START = new Date(TODAY); START.setDate(TODAY.getDate() - (DAYS - 1));
@@ -82,12 +126,13 @@
       let t = 0; for (let i = lo; i <= hi; i++) t += u.daily[i];
       const rin = u.total ? u.inbound / u.total : 0, rod = u.total ? u.odoo / u.total : 0;
       const inbound = Math.round(t * rin);
-      return { ext: u.ext, email: u.email, name: u.name, bu: u.bu, total: t, inbound, outbound: t - inbound, odoo: Math.round(t * rod) };
+      return { ext: u.ext, email: u.email, name: u.name, bu: u.bu, total: t, inbound, outbound: t - inbound, odoo: Math.round(t * rod), stw: u.stw, durw: u.durw, avgSec: u.avgSec, status: splitCount(t, u.stw) };
     });
   }
 
   /* ---- Overview headline (global, when no user selected) ---- */
   const OVERVIEW = { totalCalls: 11087, inboundPct: 39, outboundPct: 61, bu: { pso: 17, tcp: 1, unknown: 82 } };
+  OVERVIEW.status = splitCount(OVERVIEW.totalCalls, STATUS_BASE);
 
   /* ---- Bar chart ranges (always populated, ending today) ---- */
   function dayRange(n) {
@@ -110,9 +155,9 @@
     return { labels, series };
   }
   const CHART = {
-    "7d": Object.assign(dayRange(7), { avg: "3:48" }),
-    "30d": Object.assign(dayRange(30), { avg: "3:41" }),
-    "12m": Object.assign(monthRange(12), { avg: "4:05" }),
+    "7d": Object.assign(dayRange(7), { avg: "3:48", max: "28:47", min: "0:04", dur: [0.25, 0.21, 0.32, 0.22] }),
+    "30d": Object.assign(dayRange(30), { avg: "3:41", max: "41:12", min: "0:02", dur: [0.23, 0.22, 0.33, 0.22] }),
+    "12m": Object.assign(monthRange(12), { avg: "4:05", max: "58:09", min: "0:01", dur: [0.22, 0.21, 0.34, 0.23] }),
   };
 
   /* ---- Top-5 caller / callee (show email) ---- */
@@ -125,6 +170,7 @@
 
   /* ---- Heatmap: 7 days x 24 hours (1 cell = 1 hour), split by status ---- */
   let _hs = 7; function hr() { _hs = (_hs * 1103515245 + 12345) & 0x7fffffff; return _hs / 0x7fffffff; }
+  let _hs2 = 31; function hr2() { _hs2 = (_hs2 * 1103515245 + 12345) & 0x7fffffff; return _hs2 / 0x7fffffff; }
   const HEAT_LABELS = ["T2 · 05-10", "T3 · 06-10", "T4 · 07-10", "T5 · 08-10", "T6 · 09-10", "T7 · 10-10", "CN · 11-10"];
   // hourly weight 0..23 — quiet overnight, busy 8-11 & 13-18
   const HOUR_W = [0, 0, 0, 0, 0, .05, .15, .4, .9, 1, 1, .85, .5, .8, 1, .95, .85, .6, .35, .2, .1, .05, 0, 0];
@@ -137,7 +183,14 @@
         const scale = w * DAY_W[r];
         const answered = Math.round(scale * (8 + hr() * 14));
         const unanswered = Math.round(scale * (1 + hr() * 5));
-        return { answered, unanswered };
+        return {
+          answered, unanswered,
+          busy: Math.round(scale * (0.4 + hr2() * 2.6)),
+          failed: Math.round(scale * (0.2 + hr2() * 1.6)),
+          cancelled: Math.round(scale * (0.1 + hr2() * 1.4)),
+          nosignal: Math.round(scale * (hr2() * 1.2)),
+          voicemail: Math.round(scale * (hr2() * 1.3)),
+        };
       }),
     })),
   };
@@ -177,10 +230,23 @@
       from, to, dir, bu: pickBu(), dur, rec: rand() < 0.6,
     });
   }
+  // status per call (own RNG). Answered calls may have a recording; any other
+  // status never has one. The first rows mirror the live snapshot.
+  const SEED_STATUS = ["answered", "answered", "answered", "unanswered", "busy", "unanswered", "answered", "answered", "voicemail", "answered"];
+  let _cs = 97531; function cr() { _cs = (_cs * 1103515245 + 12345) & 0x7fffffff; return _cs / 0x7fffffff; }
+  // calls without a recording: answered-but-not-uploaded is less common
+  const NOREC_W = [0.3, 0.26, 0.14, 0.1, 0.08, 0.06, 0.06];
+  const CUM = []; NOREC_W.reduce((a, b, i) => (CUM[i] = a + b), 0);
+  CALLS.forEach((c, i) => {
+    if (i < SEED_STATUS.length) { c.status = SEED_STATUS[i]; return; }
+    if (c.rec) { c.status = "answered"; return; }
+    const r = cr() * CUM[CUM.length - 1];
+    c.status = STATUS_KEYS[CUM.findIndex((x) => r < x)] || "answered";
+  });
   const CALLS_TOTAL_LABEL = 11095; // headline total shown like the live site
 
   global.DEMO_DATA = {
     OVERVIEW, CHART, TOP5_CALLER, TOP5_CALLEE, HEATMAP, USERS, byExt, CALLS, CALLS_TOTAL_LABEL,
-    usersInRange,
+    usersInRange, STATUS_KEYS, STATUS_LABEL, DUR_BUCKETS, DUR_BASE, splitArr,
   };
 })(window);
